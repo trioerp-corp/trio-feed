@@ -1,0 +1,28 @@
+# Trio's Worker — deployed by GitHub Actions (.github/workflows/worker.yml) whenever worker/worker.js changes.
+# Secrets (KEY, BREVO_KEY, TG_TOKEN, ADMIN_KEY, ADMIN_CERT, GH_TOKEN, UPDATE_KEY, UPDATE_CERT, Paymob…) live only in Cloudflare
+# and are never touched by a deploy.
+name = "trio"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+account_id = "66ab03975f031d18baf0aeb4ccde2a11"
+
+[vars]
+MAIL_FROM = "trioerp.corp@gmail.com"
+SITE = "https://trioerp.pages.dev"
+
+[[kv_namespaces]]
+binding = "ACC"
+id = "8890768590cd4d4ab17d139cedbde372"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "trio"
+database_id = "8879a238-477a-43fb-971d-d88bf91cf1b7"
+
+# flood guard: 120 requests a minute per address
+[[unsafe.bindings]]
+name = "RL"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }

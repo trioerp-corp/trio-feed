@@ -1,0 +1,29 @@
+name: Deploy Trio Worker
+on:
+  push:
+    branches: [main]
+    paths: ["worker/**"]
+  workflow_dispatch: {}
+concurrency: { group: worker, cancel-in-progress: false }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Needs the Cloudflare token
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: echo "::warning::Add the repository secret CLOUDFLARE_API_TOKEN (Settings → Secrets and variables → Actions) — nothing deployed."
+      - if: env.CLOUDFLARE_API_TOKEN != ''
+        uses: actions/checkout@v4
+      - if: env.CLOUDFLARE_API_TOKEN != ''
+        uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Check the code parses
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: node --check worker/worker.js || (cp worker/worker.js /tmp/w.mjs && node -e "import('/tmp/w.mjs')")
+      - name: Deploy
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        working-directory: worker
+        run: npx --yes wrangler@3.114.0 deploy --keep-vars
