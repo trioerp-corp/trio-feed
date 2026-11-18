@@ -44,6 +44,20 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 6px;
 .empty{color:var(--muted);text-align:center;padding:14px}
 .hide{display:none!important}
 .stat{display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;background:var(--brand-soft);font-weight:600}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kit .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}.kit .chips button{flex:none;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:99px;padding:8px 14px;font:600 14px var(--body);cursor:pointer}
+.kit .chips button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.kit h3{font:800 22px var(--display);margin:6px 0 10px}.kit p{margin:0 0 12px}
+.kit .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 14px}@media(max-width:720px){.kit .cards{grid-template-columns:1fr}}
+.kit .cards div{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--bg)}.kit .cards b{display:block;font:700 16px var(--display);margin-bottom:6px;color:var(--brand-2)}.kit .cards span{white-space:pre-line;font-size:15px}
+.kit .script{border-inline-start:5px solid var(--gold);background:var(--gold-soft);border-radius:14px;padding:14px 16px;margin:0 0 14px;white-space:pre-line}.kit .script b{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.kit .tip,.kit .warn{border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:15px}.kit .tip{background:var(--brand-soft)}.kit .warn{background:var(--bad-soft)}
+.kit details{border:1px solid var(--line);border-radius:14px;margin:0 0 8px;background:var(--bg)}.kit summary{cursor:pointer;padding:12px 14px;font-weight:700}.kit details div{padding:0 14px 14px}
+.kit ol{margin:0 0 14px;padding-inline-start:22px}.kit ol li{margin-bottom:8px}.kit ul{margin:0 0 14px;padding-inline-start:22px}.kit ul li{margin-bottom:6px}
+.kit .calc{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 14px}@media(max-width:620px){.kit .calc{grid-template-columns:1fr}}
+.kit .calc .res{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kit .calc .res div{background:var(--paper);border-radius:12px;padding:10px;text-align:center}.kit .calc .res b{display:block;font:800 20px var(--display);color:var(--bad)}.kit .calc .res span{font-size:12px;color:var(--muted)}
+.kit .msgc{border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 10px;background:var(--bg)}.kit .msgc pre{white-space:pre-wrap;font:inherit;margin:6px 0 10px}.kit .msgc .btn{padding:9px 14px;font-size:14px}
+.kit .nav{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30px}footer a{color:var(--brand)}
 </style>
 </head>
@@ -61,7 +75,6 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
   <form id="fLogin" novalidate>
    <div class="g2"><label>رقم الهاتف<input name="phone" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel" required></label>
    <label>كلمة السر<input name="password" type="password" autocomplete="current-password" required></label></div>
-   <label style="margin-top:12px;display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" name="asrep" style="width:auto;margin:0"> أنا مندوب مبيعات</label>
    <button class="btn brand wide">دخول</button>
    <p class="muted" style="margin:10px 0 0;font-size:14px">نسيت كلمة السر؟ راسلنا على <a href="https://wa.me/201008030459">واتساب</a> وسنعيد تعيينها لك.</p>
   </form>
@@ -96,6 +109,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
   <div id="outMsg"></div>
  </section>
 
+ <div id="switchBox" class="card switch hide"><span id="switchTxt"></span><button class="btn soft" type="button" id="switchBtn"></button></div>
  <!-- customer -->
  <section id="cust" class="hide">
   <div class="card">
@@ -108,12 +122,20 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
    <p class="muted" style="font-size:13px;margin:10px 0 0">البرنامج يعمل على كمبيوتر المحل (ويندوز 10 أو 11)، وتجربته مجانية 14 يومًا بكل الإمكانيات.</p>
   </div>
   <div class="card"><h3 style="margin:0 0 10px">طلباتك</h3><div id="leads"></div></div>
+  <div id="joinBox" class="card hide">
+   <h3 style="margin:0 0 6px">🤝 انضم إلى فريق مندوبي Trio</h3>
+   <p class="muted" style="margin:0 0 12px">رشّح Trio للمحلات من حولك واحصل على عمولة عن كل عميل يشتري عن طريقك — بنفس حسابك وكلمة السر نفسها، دون تسجيل جديد.</p>
+   <form id="fJoin" novalidate><div class="g2">
+    <label>المحافظة / المنطقة التي تغطيها<input name="city" required></label>
+    <label>نبذة قصيرة عنك (اختياري)<input name="note" placeholder="خبرتك، المحلات التي تعرفها…"></label></div>
+    <button class="btn gold wide">أرسل طلب الانضمام</button><div id="joinMsg"></div></form>
+  </div>
  </section>
 
  <!-- rep -->
  <section id="rep" class="hide">
   <div id="repPending" class="card hide"><h2 style="margin:0 0 6px;font:800 22px var(--display)">طلبك قيد المراجعة ⏳</h2>
-   <p class="muted" style="margin:0">شكرًا لانضمامك يا <span class="uname"></span>. سيراجع فريق Trio طلبك ويحدد نسبة عمولتك، وبعدها يظهر هنا رابطك وكود QR الخاص بك. يمكنك التواصل معنا على <a href="https://wa.me/201008030459">واتساب</a>.</p></div>
+   <p class="muted" style="margin:0">شكرًا لانضمامك يا <span class="uname"></span>. سيراجع فريق Trio طلبك ويحدد نسبة عمولتك، وبعدها يظهر هنا رابطك وكود QR الخاص بك و«حقيبة المندوب»: دليل البيع والرسائل الجاهزة ومنشورك للطباعة. يمكنك التواصل معنا على <a href="https://wa.me/201008030459">واتساب</a>.</p></div>
   <div id="repStop" class="card hide"><h2 style="margin:0 0 6px;font:800 22px var(--display)">حسابك غير مفعّل</h2><p class="muted" style="margin:0">تواصل مع Trio على <a href="https://wa.me/201008030459">واتساب</a> للاستفسار.</p></div>
   <div id="repOn" class="hide">
    <div class="kpis"><div class="kpi"><span>عملاء عن طريقك</span><b id="kC">0</b></div><div class="kpi"><span>طلبات</span><b id="kL">0</b></div><div class="kpi"><span>عمولتك المستحقة</span><b id="kD">0</b></div><div class="kpi"><span>المدفوع لك</span><b id="kP">0</b></div></div>
@@ -125,6 +147,10 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
      <div class="g2" style="margin-top:12px"><a class="btn brand" id="share" target="_blank" rel="noopener">مشاركة عبر واتساب</a><button class="btn soft" type="button" id="dlQr">⬇️ تنزيل الكود صورة</button></div>
     </div></div>
    </div>
+   <div class="card kit" id="kit"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+    <div><h2 style="margin:0;font:800 22px var(--display)">🧳 حقيبة المندوب</h2><p class="muted" id="kitLead" style="margin:4px 0 0"></p></div>
+    <button class="btn gold" type="button" id="flyer">🖨 اطبع منشورك بكود QR</button></div>
+    <div class="chips" id="kitNav"></div><div id="kitBody"><p class="muted">جارٍ التحميل…</p></div></div>
    <div class="card"><h3 style="margin:0 0 10px">العملاء الذين سجّلوا عن طريقك</h3><div id="rCust"></div></div>
    <div class="card"><h3 style="margin:0 0 10px">المبيعات والعمولة</h3><div id="rSales"></div></div>
    <div class="card"><h3 style="margin:0 0 10px">الدفعات التي استلمتها</h3><div id="rPays"></div></div>
@@ -170,7 +196,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
   function signedIn(d) { A.setToken(d.token); A.setUser(d.user); load(); }
   $("fLogin").onsubmit = function (e) {
     e.preventDefault(); var v = vals(this), f = this; busy(f, true);
-    A.call("/login", { phone: v.phone, password: v.password, kind: v.asrep ? "rep" : "customer" }).then(signedIn).catch(function (x) { msg("outMsg", x.message); }).then(function () { busy(f, false); });
+    A.call("/login", { phone: v.phone, password: v.password }).then(signedIn).catch(function (x) { msg("outMsg", x.message); }).then(function () { busy(f, false); });
   };
   function reg(kind) {
     return function (e) {
@@ -199,12 +225,80 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
     document.querySelectorAll(".cOnly").forEach(function (x) { x.classList.toggle("hide", u.kind === "rep"); });
     $("prof").classList.remove("hide"); $("out").classList.add("hide");
   }
+  function other(d) {
+    var o = d.other, box = $("switchBox");
+    box.classList.toggle("hide", !o);
+    if (!o) return;
+    $("switchTxt").textContent = o.kind === "rep" ? (o.status === "pending" ? "لديك أيضًا حساب مندوب (قيد المراجعة)." : "لديك أيضًا حساب مندوب.") : "لديك أيضًا حساب عميل.";
+    $("switchBtn").textContent = o.kind === "rep" ? "↔ انتقل إلى حساب المندوب" : "↔ انتقل إلى حسابي كعميل";
+    $("switchBtn").onclick = function () { A.call("/switch", {}).then(function (x) { A.setToken(x.token); A.setUser(x.user); location.reload(); }).catch(function (x) { alert(x.message); }); };
+  }
+  $("fJoin").onsubmit = function (e) {
+    e.preventDefault(); var v = vals(this), f = this; busy(f, true);
+    A.call("/become-rep", v).then(function (x) { A.setToken(x.token); A.setUser(x.user); location.reload(); })
+      .catch(function (x) { msg("joinMsg", x.message); }).then(function () { busy(f, false); });
+  };
+  function kit(r, link, u) {
+    A.call("/kit").then(function (d) {
+      var K = d.kit, cur = 0;
+      $("kitLead").textContent = K.lead;
+      $("kitNav").innerHTML = K.sections.map(function (s, i) { return '<button type="button" data-i="' + i + '">' + s.icon + " " + ESC(s.title) + "</button>"; }).join("");
+      function block(b) {
+        if (b.t === "p") return "<p>" + ESC(b.x) + "</p>";
+        if (b.t === "script") return '<div class="script"><b>' + ESC(b.h || "") + "</b>" + ESC(b.x) + "</div>";
+        if (b.t === "tip") return '<div class="tip">💡 ' + ESC(b.x) + "</div>";
+        if (b.t === "warn") return '<div class="warn">⚠️ ' + ESC(b.x) + "</div>";
+        if (b.t === "list") return "<ul>" + b.items.map(function (x) { return "<li>" + ESC(x) + "</li>"; }).join("") + "</ul>";
+        if (b.t === "steps") return (b.h ? "<p><b>" + ESC(b.h) + "</b></p>" : "") + "<ol>" + b.items.map(function (x) { return "<li>" + ESC(x) + "</li>"; }).join("") + "</ol>";
+        if (b.t === "cards") return '<div class="cards">' + b.items.map(function (c) { return "<div><b>" + ESC(c.h) + "</b><span>" + ESC(c.x) + "</span></div>"; }).join("") + "</div>";
+        if (b.t === "qa") return b.items.map(function (q) { return "<details><summary>" + ESC(q.q) + "</summary><div>" + ESC(q.a) + "</div></details>"; }).join("");
+        if (b.t === "calc") return '<div class="calc"><label>مبيعات المحل في اليوم (جنيه)<input type="number" id="cS" value="8000" min="0" inputmode="numeric"></label>' +
+          '<label>نسبة الضائع المتوقعة %<input type="number" id="cP" value="2" min="0" max="30" step="0.5" inputmode="decimal"></label>' +
+          '<div class="res"><div><span>في اليوم</span><b id="cD"></b></div><div><span>في الشهر</span><b id="cM"></b></div><div><span>في السنة</span><b id="cY"></b></div></div></div>';
+        if (b.t === "msgs") return b.items.map(function (m, i) { var t = m.x.replace("{link}", link);
+          return '<div class="msgc"><b>' + ESC(m.h) + "</b><pre>" + ESC(t) + '</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn soft" type="button" data-copy="' + i + '">📋 نسخ</button><a class="btn brand" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">إرسال عبر واتساب</a></div></div>'; }).join("");
+        return "";
+      }
+      function show(i) {
+        cur = i; var s = K.sections[i];
+        $("kitNav").querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", +b.dataset.i === i); });
+        $("kitBody").innerHTML = "<h3>" + s.icon + " " + ESC(s.title) + "</h3>" + s.blocks.map(block).join("") +
+          '<div class="nav">' + (i > 0 ? '<button class="btn soft" type="button" data-go="' + (i - 1) + '">→ السابق</button>' : "<span></span>") +
+          (i < K.sections.length - 1 ? '<button class="btn brand" type="button" data-go="' + (i + 1) + '">التالي: ' + ESC(K.sections[i + 1].title) + " ←</button>" : "") + "</div>";
+        $("kitBody").querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { show(+b.dataset.go); $("kit").scrollIntoView({ behavior: "smooth" }); }; });
+        $("kitBody").querySelectorAll("[data-copy]").forEach(function (b) { b.onclick = function () { var t = b.closest(".msgc").querySelector("pre").textContent; navigator.clipboard.writeText(t).then(function () { b.textContent = "تم النسخ ✔"; }); }; });
+        if ($("cS")) { var calc = function () { var dd = (+$("cS").value || 0) * (+$("cP").value || 0) / 100; $("cD").textContent = money(Math.round(dd)); $("cM").textContent = money(Math.round(dd * 30)); $("cY").textContent = money(Math.round(dd * 365)); }; $("cS").oninput = $("cP").oninput = calc; calc(); }
+      }
+      $("kitNav").querySelectorAll("button").forEach(function (b) { b.onclick = function () { show(+b.dataset.i); }; });
+      show(0);
+      $("flyer").onclick = function () {
+        var F = K.flyer, qr = $("qrBox").innerHTML, w = window.open("", "_blank");
+        if (!w) { alert("اسمح بالنوافذ المنبثقة لطباعة المنشور"); return; }
+        w.document.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>Trio — منشور ' + ESC(u.name) + '</title>' +
+          '<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@700;800&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet"><style>' +
+          '@page{size:A5;margin:0}*{box-sizing:border-box}body{margin:0;font:400 15px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;color:#0a1f3c;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+          '.pg{width:148mm;height:210mm;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}.top{background:radial-gradient(120% 140% at 100% 0,#0a3a66 0,#04203f 60%);color:#fff;padding:9mm 9mm 8mm}' +
+          '.lg{display:flex;align-items:center;gap:8px;font:800 20px Alexandria,sans-serif}.lg img{width:30px;height:30px;border-radius:8px;background:#fff}' +
+          'h1{font:800 23px/1.35 Alexandria,sans-serif;margin:6mm 0 2mm}.top p{margin:0;color:#a9bdd4}' +
+          'ul{list-style:none;margin:0;padding:7mm 9mm 0;display:grid;gap:4.2mm}li{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:16.5px}'+'.for{margin:6mm 9mm 0;background:#e4f1f6;color:#0c4a76;border-radius:12px;padding:3mm 4mm;font-size:13px;text-align:center;font-weight:600}li:before{content:"✔";color:#fff;background:#3cc2b5;border-radius:50%;width:20px;height:20px;flex:none;display:grid;place-items:center;font-size:12px;margin-top:2px}' +
+          '.bot{margin-top:auto;display:flex;gap:6mm;align-items:center;padding:6mm 9mm 9mm}.q{width:44mm;flex:none;border:1.5px solid #dce5ef;border-radius:12px;padding:2mm;background:#fff}.q svg{display:block;width:100%;height:auto}' +
+          '.cta{font:800 18px/1.4 Alexandria,sans-serif;color:#17698f;margin-bottom:2mm}.rep{font-size:13px;color:#56677d}.rep b{color:#0a1f3c}' +
+          '@media screen{body{background:#e9eef4;padding:16px}.pg{background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.15)}}</style></head><body><div class="pg">' +
+          '<div class="top"><div class="lg"><img src="' + location.origin + '/logo.png" alt="">Trio</div><h1>' + ESC(F.h) + "</h1><p>" + ESC(F.sub) + "</p></div>" +
+          "<ul>" + F.points.map(function (x) { return "<li>" + ESC(x) + "</li>"; }).join("") + "</ul>" +'<div class="for">' + ESC(F.for || "") + "</div>" +
+          '<div class="bot"><div class="q">' + qr + '</div><div><div class="cta">' + ESC(F.cta) + '</div><div class="rep">مندوبك: <b>' + ESC(u.name) + '</b><br><span dir="ltr">' + ESC(u.phone || "") + '</span><br>كود المندوب: <b dir="ltr">' + ESC(r.code) + "</b></div></div></div>" +
+          "</div><script>Promise.all([document.fonts?document.fonts.ready:1].concat([].map.call(document.images,function(i){return i.complete?1:new Promise(function(r){i.onload=i.onerror=r})}))).then(function(){setTimeout(function(){print()},400)})<\/script></body></html>");
+        w.document.close();
+      };
+    }).catch(function (x) { $("kitBody").innerHTML = '<p class="muted">' + ESC(x.message) + "</p>"; });
+  }
   function load() {
     if (!A.token()) { $("out").classList.remove("hide"); return; }
     A.call("/me").then(function (d) {
-      var u = d.user; A.setUser(u); fill(u);
+      var u = d.user; A.setUser(u); fill(u); other(d);
       if (u.kind === "customer") {
-        $("cust").classList.remove("hide"); $("dl").href = DOWNLOAD;
+        $("cust").classList.remove("hide"); $("dl").href = DOWNLOAD; $("joinBox").classList.toggle("hide", !d.canJoin);
+        if (d.canJoin && $("fJoin").city) $("fJoin").city.value = u.city || "";
         $("title").textContent = "حسابك"; $("sub").textContent = u.shop ? u.shop + (u.city ? " · " + u.city : "") : "بياناتك وطلباتك وتحميل البرنامج";
         var st = { "new": "جديد — سنتواصل معك", contacted: "تم التواصل", won: "تم الشراء ✔", lost: "مغلق" };
         $("leads").innerHTML = table(d.leads || [], ["الطلب", "التاريخ", "الحالة"], function (l) { return [ESC(l.shop || l.biz || "طلب البرنامج"), day(l.created), ESC(st[l.status] || l.status)]; }, 'لا توجد طلبات بعد — <a href="../#order">اطلب البرنامج</a>');
@@ -232,6 +326,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
       };
       $("rCust").innerHTML = table(r.customers, ["العميل", "المحل", "الهاتف", "التاريخ"], function (c) { return [ESC(c.name), ESC(c.shop || "—"), '<span dir="ltr">' + ESC(c.phone) + "</span>", day(c.created)]; }, "لم يسجّل أحد عن طريقك بعد — شارك رابطك");
       $("rSales").innerHTML = table(r.sales, ["العميل", "قيمة البيع", "عمولتك", "التاريخ"], function (x) { return [ESC(x.who), money(x.amount), "<b>" + money(x.commission) + "</b>", day(x.at)]; }, "لا توجد مبيعات بعد");
+      kit(r, link, u);
       $("rPays").innerHTML = table(r.pays, ["المبلغ", "ملاحظة", "التاريخ"], function (x) { return ["<b>" + money(x.amount) + "</b>", ESC(x.note || "—"), day(x.at)]; }, "لا توجد دفعات بعد");
     }).catch(function (x) {
       if (x.status === 401) { A.setToken(null); A.setUser(null); $("out").classList.remove("hide"); $("prof").classList.add("hide"); return; }
