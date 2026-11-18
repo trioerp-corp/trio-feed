@@ -771,7 +771,7 @@ div{background:#fff;border-radius:18px;padding:28px;max-width:520px;text-align:c
 // The register lives in D1 (table admin, k=state) — Trio License pulls / pushes it (POST /admin/sync/*, Secret KEY), so the
 // computer and the phone see the same clients. Login: a 6-digit code to ADMIN_EMAIL (default MAIL_FROM) through Brevo.
 // Secrets: ADMIN_KEY, ADMIN_CERT, GH_TOKEN (GitHub: Contents read and write on the feed repository), KEY, BREVO_KEY.
-const BIZ = { market: "سوبر ماركت / بقالة", retail: "محل تجزئة", cafe: "كافيه / مطعم", gaming: "بلايستيشن / بلياردو", clinic: "عيادة / مركز طبي" };
+const BIZ = { market: "سوبر ماركت / بقالة", retail: "محل تجزئة", pharmacy: "صيدلية", cafe: "كافيه / مطعم", gaming: "بلايستيشن / بلياردو", clinic: "عيادة / مركز طبي" };
 const ALWAYS = ["pos", "items", "profit_monthly", "expiry"];
 const MODKEYS = Object.keys(CAT.names);
 const defMods = (plan, biz) => new Set([...(CAT.plan_mods[plan] || []), ...(CAT.business[biz] || [])].filter((k) => fits(k, biz)));
@@ -816,6 +816,7 @@ async function sdb(env) {
       d.prepare("CREATE TABLE IF NOT EXISTS slead (id TEXT PRIMARY KEY, uid TEXT, name TEXT, phone TEXT, shop TEXT, biz TEXT, note TEXT, ref TEXT, created TEXT, status TEXT, amount REAL)"),
       d.prepare("CREATE TABLE IF NOT EXISTS ssale (id TEXT PRIMARY KEY, rep TEXT, who TEXT, amount REAL, rate REAL, commission REAL, src TEXT, at TEXT, note TEXT)"),
       d.prepare("CREATE TABLE IF NOT EXISTS spay (id TEXT PRIMARY KEY, rep TEXT, amount REAL, at TEXT, note TEXT)"),
+      d.prepare("CREATE TABLE IF NOT EXISTS trials (m TEXT PRIMARY KEY, first TEXT, extra INTEGER DEFAULT 0, name TEXT, biz TEXT, last TEXT, n INTEGER DEFAULT 0)"),
     ]);
     siteReady = true;
   }
@@ -1402,6 +1403,46 @@ function setupMissing(env, st) {
 }
 
 async function repsPending(env) { try { const r = await (await sdb(env)).prepare("SELECT COUNT(*) n FROM su WHERE kind='rep' AND status='pending'").first(); return r ? r.n : 0; } catch (e) { return 0; } }
+
+// ---------------------------------------------------------------- the trial belongs to the computer (1.22.2)
+// A copy on trial sends its machine code and the first day it knows; the earliest day ever seen for that machine comes
+// back (a reinstall or a new folder does not start a new trial), with any extra days Trio granted from the phone.
+const TRIAL_DAYS = 14;
+async function trialSync(req, env) {
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  if (!MACHINE.test(b.m || "") || !/^\d{4}-\d{2}-\d{2}$/.test(b.t || "")) return err("طلب ناقص");
+  const d = await sdb(env), now = iso(), today = now.slice(0, 10);
+  const t = b.t > today ? today : b.t;
+  const r = await d.prepare("SELECT * FROM trials WHERE m = ?").bind(b.m).first();
+  const first = r && r.first < t ? r.first : t;
+  if (r) await d.prepare("UPDATE trials SET first = ?, name = ?, biz = ?, last = ?, n = n + 1 WHERE m = ?").bind(first, cleanTxt(b.n, 80) || r.name, cleanTxt(b.b, 20) || r.biz, now, b.m).run();
+  else await d.prepare("INSERT INTO trials (m, first, extra, name, biz, last, n) VALUES (?, ?, 0, ?, ?, ?, 1)").bind(b.m, first, cleanTxt(b.n, 80), cleanTxt(b.b, 20), now).run();
+  return json({ t: first, x: r ? r.extra || 0 : 0 });
+}
+const trialLeft = (r) => TRIAL_DAYS + (r.extra || 0) - Math.floor((Date.parse(today()) - Date.parse(r.first)) / 864e5);
+async function trialsPage(env, tok, msg = "", errText = "") {
+  const d = await sdb(env);
+  const rows = (await d.prepare("SELECT * FROM trials ORDER BY last DESC LIMIT 200").all()).results || [];
+  const on = rows.filter((r) => trialLeft(r) >= 0).length;
+  const f = (r, a, label, cls) => `<form method="post" action="/admin/trials" style="display:inline"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="m" value="${esc(r.m)}"><input type="hidden" name="a" value="${a}"><button class="btn ${cls || "light"}" style="padding:6px 10px;font-size:13px">${label}</button></form>`;
+  return apage("التجارب", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>🧪 أجهزة التجربة</h1>
+<div class="kpis"><div class="kpi a"><i>🧪</i><b>${on}</b><span>تجربة سارية</span></div><div class="kpi"><i>⌛</i><b>${rows.length - on}</b><span>انتهت تجربتها</span></div></div>
+<p class="muted">التجربة مرتبطة بالجهاز نفسه: إعادة تثبيت البرنامج أو تنزيله مرة أخرى لا تبدأ تجربة جديدة. ويمكنك منح أيام إضافية لعميل يحتاج وقتًا أطول (تصله خلال ساعة).</p>
+<div class="card list">${rows.map((r) => { const left = trialLeft(r);
+    return `<div class="it" style="flex-wrap:wrap"><span style="flex:1;min-width:180px"><b>${esc(r.name || "بدون اسم")}</b> ${left >= 0 ? `<span class="tag">متبقٍ ${left} يوم</span>` : '<span class="tag warn">انتهت</span>'}${r.extra ? ` <span class="tag">+${r.extra} يوم من Trio</span>` : ""}<br>
+<small>${esc(BIZ[r.biz] || r.biz || "")} · بدأت ${esc(r.first)} · آخر ظهور ${ago(r.last)}</small><br><small dir="ltr">${esc(r.m)}</small></span>
+<span style="display:flex;gap:6px;flex-wrap:wrap">${f(r, "x7", "+7 أيام")}${f(r, "x14", "+14 يومًا")}${r.extra ? f(r, "x0", "إلغاء الإضافة") : ""}</span></div>`; }).join("") || '<p class="muted">لم تظهر أجهزة تجربة بعد (تظهر بعد تحديث 1.22.2).</p>'}</div>`, "/more");
+}
+async function trialAct(env, f) {
+  const d = await sdb(env);
+  const r = await d.prepare("SELECT * FROM trials WHERE m = ?").bind(f.m).first();
+  if (!r) throw new Error("الجهاز غير موجود");
+  const x = f.a === "x7" ? (r.extra || 0) + 7 : f.a === "x14" ? (r.extra || 0) + 14 : 0;
+  if (x > 120) throw new Error("أقصى إضافة 120 يومًا — فعّل له رخصة بدلًا من ذلك");
+  await d.prepare("UPDATE trials SET extra = ? WHERE m = ?").bind(x, r.m).run();
+  return x ? `${r.name || r.m}: صارت تجربته ${TRIAL_DAYS + x} يومًا ✔ — تصله خلال ساعة` : `${r.name || r.m}: أُلغيت الأيام الإضافية`;
+}
 async function homePage(env, st) {
   const miss = setupMissing(env, st);
   if (!st) return apage("الرئيسية", `<div class="card"><h1>لم يتصل بعد</h1><ul>${miss.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`, "");
@@ -1410,7 +1451,8 @@ async function homePage(env, st) {
   const soon = cs.filter((c) => !c.Lifetime && c.Expires && c.Expires >= today() && c.Expires <= new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10));
   const recent = cs.filter((c) => c.Updated).sort((a, b) => (b.Updated > a.Updated ? 1 : -1)).slice(0, 5);
   const pending = await repsPending(env);
-  let regs = 0, leads = 0;
+  let regs = 0, leads = 0, trials = 0;
+  try { const d = await sdb(env); trials = (await d.prepare("SELECT COUNT(*) n FROM trials WHERE last > ?").bind(new Date(Date.now() - 30 * 864e5).toISOString()).first()).n; } catch (e) { /* */ }
   try { const d = await sdb(env); regs = (await d.prepare("SELECT COUNT(*) n FROM su WHERE kind='customer'").first()).n; leads = (await d.prepare("SELECT COUNT(*) n FROM slead WHERE status='new'").first()).n; } catch (e) { /* */ }
   const vers = {}; for (const c of cs) { const p = pres[c.Machine]; if (p && p.v) vers[p.v] = (vers[p.v] || 0) + 1; }
   const vtop = Object.entries(vers).sort((a, b) => (verGt(a[0], b[0]) ? -1 : 1)).slice(0, 5), vmax = Math.max(1, ...vtop.map((x) => x[1]));
@@ -1418,7 +1460,7 @@ async function homePage(env, st) {
   return apage("الرئيسية", `${miss.length ? `<div class="err">ناقص: ${miss.map(esc).join(" · ")}</div>` : ""}
 <div class="kpis"><div class="kpi"><i>👥</i><b>${cs.length}</b><span>العملاء</span></div><div class="kpi a"><i>🟢</i><b>${live}</b><span>نشطون آخر 36 ساعة</span></div>
 <div class="kpi b"><i>🤝</i><b>${pending}</b><span>مناديب بانتظار الموافقة</span></div><div class="kpi c"><i>📝</i><b>${leads}</b><span>طلبات جديدة من الموقع</span></div></div>
-<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/updates"><i>⬆️</i>رفع تحديث</a><a class="tile" href="/admin/site"><i>🌐</i>الموقع (${regs})</a></div>
+<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/updates"><i>⬆️</i>رفع تحديث</a><a class="tile" href="/admin/site"><i>🌐</i>الموقع (${regs})</a><a class="tile" href="/admin/trials"><i>🧪</i>التجارب (${trials})</a></div>
 <div class="card hero"><h2>⬆️ الإصدار المنشور: <span dir="ltr">${esc(cur || "—")}</span></h2>${vtop.length ? `<div class="bars">${vtop.map(([v, n]) => `<div class="bar"><span>${esc(v)}</span><div><i style="width:${Math.round(n / vmax * 100)}%"></i></div><span>${n}</span></div>`).join("")}</div>` : '<p class="muted">لم تصل إصدارات العملاء بعد.</p>'}</div>
 ${soon.length ? `<div class="card"><h2>⏳ رخص تنتهي خلال 30 يومًا</h2><div class="list">${soon.map((c) => `<a href="/admin/c/${c.Machine}"><span>${esc(c.Name)}</span><small>${esc(c.Expires)}</small></a>`).join("")}</div></div>` : ""}
 <div class="card"><h2>🕘 آخر العمليات</h2><div class="list">${recent.map((c) => `<a href="/admin/c/${c.Machine}"><span class="av">${esc(String(c.Name || "?").trim()[0] || "?")}</span><span style="flex:1">${esc(c.Name)}<br><small>${esc((c.Log || [""])[0].split(" — ").slice(1).join(" — "))}</small></span><small>${esc(c.Updated)}</small></a>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>
@@ -1515,7 +1557,7 @@ ${o.status === "paid" && o.m && o.code && !known ? `<form method="post"><input t
 function settingsPage(env, st, tok, msg, errText) {
   const sw = (a, on, t) => `<form method="post" action="/admin/settings"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}"><button class="btn ${on ? "alt" : "aq"}">${on ? "أغلق " + t : "افتح " + t}</button></form>`;
   return apage("المزيد", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>☰ المزيد</h1>
-<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/orders"><i>💳</i>طلبات الدفع</a><a class="tile" href="/admin/site"><i>🌐</i>مسجّلو الموقع</a></div>
+<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/orders"><i>💳</i>طلبات الدفع</a><a class="tile" href="/admin/site"><i>🌐</i>مسجّلو الموقع</a><a class="tile" href="/admin/trials"><i>🧪</i>أجهزة التجربة</a></div>
 <div class="card"><h2>💳 الدفع الإلكتروني ${st.pay ? '<span class="tag ok">مفعّل</span>' : '<span class="tag">مغلق</span>'}</h2>${env.SALES_KEY && env.PAYMOB_SECRET ? "" : '<p class="muted">ما زالت مفاتيح Paymob / المبيعات ناقصة في الـ Worker.</p>'}${sw("pay", st.pay, "الدفع")}</div>
 <div class="card"><h2>🤖 الذكاء الاصطناعي ${st.ai ? '<span class="tag ok">مفعّل</span>' : '<span class="tag">مغلق</span>'}</h2>${env.ANTHROPIC_KEY ? "" : '<p class="muted">ما زال ناقصًا ANTHROPIC_KEY في الـ Worker.</p>'}${sw("ai", st.ai, "الذكاء الاصطناعي")}</div>
 <div class="card"><h2>📡 قناة الأوامر</h2><p class="muted">آخر نشر: ${esc(st.published || "—")} — تُنشر تلقائيًا بعد أي تغيير.</p><form method="post" action="/admin/settings"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="publish"><button class="btn alt">انشرها الآن</button></form></div>
@@ -1787,7 +1829,7 @@ async function adminRoutes(req, env, url) {
   if (req.method === "POST") {
     const f = await form(req);
     if (f.csrf !== tok) return new Response("طلب غير صحيح", { status: 403 });
-    const siteOnly = path === "/admin/reps" || path.startsWith("/admin/rep/") || path === "/admin/site"; // need only the database
+    const siteOnly = path === "/admin/reps" || path.startsWith("/admin/rep/") || path === "/admin/site" || path === "/admin/trials"; // need only the database
     if (!siteOnly && (!st || miss.length)) return homePage(env, st);
     try {
       if (path === "/admin/new") return newPage(sid, tok, {}, "", await newLicence(env, st, f));
@@ -1797,6 +1839,7 @@ async function adminRoutes(req, env, url) {
       if (path === "/admin/reps") return repsPage(env, tok, await repAct(env, f.id, f));
       if (path.startsWith("/admin/rep/")) return repPage(env, path.slice(11), tok, await repAct(env, path.slice(11), f));
       if (path === "/admin/site") return sitePage(env, tok, await siteAct(env, f));
+      if (path === "/admin/trials") return trialsPage(env, tok, await trialAct(env, f));
       if (path === "/admin/settings") {
         if (f.a === "pay" || f.a === "ai") { st[f.a] = !st[f.a]; st.lines.triop = await triop(env, st); await bumpRev(st); await publish(env, st, f.a); await stPut(env, st);
           return settingsPage(env, st, tok, (f.a === "pay" ? "الدفع الإلكتروني " : "الذكاء الاصطناعي ") + (st[f.a] ? "فُتح ✔" : "أُغلق ✔") + " — عند العملاء خلال ساعة"); }
@@ -1811,6 +1854,7 @@ async function adminRoutes(req, env, url) {
       if (path === "/admin/reps") return repsPage(env, tok, "", m);
       if (path.startsWith("/admin/rep/")) return repPage(env, path.slice(11), tok, "", m);
       if (path === "/admin/site") return sitePage(env, tok, "", m);
+      if (path === "/admin/trials") return trialsPage(env, tok, "", m);
       return apage("خطأ", `<div class="err">${esc(m)}</div>`, "");
     }
     return redirect(path);
@@ -1827,6 +1871,7 @@ async function adminRoutes(req, env, url) {
     if (path === "/admin/reps") return await repsPage(env, tok);
     if (path.startsWith("/admin/rep/")) return await repPage(env, path.slice(11), tok);
     if (path === "/admin/site") return await sitePage(env, tok);
+    if (path === "/admin/trials") return await trialsPage(env, tok);
   } catch (e) { return apage("خطأ", `<div class="err">${esc(String(e.message || e))}</div>`, ""); }
   return redirect("/admin");
 }
@@ -1853,6 +1898,7 @@ export default {
       await env.ACC.put("m:" + d.m, JSON.stringify(rec));
       return new Response("ok");
     }
+    if (req.method === "POST" && url.pathname === "/trial") return trialSync(req, env);
     if (url.pathname === "/list" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "m:"));
     if (url.pathname === "/sales" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "o:"));
     if (url.pathname === "/info") return json({ pay: !!(env.SALES_KEY && env.PAYMOB_SECRET), ai: !!env.ANTHROPIC_KEY, catalog: CAT,
