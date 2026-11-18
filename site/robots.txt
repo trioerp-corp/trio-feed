@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://trioerp.pages.dev/sitemap.xml
