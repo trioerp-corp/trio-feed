@@ -1,0 +1,40 @@
+name: Prepare release from the phone
+on:
+  push:
+    branches: [main]
+    paths: ["incoming/*.zip"]
+  workflow_dispatch: {}
+concurrency: { group: release, cancel-in-progress: false }
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare
+        run: |
+          set -e
+          git config user.name "Trio"; git config user.email "trioerp.corp@gmail.com"
+          for f in incoming/*.zip; do
+            [ -f "$f" ] || continue
+            rm -f base.zip online.zip RELEASE_VERSION RELEASE_NOTES
+            gh release download --pattern Trio-online.zip --output base.zip || true
+            python3 tools/prepare_release.py "$f" base.zip online.zip
+            git rm -q "$f"
+            if [ -f RELEASE_VERSION ]; then
+              V=$(cat RELEASE_VERSION)
+              if [ -f online.zip ]; then
+                cp online.zip Trio-online.zip
+                gh release create "v$V" Trio-online.zip --title "Trio $V" --notes-file RELEASE_NOTES --latest || \
+                  gh release upload "v$V" Trio-online.zip --clobber
+              fi
+            fi
+          done
+          rm -f base.zip online.zip Trio-online.zip RELEASE_VERSION RELEASE_NOTES
+          git add -A updates incoming
+          git commit -qm "Release prepared from the phone" || true
+          git push -q

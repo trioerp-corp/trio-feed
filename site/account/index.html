@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>حسابي — Trio</title>
+<meta name="description" content="حسابك على Trio: بياناتك وطلباتك وتحميل البرنامج، وحساب المندوبين برابطهم وكود QR وعمولاتهم.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#04203f">
+<link rel="icon" type="image/png" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#0a1f3c;--muted:#56677d;--line:#dce5ef;--brand:#17698f;--brand-2:#0c4a76;--brand-soft:#e4f1f6;--gold:#3cc2b5;--gold-ink:#04213f;--gold-soft:#e0f6f3;
+--band:#04203f;--band-2:#0a3a66;--band-ink:#f2f6fb;--band-muted:#a9bdd4;--ok:#1f8a5b;--bad:#b42318;--bad-soft:#fde8e7;
+--display:"Alexandria","IBM Plex Sans Arabic",system-ui,sans-serif;--body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;--shadow:0 24px 60px -30px rgba(4,32,63,.45)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#06101d;--paper:#0d1b2e;--ink:#e6eef8;--muted:#9fb2c8;--line:#1d314d;--brand:#5cc3d0;--brand-2:#8ad6e0;--brand-soft:#11283f;--gold:#4fd1c5;--gold-soft:#0e2f36;--band:#030c18;--band-2:#08213d;--bad-soft:#3a1714;--shadow:0 24px 60px -30px rgba(0,0,0,.8);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#06101d;--paper:#0d1b2e;--ink:#e6eef8;--muted:#9fb2c8;--line:#1d314d;--brand:#5cc3d0;--brand-2:#8ad6e0;--brand-soft:#11283f;--gold:#4fd1c5;--gold-soft:#0e2f36;--band:#030c18;--band-2:#08213d;--bad-soft:#3a1714;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.75 var(--body)}
+.band{background:radial-gradient(120% 140% at 100% 0,var(--band-2) 0,var(--band) 60%);color:var(--band-ink);padding:18px 16px 90px}
+.in{max-width:980px;margin:0 auto}
+nav{display:flex;align-items:center;gap:12px}nav a.logo{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font:800 22px var(--display)}nav a.logo img{width:38px;height:38px;border-radius:10px}
+nav .r{margin-inline-start:auto;display:flex;gap:8px}nav .r a{color:var(--band-ink);text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.08)}
+.band h1{font:800 clamp(26px,4vw,36px)/1.3 var(--display);margin:30px 0 6px}.band p{color:var(--band-muted);margin:0;max-width:620px}
+main{max-width:980px;margin:-64px auto 40px;padding:0 16px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+.tabs{display:flex;gap:6px;background:var(--brand-soft);padding:5px;border-radius:16px;margin-bottom:18px}.tabs button{flex:1;border:0;background:transparent;font:700 15px var(--body);color:var(--muted);padding:10px;border-radius:12px;cursor:pointer}
+.tabs button.on{background:var(--paper);color:var(--brand-2);box-shadow:0 4px 14px -6px rgba(4,32,63,.3)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:620px){.g2{grid-template-columns:1fr}}
+label{display:block;font-size:14px;color:var(--muted);font-weight:600}label input,label select,label textarea{display:block;width:100%;margin-top:6px;font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px}
+label input:focus,label select:focus,label textarea:focus{outline:3px solid rgba(23,105,143,.18);border-color:var(--brand)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:14px 22px;font:700 16px var(--body);cursor:pointer;text-decoration:none}
+.btn.gold{background:var(--gold);color:var(--gold-ink)}.btn.brand{background:var(--brand);color:#fff}.btn.soft{background:var(--brand-soft);color:var(--brand-2)}.btn.wide{width:100%;margin-top:16px}
+.btn:disabled{opacity:.6;cursor:wait}
+.msg{border-radius:14px;padding:12px 14px;margin:12px 0 0;font-weight:600}.msg.ok{background:var(--gold-soft);color:var(--ok)}.msg.bad{background:var(--bad-soft);color:var(--bad)}
+.muted{color:var(--muted)}.chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-soft);color:var(--gold-ink);border-radius:99px;padding:6px 12px;font-weight:600;font-size:14px}
+@media (prefers-color-scheme:dark){.chip{color:var(--gold)}}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}@media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}.kpi span{color:var(--muted);font-size:13px}.kpi b{display:block;font:800 26px var(--display)}
+.link{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.link code{direction:ltr;font:600 15px ui-monospace,Consolas,monospace;background:var(--brand-soft);color:var(--brand-2);padding:10px 14px;border-radius:12px;flex:1;min-width:200px;word-break:break-all}
+.qr{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:center}@media(max-width:620px){.qr{grid-template-columns:1fr;justify-items:center;text-align:center}}
+.qr .box{background:#fff;border-radius:18px;padding:14px;border:1px solid var(--line);width:220px}.qr .box svg{display:block;width:100%;height:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:right}th{color:var(--muted);font-weight:600}
+.empty{color:var(--muted);text-align:center;padding:14px}
+.hide{display:none!important}
+.stat{display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;background:var(--brand-soft);font-weight:600}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30px}footer a{color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="band"><div class="in">
+ <nav><a class="logo" href="../"><img src="../logo.png" alt=""><span>Trio</span></a><div class="r"><a href="../">الصفحة الرئيسية</a><a href="../#order">اطلب البرنامج</a></div></nav>
+ <h1 id="title">حسابك على Trio</h1>
+ <p id="sub">سجّل الدخول لمتابعة طلباتك وتحميل البرنامج، أو أنشئ حسابًا جديدًا في دقيقة.</p>
+</div></div>
+<main>
+ <!-- signed out -->
+ <section id="out" class="card hide">
+  <div class="tabs" role="tablist"><button type="button" data-t="login" class="on">تسجيل الدخول</button><button type="button" data-t="reg">حساب جديد</button><button type="button" data-t="rep">سجّل كمندوب</button></div>
+  <div id="refNote" class="chip hide" style="margin-bottom:14px">🤝 جئت عن طريق المندوب: <b></b></div>
+  <form id="fLogin" novalidate>
+   <div class="g2"><label>رقم الهاتف<input name="phone" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel" required></label>
+   <label>كلمة السر<input name="password" type="password" autocomplete="current-password" required></label></div>
+   <label style="margin-top:12px;display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" name="asrep" style="width:auto;margin:0"> أنا مندوب مبيعات</label>
+   <button class="btn brand wide">دخول</button>
+   <p class="muted" style="margin:10px 0 0;font-size:14px">نسيت كلمة السر؟ راسلنا على <a href="https://wa.me/201008030459">واتساب</a> وسنعيد تعيينها لك.</p>
+  </form>
+  <form id="fReg" class="hide" novalidate>
+   <div class="g2">
+    <label>الاسم<input name="name" autocomplete="name" required></label>
+    <label>رقم الهاتف (واتساب)<input name="phone" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel" required></label>
+    <label>اسم المحل<input name="shop" autocomplete="organization" placeholder="مثال: صيدلية الأمل"></label>
+    <label>النشاط<input name="biz" placeholder="صيدلية، سوبر ماركت، كافيه…"></label>
+    <label>المحافظة / المنطقة<input name="city"></label>
+    <label>البريد الإلكتروني (اختياري)<input name="email" type="email" dir="ltr" autocomplete="email"></label>
+    <label>كلمة السر (8 أحرف على الأقل)<input name="password" type="password" autocomplete="new-password" required minlength="8"></label>
+    <label>تأكيد كلمة السر<input name="password2" type="password" autocomplete="new-password" required></label>
+   </div>
+   <button class="btn gold wide">إنشاء الحساب</button>
+   <p class="muted" style="font-size:13px;margin:10px 0 0">بإنشاء الحساب فإنك توافق على <a href="../terms/">الشروط والأحكام</a> و<a href="../privacy/">سياسة الخصوصية</a>.</p>
+  </form>
+  <form id="fRep" class="hide" novalidate>
+   <div class="stat" style="margin-bottom:14px">🤝 <span>اعمل مندوبًا لـ Trio من مكانك: تحصل على رابط وكود QR خاص بك، وكل عميل يأتي عن طريقك تُحسب لك عمولته.</span></div>
+   <div class="g2">
+    <label>الاسم الكامل<input name="name" autocomplete="name" required></label>
+    <label>رقم الهاتف (واتساب)<input name="phone" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel" required></label>
+    <label>المحافظة / المنطقة التي تغطيها<input name="city" required></label>
+    <label>البريد الإلكتروني (اختياري)<input name="email" type="email" dir="ltr" autocomplete="email"></label>
+    <label style="grid-column:1/-1">نبذة عنك (خبرتك في المبيعات، المجال الذي تعرفه)<textarea name="note" rows="2"></textarea></label>
+    <label>كلمة السر (8 أحرف على الأقل)<input name="password" type="password" autocomplete="new-password" required minlength="8"></label>
+    <label>تأكيد كلمة السر<input name="password2" type="password" autocomplete="new-password" required></label>
+   </div>
+   <button class="btn gold wide">إرسال طلب الانضمام</button>
+   <p class="muted" style="font-size:13px;margin:10px 0 0">يراجع فريق Trio طلبك ويحدد نسبة عمولتك، ثم يظهر رابطك وكود QR في حسابك.</p>
+  </form>
+  <div id="outMsg"></div>
+ </section>
+
+ <!-- customer -->
+ <section id="cust" class="hide">
+  <div class="card">
+   <h2 style="margin:0 0 6px;font:800 22px var(--display)">أهلًا <span class="uname"></span> 👋</h2>
+   <p class="muted" style="margin:0 0 16px">من هنا تحمّل البرنامج وتتابع طلباتك وتعدّل بياناتك.</p>
+   <div class="g2">
+    <a class="btn gold" id="dl" href="#">⬇️ حمّل البرنامج (ويندوز)</a>
+    <a class="btn soft" href="../#order">📝 اطلب البرنامج / زيارة تدريب</a>
+   </div>
+   <p class="muted" style="font-size:13px;margin:10px 0 0">البرنامج يعمل على كمبيوتر المحل (ويندوز 10 أو 11)، وتجربته مجانية 14 يومًا بكل الإمكانيات.</p>
+  </div>
+  <div class="card"><h3 style="margin:0 0 10px">طلباتك</h3><div id="leads"></div></div>
+ </section>
+
+ <!-- rep -->
+ <section id="rep" class="hide">
+  <div id="repPending" class="card hide"><h2 style="margin:0 0 6px;font:800 22px var(--display)">طلبك قيد المراجعة ⏳</h2>
+   <p class="muted" style="margin:0">شكرًا لانضمامك يا <span class="uname"></span>. سيراجع فريق Trio طلبك ويحدد نسبة عمولتك، وبعدها يظهر هنا رابطك وكود QR الخاص بك. يمكنك التواصل معنا على <a href="https://wa.me/201008030459">واتساب</a>.</p></div>
+  <div id="repStop" class="card hide"><h2 style="margin:0 0 6px;font:800 22px var(--display)">حسابك غير مفعّل</h2><p class="muted" style="margin:0">تواصل مع Trio على <a href="https://wa.me/201008030459">واتساب</a> للاستفسار.</p></div>
+  <div id="repOn" class="hide">
+   <div class="kpis"><div class="kpi"><span>عملاء عن طريقك</span><b id="kC">0</b></div><div class="kpi"><span>طلبات</span><b id="kL">0</b></div><div class="kpi"><span>عمولتك المستحقة</span><b id="kD">0</b></div><div class="kpi"><span>المدفوع لك</span><b id="kP">0</b></div></div>
+   <div class="card">
+    <div class="qr"><div class="box" id="qrBox"></div><div>
+     <h2 style="margin:0 0 6px;font:800 22px var(--display)">رابطك وكود QR</h2>
+     <p class="muted" style="margin:0 0 12px">اعرض الكود على صاحب المحل ليصوّره بكاميرا هاتفه، أو أرسل له الرابط. أي عميل يسجّل أو يطلب البرنامج من خلاله يُحسب لك. نسبة عمولتك: <b id="rate"></b>.</p>
+     <div class="link"><code id="myLink"></code><button class="btn soft" type="button" id="copy">📋 نسخ</button></div>
+     <div class="g2" style="margin-top:12px"><a class="btn brand" id="share" target="_blank" rel="noopener">مشاركة عبر واتساب</a><button class="btn soft" type="button" id="dlQr">⬇️ تنزيل الكود صورة</button></div>
+    </div></div>
+   </div>
+   <div class="card"><h3 style="margin:0 0 10px">العملاء الذين سجّلوا عن طريقك</h3><div id="rCust"></div></div>
+   <div class="card"><h3 style="margin:0 0 10px">المبيعات والعمولة</h3><div id="rSales"></div></div>
+   <div class="card"><h3 style="margin:0 0 10px">الدفعات التي استلمتها</h3><div id="rPays"></div></div>
+  </div>
+ </section>
+
+ <!-- profile (both) -->
+ <section id="prof" class="card hide">
+  <h3 style="margin:0 0 10px">بياناتك</h3>
+  <form id="fProf" novalidate><div class="g2">
+   <label>الاسم<input name="name" required></label><label>رقم الهاتف<input name="phone" dir="ltr" disabled></label>
+   <label class="cOnly">اسم المحل<input name="shop"></label><label class="cOnly">النشاط<input name="biz"></label>
+   <label>المحافظة / المنطقة<input name="city"></label><label>البريد الإلكتروني<input name="email" type="email" dir="ltr"></label>
+  </div>
+  <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700;color:var(--brand-2)">تغيير كلمة السر</summary><div class="g2" style="margin-top:10px">
+   <label>كلمة السر الحالية<input name="password" type="password" autocomplete="current-password"></label><label>كلمة السر الجديدة<input name="new_password" type="password" autocomplete="new-password"></label></div></details>
+  <div class="g2"><button class="btn brand wide">حفظ</button><button class="btn soft wide" type="button" id="logout">تسجيل الخروج</button></div>
+  <div id="profMsg"></div></form>
+ </section>
+</main>
+<footer>Trio · <a href="https://wa.me/201008030459">01008030459</a> · <a href="https://wa.me/201121460640">01121460640</a> · <a href="../privacy/">الخصوصية</a></footer>
+<script src="../assets/acct.js"></script>
+<script src="../assets/qrcode.min.js"></script>
+<script>
+(function () {
+  var A = window.TrioAcct, $ = function (id) { return document.getElementById(id); };
+  var DOWNLOAD = "https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-online.zip";
+  var ESC = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var money = function (n) { return Number(n || 0).toLocaleString("ar-EG", { maximumFractionDigits: 2 }) + " ج"; };
+  var day = function (t) { return String(t || "").slice(0, 10); };
+  function msg(box, text, ok) { $(box).innerHTML = text ? '<div class="msg ' + (ok ? "ok" : "bad") + '">' + ESC(text) + "</div>" : ""; }
+  function vals(f) { var o = {}; new FormData(f).forEach(function (v, k) { o[k] = String(v).trim(); }); return o; }
+  function tab(t) {
+    document.querySelectorAll(".tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.t === t); });
+    $("fLogin").classList.toggle("hide", t !== "login"); $("fReg").classList.toggle("hide", t !== "reg"); $("fRep").classList.toggle("hide", t !== "rep");
+    msg("outMsg", "");
+    $("title").textContent = t === "rep" ? "انضم إلى فريق مندوبي Trio" : t === "reg" ? "أنشئ حسابك على Trio" : "حسابك على Trio";
+  }
+  document.querySelectorAll(".tabs button").forEach(function (b) { b.onclick = function () { tab(b.dataset.t); }; });
+  var q = new URLSearchParams(location.search);
+  if (q.get("rep")) tab("rep"); else if (q.get("new") || A.ref()) tab("reg");
+  function busy(f, on) { var b = f.querySelector("button:not([type=button])"); b.disabled = on; }
+  function signedIn(d) { A.setToken(d.token); A.setUser(d.user); load(); }
+  $("fLogin").onsubmit = function (e) {
+    e.preventDefault(); var v = vals(this), f = this; busy(f, true);
+    A.call("/login", { phone: v.phone, password: v.password, kind: v.asrep ? "rep" : "customer" }).then(signedIn).catch(function (x) { msg("outMsg", x.message); }).then(function () { busy(f, false); });
+  };
+  function reg(kind) {
+    return function (e) {
+      e.preventDefault(); var v = vals(this), f = this;
+      if (v.password !== v.password2) { msg("outMsg", "كلمتا السر غير متطابقتين"); return; }
+      v.kind = kind; v.ref = A.ref(); busy(f, true);
+      A.call("/register", v).then(signedIn).catch(function (x) { msg("outMsg", x.message); }).then(function () { busy(f, false); });
+    };
+  }
+  $("fReg").onsubmit = reg("customer"); $("fRep").onsubmit = reg("rep");
+  $("logout").onclick = function () { A.call("/logout", {}).catch(function () {}); A.setToken(null); A.setUser(null); location.href = "./"; };
+  $("fProf").onsubmit = function (e) {
+    e.preventDefault(); var v = vals(this), f = this; busy(f, true);
+    if (!v.new_password) { delete v.new_password; delete v.password; }
+    A.call("/me", v).then(function (d) { A.setUser(d.user); msg("profMsg", "تم الحفظ ✔", true); f.password.value = ""; f.new_password.value = ""; })
+      .catch(function (x) { msg("profMsg", x.message); }).then(function () { busy(f, false); });
+  };
+  function table(rows, heads, cells, empty) {
+    if (!rows.length) return '<p class="empty">' + empty + "</p>";
+    return "<table><thead><tr>" + heads.map(function (h) { return "<th>" + h + "</th>"; }).join("") + "</tr></thead><tbody>" +
+      rows.map(function (r) { return "<tr>" + cells(r).map(function (c) { return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table>";
+  }
+  function fill(u) {
+    document.querySelectorAll(".uname").forEach(function (x) { x.textContent = String(u.name || "").split(" ")[0]; });
+    var f = $("fProf"); ["name", "phone", "shop", "biz", "city", "email"].forEach(function (k) { if (f[k]) f[k].value = u[k] || ""; });
+    document.querySelectorAll(".cOnly").forEach(function (x) { x.classList.toggle("hide", u.kind === "rep"); });
+    $("prof").classList.remove("hide"); $("out").classList.add("hide");
+  }
+  function load() {
+    if (!A.token()) { $("out").classList.remove("hide"); return; }
+    A.call("/me").then(function (d) {
+      var u = d.user; A.setUser(u); fill(u);
+      if (u.kind === "customer") {
+        $("cust").classList.remove("hide"); $("dl").href = DOWNLOAD;
+        $("title").textContent = "حسابك"; $("sub").textContent = u.shop ? u.shop + (u.city ? " · " + u.city : "") : "بياناتك وطلباتك وتحميل البرنامج";
+        var st = { "new": "جديد — سنتواصل معك", contacted: "تم التواصل", won: "تم الشراء ✔", lost: "مغلق" };
+        $("leads").innerHTML = table(d.leads || [], ["الطلب", "التاريخ", "الحالة"], function (l) { return [ESC(l.shop || l.biz || "طلب البرنامج"), day(l.created), ESC(st[l.status] || l.status)]; }, 'لا توجد طلبات بعد — <a href="../#order">اطلب البرنامج</a>');
+        return;
+      }
+      $("rep").classList.remove("hide"); $("title").textContent = "حساب المندوب"; $("sub").textContent = u.name + (u.city ? " · " + u.city : "");
+      if (u.status === "pending") { $("repPending").classList.remove("hide"); return; }
+      if (u.status !== "approved" || !d.rep) { $("repStop").classList.remove("hide"); return; }
+      var r = d.rep, link = "https://trioerp.pages.dev/?ref=" + r.code;
+      $("repOn").classList.remove("hide");
+      $("kC").textContent = r.customers.length; $("kL").textContent = r.leads.length; $("kD").textContent = money(r.due); $("kP").textContent = money(r.paid);
+      $("rate").textContent = r.rate + "%"; $("myLink").textContent = link;
+      $("share").href = "https://wa.me/?text=" + encodeURIComponent("برنامج Trio لإدارة المحلات (مبيعات ومخزن وحسابات) — جرّبه مجانًا 14 يومًا:\n" + link);
+      var qr = qrcode(0, "M"); qr.addData(link); qr.make(); $("qrBox").innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+      $("copy").onclick = function () { navigator.clipboard.writeText(link).then(function () { $("copy").textContent = "تم النسخ ✔"; }); };
+      $("dlQr").onclick = function () {
+        var svg = $("qrBox").querySelector("svg"), img = new Image(), c = document.createElement("canvas"), W = 720;
+        img.onload = function () {
+          c.width = W; c.height = W + 120; var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 40, 40, W - 80, W - 80);
+          g.fillStyle = "#04203f"; g.font = "bold 40px Tahoma"; g.textAlign = "center"; g.fillText("Trio — امسح الكود وجرّب البرنامج", W / 2, W + 20);
+          g.font = "28px Tahoma"; g.fillStyle = "#17698f"; g.fillText("كود المندوب: " + r.code, W / 2, W + 75);
+          var a = document.createElement("a"); a.download = "Trio-QR-" + r.code + ".png"; a.href = c.toDataURL("image/png"); a.click();
+        };
+        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+      };
+      $("rCust").innerHTML = table(r.customers, ["العميل", "المحل", "الهاتف", "التاريخ"], function (c) { return [ESC(c.name), ESC(c.shop || "—"), '<span dir="ltr">' + ESC(c.phone) + "</span>", day(c.created)]; }, "لم يسجّل أحد عن طريقك بعد — شارك رابطك");
+      $("rSales").innerHTML = table(r.sales, ["العميل", "قيمة البيع", "عمولتك", "التاريخ"], function (x) { return [ESC(x.who), money(x.amount), "<b>" + money(x.commission) + "</b>", day(x.at)]; }, "لا توجد مبيعات بعد");
+      $("rPays").innerHTML = table(r.pays, ["المبلغ", "ملاحظة", "التاريخ"], function (x) { return ["<b>" + money(x.amount) + "</b>", ESC(x.note || "—"), day(x.at)]; }, "لا توجد دفعات بعد");
+    }).catch(function (x) {
+      if (x.status === 401) { A.setToken(null); A.setUser(null); $("out").classList.remove("hide"); $("prof").classList.add("hide"); return; }
+      $("out").classList.remove("hide"); msg("outMsg", x.message);
+    });
+  }
+  load();
+})();
+</script>
+</body>
+</html>

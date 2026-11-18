@@ -2,13 +2,13 @@
 // KV binding: ACC — Secrets: KEY, phone app: ADMIN_KEY, ADMIN_CERT, GH_TOKEN; and for card payments: SALES_KEY, SALES_CERT, PAYMOB_SECRET, PAYMOB_PUBLIC, PAYMOB_INTEGRATION, PAYMOB_HMAC
 // and for the AI (activity set-up + «؟ اسأل»): ANTHROPIC_KEY — Variable (optional): ASK_LIMIT (questions per device per day, 30)
 // Variable (optional): SITE = the sales page address (https://trioerp.pages.dev)
-// «تابع محلك من الموبايل»: D1 binding DB (recommended; KV works with fewer updates) — ملخص اليوم: Secret TG_TOKEN (Trio's bot,
+// «تابع محلك من الهاتف»: D1 binding DB (recommended; KV works with fewer updates) — ملخص اليوم: Secret TG_TOKEN (Trio's bot,
 // then Trio License «الموبايل والتقارير» ← «اربط البوت») and for mail (Brevo): Secret BREVO_KEY + Variable MAIL_FROM
 const PUB = "tM+bQlw/40oF17B+DvmHJ1TxQd1oIs0oMTOJ3LxDs4c=";   // Trio's public key: checks the licence a copy already has (upgrades / renewals)
 const FEED = "https://raw.githubusercontent.com/trioerp-corp/trio-feed/main/feed.txt"; // the command channel written into every licence
 const PAYMOB = "https://accept.paymob.com";
 // prices and plans — the same as the program (core/modules.py); the browser never decides the price
-const CAT = /*CATALOG*/{"plans": {"basic": 10000, "standard": 15000, "pro": 20000}, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "addons": {"production": 1500, "profit_yearly": 1000, "branches": 3000, "report_whatsapp": 500, "report_telegram": 750, "report_email": 750, "drive_backup": 1000, "stores": 1000, "returns": 1000, "promos": 1000, "units": 1000, "labels": 1000, "valuation": 1000, "mobile": 1500}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "life": {"renew": 1500, "lifetime": 15000, "lifetime_updates": 10000}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكتر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكتر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على الإيميل", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الموبايل"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}}
+const CAT = /*CATALOG*/{"plans": {"basic": 10000, "standard": 15000, "pro": 20000}, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "addons": {"production": 1500, "profit_yearly": 1000, "branches": 3000, "report_whatsapp": 500, "report_telegram": 750, "report_email": 750, "drive_backup": 1000, "stores": 1000, "returns": 1000, "promos": 1000, "units": 1000, "labels": 1000, "valuation": 1000, "mobile": 1500}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "life": {"renew": 1500, "lifetime": 15000, "lifetime_updates": 10000}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكثر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكثر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على البريد", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الهاتف"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}}
 /*END*/;
 
 const enc = new TextEncoder();
@@ -16,7 +16,7 @@ const b64u = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).repl
 const unb64 = (s) => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); };
 const utf8b64u = (obj) => b64u(enc.encode(JSON.stringify(obj)));
 const fromB64u = (s) => JSON.parse(new TextDecoder().decode(unb64(s)));
-const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST,OPTIONS", "Access-Control-Allow-Headers": "Content-Type" };
+const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET,POST,OPTIONS", "Access-Control-Allow-Headers": "Content-Type, Authorization" };
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "Content-Type": "application/json; charset=utf-8", ...cors } });
 const err = (msg, status = 400) => json({ error: msg }, status);
 const digits = (s) => String(s || "").replace(/\D/g, "");
@@ -64,16 +64,16 @@ async function price(b) {
   let total = 0, cur = null;
   if (b.lic) {
     cur = await readLicence(b.lic);
-    if (!cur || cur.m !== b.m) return { error: "الرخصة اللي على الجهاز ده مش سليمة — اطلب واتساب" };
+    if (!cur || cur.m !== b.m) return { error: "الرخصة على هذا الجهاز غير سليمة — اطلب عبر واتساب" };
   }
   const plan = CAT.plans[b.plan] ? b.plan : "";
   if (!cur) {
-    if (!plan) return { error: "اختار الباقة" };
+    if (!plan) return { error: "اختر الباقة" };
     lines.push(["باقة " + CAT.plan_names[plan], CAT.plans[plan]]); total += CAT.plans[plan];
   } else if (plan && plan !== cur.p) {
-    if (!CAT.plans[cur.p]) return { error: "الترقية دي محتاجة Trio — اطلبها واتساب" };
+    if (!CAT.plans[cur.p]) return { error: "هذه الترقية تحتاج إلى Trio — اطلبها عبر واتساب" };
     const diff = CAT.plans[plan] - CAT.plans[cur.p];
-    if (diff <= 0) return { error: "دي مش ترقية — اختار باقة أعلى" };
+    if (diff <= 0) return { error: "هذه ليست ترقية — اختر باقة أعلى" };
     lines.push(["ترقية لباقة " + CAT.plan_names[plan], diff]); total += diff;
   }
   const newPlan = plan || (cur && cur.p) || "basic";
@@ -89,7 +89,7 @@ async function price(b) {
   for (const k of life) { lines.push([k === "lifetime" ? "رخصة مدى الحياة" : "التحديثات مدى الحياة", CAT.life[k]]); total += CAT.life[k]; }
   const renew = !!(cur && b.renew && !cur.l && !life.has("lifetime"));
   if (renew) { lines.push(["تجديد سنة", CAT.life.renew]); total += CAT.life.renew; }
-  if (total <= 0) return { error: "مفيش حاجة تتدفع" };
+  if (total <= 0) return { error: "لا يوجد ما يُدفع" };
   return { business, plan: newPlan, extras, life: [...life], renew, lines, total, cur };
 }
 
@@ -138,16 +138,16 @@ async function settle(env, t) {
 }
 
 async function checkout(req, env, url) {
-  if (!env.SALES_KEY || !env.PAYMOB_SECRET) return err("الدفع أونلاين مش متاح دلوقتي", 503);
+  if (!env.SALES_KEY || !env.PAYMOB_SECRET) return err("الدفع الإلكتروني غير متاح الآن", 503);
   let b;
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
-  if (b.m && !MACHINE.test(b.m)) return err("كود الجهاز غلط");
+  if (b.m && !MACHINE.test(b.m)) return err("كود الجهاز غير صحيح");
   const phone = digits(b.phone);
   if (phone.length < 10) return err("اكتب رقم موبايل صحيح");
   const name = String(b.name || "").trim().slice(0, 100);
   if (!name) return err("اكتب اسم المحل");
   const agree = String(b.agree || "").slice(0, 10);
-  if (!b.m && !agree) return err("لازم توافق على الشروط والأحكام وسياسة الاسترجاع قبل الدفع");
+  if (!b.m && !agree) return err("يجب الموافقة على الشروط والأحكام وسياسة الاسترجاع قبل الدفع");
   const pr = await price(b);
   if (pr.error) return err(pr.error);
   const id = "TRIO-" + b64u(crypto.getRandomValues(new Uint8Array(5))).toUpperCase().replace(/[^A-Z0-9]/g, "7").slice(0, 6);
@@ -160,6 +160,7 @@ async function checkout(req, env, url) {
   const repMail = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(b.rep_email || "").trim()) ? String(b.rep_email).trim().slice(0, 120) : "";
   const repWa = digits(b.rep_wa).slice(0, 15);
   if (repMail || repWa) o.rep = { email: repMail, wa: repWa };
+  if (/^[A-Z2-9]{6}$/.test(String(b.ref || "").toUpperCase())) o.ref = String(b.ref).toUpperCase(); // the sales rep who brought him (commission)
   const [first, ...rest] = name.split(/\s+/);
   const body = {
     amount: pr.total * 100, currency: "EGP",
@@ -172,7 +173,7 @@ async function checkout(req, env, url) {
   };
   const r = await fetch((env.PAYMOB_API || PAYMOB) + "/v1/intention/", { method: "POST", headers: { Authorization: "Token " + env.PAYMOB_SECRET, "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const d = await r.json().catch(() => ({}));
-  if (!r.ok || !d.client_secret) return err("Paymob مش بترد دلوقتي — جرّب كمان شوية", 502);
+  if (!r.ok || !d.client_secret) return err("Paymob لا يستجيب الآن — حاول بعد قليل", 502);
   o.pm = String(d.intention_order_id || "");
   if (o.pm) await env.ACC.put("p:" + o.pm, id);
   await putOrder(env, o);
@@ -199,64 +200,64 @@ async function claude(env, model, system, user, tool, maxTokens) {
   return use.input;
 }
 const PROFILE_TOOL = { name: "activity_profile", description: "The set-up of Trio for one shop activity", input_schema: { type: "object", required: ["name", "base", "categories", "units", "fields"], properties: {
-  name: { type: "string", description: "اسم النشاط بالعربي المصري، قصير" },
+  name: { type: "string", description: "اسم النشاط بالعربية الفصحى، قصير" },
   base: { type: "string", enum: ["market", "retail", "cafe", "gaming"], description: "market=بيع بالكيلو والباركود والميزان، retail=محل بيع قطع/منتجات، cafe=مشروبات وأكل بوصفات، gaming=أجهزة بالساعة" },
-  categories: { type: "array", items: { type: "string" }, maxItems: 12, description: "تصنيفات الأصناف (6–10) بالعربي" },
+  categories: { type: "array", items: { type: "string" }, maxItems: 12, description: "تصنيفات الأصناف (6–10) بالعربية" },
   units: { type: "array", items: { type: "string" }, maxItems: 6, description: "وحدات البيع (قطعة، كيلو، متر…)" },
-  fields: { type: "array", maxItems: 5, items: { type: "object", required: ["k", "n"], properties: { k: { type: "string", description: "english_snake_case key" }, n: { type: "string", description: "اسم الخانة بالعربي" }, s: { type: "boolean", description: "يتدوّر بيها في الكاشير" } } },
-    description: "بيانات زيادة لكل صنف يحتاجها النشاط ده بس (رقم القطعة، المقاس، الماركة، الموديل…) — 0 لـ 5" },
-  item: { type: "string", description: "كلمة «صنف» في النشاط ده (مفرد)" }, items: { type: "string", description: "الجمع" },
-  suggest: { type: "array", items: { type: "string", enum: Object.keys(CAT.names) }, maxItems: 5, description: "أجزاء البرنامج اللي تفيد النشاط ده" },
-  plan: { type: "string", enum: ["basic", "standard", "pro"], description: "الباقة المناسبة: basic لمحل صغير، standard لمحل فيه وحدات/عروض/مرتجع/أكتر من مخزن، pro للفروع" },
+  fields: { type: "array", maxItems: 5, items: { type: "object", required: ["k", "n"], properties: { k: { type: "string", description: "english_snake_case key" }, n: { type: "string", description: "اسم الخانة بالعربي" }, s: { type: "boolean", description: "يُبحث بها في الكاشير" } } },
+    description: "بيانات إضافية لكل صنف يحتاجها هذا النشاط فقط (رقم القطعة، المقاس، الماركة، الموديل…) — من 0 إلى 5" },
+  item: { type: "string", description: "كلمة «صنف» في هذا النشاط (مفرد)" }, items: { type: "string", description: "الجمع" },
+  suggest: { type: "array", items: { type: "string", enum: Object.keys(CAT.names) }, maxItems: 5, description: "أجزاء البرنامج المفيدة لهذا النشاط" },
+  plan: { type: "string", enum: ["basic", "standard", "pro"], description: "الباقة المناسبة: basic لمحل صغير، standard لمحل فيه وحدات/عروض/مرتجع/أكثر من مخزن، pro للفروع" },
   samples: { type: "array", maxItems: 6, items: { type: "object", required: ["name", "price"], properties: { name: { type: "string" }, price: { type: "number", description: "سعر تقريبي بالجنيه المصري" }, category: { type: "string", description: "واحد من categories" },
-    extra: { type: "object", description: "قيم البيانات الزيادة (بنفس مفاتيح fields)" } } }, description: "6 أصناف أمثلة حقيقية من النشاط بأسعار تقريبية" },
+    extra: { type: "object", description: "قيم البيانات الإضافية (بمفاتيح fields)" } } }, description: "6 أصناف أمثلة حقيقية من النشاط بأسعار تقريبية" },
 } } };
 async function profile(req, env) {
-  if (!env.ANTHROPIC_KEY) return err("الذكاء الاصطناعي مش متاح", 503);
+  if (!env.ANTHROPIC_KEY) return err("الذكاء الاصطناعي غير متاح", 503);
   let b = {};
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
   const text = String(b.text || "").slice(0, 200).trim(), key = "bp:" + normAr(text).slice(0, 80);
   if (text.length < 2) return err("اكتب النشاط");
   const cached = await env.ACC.get(key);
   if (cached) return json({ profile: JSON.parse(cached).profile, cached: true });
-  if (!MACHINE.test(b.m || "") || (await bump(env, "rl:p:" + b.m + ":" + today(), 90000)) > 6) return err("حاول كمان شوية", 429);
+  if (!MACHINE.test(b.m || "") || (await bump(env, "rl:p:" + b.m + ":" + today(), 90000)) > 6) return err("حاول بعد قليل", 429);
   if ((await bump(env, "rl:ai:" + today(), 90000)) > Number(env.AI_DAILY_CAP || 1500)) return err("حاول بكره", 429);
   const names = Object.entries(CAT.names).map(([k, v]) => k + " = " + v).join("\n");
-  const system = "انت بتجهّز برنامج Trio (مبيعات ومخازن وحسابات للمحلات في مصر) على مقاس نشاط محل. اختار من اللي البرنامج عنده بس: النوع الأساسي، التصنيفات، الوحدات، وبيانات زيادة للصنف. " +
-    "الكلام بالعربي المصري البسيط اللي أصحاب المحلات بيستخدموه. لو الكلام مش نشاط محل حقيقي، رجّع أقرب نشاط عام. أجزاء البرنامج:\n" + names;
+  const system = "أنت تجهّز برنامج Trio (مبيعات ومخازن وحسابات للمحلات في مصر) على مقاس نشاط محل. اختر مما يوفره البرنامج فقط: النوع الأساسي، التصنيفات، الوحدات، وبيانات إضافية للصنف. " +
+    "الأسماء بالعربية الفصحى البسيطة. وإن لم يكن الكلام نشاط محل حقيقيًا فأعد أقرب نشاط عام. أجزاء البرنامج:\n" + names;
   let p;
   try { p = await claude(env, PROFILE_MODEL, system, "نشاط المحل: " + text, PROFILE_TOOL, 1600); }
-  catch (e) { return err("الذكاء الاصطناعي مش بيرد دلوقتي", 502); }
+  catch (e) { return err("الذكاء الاصطناعي لا يستجيب الآن", 502); }
   p.key = "ai_" + normAr(text).replace(/\s/g, "_").slice(0, 24);
   await env.ACC.put(key, JSON.stringify({ profile: p, text, m: b.m, at: iso() }));
   await bump(env, "us:p:" + today().slice(0, 7), 40 * 86400);
   return json({ profile: p });
 }
 const ASK_TOOL = { name: "answer", description: "The answer shown to the shop user", input_schema: { type: "object", required: ["answer"], properties: {
-  answer: { type: "string", description: "الرد بالعربي المصري: خطوات قصيرة مرقمة لو فيه خطوات، من غير مقدمات" },
-  links: { type: "array", items: { type: "string" }, maxItems: 3, description: "عناوين الصفحات (url من القايمة بس) اللي تفيده" } } } };
+  answer: { type: "string", description: "الرد بالعربية الفصحى المبسطة: خطوات قصيرة مرقمة إن وُجدت خطوات، بدون مقدمات" },
+  links: { type: "array", items: { type: "string" }, maxItems: 3, description: "عناوين الصفحات (url من القائمة فقط) المفيدة له" } } } };
 async function ask(req, env) {
-  if (!env.ANTHROPIC_KEY) return err("المساعد مش متاح دلوقتي", 503);
+  if (!env.ANTHROPIC_KEY) return err("المساعد غير متاح الآن", 503);
   let b = {};
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
   if (!MACHINE.test(b.m || "")) return err("طلب ناقص");
   const q = String(b.q || "").slice(0, 500).trim();
   if (q.length < 2) return err("اكتب سؤالك");
   // a made-up machine code is free, so the whole service also has a daily ceiling (AI_DAILY_CAP) — the bill can never run away
-  if ((await bump(env, "rl:ai:" + today(), 90000)) > Number(env.AI_DAILY_CAP || 1500)) return err("المساعد مشغول النهارده — جرّب بكره", 429);
+  if ((await bump(env, "rl:ai:" + today(), 90000)) > Number(env.AI_DAILY_CAP || 1500)) return err("المساعد مشغول اليوم — حاول غدًا", 429);
   const limit = parseInt(env.ASK_LIMIT || "30", 10), n = await bump(env, "rl:a:" + b.m + ":" + today(), 90000);
-  if (n > limit) return err("خلصت أسئلة النهارده (" + limit + ") — جرّب بكره أو كلّم Trio 01008030459", 429);
+  if (n > limit) return err("انتهت أسئلة اليوم (" + limit + ") — حاول غدًا أو تواصل مع Trio 01008030459", 429);
   const cut = (a, k) => (Array.isArray(a) ? a.slice(0, k) : []);
   const pages = cut(b.pages, 60).map((p) => "- " + String(p.name || "").slice(0, 60) + " → " + String(p.url || "").slice(0, 80)).join("\n");
   const topics = cut(b.topics, 8).map((t) => "## " + String(t.t || "").slice(0, 80) + "\n" + String(t.a || "").slice(0, 900)).join("\n\n");
-  const system = "انت «مساعد Trio» جوه برنامج مبيعات ومخازن لمحل في مصر. بترد بالعربي المصري البسيط على أسئلة استخدام البرنامج بس: الحاجة دي فين وبتتعمل إزاي. " +
-    "استخدم الصفحات والشرح اللي تحت بس، وماتخترعش شاشات أو أزرار مش موجودة. لو حاجة مش موجودة في الأجزاء المفتوحة عنده قوله إنها ممكن تتضاف من «⭐ ترقية وطلبات». " +
-    "لو السؤال مش عن البرنامج اعتذر بلطف. ماتطلبش بيانات سرية. خلي الرد قصير.\n\n" +
-    "النشاط: " + String(b.activity || "").slice(0, 80) + " — دوره: " + String(b.role || "").slice(0, 30) + " — الصفحة اللي هو فيها: " + String(b.page || "").slice(0, 80) +
+  const system = "أنت «مساعد Trio» داخل برنامج مبيعات ومخازن لمحل في مصر. ترد بالعربية الفصحى المبسطة على أسئلة استخدام البرنامج فقط: أين يوجد الشيء وكيف يُنفَّذ. " +
+    "استخدم الصفحات والشرح أدناه فقط، ولا تخترع شاشات أو أزرارًا غير موجودة. وإن كان شيء غير موجود في الأجزاء المفتوحة لديه فأخبره أنه يمكن إضافته من «⭐ ترقية وطلبات». " +
+    "إن لم يكن السؤال عن البرنامج فاعتذر بلطف. لا تطلب بيانات سرية. اجعل الرد قصيرًا.\n\n" +
+    "النشاط: " + String(b.activity || "").slice(0, 80) + " — دوره: " + String(b.role || "").slice(0, 30) + " — الصفحة التي هو فيها: " + String(b.page || "").slice(0, 80) +
     "\nالأجزاء المفتوحة: " + cut(b.mods, 40).map((x) => String(x).slice(0, 40)).join("، ") + "\n\nالصفحات:\n" + pages + "\n\nشرح من دليل البرنامج:\n" + topics;
   let a;
   try { a = await claude(env, ASK_MODEL, system, q, ASK_TOOL, 700); }
-  catch (e) { return err("المساعد مش بيرد دلوقتي — جرّب كمان شوية", 502); }
+  catch (e) { return err("المساعد لا يستجيب الآن — حاول بعد قليل", 502); }
   await bump(env, "us:a:" + today().slice(0, 7), 40 * 86400);
   const ok = new Set(cut(b.pages, 60).map((p) => String(p.url || "")));
   return json({ answer: String(a.answer || "").slice(0, 3000), links: cut(a.links, 3).filter((u) => ok.has(u)), left: Math.max(0, limit - n) });
@@ -316,25 +317,25 @@ async function tgHook(req, env) {
   const m = text.match(/^\/start(?:\s+([A-Za-z0-9]{16,40}))?$/);
   if (m && m[1]) {
     const id = await sidOf(m[1]), list = await tgChats(env, id);
-    if (!list.includes(chat)) { if (list.length >= 5) { await reply("الحد 5 حسابات للمحل — شيل حساب الأول بـ /stop منه."); return new Response("ok"); } list.push(chat); }
+    if (!list.includes(chat)) { if (list.length >= 5) { await reply("الحد 5 حسابات للمحل — احذف حسابًا أولًا بـ /stop منه."); return new Response("ok"); } list.push(chat); }
     await env.ACC.put("tg:" + id, JSON.stringify(list));
     await env.ACC.put("tgc:" + chat, id);
     const s = await snapGet(env, id);
-    await reply("✔ اتربطت" + (s && s.d && s.d.shop ? " بـ «" + s.d.shop + "»" : "") + " — ملخص اليوم هيوصلك هنا كل يوم من Trio.\nلإيقافه ابعت /stop");
+    await reply("✔ تم الربط" + (s && s.d && s.d.shop ? " بـ «" + s.d.shop + "»" : "") + " — سيصلك ملخص اليوم هنا كل يوم من Trio.\nلإيقافه أرسل /stop");
   } else if (/^\/stop/.test(text)) {
     const id = await env.ACC.get("tgc:" + chat);
     if (id) { await env.ACC.put("tg:" + id, JSON.stringify((await tgChats(env, id)).filter((c) => c !== chat))); await env.ACC.delete("tgc:" + chat); }
-    await reply("اتوقف ✔ — مش هيوصلك ملخص تاني. ترجعه من «📱 الموبايل والتقارير» في البرنامج.");
+    await reply("أُوقف ✔ — لن يصلك ملخص آخر. تعيده من «📱 الموبايل والتقارير» في البرنامج.");
   } else {
-    await reply("أهلًا 👋 ده بوت Trio لملخص اليوم. اربطه من البرنامج: «📱 الموبايل والتقارير» ← «افتح تليجرام واربط».\nTrio · 01008030459");
+    await reply("أهلًا 👋 هذا بوت Trio لملخص اليوم. اربطه من البرنامج: «📱 الموبايل والتقارير» ← «افتح تليجرام واربط».\nTrio · 01008030459");
   }
   return new Response("ok");
 }
 async function tgSecret(env) { const h = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode("tg:" + (env.TG_TOKEN || "")))); return [...h.slice(0, 16)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
 async function tgSetup(env, url) {
-  if (!env.TG_TOKEN) return err("حط TG_TOKEN في الـ Worker الأول");
+  if (!env.TG_TOKEN) return err("ضع TG_TOKEN في الـ Worker أولًا");
   const me = await tgCall(env, "getMe", {});
-  if (!me.ok) return err("توكن البوت غلط");
+  if (!me.ok) return err("توكن البوت غير صحيح");
   await env.ACC.put("cfg:tgbot", me.result.username);
   const hook = await tgCall(env, "setWebhook", { url: url.origin + "/tg", secret_token: await tgSecret(env), allowed_updates: ["message"], drop_pending_updates: true });
   return json({ ok: !!hook.ok, bot: me.result.username, error: hook.ok ? "" : hook.description || "" });
@@ -345,7 +346,7 @@ async function mail(env, to, subject, text, shop) {
   const html = `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;font-size:15px;line-height:1.8;color:#0B1F3A;max-width:560px">
 <div style="background:#17698F;color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;font-weight:bold">${esc(subject)}</div>
 <div style="border:1px solid #DFE6EF;border-top:0;padding:16px 18px;border-radius:0 0 12px 12px;white-space:pre-line">${esc(text)}</div>
-<p style="color:#66788F;font-size:12px">اتبعت من Trio لـ ${esc(shop)} · 01008030459</p></div>`;
+<p style="color:#66788F;font-size:12px">أُرسل من Trio لـ ${esc(shop)} · 01008030459</p></div>`;
   const r = await fetch(env.MAIL_API || "https://api.brevo.com/v3/smtp/email", {
     method: "POST", headers: { "api-key": env.BREVO_KEY, "Content-Type": "application/json", accept: "application/json" },
     body: JSON.stringify({ sender: { name: "Trio", email: env.MAIL_FROM }, to: to.map((e) => ({ email: e })), subject, textContent: text + "\n\npowered by Trio", htmlContent: html }),
@@ -357,27 +358,27 @@ async function notify(req, env) {
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
   if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "")) return err("طلب ناقص");
   const id = await sidOf(b.k);
-  if ((await bump(env, "rl:n:" + id + ":" + today(), 90000)) > 8) return err("اتبعت كتير النهارده — بكره", 429);
+  if ((await bump(env, "rl:n:" + id + ":" + today(), 90000)) > 8) return err("أُرسل كثيرًا اليوم — غدًا", 429);
   const text = String(b.text || "").slice(0, 3500), subject = String(b.subject || "ملخص اليوم").slice(0, 150), shop = String(b.shop || "").slice(0, 100);
-  if (!text) return err("مفيش نص");
+  if (!text) return err("لا يوجد نص");
   const out = {};
   if (b.tg) {
-    if (!env.TG_TOKEN) out.tg = "تليجرام مش متاح من Trio لسه";
+    if (!env.TG_TOKEN) out.tg = "تليجرام غير متاح من Trio بعد";
     else {
       const chats = await tgChats(env, id);
-      if (!chats.length) out.tg = "لسه محدش ربط تليجرام — «📱 الموبايل والتقارير» ← «افتح تليجرام واربط»";
+      if (!chats.length) out.tg = "لم يربط أحد تليجرام بعد — «📱 الموبايل والتقارير» ← «افتح تليجرام واربط»";
       else { let ok = 0; for (const c of chats) ok += (await tgCall(env, "sendMessage", { chat_id: c, text })).ok ? 1 : 0; out.tg = ok ? "ok" : "تليجرام رفض الرسالة"; }
     }
   }
   if (b.email) {
     // mail leaves in Trio's name, so only a copy that holds a genuine licence for its own machine may ask for it (never an open relay)
     const lic = await readLicence(b.lic);
-    if (!lic || lic.m !== b.m || (lic.e && !lic.l && lic.e < today())) { out.mail = "الإيميل من Trio للنسخ المفعّلة بس — فعّل الرخصة أو استخدم إيميل المحل"; return json(out); }
-    if ((await bump(env, "rl:mail:" + today(), 90000)) > Number(env.MAIL_DAILY_CAP || 250)) { out.mail = "الإيميل وصل حد اليوم — بكره"; return json(out); }
+    if (!lic || lic.m !== b.m || (lic.e && !lic.l && lic.e < today())) { out.mail = "البريد من Trio للنسخ المفعّلة فقط — فعّل الرخصة أو استخدم بريد المحل"; return json(out); }
+    if ((await bump(env, "rl:mail:" + today(), 90000)) > Number(env.MAIL_DAILY_CAP || 250)) { out.mail = "وصل البريد إلى حده اليومي — غدًا"; return json(out); }
     const to = String(b.email).split(",").map((x) => x.trim()).filter((x) => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(x)).slice(0, 3);
-    if (!to.length) out.mail = "الإيميل مكتوب غلط";
-    else if (!(env.BREVO_KEY && env.MAIL_FROM)) out.mail = "الإيميل مش متاح من Trio لسه";
-    else { try { await mail(env, to, subject, text, shop); out.mail = "ok"; } catch (e) { out.mail = "الإيميل مااتبعتش — جرّب كمان شوية"; } }
+    if (!to.length) out.mail = "البريد مكتوب بشكل غير صحيح";
+    else if (!(env.BREVO_KEY && env.MAIL_FROM)) out.mail = "البريد غير متاح من Trio بعد";
+    else { try { await mail(env, to, subject, text, shop); out.mail = "ok"; } catch (e) { out.mail = "لم يُرسل البريد — حاول بعد قليل"; } }
   }
   return json(out);
 }
@@ -385,7 +386,7 @@ async function notify(req, env) {
 function png(b64) { return new Response(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)), { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=604800" } }); }
 function manifest(k, shop) {
   return new Response(JSON.stringify({
-    name: "Trio" + (shop ? " — " + shop : ""), short_name: "Trio", description: "تابع محلك من الموبايل", lang: "ar", dir: "rtl",
+    name: "Trio" + (shop ? " — " + shop : ""), short_name: "Trio", description: "تابع محلك من الهاتف", lang: "ar", dir: "rtl",
     start_url: "/m/" + k, scope: "/m/" + k, display: "standalone", background_color: "#0A3A66", theme_color: "#17698F",
     icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
       { src: "/icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" }],
@@ -440,8 +441,8 @@ body{padding-bottom:70px}.view[hidden]{display:none}.f{background:var(--card);bo
 .modal{position:fixed;inset:0;background:rgba(7,17,30,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}.modal[hidden]{display:none}
 .modal .f{width:100%;max-width:360px}.pin{letter-spacing:10px;text-align:center;font-size:26px!important}
 </style></head><body>
-<header><div class="top"><img src="/icon-192.png" alt=""><div><h1 id="shop">${t}</h1><small><span class="st off" id="st"><i></i><span id="stt">بيحمّل…</span></span></small></div></div></header>
-<main id="app"><div class="hero load">بيحمّل…</div></main>
+<header><div class="top"><img src="/icon-192.png" alt=""><div><h1 id="shop">${t}</h1><small><span class="st off" id="st"><i></i><span id="stt">جارٍ التحميل…</span></span></small></div></div></header>
+<main id="app"><div class="hero load">جارٍ التحميل…</div></main>
 <main id="v-draw" class="view" hidden></main><main id="v-req" class="view" hidden></main><main id="v-buy" class="view" hidden></main>
 <div class="modal" id="pinm" hidden><div class="f"><h2 id="pint">اكتب الرقم السري</h2><input id="pinv" class="pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off"><div class="note no" id="pine"></div>
 <button class="btn" id="pinok">تأكيد</button><button class="btn l" onclick="pinDone(null)">إلغاء</button></div></div>
@@ -451,36 +452,36 @@ body{padding-bottom:70px}.view[hidden]{display:none}.f{background:var(--card);bo
 <script>
 const K=${JSON.stringify(k)},$=s=>document.querySelector(s),E=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const N=v=>Number(v||0).toLocaleString("en-US",{maximumFractionDigits:2});
-const ago=t=>{const m=Math.round((Date.now()-Date.parse(t))/60000);return m<1?"دلوقتي":m<60?"من "+m+" دقيقة":m<1440?"من "+Math.round(m/60)+" ساعة":"من "+Math.round(m/1440)+" يوم"};
+const ago=t=>{const m=Math.round((Date.now()-Date.parse(t))/60000);return m<1?"الآن":m<60?"من "+m+" دقيقة":m<1440?"من "+Math.round(m/60)+" ساعة":"من "+Math.round(m/1440)+" يوم"};
 let deferred=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;const b=$("#inst");if(b)b.style.display=""});
 function list(rows,f,emptyText){return rows&&rows.length?"<ul>"+rows.map(f).join("")+"</ul>":'<div class="empty">'+emptyText+"</div>"}
 function render(r){
   const d=r.d,old=(Date.now()-Date.parse(r.at))>25*60000,today=d.day===new Date(Date.now()+2*3600e3).toISOString().slice(0,10);
   $("#shop").textContent=d.shop||"محلك";document.title="Trio — "+(d.shop||"");
-  $("#st").className="st"+(old?" off":"");$("#stt").textContent=(old?"البرنامج مقفول أو مفيش نت — آخر تحديث ":"المحل شغال — آخر تحديث ")+ago(r.at);
+  $("#st").className="st"+(old?" off":"");$("#stt").textContent=(old?"البرنامج مغلق أو لا يوجد إنترنت — آخر تحديث ":"المحل يعمل — آخر تحديث ")+ago(r.at);
   const t=d.today||{},wa=d.wa?"https://wa.me/"+d.wa+"?text="+encodeURIComponent(sumText(d)):"https://wa.me/?text="+encodeURIComponent(sumText(d));
-  let h='<div class="hero"><div class="k">مبيعات '+(today?"النهارده":d.day)+'</div><div class="v">'+N(t.net)+' <small>ج.م</small></div>'+
-   '<div class="row"><div><b>'+(t.n||0)+'</b><span>فاتورة</span></div><div><b>'+N(t.cash)+'</b><span>نقدي</span></div><div><b>'+N(t.card)+'</b><span>فيزا / محافظ</span></div></div></div>';
+  let h='<div class="hero"><div class="k">مبيعات '+(today?"اليوم":d.day)+'</div><div class="v">'+N(t.net)+' <small>ج.م</small></div>'+
+   '<div class="row"><div><b>'+(t.n||0)+'</b><span>فاتورة</span></div><div><b>'+N(t.cash)+'</b><span>نقدي</span></div><div><b>'+N(t.card)+'</b><span>بطاقات / محافظ</span></div></div></div>';
   h+='<div class="grid"><div class="tile"><div class="k">الربح التقريبي</div><div class="v">'+N(t.profit)+'</div></div><div class="tile"><div class="k">رصيد الدرج</div><div class="v">'+N(d.drawer)+'</div></div>'+
    '<div class="tile"><div class="k">مبيعات الشهر</div><div class="v">'+N((d.month||{}).net)+'</div></div><div class="tile'+(d.low_n?" warn":"")+'"><div class="k">نواقص</div><div class="v">'+(d.low_n||0)+' صنف</div></div>'+
-   (t.credit?'<div class="tile"><div class="k">آجل النهارده</div><div class="v">'+N(t.credit)+'</div></div>':"")+(t.returns?'<div class="tile warn"><div class="k">مرتجعات</div><div class="v">'+N(t.returns)+'</div></div>':"")+"</div>";
-  if(d.branches)h+='<section><h2>الفروع النهارده</h2>'+list(d.branches,b=>"<li><span>"+E(b.n)+' <span class="s">درج '+N(b.cash)+"</span></span><span>"+N(b.v)+"</span></li>","")+"</section>";
-  if(d.play)h+='<section><h2>الأجهزة الشغالة <em>'+d.play.length+'</em></h2>'+list(d.play,p=>"<li><span>"+E(p.n)+' <span class="s">من '+E(p.at)+"</span></span><span>"+p.m+" د</span></li>","مفيش أجهزة شغالة دلوقتي")+"</section>";
-  h+='<section><h2>آخر الفواتير</h2>'+list(d.recent,o=>"<li><span>#"+E(o.n)+' <span class="s">'+E(o.t)+" · "+E(o.d)+"</span>"+(o.r?'<span class="tag r">مرتجع</span>':"")+(o.x?'<span class="tag r">ملغية</span>':"")+'<span class="tag">'+E(o.pay)+"</span></span><span>"+N(o.v)+"</span></li>","لسه مفيش فواتير النهارده")+"</section>";
-  h+='<section><h2>الأكتر بيعًا النهارده</h2>'+list(d.top,x=>"<li><span>"+E(x.n)+' <span class="s">× '+N(x.q)+"</span></span><span>"+N(x.v)+"</span></li>","لسه مفيش")+"</section>";
-  h+='<section><h2>النواقص <em>'+(d.low_n||0)+'</em></h2>'+list(d.low,x=>"<li><span>"+E(x.n)+'</span><span>'+N(x.q)+' <span class="s">/ حد الطلب '+N(x.r)+"</span></span></li>","مفيش نواقص 👌")+"</section>";
+   (t.credit?'<div class="tile"><div class="k">آجل اليوم</div><div class="v">'+N(t.credit)+'</div></div>':"")+(t.returns?'<div class="tile warn"><div class="k">مرتجعات</div><div class="v">'+N(t.returns)+'</div></div>':"")+"</div>";
+  if(d.branches)h+='<section><h2>الفروع اليوم</h2>'+list(d.branches,b=>"<li><span>"+E(b.n)+' <span class="s">درج '+N(b.cash)+"</span></span><span>"+N(b.v)+"</span></li>","")+"</section>";
+  if(d.play)h+='<section><h2>الأجهزة الشغالة <em>'+d.play.length+'</em></h2>'+list(d.play,p=>"<li><span>"+E(p.n)+' <span class="s">من '+E(p.at)+"</span></span><span>"+p.m+" د</span></li>","لا توجد أجهزة مشغولة الآن")+"</section>";
+  h+='<section><h2>آخر الفواتير</h2>'+list(d.recent,o=>"<li><span>#"+E(o.n)+' <span class="s">'+E(o.t)+" · "+E(o.d)+"</span>"+(o.r?'<span class="tag r">مرتجع</span>':"")+(o.x?'<span class="tag r">ملغية</span>':"")+'<span class="tag">'+E(o.pay)+"</span></span><span>"+N(o.v)+"</span></li>","لا توجد فواتير اليوم بعد")+"</section>";
+  h+='<section><h2>الأكثر مبيعًا اليوم</h2>'+list(d.top,x=>"<li><span>"+E(x.n)+' <span class="s">× '+N(x.q)+"</span></span><span>"+N(x.v)+"</span></li>","لا يوجد بعد")+"</section>";
+  h+='<section><h2>النواقص <em>'+(d.low_n||0)+'</em></h2>'+list(d.low,x=>"<li><span>"+E(x.n)+'</span><span>'+N(x.q)+' <span class="s">/ حد الطلب '+N(x.r)+"</span></span></li>","لا توجد نواقص 👌")+"</section>";
   if(d.exp_n)h+='<section><h2>صلاحية قربت <em>'+d.exp_n+'</em></h2>'+list(d.exp,x=>"<li><span>"+E(x.n)+"</span><span>"+(x.d<0?"خلصت":"باقي "+x.d+" يوم")+"</span></li>","")+"</section>";
   if(d.shifts&&d.shifts.length)h+='<section><h2>ورديات مفتوحة</h2>'+list(d.shifts,s=>"<li><span>"+E(s.c)+' <span class="s">'+E(s.d)+"</span></span><span>من "+E(s.at)+"</span></li>","")+"</section>";
-  h+='<div class="acts"><a class="btn" href="'+wa+'" target="_blank" rel="noopener">ابعت الملخص واتساب</a><button class="btn l" onclick="load(1)">تحديث</button><button class="btn l" id="inst" style="display:none" onclick="deferred&&deferred.prompt()">ثبّت الأيقونة</button></div>'+
-   '<div class="tip" id="ios"><b>ضيفه للشاشة الرئيسية:</b> دوس زرار المشاركة ⬆️ تحت ← «إضافة إلى الشاشة الرئيسية» ← هتلاقي أيقونة Trio.</div>'+
-   '<footer>Trio · 01008030459<br>الأرقام بتتحدّث كل 10 دقايق طول ما البرنامج شغال في المحل</footer>';
+  h+='<div class="acts"><a class="btn" href="'+wa+'" target="_blank" rel="noopener">أرسل الملخص عبر واتساب</a><button class="btn l" onclick="load(1)">تحديث</button><button class="btn l" id="inst" style="display:none" onclick="deferred&&deferred.prompt()">ثبّت الأيقونة</button></div>'+
+   '<div class="tip" id="ios"><b>ضيفه للشاشة الرئيسية:</b> اضغط زر المشاركة ⬆️ تحت ← «إضافة إلى الشاشة الرئيسية» ← ستجد أيقونة Trio.</div>'+
+   '<footer>Trio · 01008030459<br>تُحدَّث الأرقام كل 10 دقائق طالما البرنامج يعمل في المحل</footer>';
   $("#app").innerHTML=h;
   if(/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone)$("#ios").style.display="block";
   if(deferred)$("#inst").style.display="";
 }
 function sumText(d){const t=d.today||{};return ["ملخص "+(d.shop||"")+" — "+d.day,"المبيعات: "+N(t.net)+" ج ("+(t.n||0)+" فاتورة)","نقدي "+N(t.cash)+" — فيزا/محافظ "+N(t.card)+" — آجل "+N(t.credit),"الربح التقريبي: "+N(t.profit),"رصيد الدرج: "+N(d.drawer),"powered by Trio"].join("\\n")}
-async function load(manual){try{const r=await fetch("/m/"+K+"/data",{cache:"no-store"});const j=await r.json();if(j.d)render(j);else $("#app").innerHTML='<div class="hero load">لسه مفيش بيانات من المحل — افتح البرنامج على كمبيوتر المحل ودوس «حدّث دلوقتي» من «📱 الموبايل والتقارير».</div>'}
-catch(e){$("#stt").textContent="مفيش نت على الموبايل"}}
+async function load(manual){try{const r=await fetch("/m/"+K+"/data",{cache:"no-store"});const j=await r.json();if(j.d)render(j);else $("#app").innerHTML='<div class="hero load">لا توجد بيانات من المحل بعد — افتح البرنامج على كمبيوتر المحل واضغط «حدّث الآن» من «📱 الموبايل والتقارير».</div>'}
+catch(e){$("#stt").textContent="لا يوجد إنترنت على الهاتف"}}
 load();setInterval(load,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
 if("serviceWorker" in navigator)navigator.serviceWorker.register("/m/"+K+"/sw.js",{scope:"/m/"+K}).catch(()=>{});
 // ---------- the owner's actions (signed with the phone's secret; the PIN goes only to Trio's check)
@@ -491,42 +492,42 @@ async function hx(s){const b=await crypto.subtle.digest("SHA-256",new TextEncode
 async function hmac(key,msg){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(key),{name:"HMAC",hash:"SHA-256"},false,["sign"]);
  return [...new Uint8Array(await crypto.subtle.sign("HMAC",k,new TextEncoder().encode(msg)))].map(x=>x.toString(16).padStart(2,"0")).join("")}
 async function api(p,body){const r=await fetch("/m/"+K+p,body?{method:"POST",headers:{"Content-Type":"application/json","X-Trio":"1"},body:J(body),credentials:"same-origin"}:{cache:"no-store",credentials:"same-origin"});
- let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||"مفيش نت");return j}
+ let j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.error||"لا يوجد إنترنت");return j}
 function show(v){CUR=v;document.querySelectorAll(".view,#app").forEach(e=>e.hidden=(e.id!==(v==="app"?"app":"v-"+v)));document.querySelectorAll("nav.bt a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));
  scrollTo(0,0);if(v!=="app")drawAll()}
 document.querySelectorAll("nav.bt a").forEach(a=>a.onclick=()=>show(a.dataset.v));
 let pinCb=null;function askPin(t,cb){pinCb=cb;$("#pint").textContent=t;$("#pinv").value="";$("#pine").textContent="";$("#pinm").hidden=false;setTimeout(()=>$("#pinv").focus(),50)}
 function pinDone(v){$("#pinm").hidden=true;const c=pinCb;pinCb=null;if(c&&v)c(v)}
-$("#pinok").onclick=()=>{const v=$("#pinv").value;if(!/^\\d{4,6}$/.test(v)){$("#pine").textContent="من 4 لـ 6 أرقام";return}pinDone(v)};
-async function send(kind,body,pin){const s=sec();if(!s)throw new Error("الموبايل مش مربوط");const id=[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join("");
+$("#pinok").onclick=()=>{const v=$("#pinv").value;if(!/^\\d{4,6}$/.test(v)){$("#pine").textContent="من 4 إلى 6 أرقام";return}pinDone(v)};
+async function send(kind,body,pin){const s=sec();if(!s)throw new Error("الهاتف غير مربوط");const id=[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join("");
  const b=J(body);await api("/cmd",{id,kind,body:b,mac:await hmac(s,id+"\\n"+kind+"\\n"+b),pin});return id}
-function stTxt(c){return c.state==="ok"?'<span class="ok">✓ '+E(c.res)+"</span>":c.state==="no"?'<span class="no">✗ '+E(c.res)+"</span>":'<span class="s">⏳ مستني برنامج المحل…</span>'}
+function stTxt(c){return c.state==="ok"?'<span class="ok">✓ '+E(c.res)+"</span>":c.state==="no"?'<span class="no">✗ '+E(c.res)+"</span>":'<span class="s">⏳ بانتظار برنامج المحل…</span>'}
 function cmdList(kinds){const r=(ME.cmds||[]).filter(c=>kinds.includes(c.kind));return r.length?'<section><h2>آخر أوامرك</h2><ul>'+r.map(c=>"<li style='display:block'><b>"+E(c.sum)+"</b> <span class='s'>"+E(c.at.slice(5,16).replace("T"," "))+"</span><div style='white-space:normal;font-size:13.5px'>"+stTxt(c)+"</div></li>").join("")+"</ul></section>":""}
 function pairForm(){const code=(location.hash.match(/pair=([A-Z0-9-]{12,16})/)||[])[1]||"";
- return '<div class="f"><h2>🔗 اربط موبايلك</h2><p class="note" style="margin:0">من البرنامج على كمبيوتر المحل: <b>الموبايل والتقارير ← اربط موبايلي</b> — صوّر الكود أو اكتبه هنا.</p>'+
+ return '<div class="f"><h2>🔗 اربط موبايلك</h2><p class="note" style="margin:0">من البرنامج على كمبيوتر المحل: <b>الموبايل والتقارير ← اربط موبايلي</b> — امسح الكود أو اكتبه هنا.</p>'+
  '<label>الكود</label><input id="pc" dir="ltr" value="'+E(code)+'" placeholder="XXXX-XXXX-XXXX" autocomplete="off">'+
- '<label>اختار رقم سري (PIN) — بيتسأل قبل أي سحب أو فاتورة</label><input id="pp" class="pin" type="password" inputmode="numeric" maxlength="6">'+
- '<label>الرقم السري تاني</label><input id="pp2" class="pin" type="password" inputmode="numeric" maxlength="6">'+
+ '<label>اختر رقمًا سريًا (PIN) — يُطلب قبل أي سحب أو فاتورة</label><input id="pp" class="pin" type="password" inputmode="numeric" maxlength="6">'+
+ '<label>الرقم السري مرة أخرى</label><input id="pp2" class="pin" type="password" inputmode="numeric" maxlength="6">'+
  '<button class="btn" onclick="doPair()">اربط</button><div class="note no" id="pe"></div></div>'}
 async function doPair(){const code=$("#pc").value.toUpperCase().replace(/[^A-Z0-9]/g,""),p=$("#pp").value;
- if(code.length!==12){$("#pe").textContent="الكود 12 حرف";return}if(!/^\\d{4,6}$/.test(p)){$("#pe").textContent="الرقم السري من 4 لـ 6 أرقام";return}if(p!==$("#pp2").value){$("#pe").textContent="الرقمين مش زي بعض";return}
+ if(code.length!==12){$("#pe").textContent="الكود 12 حرف";return}if(!/^\\d{4,6}$/.test(p)){$("#pe").textContent="الرقم السري من 4 إلى 6 أرقام";return}if(p!==$("#pp2").value){$("#pe").textContent="الرقمان غير متطابقين";return}
  try{await api("/pair",{ph:await hx("trio-pair:"+code),pin:p,name:/iphone|ipad/i.test(navigator.userAgent)?"آيفون":/android/i.test(navigator.userAgent)?"أندرويد":"موبايل"});
   localStorage.setItem(LSK,await hx("trio-sign:"+code));history.replaceState(null,"",location.pathname);await refreshMe();drawAll()}catch(e){$("#pe").textContent=e.message}}
-function needPair(el){if(ME.paired&&sec())return false;el.innerHTML=ME.paired?'<div class="f"><h2>الموبايل ده محتاج يتربط تاني</h2><p class="note">اتربط من متصفح تاني. افصله واربطه من هنا.</p><button class="btn l" onclick="unpairMe()">افصل</button></div>':pairForm();return true}
+function needPair(el){if(ME.paired&&sec())return false;el.innerHTML=ME.paired?'<div class="f"><h2>يحتاج هذا الهاتف إلى ربط جديد</h2><p class="note">رُبط من متصفح آخر. افصله واربطه من هنا.</p><button class="btn l" onclick="unpairMe()">افصل</button></div>':pairForm();return true}
 async function unpairMe(){try{await api("/unpair",{})}catch(e){}try{localStorage.removeItem(LSK)}catch(e){}await refreshMe();drawAll()}
-function fresh(){return ME.at?'<p class="note">بيانات البرنامج من '+ago(ME.at)+(Date.now()-Date.parse(ME.at)>180000?" — البرنامج مقفول أو مفيش نت: الأمر هيتنفّذ أول ما يفتح":"")+"</p>":""}
+function fresh(){return ME.at?'<p class="note">بيانات البرنامج من '+ago(ME.at)+(Date.now()-Date.parse(ME.at)>180000?" — البرنامج مغلق أو لا يوجد إنترنت: سيُنفَّذ الأمر فور فتحه":"")+"</p>":""}
 function drawAll(){drawDraw();drawReq();drawBuy();const n=(ME.pend||[]).length;$("#rqn").hidden=!n;$("#rqn").textContent=n}
 function drawDraw(){const el=$("#v-draw");if(CUR!=="draw"&&el.innerHTML)return;if(needPair(el))return;
- const opts=(ME.boxes||[]).map(b=>'<option value="'+b.i+'">'+E(b.n)+" — "+N(b.v)+"</option>").join("")+'<option value="card">فلوس الفيزا (Paymob)</option>';
+ const opts=(ME.boxes||[]).map(b=>'<option value="'+b.i+'">'+E(b.n)+" — "+N(b.v)+"</option>").join("")+'<option value="card">أرصدة البطاقات (Paymob)</option>';
  el.innerHTML='<div class="f"><h2>💵 سحب على حسابك</h2><label>المبلغ</label><input id="da" type="number" inputmode="decimal" min="1" step="0.01">'+
  '<label>من</label><select id="df">'+opts+'</select><label>ملاحظة</label><input id="dn" maxlength="100" placeholder="اختياري">'+
  '<button class="btn" onclick="doDraw()">سجّل السحب</button><div class="note no" id="de"></div>'+
- '<p class="note">بيتسجّل في حسابات المحل كمسحوبات على حسابك. لو السحب من فلوس الفيزا، التحويل نفسه بيتعمل من تطبيق Paymob أو لوحته.</p>'+fresh()+'</div>'+cmdList(["drawing"])}
+ '<p class="note">يُسجَّل في حسابات المحل كمسحوبات على حسابك. وإن كان السحب من أرصدة البطاقات فالتحويل نفسه يتم من تطبيق Paymob أو لوحته.</p>'+fresh()+'</div>'+cmdList(["drawing"])}
 function doDraw(){const a=Number($("#da").value);if(!(a>0)){$("#de").textContent="اكتب المبلغ";return}const f=$("#df").value,fn=$("#df").selectedOptions[0].text.split(" — ")[0];
  askPin("سحب "+N(a)+" من "+fn,async pin=>{try{await send("drawing",{amount:String(a),from:f,note:$("#dn").value},pin);await refreshMe();CUR="draw";$("#v-draw").innerHTML="";drawDraw()}catch(e){$("#de").textContent=e.message}})}
 function drawReq(){const el=$("#v-req");if(CUR!=="req"&&el.innerHTML)return;if(needPair(el))return;const P=ME.pend||[];
  el.innerHTML='<section style="margin-top:0"><h2>طلبات الكاشير <em>'+P.length+'</em></h2>'+(P.length?P.map((r,i)=>'<div class="rq"><b>'+E(r.kind)+" "+E(r.target)+(r.v!=null?" — "+N(r.v):"")+'</b><span class="s">'+E(r.by)+" · "+E(r.at)+"</span><div>"+E(r.why)+"</div>"+
- '<div class="a"><button class="yes" onclick="doDecI('+i+',1)">موافق</button><button class="nope" onclick="doDecI('+i+',0)">رفض</button></div></div>').join(""):'<div class="empty">مفيش طلبات مستنية 👌</div>')+
+ '<div class="a"><button class="yes" onclick="doDecI('+i+',1)">موافق</button><button class="nope" onclick="doDecI('+i+',0)">رفض</button></div></div>').join(""):'<div class="empty">لا توجد طلبات معلّقة 👌</div>')+
  "</section>"+fresh()+cmdList(["decide"])}
 function doDecI(i,yes){const r=(ME.pend||[])[i];if(r)doDec(r.uid,yes,r.kind+" "+r.target)}
 async function doDec(uid,yes,what){try{await send("decide",{req:uid,approve:!!yes,what});ME.pend=(ME.pend||[]).filter(r=>r.uid!==uid);await refreshMe(true);$("#v-req").innerHTML="";CUR="req";drawReq()}catch(e){alert(e.message)}}
@@ -537,17 +538,17 @@ function drawBuy(){const el=$("#v-buy");if(CUR!=="buy"&&el.innerHTML)return;if(n
  const boxes=(ME.boxes||[]).map(b=>'<option value="'+b.i+'">'+E(b.n)+"</option>").join("");
  el.innerHTML='<div class="f"><h2>🧾 فاتورة مشتريات</h2><label>المورد</label><input id="bs" list="spl" placeholder="اسم المورد (أو مورد جديد)">'+
  '<label>رقم الفاتورة</label><input id="bi" maxlength="30" placeholder="اختياري"><div class="ln" style="margin-top:12px;font-size:12px;color:var(--mut)"><span>الصنف</span><span>الكمية</span><span>سعر الشراء</span><span></span></div><div id="bl"></div>'+
- '<button class="btn l" onclick="BL.push({});bl()">+ صنف</button><label>الدفع</label><select id="bp" onchange="$(\\'#bbx\\').hidden=this.value!==\\'cash\\'"><option value="cash">كاش دفعته</option><option value="credit">آجل على المورد</option></select>'+
- '<div id="bbx"><label>اتدفع من</label><select id="bb">'+boxes+'</select></div><p style="margin:12px 0 0;font-weight:800">الإجمالي: <span id="bt">0</span></p>'+
+ '<button class="btn l" onclick="BL.push({});bl()">+ صنف</button><label>الدفع</label><select id="bp" onchange="$(\\'#bbx\\').hidden=this.value!==\\'cash\\'"><option value="cash">نقدًا دفعته</option><option value="credit">آجل على المورد</option></select>'+
+ '<div id="bbx"><label>دُفع من</label><select id="bb">'+boxes+'</select></div><p style="margin:12px 0 0;font-weight:800">الإجمالي: <span id="bt">0</span></p>'+
  '<button class="btn" onclick="doBuy()">سجّل الفاتورة</button><div class="note no" id="be"></div>'+fresh()+'</div>'+cmdList(["purchase"]);bl()}
 function bl(){$("#bl").innerHTML=BL.map((l,i)=>'<div class="ln"><input list="itl" value="'+E(l.n||"")+'" oninput="BL['+i+'].n=this.value;bt()" placeholder="اسم / كود"><input type="number" inputmode="decimal" value="'+E(l.q||"")+'" oninput="BL['+i+'].q=this.value;bt()"><input type="number" inputmode="decimal" value="'+E(l.c||"")+'" oninput="BL['+i+'].c=this.value;bt()"><button onclick="BL.splice('+i+',1);if(!BL.length)BL.push({});bl()">×</button></div>').join("");bt()}
 function bt(){$("#bt").textContent=N(BL.reduce((s,l)=>s+(Number(l.q)||0)*(Number(l.c)||0),0))}
 function findItem(n){n=String(n||"").trim();if(!n||!CAT)return null;return CAT.find(r=>r[1]===n||r[2]===n||r[3]===n)||null}
 function doBuy(){const sn=$("#bs").value.trim();if(!sn){$("#be").textContent="اكتب المورد";return}const sp=(ME.sup||[]).find(s=>s.n===sn);
- const lines=[],news=[];for(const l of BL){if(!l.n&&!l.q)continue;const q=Number(l.q),c=Number(l.c);if(!l.n||!(q>0)||!(c>=0)||l.c===""||l.c==null){$("#be").textContent="كمّل كل سطر: الصنف والكمية والسعر";return}
+ const lines=[],news=[];for(const l of BL){if(!l.n&&!l.q)continue;const q=Number(l.q),c=Number(l.c);if(!l.n||!(q>0)||!(c>=0)||l.c===""||l.c==null){$("#be").textContent="أكمل كل سطر: الصنف والكمية والسعر";return}
   const it=findItem(l.n);if(it)lines.push({item:it[0],qty:String(q),cost:String(c)});else{lines.push({new:l.n,qty:String(q),cost:String(c),sale:""});news.push(l.n)}}
- if(!lines.length){$("#be").textContent="ضيف صنف";return}
- if(news.length&&!confirm("أصناف جديدة هتتضاف للبرنامج من غير سعر بيع: "+news.join("، ")+" — تحدد سعرها بعدين من البرنامج. نكمّل؟"))return;
+ if(!lines.length){$("#be").textContent="أضف صنفًا";return}
+ if(news.length&&!confirm("أصناف جديدة ستُضاف إلى البرنامج بدون سعر بيع: "+news.join("، ")+" — تحدد سعرها لاحقًا من البرنامج. هل نكمل؟"))return;
  const pay=$("#bp").value,total=BL.reduce((s,l)=>s+(Number(l.q)||0)*(Number(l.c)||0),0);
  askPin("فاتورة "+sn+" بـ "+N(total),async pin=>{try{await send("purchase",{supplier:sp?String(sp.i):"",new_supplier:sp?"":sn,sup_name:sn,invoice:$("#bi").value,pay,box:pay==="cash"?$("#bb").value:"",lines,total:N(total)},pin);
   BL=[{}];await refreshMe();$("#v-buy").innerHTML="";CUR="buy";drawBuy()}catch(e){$("#be").textContent=e.message}})}
@@ -574,7 +575,8 @@ function menuPage(rec) {
   const d = rec.d, fmt = (n) => Number(n || 0).toLocaleString("ar-EG", { maximumFractionDigits: 2 });
   const tabs = d.cats.map((c, i) => `<a href="#c${i}">${esc(c.n)}</a>`).join("");
   const secs = d.cats.map((c, i) => `<section id="c${i}"><h2>${esc(c.n)}</h2>${c.items.map((x) =>
-    `<div class="it"><div><b>${esc(x.n)}</b>${x.d ? `<small>${esc(x.d)}</small>` : ""}</div><span>${fmt(x.p)} <i>ج</i></span></div>`).join("")}</section>`).join("");
+    `<div class="it"><div><b>${esc(x.n)}</b>${x.d ? `<small>${esc(x.d)}</small>` : ""}${Array.isArray(x.s) && x.s.length ? `<div class="sz">${x.s.map((z) => `<em>${esc(z[0])} <b>${fmt(z[1])}</b></em>`).join("")}</div>` : ""}</div>${Array.isArray(x.s) && x.s.length ? "" : `<span>${fmt(x.p)} <i>ج</i></span>`}</div>`).join("")}</section>`).join("")
+    + (Array.isArray(d.add) && d.add.length ? `<section id="add"><h2>الإضافات</h2><div class="adds">${d.add.map((a) => `<em>${esc(a.n)} <b>+${fmt(a.p)}</b></em>`).join("")}</div></section>` : "");
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(d.name)} — المنيو</title><meta name="theme-color" content="#0B1F3A"><link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
@@ -585,16 +587,18 @@ nav a{flex:none;padding:6px 14px;border-radius:99px;background:#E3F0F6;color:#0B
 main{max-width:720px;margin:0 auto;padding:6px 14px 30px}h2{margin:22px 0 8px;font-size:19px;color:#0B1F3A;border-bottom:2px solid #3CC2B5;display:inline-block}
 .it{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:12px 14px;margin:8px 0;box-shadow:0 1px 3px #0000000d}
 .it b{font-size:16px}.it small{display:block;color:#66788F;font-size:13px}.it span{font-weight:800;color:#17698F;white-space:nowrap;font-size:17px}.it i{font-style:normal;font-size:13px}
+.sz,.adds{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.sz em,.adds em{font-style:normal;background:#E3F0F6;border-radius:99px;padding:3px 10px;font-size:13px}.sz em b,.adds em b{color:#17698F}
+.adds{background:#fff;border-radius:14px;padding:12px 14px}
 .note{text-align:center;color:#66788F;font-size:13px;margin:20px 0 0}footer{text-align:center;font-size:12px;color:#7F8EA3;padding:16px}footer a{color:#17698F}</style></head><body>
 <header><h1>${esc(d.name)}</h1>${d.address || d.phone ? `<p>${[d.address ? esc(d.address) : "", d.phone ? `<span dir="ltr">${esc(d.phone)}</span>` : ""].filter(Boolean).join(" · ")}</p>` : ""}</header>
-${d.cats.length > 1 ? `<nav>${tabs}</nav>` : ""}<main>${secs || "<p class=note>المنيو بيتجهز…</p>"}
-${d.note ? `<p class="note">${esc(d.note)}</p>` : ""}${d.vat ? `<p class="note">الأسعار قبل ضريبة القيمة المضافة</p>` : ""}</main>
-<footer>المنيو بيتحدّث لوحده من برنامج المحل · <a href="https://trioerp.pages.dev/" rel="noopener">Trio</a></footer></body></html>`;
+${d.cats.length > 1 ? `<nav>${tabs}</nav>` : ""}<main>${secs || "<p class=note>جارٍ تجهيز المنيو…</p>"}
+${d.note ? `<p class="note">${esc(d.note)}</p>` : ""}${d.vat ? `<p class="note">الأسعار لا تشمل ضريبة القيمة المضافة</p>` : ""}</main>
+<footer>يُحدَّث المنيو تلقائيًا من برنامج المطعم · <a href="https://trioerp.pages.dev/" rel="noopener">Trio</a></footer></body></html>`;
 }
 async function menuGet(env, id) {
   if (!/^[0-9a-f]{20}$/.test(id)) return new Response("not found", { status: 404 });
   const v = await env.ACC.get("mn:" + id);
-  if (!v) return new Response("<!doctype html><meta charset=utf-8><p style='font-family:sans-serif;text-align:center;margin-top:40px'>المنيو مش متاح دلوقتي</p>",
+  if (!v) return new Response("<!doctype html><meta charset=utf-8><p style='font-family:sans-serif;text-align:center;margin-top:40px'>المنيو غير متاح الآن</p>",
     { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } });
   return new Response(menuPage(JSON.parse(v)), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=60" } });
 }
@@ -627,7 +631,7 @@ async function ownProg(req, env, url) {
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
   if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "")) return err("طلب ناقص");
   const d = await ownDB(env);
-  if (!d) return err("السيرفر محتاج قاعدة D1", 503);
+  if (!d) return err("الخادم يحتاج إلى قاعدة D1", 503);
   const sid = await sidOf(b.k), p = url.pathname;
   if (p === "/m/pair") {
     if (!HEX64.test(b.ph || "")) return err("طلب ناقص");
@@ -638,7 +642,7 @@ async function ownProg(req, env, url) {
   if (p === "/m/unpair") { await d.prepare("DELETE FROM ophone WHERE ph = ?1 AND sid = ?2").bind(String(b.ph || ""), sid).run(); return json({ ok: true }); }
   if (p === "/m/cat") {
     const items = JSON.stringify(Array.isArray(b.items) ? b.items.slice(0, 5000) : []);
-    if (items.length > 900000) return err("الأصناف كتير", 413);
+    if (items.length > 900000) return err("الأصناف كثيرة", 413);
     await d.prepare("INSERT INTO oaux (sid, cat, at) VALUES (?1, ?2, ?3) ON CONFLICT(sid) DO UPDATE SET cat = ?2").bind(sid, items, iso()).run();
     return json({ ok: true });
   }
@@ -660,10 +664,10 @@ async function ownProg(req, env, url) {
 // --- the owner's phone (/m/<k>/…)
 async function ownPhone(req, env, k, sub) {
   const d = await ownDB(env);
-  if (!d) return err("الميزة دي مش متاحة على السيرفر لسه", 503);
+  if (!d) return err("هذه الميزة غير متاحة على الخادم بعد", 503);
   const sid = await sidOf(k), tok = cookieOf(req, "tp");
   const me = tok ? await d.prepare("SELECT * FROM ophone WHERE sid = ?1 AND tok = ?2").bind(sid, await hexsha("tok:" + tok)).first() : null;
-  if (req.method === "POST" && req.headers.get("X-Trio") !== "1") return err("طلب مش من التطبيق", 403);
+  if (req.method === "POST" && req.headers.get("X-Trio") !== "1") return err("طلب ليس من التطبيق", 403);
   if (sub === "/me") {
     const out = { paired: !!me };
     if (me) {
@@ -677,18 +681,18 @@ async function ownPhone(req, env, k, sub) {
     return json(out);
   }
   if (sub === "/cat") {
-    if (!me) return err("الموبايل مش مربوط", 401);
+    if (!me) return err("الهاتف غير مربوط", 401);
     const a = await d.prepare("SELECT cat FROM oaux WHERE sid = ?1").bind(sid).first();
     return new Response((a && a.cat) || "[]", { headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
   }
-  if (req.method !== "POST") return err("مش موجود", 404);
+  if (req.method !== "POST") return err("غير موجود", 404);
   let b = {};
   try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
   if (sub === "/pair") {
-    if (!HEX64.test(b.ph || "") || !/^\d{4,6}$/.test(b.pin || "")) return err("اكتب الكود ورقم سري من 4 لـ 6 أرقام");
-    if ((await bump(env, "rl:op:" + sid, 3600)) > 12) return err("محاولات كتير — استنى ساعة", 429);
+    if (!HEX64.test(b.ph || "") || !/^\d{4,6}$/.test(b.pin || "")) return err("اكتب الرمز ورقمًا سريًا من 4 إلى 6 أرقام");
+    if ((await bump(env, "rl:op:" + sid, 3600)) > 12) return err("محاولات كثيرة — انتظر ساعة", 429);
     const pr = await d.prepare("SELECT * FROM opair WHERE ph = ?1 AND sid = ?2").bind(b.ph, sid).first();
-    if (!pr || pr.exp < iso()) return err("الكود غلط أو خلص — اعمل كود جديد من البرنامج (الموبايل والتقارير ← اربط موبايلي)");
+    if (!pr || pr.exp < iso()) return err("الكود غير صحيح أو منتهٍ — أنشئ كودًا جديدًا من البرنامج (الموبايل والتقارير ← اربط موبايلي)");
     const t = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "").slice(0, 16), salt = crypto.randomUUID();
     await d.prepare("DELETE FROM opair WHERE ph = ?1").bind(b.ph).run();
     await d.prepare("INSERT OR REPLACE INTO ophone (ph, sid, name, pin, tok, at, seen, fails, lock) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, 0, '')")
@@ -696,7 +700,7 @@ async function ownPhone(req, env, k, sub) {
     return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json; charset=utf-8",
       "Set-Cookie": `tp=${t}; Path=/m/${k}; Max-Age=31536000; HttpOnly; Secure; SameSite=Strict` } });
   }
-  if (!me) return err("الموبايل مش مربوط — اربطه من البرنامج", 401);
+  if (!me) return err("الهاتف غير مربوط — اربطه من البرنامج", 401);
   if (sub === "/unpair") {
     await d.prepare("DELETE FROM ophone WHERE ph = ?1").bind(me.ph).run();
     return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json; charset=utf-8", "Set-Cookie": `tp=x; Path=/m/${k}; Max-Age=0; HttpOnly; Secure; SameSite=Strict` } });
@@ -705,23 +709,23 @@ async function ownPhone(req, env, k, sub) {
     const kinds = { drawing: true, purchase: true, decide: false }; // true: asks for the PIN
     if (!(b.kind in kinds) || !/^[0-9a-f]{20,40}$/.test(b.id || "") || !HEX64.test(b.mac || "") || typeof b.body !== "string" || b.body.length > 20000) return err("طلب ناقص");
     if (kinds[b.kind]) {
-      if (me.lock && me.lock > iso()) return err("الرقم السري اتكتب غلط كذا مرة — استنى ربع ساعة", 429);
+      if (me.lock && me.lock > iso()) return err("كُتب الرقم السري خطأً عدة مرات — انتظر ربع ساعة", 429);
       const [salt, h] = String(me.pin).split(":");
       if ((await hexsha(salt + ":" + String(b.pin || ""))) !== h) {
         const f = (me.fails || 0) + 1;
-        if (f >= 15) { await d.prepare("DELETE FROM ophone WHERE ph = ?1").bind(me.ph).run(); return err("الرقم السري غلط كتير — الموبايل اتفصل، اربطه تاني من البرنامج", 401); }
+        if (f >= 15) { await d.prepare("DELETE FROM ophone WHERE ph = ?1").bind(me.ph).run(); return err("أُدخل الرقم السري خطأً مرات كثيرة — فُصل الهاتف، اربطه مرة أخرى من البرنامج", 401); }
         await d.prepare("UPDATE ophone SET fails = ?1, lock = ?2 WHERE ph = ?3").bind(f, f % 5 === 0 ? new Date(Date.now() + 900000).toISOString() : "", me.ph).run();
-        return err("الرقم السري غلط", 403);
+        return err("الرقم السري غير صحيح", 403);
       }
       if (me.fails) await d.prepare("UPDATE ophone SET fails = 0, lock = '' WHERE ph = ?1").bind(me.ph).run();
     }
-    if ((await bump(env, "rl:oc:" + me.ph, 3600)) > 60) return err("أوامر كتير في ساعة واحدة", 429);
+    if ((await bump(env, "rl:oc:" + me.ph, 3600)) > 60) return err("أوامر كثيرة في ساعة واحدة", 429);
     await d.prepare("INSERT OR IGNORE INTO ocmd (id, sid, ph, kind, body, mac, at, state, res, done) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'new', '', '')")
       .bind(b.id, sid, me.ph, b.kind, b.body, b.mac, iso()).run();
     await d.prepare("INSERT INTO oaux (sid, act) VALUES (?1, ?2) ON CONFLICT(sid) DO UPDATE SET act = ?2").bind(sid, iso()).run();
     return json({ ok: true, id: b.id });
   }
-  return err("مش موجود", 404);
+  return err("غير موجود", 404);
 }
 function cmdSum(kind, body) {
   try {
@@ -777,7 +781,7 @@ const adminEmail = (env) => env.ADMIN_EMAIL || env.MAIL_FROM || "";
 
 async function adminDB(env) {
   const d = await db(env);
-  if (!d) throw new Error("مفيش قاعدة بيانات (D1) مربوطة باسم DB");
+  if (!d) throw new Error("لا توجد قاعدة بيانات (D1) مربوطة باسم DB");
   await d.prepare("CREATE TABLE IF NOT EXISTS admin (k TEXT PRIMARY KEY, v TEXT)").run();
   return d;
 }
@@ -794,6 +798,142 @@ async function asign(env, tag, payload, upd = false) {
   const p = utf8b64u(payload);
   const s = b64u(await crypto.subtle.sign({ name: "Ed25519" }, key, enc.encode(p)));
   return `${tag}.${p}.${s}.` + String(upd ? env.UPDATE_CERT : env.ADMIN_CERT).trim().replace(/^TRIOK\./, "");
+}
+
+
+// ---------------------------------------------------------------- site accounts (1.22): customers, sales reps and who brought whom
+// The site (trioerp.pages.dev) talks to these with a bearer token kept in the browser (no third-party cookies).
+// Reps sign up, Trio approves them from the phone panel with a commission %, and each approved rep gets a link + QR
+// (…/?ref=CODE). Whoever comes through that link and registers / orders / pays is counted for that rep.
+let siteReady = false;
+async function sdb(env) {
+  const d = await db(env);
+  if (!d) throw new Error("لا توجد قاعدة بيانات");
+  if (!siteReady) {
+    await d.batch([
+      d.prepare("CREATE TABLE IF NOT EXISTS su (id TEXT PRIMARY KEY, kind TEXT, name TEXT, phone TEXT, email TEXT, ph TEXT, salt TEXT, shop TEXT, city TEXT, biz TEXT, ref TEXT, status TEXT, rate REAL, code TEXT, created TEXT, last TEXT, note TEXT)"),
+      d.prepare("CREATE UNIQUE INDEX IF NOT EXISTS su_kp ON su (kind, phone)"),
+      d.prepare("CREATE TABLE IF NOT EXISTS slead (id TEXT PRIMARY KEY, uid TEXT, name TEXT, phone TEXT, shop TEXT, biz TEXT, note TEXT, ref TEXT, created TEXT, status TEXT, amount REAL)"),
+      d.prepare("CREATE TABLE IF NOT EXISTS ssale (id TEXT PRIMARY KEY, rep TEXT, who TEXT, amount REAL, rate REAL, commission REAL, src TEXT, at TEXT, note TEXT)"),
+      d.prepare("CREATE TABLE IF NOT EXISTS spay (id TEXT PRIMARY KEY, rep TEXT, amount REAL, at TEXT, note TEXT)"),
+    ]);
+    siteReady = true;
+  }
+  return d;
+}
+const sid6 = () => b64u(crypto.getRandomValues(new Uint8Array(9))).replace(/[^A-Za-z0-9]/g, "x").slice(0, 12);
+const REFRE = /^[A-Z2-9]{6}$/;
+const newRefCode = () => { const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; return [...crypto.getRandomValues(new Uint8Array(6))].map((x) => A[x % A.length]).join(""); };
+async function passHash(pw, salt, env) {
+  const key = await crypto.subtle.importKey("raw", enc.encode(String(pw) + "|" + (env.KEY || "trio")), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: enc.encode(salt), iterations: 20000 }, key, 256);
+  return b64u(new Uint8Array(bits));
+}
+const pubUser = (u) => u && ({ id: u.id, kind: u.kind, name: u.name, phone: u.phone, email: u.email || "", shop: u.shop || "", city: u.city || "", biz: u.biz || "",
+  status: u.status, rate: u.kind === "rep" && u.status === "approved" ? u.rate : undefined, code: u.kind === "rep" && u.status === "approved" ? u.code : undefined, created: u.created });
+async function siteUser(req, env) {
+  const m = /^Bearer\s+([A-Za-z0-9_-]{30,80})$/.exec(req.headers.get("Authorization") || "");
+  if (!m) return null;
+  const id = await env.ACC.get("us:" + (await sha(m[1])));
+  if (!id) return null;
+  return (await sdb(env)).prepare("SELECT * FROM su WHERE id = ?").bind(id).first();
+}
+async function newSession(env, id) {
+  const t = b64u(crypto.getRandomValues(new Uint8Array(30)));
+  await env.ACC.put("us:" + (await sha(t)), id, { expirationTtl: 60 * 86400 });
+  return t;
+}
+const cleanTxt = (v, n) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, " ").trim().slice(0, n);
+const okMail = (v) => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(v || "").trim());
+async function repByCode(d, code) {
+  if (!REFRE.test(String(code || ""))) return null;
+  return d.prepare("SELECT id, name, code FROM su WHERE kind='rep' AND status='approved' AND code = ?").bind(code).first();
+}
+async function siteRoutes(req, env, url) {
+  const ip = req.headers.get("CF-Connecting-IP") || "?";
+  let b = {};
+  if (req.method === "POST") { try { b = await req.json(); } catch (e) { return err("طلب ناقص"); } }
+  const d = await sdb(env);
+  const path = url.pathname.slice(5);
+  if (path === "/register" && req.method === "POST") {
+    if ((await bump(env, "rl:reg:" + ip, 3600)) > 8) return err("محاولات كثيرة — انتظر ساعة", 429);
+    const kind = b.kind === "rep" ? "rep" : "customer";
+    const name = cleanTxt(b.name, 80), phone = digits(b.phone).slice(-11), pw = String(b.password || "");
+    if (name.length < 2) return err("اكتب الاسم");
+    if (!/^01\d{9}$/.test(phone)) return err("اكتب رقم هاتف مصري صحيح (11 رقمًا يبدأ بـ 01)");
+    if (pw.length < 8) return err("كلمة السر 8 أحرف على الأقل");
+    if (b.email && !okMail(b.email)) return err("البريد الإلكتروني غير صحيح");
+    if (await d.prepare("SELECT id FROM su WHERE kind = ? AND phone = ?").bind(kind, phone).first()) return err("هذا الرقم مسجّل بالفعل — سجّل الدخول");
+    const ref = kind === "customer" ? (await repByCode(d, String(b.ref || "").toUpperCase())) : null;
+    const id = (kind === "rep" ? "R" : "C") + sid6(), salt = sid6();
+    await d.prepare("INSERT INTO su (id, kind, name, phone, email, ph, salt, shop, city, biz, ref, status, rate, code, created, last, note) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?15,?16)")
+      .bind(id, kind, name, phone, okMail(b.email) ? String(b.email).trim().slice(0, 120) : "", await passHash(pw, salt, env), salt, cleanTxt(b.shop, 100), cleanTxt(b.city, 60),
+        cleanTxt(b.biz, 60), ref ? ref.id : "", kind === "rep" ? "pending" : "active", kind === "rep" ? 0 : null, null, iso(), cleanTxt(b.note, 300)).run();
+    if (kind === "rep") { try { await mail(env, [adminEmail(env)], "Trio: مندوب جديد بانتظار الموافقة — " + name, `سجّل ${name} (${phone}) كمندوب على الموقع.\nوافق عليه وحدد عمولته من لوحة التحكم ← المناديب.`, "Trio"); } catch (e) { /* */ } }
+    const u = await d.prepare("SELECT * FROM su WHERE id = ?").bind(id).first();
+    return json({ ok: true, token: await newSession(env, id), user: pubUser(u), ref: ref ? ref.name : "" });
+  }
+  if (path === "/login" && req.method === "POST") {
+    const phone = digits(b.phone).slice(-11), kind = b.kind === "rep" ? "rep" : "customer";
+    if ((await bump(env, "rl:login:" + ip, 900)) > 12 || (await bump(env, "rl:loginp:" + phone, 900)) > 8) return err("محاولات كثيرة — انتظر ربع ساعة", 429);
+    const u = await d.prepare("SELECT * FROM su WHERE kind = ? AND phone = ?").bind(kind, phone).first();
+    if (!u || (await passHash(String(b.password || ""), u.salt, env)) !== u.ph) return err("رقم الهاتف أو كلمة السر غير صحيحة", 403);
+    if (u.status === "blocked") return err("هذا الحساب موقوف — تواصل مع Trio", 403);
+    await d.prepare("UPDATE su SET last = ? WHERE id = ?").bind(iso(), u.id).run();
+    return json({ ok: true, token: await newSession(env, u.id), user: pubUser(u) });
+  }
+  if (path === "/logout" && req.method === "POST") {
+    const m = /^Bearer\s+([A-Za-z0-9_-]{30,80})$/.exec(req.headers.get("Authorization") || "");
+    if (m) await env.ACC.delete("us:" + (await sha(m[1])));
+    return json({ ok: true });
+  }
+  if (path === "/ref" && req.method === "GET") { // who is this link from (shown on the site: «جئت عن طريق …»)
+    const r = await repByCode(d, String(url.searchParams.get("c") || "").toUpperCase());
+    return json(r ? { ok: true, name: r.name } : { ok: false });
+  }
+  if (path === "/lead" && req.method === "POST") { // an order / request from the site (WhatsApp now; online payment later)
+    if ((await bump(env, "rl:lead:" + ip, 3600)) > 20) return err("طلبات كثيرة — انتظر ساعة", 429);
+    const u = await siteUser(req, env).catch(() => null);
+    const phone = digits(b.phone || (u && u.phone)).slice(-11);
+    if (!/^01\d{9}$/.test(phone)) return err("اكتب رقم هاتف صحيح");
+    const ref = (await repByCode(d, String(b.ref || "").toUpperCase())) || (u && u.ref ? { id: u.ref } : null);
+    const id = "L" + sid6();
+    await d.prepare("INSERT INTO slead (id, uid, name, phone, shop, biz, note, ref, created, status, amount) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,'new',0)")
+      .bind(id, u ? u.id : "", cleanTxt(b.name || (u && u.name), 80), phone, cleanTxt(b.shop || (u && u.shop), 100), cleanTxt(b.biz, 80), cleanTxt(b.note, 500), ref ? ref.id : "", iso()).run();
+    return json({ ok: true, id });
+  }
+  const u = await siteUser(req, env);
+  if (!u) return err("سجّل الدخول أولًا", 401);
+  if (path === "/me" && req.method === "GET") {
+    const out = { ok: true, user: pubUser(u) };
+    out.leads = (await d.prepare("SELECT id, shop, biz, created, status FROM slead WHERE uid = ? ORDER BY created DESC LIMIT 20").bind(u.id).all()).results || [];
+    if (u.kind === "rep" && u.status === "approved") out.rep = await repStats(d, u);
+    return json(out);
+  }
+  if (path === "/me" && req.method === "POST") {
+    const name = cleanTxt(b.name, 80) || u.name;
+    if (b.email && !okMail(b.email)) return err("البريد الإلكتروني غير صحيح");
+    await d.prepare("UPDATE su SET name = ?, email = ?, shop = ?, city = ?, biz = ? WHERE id = ?")
+      .bind(name, okMail(b.email) ? String(b.email).trim().slice(0, 120) : "", cleanTxt(b.shop, 100), cleanTxt(b.city, 60), cleanTxt(b.biz, 60), u.id).run();
+    if (b.new_password) {
+      if (String(b.new_password).length < 8) return err("كلمة السر الجديدة 8 أحرف على الأقل");
+      if ((await passHash(String(b.password || ""), u.salt, env)) !== u.ph) return err("كلمة السر الحالية غير صحيحة", 403);
+      const salt = sid6();
+      await d.prepare("UPDATE su SET ph = ?, salt = ? WHERE id = ?").bind(await passHash(String(b.new_password), salt, env), salt, u.id).run();
+    }
+    return json({ ok: true, user: pubUser(await d.prepare("SELECT * FROM su WHERE id = ?").bind(u.id).first()) });
+  }
+  return err("غير موجود", 404);
+}
+async function repStats(d, r) {
+  const custs = (await d.prepare("SELECT id, name, phone, shop, city, created FROM su WHERE kind='customer' AND ref = ? ORDER BY created DESC").bind(r.id).all()).results || [];
+  const leads = (await d.prepare("SELECT id, name, phone, shop, created, status, amount FROM slead WHERE ref = ? ORDER BY created DESC").bind(r.id).all()).results || [];
+  const sales = (await d.prepare("SELECT id, who, amount, rate, commission, src, at, note FROM ssale WHERE rep = ? ORDER BY at DESC").bind(r.id).all()).results || [];
+  const pays = (await d.prepare("SELECT id, amount, at, note FROM spay WHERE rep = ? ORDER BY at DESC").bind(r.id).all()).results || [];
+  const earned = sales.reduce((s, x) => s + (x.commission || 0), 0), paid = pays.reduce((s, x) => s + (x.amount || 0), 0);
+  const mask = (p) => String(p || "").replace(/^(\d{3})\d+(\d{2})$/, "$1•••••$2");
+  return { code: r.code, rate: r.rate, customers: custs.map((c) => ({ ...c, phone: mask(c.phone) })), leads: leads.map((l) => ({ ...l, phone: mask(l.phone) })),
+    sales, pays, earned: Math.round(earned * 100) / 100, paid: Math.round(paid * 100) / 100, due: Math.round((earned - paid) * 100) / 100 };
 }
 
 // ---------------------------------------------------------------- releases from the phone (update key; clients wait 2 hours)
@@ -821,43 +961,88 @@ async function updatesPage(env, st, tok, msg = "", errText = "") {
   let rels = [], e2 = "";
   try { rels = (await ghReleases(env, st)).filter((r) => verGt(r.v, cur)); } catch (e) { e2 = String(e.message || e); }
   const otp = await env.ACC.get("uotp");
-  const f = (a, inner, cls = "btn") => `<form method="post"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}">${inner}</form>`;
-  return apage("التحديثات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText || e2 ? `<div class="err">${esc(errText || e2)}</div>` : ""}<h1>⬆ التحديثات</h1>
-<div class="card"><h2>المنشور دلوقتي</h2><p><b dir="ltr">${esc(cur || "—")}</b>${st.lines?.relFrom === "phone" ? ' <span class="tag warn">من الموبايل</span>' : ""}</p>
-${st.lines?.prevRelease !== undefined && st.lines?.relFrom === "phone" ? f("undo", `<p class="muted">لو النشر ده مش انت اللي عامله أو فيه مشكلة: رجّع اللي قبله (العملاء اللي لسه ماسطّبوش مش هياخدوه).</p><button class="btn red" onclick="return confirm('ترجع للإصدار اللي قبله؟')">تراجع عن النشر</button>`) : ""}</div>
-${!ready ? `<div class="card"><p class="muted">النشر من الموبايل محتاج «مفتاح النشر»: من Trio License ← «📱 من الموبايل» ← رقم 4 ← اعمل مفتاح النشر، وحط UPDATE_KEY و UPDATE_CERT في الـ Worker.</p></div>` :
-  rels.length ? rels.map((r) => `<div class="card"><h2>إصدار <span dir="ltr">${esc(r.v)}</span> جاهز</h2><p class="muted" style="white-space:pre-line">${esc(r.notes)}</p><p class="muted">${(r.n / 1048576).toFixed(1)} ميجا</p>
-${otp ? f("go", `<input type="hidden" name="v" value="${esc(r.v)}"><label>كود النشر اللي وصلك على الإيميل<input name="code" inputmode="numeric" maxlength="6" required></label><button class="btn">انشر ${esc(r.v)} للعملاء</button>`)
-      : f("code", `<button class="btn">ابعتلي كود النشر</button>`)}
-<p class="muted">بعد النشر العملاء بيستنوا ساعتين قبل ما يسطّبوا — ويوصلك إيميل بالنشر.</p></div>`).join("")
-  : `<div class="card"><p class="muted">مفيش إصدار أحدث من المنشور على GitHub. أول ما Trio يرفع إصدار جديد هيظهر هنا.</p></div>`}`, "/settings");
+  const f = (a, inner) => `<form method="post" action="/admin/updates"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}">${inner}</form>`;
+  const js = `const tok=${JSON.stringify(tok)},inp=document.getElementById("zf"),go=document.getElementById("up"),bar=document.querySelector("#pg i"),info=document.getElementById("upi");
+function say(t,bad){info.textContent=t;info.className=bad?"err":"msg";info.style.display="block"}
+inp&&(inp.onchange=()=>{const f=inp.files[0];if(!f)return;document.getElementById("fn").textContent=f.name+" — "+(f.size/1048576).toFixed(1)+" ميجابايت";go.disabled=false});
+go&&(go.onclick=async()=>{const f=inp.files[0];if(!f)return;if(!/\\.zip$/i.test(f.name)){say("اختر ملف التحديث بصيغة zip",1);return}if(f.size>60*1048576){say("الملف أكبر من 60 ميجابايت — هل اخترت ملف التحميل الكامل؟ ارفع ملف التحديث",1);return}
+go.disabled=true;say("جارٍ تجهيز الملف…");const b64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=no;r.readAsDataURL(f)});
+const name="up-"+Date.now();const body=new Blob(['{"message":"Trio: تحديث مرفوع من الهاتف","content":"',b64,'"}']);
+const x=new XMLHttpRequest();x.open("POST","/admin/upload?n="+name);x.setRequestHeader("X-CSRF",tok);x.setRequestHeader("Content-Type","application/json");
+x.upload.onprogress=e=>{if(e.lengthComputable){bar.style.width=Math.round(e.loaded/e.total*100)+"%";say("جارٍ الرفع… "+Math.round(e.loaded/e.total*100)+"%")}};
+x.onload=()=>{let j={};try{j=JSON.parse(x.responseText)}catch(e){}if(x.status!==200||!j.ok){say(j.error||("تعذّر الرفع ("+x.status+")"),1);go.disabled=false;return}bar.style.width="100%";say("تم الرفع ✔ — يجهّز GitHub الإصدار الآن (دقيقة إلى دقيقتين)…");poll(name,0)};
+x.onerror=()=>{say("انقطع الاتصال أثناء الرفع — حاول مرة أخرى",1);go.disabled=false};x.send(body)});
+async function poll(n,i){const r=await fetch("/admin/upload/status?n="+n,{headers:{"X-CSRF":tok}}).then(r=>r.json()).catch(()=>({}));
+if(r.state==="done"){say("الإصدار "+r.v+" جاهز للنشر ✔ — جارٍ تحديث الصفحة…");setTimeout(()=>location.reload(),1500);return}
+if(r.state==="error"){say(r.msg||"تعذّر تجهيز الإصدار",1);go.disabled=false;return}
+if(i>40){say("يستغرق التجهيز وقتًا أطول من المعتاد — حدّث الصفحة بعد قليل",1);return}setTimeout(()=>poll(n,i+1),8000)}`;
+  return apage("التحديثات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText || e2 ? `<div class="err">${esc(errText || e2)}</div>` : ""}<h1>⬆️ التحديثات</h1>
+<div class="card hero"><h2>الإصدار المنشور للعملاء</h2><p style="font-size:26px;font-weight:800;margin:0" dir="ltr">${esc(cur || "—")}</p>${st.lines?.relFrom === "phone" ? '<p class="muted" style="margin:4px 0 0">نُشر من الهاتف</p>' : ""}</div>
+<div class="card"><h2>📦 رفع تحديث من الهاتف</h2><p class="muted">نزّل ملف «Trio - تحديث … (كامل).zip» على هاتفك ثم اختره هنا. يُجهَّز الإصدار تلقائيًا (تُحذف منه نسخة Trio License المشفرة، وتُحدَّث نسخة التحميل الكاملة)، ثم يظهر في الأسفل لتنشره.</p>
+<label class="drop"><span style="font-size:30px">🗂️</span><b>اختر ملف التحديث</b><span id="fn">zip — حتى 60 ميجابايت</span><input type="file" id="zf" accept=".zip,application/zip" style="display:none"></label>
+<button class="btn" id="up" disabled>⬆️ ارفع</button><div class="prog" id="pg"><i></i></div><div id="upi" style="display:none;margin-top:10px"></div></div>
+${!ready ? `<div class="card"><p class="muted">النشر من الهاتف يحتاج إلى «مفتاح النشر»: من Trio License ← «📱 من الموبايل» ← رقم 4 ← أنشئ مفتاح النشر، وضع UPDATE_KEY و UPDATE_CERT في الـ Worker.</p></div>` :
+  rels.length ? rels.map((r) => `<div class="card"><h2>🆕 إصدار <span dir="ltr">${esc(r.v)}</span> جاهز للنشر</h2><p class="muted" style="white-space:pre-line">${esc(r.notes)}</p><p class="muted">${(r.n / 1048576).toFixed(1)} ميجابايت</p>
+${otp ? f("go", `<input type="hidden" name="v" value="${esc(r.v)}"><label>رمز النشر الذي وصلك على البريد</label><input name="code" inputmode="numeric" maxlength="6" required style="font-size:22px;text-align:center;letter-spacing:6px;direction:ltr"><button class="btn">🚀 انشر ${esc(r.v)} لكل العملاء</button>`)
+      : f("code", `<button class="btn">أرسل لي رمز النشر</button>`)}
+<p class="muted">بعد النشر ينتظر العملاء ساعتين ثم يُثبَّت التحديث (ليلًا أو فورًا بزر «حدّث الآن»)، ويصلك بريد بالنشر.</p></div>`).join("")
+  : `<div class="card"><p class="muted">لا يوجد إصدار أحدث من المنشور. ارفع ملف التحديث من الأعلى، أو من Trio License على الكمبيوتر.</p></div>`}
+${st.lines?.prevRelease !== undefined && st.lines?.relFrom === "phone" ? `<details class="card"><summary>↩️ التراجع عن آخر نشر</summary>${f("undo", `<p class="muted">إن لم تكن أنت من نشر، أو ظهرت مشكلة: أعد الإصدار السابق (العملاء الذين لم يُثبّتوه بعد لن يأخذوه).</p><button class="btn red" onclick="return confirm('هل تريد الرجوع إلى الإصدار السابق؟')">تراجع عن النشر</button>`)}</details>` : ""}`, "/updates", js);
+}
+async function uploadRoute(req, env, st, tok, url) {
+  if (req.headers.get("X-CSRF") !== tok) return err("طلب غير صحيح", 403);
+  const n = String(url.searchParams.get("n") || "");
+  if (!/^up-\d{10,16}$/.test(n)) return err("اسم غير صحيح");
+  const g = st.gh || {};
+  if (!env.GH_TOKEN || !g.Owner || !g.Repo) return err("ناقص GH_TOKEN أو بيانات GitHub");
+  const h = { Authorization: "Bearer " + env.GH_TOKEN, "User-Agent": "Trio", Accept: "application/vnd.github+json" };
+  const api = `${env.GH_API || "https://api.github.com"}/repos/${g.Owner}/${g.Repo}/contents/incoming/`;
+  if (url.pathname.endsWith("/status")) {
+    for (const [ext, state] of [[".done", "done"], [".err", "error"]]) {
+      const r = await fetch(api + n + ext + "?ref=" + encodeURIComponent(g.Branch || "main") + "&t=" + Date.now(), { headers: h });
+      if (r.ok) { const j = await r.json(); const txt = new TextDecoder().decode(Uint8Array.from(atob(String(j.content || "").replace(/\s/g, "")), (c) => c.charCodeAt(0))).trim();
+        return json(state === "done" ? { state, v: txt } : { state, msg: txt }); }
+    }
+    return json({ state: "waiting" });
+  }
+  if (req.method !== "POST") return err("POST فقط", 405);
+  const len = Number(req.headers.get("Content-Length") || 0);
+  if (len > 95 * 1048576) return err("الملف كبير جدًا", 413);
+  // the browser already wrapped the file as GitHub wants it ({message, content: base64}); it streams through as is
+  if (!len) return err("حجم الطلب غير معروف", 411);
+  const { readable, writable } = new FixedLengthStream(len);
+  req.body.pipeTo(writable);
+  const r = await fetch(api + n + ".zip", { method: "PUT", headers: { ...h, "Content-Type": "application/json" }, body: readable });
+  if (!r.ok) return err("GitHub رفض الرفع (" + r.status + ") " + (await r.text()).slice(0, 120), 502);
+  try { await mail(env, [adminEmail(env)], "Trio: رُفع ملف تحديث من الهاتف", `رُفع ملف تحديث من لوحة الهاتف (${cairo()}). يُجهَّز الآن على GitHub، ولن يُنشر للعملاء إلا بعد إدخال رمز النشر.`, "Trio"); } catch (e) { /* */ }
+  return json({ ok: true });
 }
 async function updatesAct(env, st, f) {
   if (f.a === "undo") {
-    if (st.lines?.relFrom !== "phone") throw new Error("مفيش نشر من الموبايل ترجع عنه");
+    if (st.lines?.relFrom !== "phone") throw new Error("لا يوجد نشر من الهاتف للتراجع عنه");
     st.lines.release = st.lines.prevRelease || ""; st.lines.relFrom = "undo"; delete st.lines.prevRelease;
     await bumpRev(st); await publish(env, st, "تراجع عن نشر إصدار"); await stPut(env, st);
-    try { await mail(env, [adminEmail(env)], "Trio: اتعمل تراجع عن نشر إصدار", "اتعمل تراجع عن آخر إصدار اتنشر من الموبايل. المنشور دلوقتي: " + (relVer(st.lines.release) || "—"), "Trio"); } catch (e) { /* */ }
-    return "اترجع ✔ — المنشور دلوقتي " + (relVer(st.lines.release) || "—");
+    try { await mail(env, [adminEmail(env)], "Trio: تم التراجع عن نشر إصدار", "تم التراجع عن آخر إصدار نُشر من الهاتف. المنشور الآن: " + (relVer(st.lines.release) || "—"), "Trio"); } catch (e) { /* */ }
+    return "تم التراجع ✔ — المنشور الآن " + (relVer(st.lines.release) || "—");
   }
   if (!env.UPDATE_KEY || !env.UPDATE_CERT) throw new Error("ناقص مفتاح النشر في الـ Worker");
   if (f.a === "code") {
-    if ((await bump(env, "rl:uotp", 3600)) > 5) throw new Error("طلبت أكواد كتير — استنى ساعة");
+    if ((await bump(env, "rl:uotp", 3600)) > 5) throw new Error("طلبت رموزًا كثيرة — انتظر ساعة");
     const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 900000 + 100000);
     await env.ACC.put("uotp", JSON.stringify({ h: await sha(code + env.KEY), n: 0 }), { expirationTtl: 600 });
-    await mail(env, [adminEmail(env)], "كود نشر تحديث Trio: " + code, `حد طلب ينشر تحديث للبرنامج عند كل العملاء من لوحة الموبايل.\nالكود: ${code} (صالح 10 دقايق)\nلو مش انت: ماتدخلش الكود، وغيّر باسورد الإيميل وCloudflare، واقفل «مفتاح النشر» من Trio License.`, "Trio");
-    return "الكود اتبعت على " + adminEmail(env);
+    await mail(env, [adminEmail(env)], "كود نشر تحديث Trio: " + code, `طلب أحدهم نشر تحديث للبرنامج لدى كل العملاء من لوحة الهاتف.\nالرمز: ${code} (صالح 10 دقائق)\nإن لم تكن أنت: لا تُدخل الرمز، وغيّر كلمة سر البريد وCloudflare، وأغلق «مفتاح النشر» من Trio License.`, "Trio");
+    return "أُرسل الرمز إلى " + adminEmail(env);
   }
   if (f.a === "go") {
     const o = JSON.parse((await env.ACC.get("uotp")) || "null");
-    if (!o) throw new Error("الكود خلص — اطلب كود جديد");
+    if (!o) throw new Error("انتهت صلاحية الرمز — اطلب رمزًا جديدًا");
     if ((await sha(String(f.code || "").trim() + env.KEY)) !== o.h) {
       o.n++; if (o.n >= 5) await env.ACC.delete("uotp"); else await env.ACC.put("uotp", JSON.stringify(o), { expirationTtl: 600 });
-      throw new Error("الكود غلط");
+      throw new Error("الرمز غير صحيح");
     }
     await env.ACC.delete("uotp");
     const r = (await ghReleases(env, st)).find((x) => x.v === String(f.v || ""));
-    if (!r) throw new Error("الإصدار ده مش موجود على GitHub");
+    if (!r) throw new Error("هذا الإصدار غير موجود على GitHub");
     if (!verGt(r.v, relVer(st.lines?.release))) throw new Error("فيه إصدار أحدث منه منشور");
     const t = new Date().toISOString().replace(/\.\d+Z$/, "Z");
     st.lines = st.lines || {};
@@ -865,10 +1050,10 @@ async function updatesAct(env, st, f) {
     st.lines.release = await asign(env, "TRIOUP", { v: r.v, notes: r.notes, sha: r.sha, n: r.n, to: "*", u: r.u, t }, true);
     st.lines.relFrom = "phone";
     await bumpRev(st); await publish(env, st, "نشر إصدار " + r.v + " من الموبايل"); await stPut(env, st);
-    try { await mail(env, [adminEmail(env)], "Trio: اتنشر إصدار " + r.v + " من الموبايل", `اتنشر إصدار ${r.v} لكل العملاء من لوحة الموبايل (${cairo()}).\nالعملاء هيسطّبوه بعد ساعتين.\nلو مش انت: افتح لوحة الموبايل ← الإعدادات ← التحديثات ← «تراجع عن النشر»، واقفل «مفتاح النشر» من Trio License.`, "Trio"); } catch (e) { /* */ }
-    return "اتنشر " + r.v + " ✔ — العملاء هيسطّبوه بعد ساعتين، ووصلك إيميل بالنشر";
+    try { await mail(env, [adminEmail(env)], "Trio: نُشر الإصدار " + r.v + " من الهاتف", `نُشر الإصدار ${r.v} لكل العملاء من لوحة الهاتف (${cairo()}).\nسيثبّته العملاء بعد ساعتين.\nإن لم تكن أنت: افتح لوحة الهاتف ← التحديثات ← «تراجع عن النشر»، وأغلق «مفتاح النشر» من Trio License.`, "Trio"); } catch (e) { /* */ }
+    return "نُشر " + r.v + " ✔ — سيثبّته العملاء بعد ساعتين، ووصلك بريد بالنشر";
   }
-  throw new Error("طلب غلط");
+  throw new Error("طلب غير صحيح");
 }
 
 // ---------------------------------------------------------------- the command channel (same lines as Trio License)
@@ -913,7 +1098,7 @@ async function orderCode(env, c, lic) {
   return asign(env, "TRIOM", p);
 }
 const note = (c, s) => { c.Updated = cairo(); c.Log = [c.Updated + " — " + s, ...(c.Log || [])].slice(0, 60); };
-const licText = (c) => (c.Lifetime ? "مدى الحياة" : c.Expires ? "لحد " + c.Expires : "لسه مفيش رخصة");
+const licText = (c) => (c.Lifetime ? "مدى الحياة" : c.Expires ? "حتى " + c.Expires : "لا توجد رخصة بعد");
 const expired = (c) => !c.Lifetime && c.Expires && c.Expires < today();
 
 // ---------------------------------------------------------------- login: a code to Trio's e-mail, then a 7-day session
@@ -924,37 +1109,59 @@ async function session(req, env) {
 }
 const csrf = async (sid) => (await sha("csrf:" + sid)).slice(0, 24);
 
-const ACSS = `*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Segoe UI",Tahoma,sans-serif;background:#F3F6FA;color:#0B1F3A;font-size:16px;padding-bottom:84px}
-header{background:linear-gradient(100deg,#062A4F,#0C4A76 55%,#17698F);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5;box-shadow:0 2px 12px rgba(3,21,43,.3);border-bottom:3px solid #3CC2B5}
-header img{width:30px;height:30px;border-radius:8px}header b{font-size:18px}header small{display:block;color:#9BEDE3;font-size:12px}
-main{max-width:720px;margin:0 auto;padding:14px}h1{font-size:21px;margin:6px 0 12px}h2{font-size:17px;margin:0 0 10px}
-.card{background:#fff;border:1px solid #DFE6EF;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(10,31,58,.05)}
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.kpi{background:#fff;border:1px solid #DFE6EF;border-radius:14px;padding:12px;border-inline-start:4px solid #3CC2B5}
-.kpi b{display:block;font-size:24px}.kpi span{color:#58697F;font-size:13px}.kpi.hero{background:linear-gradient(135deg,#17698F,#0A3A66);color:#fff;border:0}.kpi.hero span{color:#CFE0EC}
-label{display:block;font-size:13px;color:#58697F;margin:10px 0 4px}input,select,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid #DFE6EF;border-radius:12px;background:#fff;color:#0B1F3A}
-input:focus,select:focus,textarea:focus{outline:2px solid rgba(23,105,143,.25);border-color:#17698F}
-.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:700;background:#17698F;color:#fff;text-decoration:none;cursor:pointer;width:100%;margin-top:12px}
-.btn.alt{background:#E3F0F6;color:#0C4A76}.btn.red{background:#B42318}.btn.aq{background:#3CC2B5;color:#04213F}.row{display:flex;gap:8px}.row>*{flex:1}
-.list a{display:flex;justify-content:space-between;gap:10px;padding:12px 4px;border-bottom:1px solid #EDF2F7;color:inherit;text-decoration:none}.list a:last-child{border-0}
-.list small,.muted{color:#58697F;font-size:13px}.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:20px;background:#E3F0F6;color:#0C4A76;margin-inline-start:4px}
-.tag.red{background:#FDE8E7;color:#B42318}.tag.ok{background:#E0F6F3;color:#0F7A5C}.tag.warn{background:#FFF4E2;color:#9A5B07}
-.msg{background:#E0F6F3;color:#0F5E49;border-radius:12px;padding:10px 12px;margin-bottom:12px}.err{background:#FDE8E7;color:#B42318;border-radius:12px;padding:10px 12px;margin-bottom:12px}
+const ACSS = `*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--ink:#0B1F3A;--muted:#5B6B80;--line:#E2E8F0;--bg:#EEF3F8;--card:#fff;--brand:#0E5E88;--brand2:#3CC2B5;--navy:#062A4F;--red:#C0362C;--amber:#B7791F;--green:#0F7A5C}
+body{margin:0;font-family:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;padding-bottom:92px}
+header{background:radial-gradient(120% 140% at 100% 0,#1A7FA8 0,#0C4A76 45%,#062A4F 100%);color:#fff;padding:16px 16px 54px;position:relative}
+header .top{display:flex;align-items:center;gap:10px;max-width:760px;margin:0 auto}header img{width:36px;height:36px;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+header b{font-family:Alexandria,system-ui,sans-serif;font-size:19px;letter-spacing:.3px}header small{display:block;color:#A9F0E7;font-size:12px}
+header .who{margin-inline-start:auto;font-size:12px;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:99px}
+main{max-width:760px;margin:-40px auto 0;padding:0 14px;position:relative}
+h1{font-family:Alexandria,system-ui,sans-serif;font-size:21px;margin:8px 2px 14px}h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 6px 22px rgba(11,31,58,.06)}
+.hero{background:linear-gradient(135deg,#0E5E88,#0A3A66);color:#fff;border:0}.hero .muted{color:#CFE4F1}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}@media(min-width:560px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--card);border-radius:18px;padding:14px;box-shadow:0 6px 22px rgba(11,31,58,.07);position:relative;overflow:hidden}
+.kpi i{font-style:normal;font-size:20px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#E6F4F8;margin-bottom:8px}
+.kpi b{display:block;font-family:Alexandria,system-ui;font-size:24px;line-height:1.1}.kpi span{color:var(--muted);font-size:12.5px}
+.kpi.a i{background:#E0F6F3}.kpi.b i{background:#FFF1DE}.kpi.c i{background:#FDE8E7}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.tile{background:var(--card);border-radius:18px;padding:14px 8px;text-align:center;color:var(--ink);text-decoration:none;font-size:13px;font-weight:600;box-shadow:0 6px 22px rgba(11,31,58,.06)}
+.tile i{display:block;font-style:normal;font-size:26px;margin-bottom:4px}
+.bars .bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}.bars .bar span:first-child{width:62px;direction:ltr;text-align:right}
+.bars .bar div{flex:1;background:#EDF2F7;border-radius:99px;height:10px;overflow:hidden}.bars .bar div i{display:block;height:100%;background:linear-gradient(90deg,#3CC2B5,#0E5E88);border-radius:99px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}input,select,textarea{width:100%;font:inherit;padding:12px 13px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(14,94,136,.18);border-color:var(--brand)}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;border:0;border-radius:14px;padding:13px 16px;font:inherit;font-weight:700;background:var(--brand);color:#fff;text-decoration:none;cursor:pointer;width:100%;margin-top:12px}
+.btn.alt{background:#E6F2F8;color:#0C4A76}.btn.red{background:var(--red)}.btn.aq{background:var(--brand2);color:#04213F}.btn.sm{width:auto;padding:8px 12px;margin:0;font-size:14px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.list a,.list .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px;border-bottom:1px solid #EEF2F6;color:inherit;text-decoration:none}.list>:last-child{border-bottom:0}
+.av{width:38px;height:38px;border-radius:12px;background:#E6F2F8;color:#0C4A76;display:grid;place-items:center;font-weight:700;flex:none}
+.list small,.muted{color:var(--muted);font-size:13px}.tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;background:#E6F2F8;color:#0C4A76;margin-inline-start:4px;font-weight:600}
+.tag.red{background:#FDE8E7;color:var(--red)}.tag.ok{background:#E0F6F3;color:var(--green)}.tag.warn{background:#FFF4E2;color:#9A5B07}
+.msg{background:#E0F6F3;color:#0F5E49;border-radius:14px;padding:11px 13px;margin-bottom:12px}.err{background:#FDE8E7;color:var(--red);border-radius:14px;padding:11px 13px;margin-bottom:12px}
 .code{direction:ltr;text-align:left;font:13px/1.5 ui-monospace,Consolas,monospace;word-break:break-all;background:#F5F8FB;border:1px dashed #9DBDD6;border-radius:12px;padding:10px;max-height:150px;overflow:auto}
-.mods{display:grid;grid-template-columns:1fr;gap:2px}.mods label{display:flex;gap:8px;align-items:center;color:#0B1F3A;font-size:15px;margin:0;padding:6px 2px}.mods input{width:20px;height:20px}
-nav.tabs{position:fixed;bottom:0;inset-inline:0;background:#fff;border-top:1px solid #DFE6EF;display:flex;justify-content:space-around;padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:9}
-nav.tabs a{flex:1;text-align:center;color:#58697F;text-decoration:none;font-size:11px;padding:4px 0}nav.tabs a i{display:block;font-style:normal;font-size:22px}nav.tabs a.on{color:#17698F;font-weight:700}
-details summary{cursor:pointer;font-weight:700;color:#0C4A76}dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0}dt{color:#58697F}dd{margin:0}
-@media (prefers-color-scheme:dark){body{background:#07111E;color:#E6EEF8}.card,.kpi,nav.tabs,input,select,textarea{background:#0F1C2E;border-color:#1F3350;color:#E6EEF8}
-.list a{border-color:#16263C}.muted,.list small,dt,label{color:#9FB2C8}.mods label{color:#E6EEF8}.code{background:#0B1F3A;border-color:#1F3350}.btn.alt{background:#11283F;color:#8AD6E0}}`;
+.mods{display:grid;grid-template-columns:1fr;gap:2px}.mods label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:15px;margin:0;padding:6px 2px}.mods input{width:20px;height:20px}
+nav.tabs{position:fixed;bottom:10px;inset-inline:10px;max-width:740px;margin:0 auto;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:22px;display:flex;justify-content:space-around;padding:6px 4px;z-index:9;box-shadow:0 10px 30px rgba(11,31,58,.15)}
+nav.tabs a{flex:1;text-align:center;color:var(--muted);text-decoration:none;font-size:11px;padding:4px 0;border-radius:16px;position:relative}nav.tabs a i{display:block;font-style:normal;font-size:21px}
+nav.tabs a.on{color:var(--brand);font-weight:700;background:#E6F2F8}nav.tabs a em{position:absolute;top:0;inset-inline-end:18%;background:var(--red);color:#fff;font-style:normal;font-size:10px;border-radius:99px;padding:0 5px}
+details summary{cursor:pointer;font-weight:700;color:#0C4A76;list-style:none}details summary::before{content:"◂ ";color:#9DBDD6}details[open] summary::before{content:"▾ "}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0}dt{color:var(--muted)}dd{margin:0}
+.prog{height:10px;background:#EDF2F7;border-radius:99px;overflow:hidden;margin-top:10px}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3CC2B5,#0E5E88);transition:width .3s}
+.drop{border:2px dashed #9DBDD6;border-radius:18px;padding:22px;text-align:center;color:var(--muted);background:#F8FBFD}.drop b{color:var(--ink);display:block;font-size:17px;margin:6px 0}
+@media (prefers-color-scheme:dark){:root{--ink:#E6EEF8;--muted:#9FB2C8;--line:#1F3350;--bg:#07111E;--card:#0F1C2E}input,select,textarea{background:#0B1727;color:var(--ink)}
+.list a,.list .it{border-color:#16263C}.code{background:#0B1F3A;border-color:#1F3350}.btn.alt,.av,.kpi i,nav.tabs a.on{background:#11283F;color:#8AD6E0}nav.tabs{background:rgba(15,28,46,.95)}
+.drop{background:#0B1727;border-color:#1F3350}.tile{color:var(--ink)}}`;
 
-function apage(title, body, active, extra = "") {
-  const tab = (k, ic, t) => `<a href="/admin${k}" class="${active === k ? "on" : ""}"><i>${ic}</i>${t}</a>`;
+const AFONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">';
+function apage(title, body, active, extra = "", badge = {}) {
+  const tab = (k, ic, t) => `<a href="/admin${k}" class="${active === k ? "on" : ""}"><i>${ic}</i>${t}${badge[k] ? `<em>${badge[k]}</em>` : ""}</a>`;
   return new Response(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0C4A76"><meta name="robots" content="noindex"><link rel="manifest" href="/admin/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#062A4F"><meta name="robots" content="noindex"><link rel="manifest" href="/admin/manifest.webmanifest"><link rel="apple-touch-icon" href="/icon-192.png">${AFONT}
 <title>${esc(title)} · Trio</title><style>${ACSS}</style></head><body>
-<header><img src="/icon-192.png" alt=""><div><b>Trio</b><small>لوحة التحكم — من الموبايل</small></div></header><main>${body}</main>
-${active === null ? "" : `<nav class="tabs">${tab("", "🏠", "الرئيسية")}${tab("/clients", "👥", "العملاء")}${tab("/new", "🔑", "رخصة جديدة")}${tab("/orders", "💳", "الطلبات")}${tab("/settings", "⚙️", "الإعدادات")}</nav>`}
-<script>document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(document.getElementById(b.dataset.copy).innerText);b.textContent="اتنسخ ✔"});${extra}</script></body></html>`,
+<header><div class="top"><img src="/icon-192.png" alt=""><div><b>Trio</b><small>لوحة التحكم</small></div><span class="who">${esc(cairo().slice(5).replace(" ", " · "))}</span></div></header><main>${body}</main>
+${active === null ? "" : `<nav class="tabs">${tab("", "🏠", "الرئيسية")}${tab("/clients", "👥", "العملاء")}${tab("/reps", "🤝", "المناديب")}${tab("/updates", "⬆️", "التحديثات")}${tab("/more", "☰", "المزيد")}</nav>`}
+<script>document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(document.getElementById(b.dataset.copy).innerText);b.textContent="تم النسخ ✔"});${extra}</script></body></html>`,
     { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "no-referrer" } });
 }
 const redirect = (to, cookie) => new Response(null, { status: 303, headers: { Location: to, ...(cookie ? { "Set-Cookie": cookie } : {}) } });
@@ -963,11 +1170,11 @@ const waNum = (p) => { const d = digits(p); return d.length === 11 && d.startsWi
 
 function loginPage(step, msg, errText) {
   const body = step === "code"
-    ? `<div class="card"><h1>اكتب الكود</h1><p class="muted">بعتنا كود من 6 أرقام على إيميل Trio — صالح 10 دقايق.</p>${errText ? `<div class="err">${esc(errText)}</div>` : ""}
-<form method="post" action="/admin/verify"><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\\d{6}" required autofocus style="font-size:26px;text-align:center;letter-spacing:8px;direction:ltr">
-<button class="btn">دخول</button></form><form method="post" action="/admin/login"><button class="btn alt">ابعت كود تاني</button></form></div>`
-    : `<div class="card"><h1>دخول لوحة Trio</h1><p class="muted">نفس Trio License بس من الموبايل: العملاء، الرخص، الإيقاف، الطلبات. الدخول بكود بيوصل على إيميل Trio.</p>
-${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<form method="post" action="/admin/login"><button class="btn">ابعتلي كود الدخول</button></form></div>`;
+    ? `<div class="card"><h1>🔐 اكتب الرمز</h1><p class="muted">أرسلنا رمزًا من 6 أرقام إلى بريد Trio — صالح 10 دقائق.</p>${errText ? `<div class="err">${esc(errText)}</div>` : ""}
+<form method="post" action="/admin/verify"><input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\\d{6}" required autofocus style="font-size:28px;text-align:center;letter-spacing:10px;direction:ltr">
+<button class="btn">دخول</button></form><form method="post" action="/admin/login"><button class="btn alt">أرسل رمزًا آخر</button></form></div>`
+    : `<div class="card"><h1>مرحبًا بك في لوحة Trio</h1><p class="muted">العملاء، والرخص، والمناديب، والتحديثات — كلها من هاتفك. الدخول برمز يصل إلى بريد Trio.</p>
+${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<form method="post" action="/admin/login"><button class="btn">أرسل رمز الدخول</button></form></div>`;
   return apage("دخول", body, null);
 }
 
@@ -981,35 +1188,44 @@ const ago = (t) => { if (!t) return ""; const m = Math.round((Date.now() - Date.
 function setupMissing(env, st) {
   const miss = [];
   if (!st) miss.push("بيانات Trio License: من الكمبيوتر «📱 من الموبايل» ← «فعّل وارفع بياناتي»");
-  if (!env.ADMIN_KEY || !env.ADMIN_CERT) miss.push("Secrets في الـ Worker: ADMIN_KEY و ADMIN_CERT (من نفس الصفحة في Trio License)");
-  if (!env.GH_TOKEN) miss.push("Secret في الـ Worker: GH_TOKEN (مفتاح GitHub — من نفس الصفحة)");
+  if (!env.ADMIN_KEY || !env.ADMIN_CERT) miss.push("مفاتيح في الـ Worker: ADMIN_KEY و ADMIN_CERT (من الصفحة نفسها في Trio License)");
+  if (!env.GH_TOKEN) miss.push("مفتاح في الـ Worker: GH_TOKEN (مفتاح GitHub — من الصفحة نفسها)");
   return miss;
 }
 
+async function repsPending(env) { try { const r = await (await sdb(env)).prepare("SELECT COUNT(*) n FROM su WHERE kind='rep' AND status='pending'").first(); return r ? r.n : 0; } catch (e) { return 0; } }
 async function homePage(env, st) {
   const miss = setupMissing(env, st);
-  if (!st) return apage("الرئيسية", `<div class="card"><h1>لسه مش متوصل</h1><ul>${miss.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`, "");
+  if (!st) return apage("الرئيسية", `<div class="card"><h1>لم يتصل بعد</h1><ul>${miss.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>`, "");
   const pres = await presenceAll(env), cs = Object.values(st.clients || {});
   const live = cs.filter((c) => pres[c.Machine] && Date.now() - Date.parse(pres[c.Machine].at) < 36 * 3600e3).length;
   const soon = cs.filter((c) => !c.Lifetime && c.Expires && c.Expires >= today() && c.Expires <= new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10));
-  const orders = Object.values(await all(env, "o:")).filter((o) => o.status === "paid").length;
   const recent = cs.filter((c) => c.Updated).sort((a, b) => (b.Updated > a.Updated ? 1 : -1)).slice(0, 5);
+  const pending = await repsPending(env);
+  let regs = 0, leads = 0;
+  try { const d = await sdb(env); regs = (await d.prepare("SELECT COUNT(*) n FROM su WHERE kind='customer'").first()).n; leads = (await d.prepare("SELECT COUNT(*) n FROM slead WHERE status='new'").first()).n; } catch (e) { /* */ }
+  const vers = {}; for (const c of cs) { const p = pres[c.Machine]; if (p && p.v) vers[p.v] = (vers[p.v] || 0) + 1; }
+  const vtop = Object.entries(vers).sort((a, b) => (verGt(a[0], b[0]) ? -1 : 1)).slice(0, 5), vmax = Math.max(1, ...vtop.map((x) => x[1]));
+  const cur = relVer(st.lines?.release);
   return apage("الرئيسية", `${miss.length ? `<div class="err">ناقص: ${miss.map(esc).join(" · ")}</div>` : ""}
-<div class="kpis"><div class="kpi hero"><span>العملاء</span><b>${cs.length}</b></div><div class="kpi"><span>شغالين آخر يوم ونص</span><b>${live}</b></div>
-<div class="kpi"><span>موقوفين</span><b>${Object.keys(st.stopped || {}).length}</b></div><div class="kpi"><span>طلبات أونلاين مدفوعة</span><b>${orders}</b></div></div>
-${soon.length ? `<div class="card"><h2>رخص بتخلص خلال 30 يوم</h2><div class="list">${soon.map((c) => `<a href="/admin/c/${c.Machine}"><span>${esc(c.Name)}</span><small>${esc(c.Expires)}</small></a>`).join("")}</div></div>` : ""}
-<div class="card"><h2>آخر حاجات اتعملت</h2><div class="list">${recent.map((c) => `<a href="/admin/c/${c.Machine}"><span>${esc(c.Name)}<br><small>${esc((c.Log || [""])[0].split(" — ").slice(1).join(" — "))}</small></span><small>${esc(c.Updated)}</small></a>`).join("") || '<p class="muted">لسه مفيش</p>'}</div></div>
-<p class="muted">آخر نشر لقناة الأوامر: ${esc(st.published || "—")} · آخر مزامنة مع الكمبيوتر: ${esc(st.at || "—")}</p>`, "");
+<div class="kpis"><div class="kpi"><i>👥</i><b>${cs.length}</b><span>العملاء</span></div><div class="kpi a"><i>🟢</i><b>${live}</b><span>نشطون آخر 36 ساعة</span></div>
+<div class="kpi b"><i>🤝</i><b>${pending}</b><span>مناديب بانتظار الموافقة</span></div><div class="kpi c"><i>📝</i><b>${leads}</b><span>طلبات جديدة من الموقع</span></div></div>
+<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/updates"><i>⬆️</i>رفع تحديث</a><a class="tile" href="/admin/site"><i>🌐</i>الموقع (${regs})</a></div>
+<div class="card hero"><h2>⬆️ الإصدار المنشور: <span dir="ltr">${esc(cur || "—")}</span></h2>${vtop.length ? `<div class="bars">${vtop.map(([v, n]) => `<div class="bar"><span>${esc(v)}</span><div><i style="width:${Math.round(n / vmax * 100)}%"></i></div><span>${n}</span></div>`).join("")}</div>` : '<p class="muted">لم تصل إصدارات العملاء بعد.</p>'}</div>
+${soon.length ? `<div class="card"><h2>⏳ رخص تنتهي خلال 30 يومًا</h2><div class="list">${soon.map((c) => `<a href="/admin/c/${c.Machine}"><span>${esc(c.Name)}</span><small>${esc(c.Expires)}</small></a>`).join("")}</div></div>` : ""}
+<div class="card"><h2>🕘 آخر العمليات</h2><div class="list">${recent.map((c) => `<a href="/admin/c/${c.Machine}"><span class="av">${esc(String(c.Name || "?").trim()[0] || "?")}</span><span style="flex:1">${esc(c.Name)}<br><small>${esc((c.Log || [""])[0].split(" — ").slice(1).join(" — "))}</small></span><small>${esc(c.Updated)}</small></a>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>
+<p class="muted">آخر نشر لقناة الأوامر: ${esc(st.published || "—")} · آخر مزامنة مع الكمبيوتر: ${esc(st.at || "—")}</p>`, "", "", { "/reps": pending || "" });
 }
 
 async function clientsPage(env, st, q) {
   const pres = await presenceAll(env), qq = String(q || "").trim().toLowerCase();
   const cs = Object.values(st.clients || {}).filter((c) => !qq || [c.Name, c.Phone, c.Machine].join(" ").toLowerCase().includes(qq)).sort((a, b) => String(a.Name).localeCompare(String(b.Name), "ar"));
   const row = (c) => { const p = pres[c.Machine]; const stop = (st.stopped || {})[c.Machine] !== undefined;
-    return `<a href="/admin/c/${c.Machine}"><span><b>${esc(c.Name)}</b>${stop ? '<span class="tag red">موقوف</span>' : ""}${expired(c) ? '<span class="tag warn">الرخصة خلصت</span>' : ""}<br><small>${esc(CAT.plan_names[c.Plan] || c.Plan || "")} · ${esc(BIZ[c.Business] || "")} · ${esc(licText(c))}</small></span>
-<small style="text-align:left">${p ? `${esc(p.v)}<br>${ago(p.at)}` : "مظهرش"}</small></a>`; };
-  return apage("العملاء", `<h1>العملاء (${cs.length})</h1><form><input name="q" value="${esc(q || "")}" placeholder="دوّر بالاسم أو التليفون أو كود الجهاز"></form>
-<div class="card list" style="margin-top:12px">${cs.map(row).join("") || '<p class="muted">مفيش</p>'}</div>`, "/clients");
+    return `<a href="/admin/c/${c.Machine}"><span><b>${esc(c.Name)}</b>${stop ? '<span class="tag red">موقوف</span>' : ""}${expired(c) ? '<span class="tag warn">انتهت الرخصة</span>' : ""}<br><small>${esc(CAT.plan_names[c.Plan] || c.Plan || "")} · ${esc(BIZ[c.Business] || "")} · ${esc(licText(c))}</small></span>
+<small style="text-align:left">${p ? `${esc(p.v)}<br>${ago(p.at)}` : "لم يظهر"}</small></a>`; };
+  return apage("العملاء", `<h1>العملاء (${cs.length})</h1><form><input name="q" value="${esc(q || "")}" placeholder="🔎 ابحث بالاسم أو الهاتف أو كود الجهاز"></form>
+<div class="card list" style="margin-top:12px">${cs.map(row).join("") || '<p class="muted">لا يوجد</p>'}</div>
+<a class="btn" href="/admin/new">🔑 رخصة جديدة</a>`, "/clients");
 }
 
 function modsBox(c) {
@@ -1026,20 +1242,20 @@ async function clientPage(env, st, m, sid, msg, errText, code) {
   return apage(c.Name, `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}
 ${code ? `<div class="card"><h2>${esc(code.title)}</h2>${codeBox("cx", code.text, code.wa ? wa : "")}</div>` : ""}
 <div class="card"><h1>${esc(c.Name)} ${stopped !== undefined ? '<span class="tag red">موقوف</span>' : ""}</h1><dl>
-<dt>كود الجهاز</dt><dd dir="ltr" style="text-align:right">${esc(c.Machine)}</dd><dt>التليفون</dt><dd>${c.Phone ? `<a href="tel:${esc(c.Phone)}">${esc(c.Phone)}</a>${wa ? ` · <a href="https://wa.me/${wa}">واتساب</a>` : ""}` : "—"}</dd>
-<dt>الباقة</dt><dd>${esc(CAT.plan_names[c.Plan] || c.Plan || "")} · ${esc(BIZ[c.Business] || "")}</dd><dt>الرخصة</dt><dd>${esc(licText(c))}${expired(c) ? ' <span class="tag warn">خلصت</span>' : ""}</dd>
-<dt>التحديثات</dt><dd>${c.LifetimeUpdates ? "مدى الحياة" : "مع الاشتراك"}</dd><dt>الإصدار عنده</dt><dd>${p ? `${esc(p.v)} · ${ago(p.at)}` : "مظهرش لسه"}</dd></dl></div>
-<details class="card"><summary>🔑 الرخصة: تجديد / مدى الحياة</summary>${act("licence", `<label>نوعها</label>${sel("kind", { renew: "تجديد", lifetime: "مدى الحياة", same: "زي ما هي" }, "renew")}
-<label>مدة التجديد</label>${sel("months", { 1: "شهر", 3: "3 شهور", 6: "6 شهور", 12: "سنة", 24: "سنتين" }, "12")}
-<label><input type="checkbox" name="updates" value="1"${c.LifetimeUpdates ? " checked" : ""} style="width:auto"> التحديثات مدى الحياة</label>`, "طلّع الرخصة وابعتها")}</details>
+<dt>كود الجهاز</dt><dd dir="ltr" style="text-align:right">${esc(c.Machine)}</dd><dt>الهاتف</dt><dd>${c.Phone ? `<a href="tel:${esc(c.Phone)}">${esc(c.Phone)}</a>${wa ? ` · <a href="https://wa.me/${wa}">واتساب</a>` : ""}` : "—"}</dd>
+<dt>الباقة</dt><dd>${esc(CAT.plan_names[c.Plan] || c.Plan || "")} · ${esc(BIZ[c.Business] || "")}</dd><dt>الرخصة</dt><dd>${esc(licText(c))}${expired(c) ? ' <span class="tag warn">منتهية</span>' : ""}</dd>
+<dt>التحديثات</dt><dd>${c.LifetimeUpdates ? "مدى الحياة" : "مع الاشتراك"}</dd><dt>الإصدار عنده</dt><dd>${p ? `${esc(p.v)} · ${ago(p.at)}` : "لم يظهر بعد"}</dd></dl></div>
+<details class="card"><summary>🔑 الرخصة: تجديد / مدى الحياة</summary>${act("licence", `<label>نوعها</label>${sel("kind", { renew: "تجديد", lifetime: "مدى الحياة", same: "كما هي" }, "renew")}
+<label>مدة التجديد</label>${sel("months", { 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 12: "سنة", 24: "سنتان" }, "12")}
+<label><input type="checkbox" name="updates" value="1"${c.LifetimeUpdates ? " checked" : ""} style="width:auto"> التحديثات مدى الحياة</label>`, "أصدر الرخصة وأرسلها")}</details>
 <details class="card"><summary>⭐ الباقة والنشاط والمميزات</summary>${act("mods", `<label>الباقة</label>${sel("plan", CAT.plan_names, c.Plan)}<label>النشاط</label>${sel("biz", BIZ, c.Business)}
-<label><input type="checkbox" name="reset" value="1" style="width:auto"> رجّع مميزات الباقة الافتراضية</label><label>المميزات</label>${modsBox(c)}`, "ابعت للعميل")}</details>
-<details class="card"><summary>${stopped !== undefined ? "▶️ تشغيل البرنامج تاني" : "⛔ إيقاف البرنامج"}</summary>${stopped !== undefined
-    ? `<p class="muted">موقوف: ${esc(stopped)}</p>` + act("resume", "", "شغّله تاني", "aq")
-    : act("stop", `<label>الرسالة اللي هتظهرله</label><textarea name="why" rows="2" required>البرنامج موقوف مؤقتًا — كلّمنا</textarea>`, "اوقفه", "red")}</details>
-<details class="card"><summary>🛠 كود دخول مطور</summary>${act("dev", `<label>كود الطلب اللي ظاهر عند العميل (XXXX-XXXX)</label><input name="ch" dir="ltr" required pattern="[0-9A-Fa-f]{4}-?[0-9A-Fa-f]{4}">`, "طلّع الكود")}</details>
+<label><input type="checkbox" name="reset" value="1" style="width:auto"> أعد مميزات الباقة الافتراضية</label><label>المميزات</label>${modsBox(c)}`, "أرسل إلى العميل")}</details>
+<details class="card"><summary>${stopped !== undefined ? "▶️ تشغيل البرنامج مرة أخرى" : "⛔ إيقاف البرنامج"}</summary>${stopped !== undefined
+    ? `<p class="muted">موقوف: ${esc(stopped)}</p>` + act("resume", "", "أعد تشغيله", "aq")
+    : act("stop", `<label>الرسالة التي ستظهر له</label><textarea name="why" rows="2" required>البرنامج موقوف مؤقتًا — تواصل معنا</textarea>`, "أوقفه", "red")}</details>
+<details class="card"><summary>🛠 كود دخول مطور</summary>${act("dev", `<label>كود الطلب الظاهر لدى العميل (XXXX-XXXX)</label><input name="ch" dir="ltr" required pattern="[0-9A-Fa-f]{4}-?[0-9A-Fa-f]{4}">`, "أصدر الكود")}</details>
 ${bkBox(await bkList(env, m))}
-<details class="card"><summary>✏️ الاسم والتليفون</summary>${act("info", `<label>الاسم</label><input name="name" value="${esc(c.Name)}" required><label>التليفون</label><input name="phone" value="${esc(c.Phone || "")}" inputmode="tel">`, "احفظ", "alt")}</details>
+<details class="card"><summary>✏️ الاسم والهاتف</summary>${act("info", `<label>الاسم</label><input name="name" value="${esc(c.Name)}" required><label>الهاتف</label><input name="phone" value="${esc(c.Phone || "")}" inputmode="tel">`, "حفظ", "alt")}</details>
 <div class="card"><h2>السجل</h2><div class="muted" style="white-space:pre-line;font-size:13px">${esc((c.Log || []).slice(0, 15).join("\n")) || "—"}</div></div>`, "/clients");
 }
 
@@ -1048,7 +1264,7 @@ const BKRE = /^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){5}$/;
 async function bkList(env, m) { try { return JSON.parse((await env.ACC.get("bk:" + m)) || "[]"); } catch (e) { return []; } }
 function bkBox(list) {
   if (!list.length) return "";
-  return `<details class="card"><summary>♻️ مفتاح استرجاع النسخ الاحتياطية</summary><p class="muted">لو جهاز العميل باظ: يرفع آخر ملف من الدرايف في «عندك نسخة احتياطية؟» ويكتب المفتاح ده.</p>${
+  return `<details class="card"><summary>♻️ مفتاح استرجاع النسخ الاحتياطية</summary><p class="muted">إن تعطّل جهاز العميل: يرفع آخر ملف من جوجل درايف في «لديك نسخة احتياطية؟» ويكتب هذا المفتاح.</p>${
     list.map((x) => `<p><b dir="ltr" style="font-size:17px;user-select:all">${esc(x.key)}</b><br><small class="muted">${esc(x.shop || "")} · ${esc(String(x.at || "").slice(0, 10))}${x.lic ? "" : " · من نسخة تجريبية"}</small></p>`).join("")}</details>`;
 }
 async function bkPut(req, env) {
@@ -1059,7 +1275,7 @@ async function bkPut(req, env) {
   const list = await bkList(env, b.m);
   if (list.some((x) => x.key === b.key)) return json({ ok: true });
   // a licensed copy may add its key; without a licence only the first key of a machine is kept (nobody overwrites another's)
-  if (!genuine && list.length) return json({ ok: false, error: "محفوظ قبل كده" });
+  if (!genuine && list.length) return json({ ok: false, error: "محفوظ من قبل" });
   list.unshift({ key: b.key, shop: String(b.shop || "").slice(0, 80), at: iso(), lic: genuine });
   await env.ACC.put("bk:" + b.m, JSON.stringify(list.slice(0, 5)));
   return json({ ok: true });
@@ -1067,35 +1283,159 @@ async function bkPut(req, env) {
 
 function newPage(sid, tok, vals = {}, errText = "", code = null) {
   const sel = (name, opts, v) => `<select name="${name}">${Object.entries(opts).map(([k, t]) => `<option value="${k}"${k === v ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>`;
-  return apage("رخصة جديدة", `${errText ? `<div class="err">${esc(errText)}</div>` : ""}${code ? `<div class="card"><h2>الكود جاهز ✔</h2><p class="muted">ابعته للعميل يلصقه في «التفعيل».</p>${codeBox("lx", code.text, code.wa)}</div>` : ""}
+  return apage("رخصة جديدة", `${errText ? `<div class="err">${esc(errText)}</div>` : ""}${code ? `<div class="card"><h2>الكود جاهز ✔</h2><p class="muted">أرسله إلى العميل ليلصقه في «التفعيل».</p>${codeBox("lx", code.text, code.wa)}</div>` : ""}
 <div class="card"><h1>رخصة جديدة</h1><form method="post"><input type="hidden" name="csrf" value="${tok}">
-<label>اسم العميل / المحل</label><input name="name" required value="${esc(vals.name || "")}"><label>التليفون</label><input name="phone" inputmode="tel" value="${esc(vals.phone || "")}">
-<label>كود الجهاز (16 حرف)</label><input name="m" dir="ltr" required value="${esc(vals.m || "")}" placeholder="ABCD-EFGH-IJKL-MNOP" style="text-transform:uppercase">
+<label>اسم العميل / المحل</label><input name="name" required value="${esc(vals.name || "")}"><label>الهاتف</label><input name="phone" inputmode="tel" value="${esc(vals.phone || "")}">
+<label>كود الجهاز (16 حرفًا)</label><input name="m" dir="ltr" required value="${esc(vals.m || "")}" placeholder="ABCD-EFGH-IJKL-MNOP" style="text-transform:uppercase">
 <div class="row"><div><label>الباقة</label>${sel("plan", CAT.plan_names, vals.plan || "pro")}</div><div><label>النشاط</label>${sel("biz", BIZ, vals.biz || "market")}</div></div>
-<div class="row"><div><label>النوع</label>${sel("kind", { year: "اشتراك", lifetime: "مدى الحياة" }, vals.kind || "year")}</div><div><label>المدة</label>${sel("months", { 1: "شهر", 3: "3 شهور", 6: "6 شهور", 12: "سنة", 24: "سنتين" }, vals.months || "12")}</div></div>
+<div class="row"><div><label>النوع</label>${sel("kind", { year: "اشتراك", lifetime: "مدى الحياة" }, vals.kind || "year")}</div><div><label>المدة</label>${sel("months", { 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 12: "سنة", 24: "سنتان" }, vals.months || "12")}</div></div>
 <label><input type="checkbox" name="updates" value="1" style="width:auto"${vals.updates ? " checked" : ""}> التحديثات مدى الحياة</label>
-<label><input type="checkbox" name="self" value="1" style="width:auto"${vals.self ? " checked" : ""}> تسطيب ذاتي (العميل بيجهّز محله بنفسه)</label>
-<button class="btn">طلّع كود التفعيل</button></form></div>`, "/new");
+<label><input type="checkbox" name="self" value="1" style="width:auto"${vals.self ? " checked" : ""}> تثبيت ذاتي (يجهّز العميل محله بنفسه)</label>
+<button class="btn">أصدر كود التفعيل</button></form></div>`, "/more");
 }
 
 async function ordersPage(env, st, tok, msg) {
   const os = Object.values(await all(env, "o:")).sort((a, b) => (String(b.created || "") > String(a.created || "") ? 1 : -1)).slice(0, 60);
-  const stx = { paid: ["اتدفع", "ok"], pending: ["مستني الدفع", "warn"], failed: ["فشل", "red"] };
+  const stx = { paid: ["دُفع", "ok"], pending: ["بانتظار الدفع", "warn"], failed: ["فشل", "red"] };
   const row = (o) => { const s = stx[o.status] || [o.status || "—", ""]; const known = o.m && (st.clients || {})[o.m];
     return `<div style="padding:10px 0;border-bottom:1px solid #EDF2F7"><b>${esc(o.name || o.phone || o.id)}</b> <span class="tag ${s[1]}">${esc(s[0])}</span><br>
-<small class="muted">${esc(o.id)} · ${esc(CAT.plan_names[o.plan] || o.plan || "")} · ${esc(String(o.total || o.amount || ""))} ج · ${esc(o.phone || "")}${o.m ? " · " + esc(o.m) : " · لسه متفعّلش على جهاز"}</small>
+<small class="muted">${esc(o.id)} · ${esc(CAT.plan_names[o.plan] || o.plan || "")} · ${esc(String(o.total || o.amount || ""))} ج · ${esc(o.phone || "")}${o.m ? " · " + esc(o.m) : " · لم يُفعَّل على جهاز بعد"}</small>
 ${o.status === "paid" && o.m && o.code && !known ? `<form method="post"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="take"><input type="hidden" name="id" value="${esc(o.id)}"><button class="btn alt">سجّله في العملاء</button></form>` : known ? `<a href="/admin/c/${o.m}" class="muted">عند العملاء ←</a>` : ""}</div>`; };
-  return apage("الطلبات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}<h1>طلبات الموقع والبرنامج</h1><div class="card">${os.map(row).join("") || '<p class="muted">لسه مفيش طلبات</p>'}</div>`, "/orders");
+  return apage("الطلبات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}<h1>💳 طلبات الدفع الإلكتروني</h1><div class="card">${os.map(row).join("") || '<p class="muted">لا توجد طلبات بعد</p>'}</div>`, "/more");
 }
 
 function settingsPage(env, st, tok, msg, errText) {
-  const sw = (a, on, t) => `<form method="post"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}"><button class="btn ${on ? "alt" : "aq"}">${on ? "اقفل " + t : "افتح " + t}</button></form>`;
-  return apage("الإعدادات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>الإعدادات</h1>
-<div class="card"><h2>💳 الدفع بالفيزا ${st.pay ? '<span class="tag ok">شغال</span>' : '<span class="tag">مقفول</span>'}</h2>${env.SALES_KEY && env.PAYMOB_SECRET ? "" : '<p class="muted">لسه ناقص مفاتيح Paymob / المبيعات في الـ Worker.</p>'}${sw("pay", st.pay, "الدفع")}</div>
-<div class="card"><h2>🤖 الذكاء الاصطناعي ${st.ai ? '<span class="tag ok">شغال</span>' : '<span class="tag">مقفول</span>'}</h2>${env.ANTHROPIC_KEY ? "" : '<p class="muted">لسه ناقص ANTHROPIC_KEY في الـ Worker.</p>'}${sw("ai", st.ai, "الذكاء الاصطناعي")}</div>
-<div class="card"><h2>📡 قناة الأوامر</h2><p class="muted">آخر نشر: ${esc(st.published || "—")} — بتتنشر لوحدها بعد أي تغيير.</p><form method="post"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="publish"><button class="btn alt">انشرها دلوقتي</button></form></div>
-<div class="card"><h2>⬆ التحديثات</h2><p class="muted">المنشور: <b dir="ltr">${esc(relVer(st.lines?.release) || "—")}</b></p><a class="btn alt" href="/admin/updates">افتح التحديثات</a></div>
-<div class="card"><h2>🔒 الدخول</h2><p class="muted">الكود بيوصل على ${esc(adminEmail(env))}. الجلسة بتفضل 7 أيام على الموبايل ده.</p><form method="post" action="/admin/logout"><button class="btn red">خروج</button></form></div>`, "/settings");
+  const sw = (a, on, t) => `<form method="post" action="/admin/settings"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}"><button class="btn ${on ? "alt" : "aq"}">${on ? "أغلق " + t : "افتح " + t}</button></form>`;
+  return apage("المزيد", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>☰ المزيد</h1>
+<div class="tiles"><a class="tile" href="/admin/new"><i>🔑</i>رخصة جديدة</a><a class="tile" href="/admin/orders"><i>💳</i>طلبات الدفع</a><a class="tile" href="/admin/site"><i>🌐</i>مسجّلو الموقع</a></div>
+<div class="card"><h2>💳 الدفع الإلكتروني ${st.pay ? '<span class="tag ok">مفعّل</span>' : '<span class="tag">مغلق</span>'}</h2>${env.SALES_KEY && env.PAYMOB_SECRET ? "" : '<p class="muted">ما زالت مفاتيح Paymob / المبيعات ناقصة في الـ Worker.</p>'}${sw("pay", st.pay, "الدفع")}</div>
+<div class="card"><h2>🤖 الذكاء الاصطناعي ${st.ai ? '<span class="tag ok">مفعّل</span>' : '<span class="tag">مغلق</span>'}</h2>${env.ANTHROPIC_KEY ? "" : '<p class="muted">ما زال ناقصًا ANTHROPIC_KEY في الـ Worker.</p>'}${sw("ai", st.ai, "الذكاء الاصطناعي")}</div>
+<div class="card"><h2>📡 قناة الأوامر</h2><p class="muted">آخر نشر: ${esc(st.published || "—")} — تُنشر تلقائيًا بعد أي تغيير.</p><form method="post" action="/admin/settings"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="publish"><button class="btn alt">انشرها الآن</button></form></div>
+<div class="card"><h2>🔒 الدخول</h2><p class="muted">يصل الرمز إلى ${esc(adminEmail(env))}. تبقى الجلسة 7 أيام على هذا الهاتف.</p><form method="post" action="/admin/logout"><button class="btn red">تسجيل الخروج</button></form></div>`, "/more");
+}
+
+// ---------------------------------------------------------------- sales reps and the site's accounts (1.22)
+async function syncOrderSales(env, d) { // online orders paid through a rep's link become his sales (once)
+  try {
+    const os = Object.values(await all(env, "o:")).filter((o) => o.status === "paid" && o.ref);
+    for (const o of os) {
+      if (await d.prepare("SELECT id FROM ssale WHERE id = ?").bind("O" + o.id).first()) continue;
+      const r = await d.prepare("SELECT id, rate FROM su WHERE kind='rep' AND code = ?").bind(o.ref).first();
+      if (!r) continue;
+      const amt = Number(o.total) || 0;
+      await d.prepare("INSERT INTO ssale (id, rep, who, amount, rate, commission, src, at, note) VALUES (?1,?2,?3,?4,?5,?6,'order',?7,?8)")
+        .bind("O" + o.id, r.id, String(o.name || o.phone || ""), amt, r.rate || 0, Math.round(amt * (r.rate || 0)) / 100, iso(), o.id).run();
+    }
+  } catch (e) { /* the orders store can be empty */ }
+}
+const egp = (n) => Number(n || 0).toLocaleString("ar-EG", { maximumFractionDigits: 2 }) + " ج";
+async function repsPage(env, tok, msg = "", errText = "") {
+  const d = await sdb(env);
+  await syncOrderSales(env, d);
+  const reps = (await d.prepare("SELECT * FROM su WHERE kind='rep' ORDER BY CASE status WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END, created DESC").all()).results || [];
+  const sums = {};
+  for (const r of (await d.prepare("SELECT rep, SUM(commission) c, COUNT(*) n FROM ssale GROUP BY rep").all()).results || []) sums[r.rep] = { c: r.c || 0, n: r.n };
+  for (const r of (await d.prepare("SELECT rep, SUM(amount) p FROM spay GROUP BY rep").all()).results || []) (sums[r.rep] = sums[r.rep] || { c: 0, n: 0 }).p = r.p || 0;
+  const cnt = {};
+  for (const r of (await d.prepare("SELECT ref, COUNT(*) n FROM su WHERE kind='customer' AND ref <> '' GROUP BY ref").all()).results || []) cnt[r.ref] = r.n;
+  const pend = reps.filter((r) => r.status === "pending"), rest = reps.filter((r) => r.status !== "pending");
+  const f = (inner) => `<form method="post" action="/admin/reps"><input type="hidden" name="csrf" value="${tok}">${inner}</form>`;
+  return apage("المناديب", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>🤝 المناديب</h1>
+${pend.map((r) => `<div class="card"><h2>${esc(r.name)} <span class="tag warn">بانتظار الموافقة</span></h2><p class="muted">${esc(r.phone)}${r.city ? " · " + esc(r.city) : ""}${r.email ? " · " + esc(r.email) : ""}<br>${esc(r.note || "")}</p>
+${f(`<input type="hidden" name="id" value="${r.id}"><div class="row"><div><label>نسبة العمولة %</label><input name="rate" inputmode="decimal" value="10" required></div><div><label>&nbsp;</label><button class="btn" name="a" value="approve" style="margin:0">✔ موافقة</button></div></div>
+<button class="btn alt" name="a" value="reject" onclick="return confirm('رفض هذا المندوب؟')">رفض</button>`)}</div>`).join("")}
+<div class="card"><h2>المناديب المعتمدون</h2><div class="list">${rest.map((r) => { const x = sums[r.id] || { c: 0, p: 0, n: 0 }; const due = (x.c || 0) - (x.p || 0);
+    return `<a href="/admin/rep/${r.id}"><span class="av">${esc(String(r.name).trim()[0] || "?")}</span><span style="flex:1"><b>${esc(r.name)}</b>${r.status !== "approved" ? ` <span class="tag red">${r.status === "blocked" ? "موقوف" : "مرفوض"}</span>` : ` <span class="tag">${esc(r.rate)}%</span>`}<br>
+<small>${cnt[r.id] || 0} عميل · ${x.n || 0} عملية بيع · الكود ${esc(r.code || "—")}</small></span><small style="text-align:left">مستحق<br><b>${egp(due)}</b></small></a>`; }).join("") || '<p class="muted">لا يوجد مناديب بعد. رابط التسجيل للمناديب: trioerp.pages.dev/account/?rep=1</p>'}</div></div>`, "/reps");
+}
+async function repPage(env, id, tok, msg = "", errText = "") {
+  const d = await sdb(env);
+  await syncOrderSales(env, d);
+  const r = await d.prepare("SELECT * FROM su WHERE id = ? AND kind='rep'").bind(id).first();
+  if (!r) return redirect("/admin/reps");
+  const S = await repStats(d, r);
+  const full = (await d.prepare("SELECT id, name, phone, shop, created FROM su WHERE kind='customer' AND ref = ? ORDER BY created DESC").bind(r.id).all()).results || [];
+  const f = (a, inner, btn, cls = "") => `<form method="post" action="/admin/rep/${r.id}"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="${a}">${inner}<button class="btn ${cls}">${btn}</button></form>`;
+  const link = "https://trioerp.pages.dev/?ref=" + (r.code || "");
+  return apage(r.name, `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}
+<div class="card hero"><h1 style="margin:0 0 6px">${esc(r.name)}</h1><p class="muted" style="margin:0">${esc(r.phone)} · ${esc(r.city || "")} · منذ ${esc(String(r.created).slice(0, 10))}</p>
+${r.code ? `<p style="margin:10px 0 0;direction:ltr;text-align:right;font-weight:700">${esc(link)}</p>` : ""}</div>
+<div class="kpis"><div class="kpi"><i>👥</i><b>${full.length}</b><span>عملاء عن طريقه</span></div><div class="kpi a"><i>💰</i><b>${egp(S.earned)}</b><span>إجمالي العمولة</span></div>
+<div class="kpi b"><i>✅</i><b>${egp(S.paid)}</b><span>المدفوع له</span></div><div class="kpi c"><i>⏳</i><b>${egp(S.due)}</b><span>المستحق له</span></div></div>
+<details class="card"><summary>💵 تسجيل بيع لعميل جاء عن طريقه</summary>${f("sale", `<label>العميل</label><input name="who" list="cl" required><datalist id="cl">${full.map((c) => `<option value="${esc(c.name + (c.shop ? " — " + c.shop : ""))}">`).join("")}</datalist>
+<label>قيمة البيع (ج)</label><input name="amount" inputmode="decimal" required><label>ملاحظة</label><input name="note">`, "سجّل البيع")}</details>
+<details class="card"><summary>🧾 تسجيل دفعة للمندوب</summary>${f("pay", `<label>المبلغ (ج)</label><input name="amount" inputmode="decimal" required><label>ملاحظة</label><input name="note" placeholder="فودافون كاش / نقدًا…">`, "سجّل الدفعة")}</details>
+<details class="card"><summary>⚙️ العمولة والحالة</summary>${f("rate", `<label>نسبة العمولة %</label><input name="rate" inputmode="decimal" value="${esc(r.rate || 0)}">`, "حفظ النسبة", "alt")}
+${r.status === "approved" ? f("block", "", "إيقاف المندوب", "red") : f("approve", `<input type="hidden" name="rate" value="${esc(r.rate || 10)}">`, "تفعيل المندوب", "aq")}
+${f("reset", "", "إعادة تعيين كلمة السر", "alt")}</details>
+<div class="card"><h2>العملاء</h2><div class="list">${full.map((c) => `<div class="it"><span>${esc(c.name)}${c.shop ? "<br><small>" + esc(c.shop) + "</small>" : ""}</span><small>${esc(c.phone)}<br>${esc(String(c.created).slice(0, 10))}</small></div>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>
+<div class="card"><h2>المبيعات والعمولة</h2><div class="list">${S.sales.map((x) => `<div class="it"><span>${esc(x.who)}<br><small>${esc(String(x.at).slice(0, 10))}${x.src === "order" ? " · دفع إلكتروني" : ""}</small></span><small style="text-align:left">${egp(x.amount)}<br><b>${egp(x.commission)}</b></small></div>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>
+<div class="card"><h2>الدفعات</h2><div class="list">${S.pays.map((x) => `<div class="it"><span>${esc(x.note || "دفعة")}<br><small>${esc(String(x.at).slice(0, 10))}</small></span><b>${egp(x.amount)}</b></div>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>`, "/reps");
+}
+async function repAct(env, id, f) {
+  const d = await sdb(env);
+  const r = await d.prepare("SELECT * FROM su WHERE id = ? AND kind='rep'").bind(id || f.id).first();
+  if (!r) throw new Error("المندوب غير موجود");
+  const num = (v) => { const n = Number(String(v || "").replace(/[٠-٩]/g, (c) => "٠١٢٣٤٥٦٧٨٩".indexOf(c)).replace(",", ".")); if (!(n >= 0)) throw new Error("اكتب رقمًا صحيحًا"); return Math.round(n * 100) / 100; };
+  if (f.a === "approve") {
+    const rate = num(f.rate);
+    if (rate > 90) throw new Error("نسبة العمولة كبيرة جدًا");
+    let code = r.code;
+    while (!code) { const c = newRefCode(); if (!(await d.prepare("SELECT id FROM su WHERE code = ?").bind(c).first())) code = c; }
+    await d.prepare("UPDATE su SET status='approved', rate=?, code=? WHERE id=?").bind(rate, code, r.id).run();
+    return `تمت الموافقة على ${r.name} ✔ — عمولته ${rate}% وكوده ${code}`;
+  }
+  if (f.a === "reject") { await d.prepare("UPDATE su SET status='rejected' WHERE id=?").bind(r.id).run(); return "تم الرفض"; }
+  if (f.a === "block") { await d.prepare("UPDATE su SET status='blocked' WHERE id=?").bind(r.id).run(); return "أُوقف المندوب — رابطه لم يعد يُسجَّل عليه"; }
+  if (f.a === "rate") { await d.prepare("UPDATE su SET rate=? WHERE id=?").bind(num(f.rate), r.id).run(); return "تم حفظ النسبة — تُطبَّق على المبيعات الجديدة"; }
+  if (f.a === "sale") {
+    const amt = num(f.amount); if (!amt) throw new Error("اكتب قيمة البيع");
+    await d.prepare("INSERT INTO ssale (id, rep, who, amount, rate, commission, src, at, note) VALUES (?1,?2,?3,?4,?5,?6,'manual',?7,?8)")
+      .bind("S" + sid6(), r.id, cleanTxt(f.who, 120), amt, r.rate || 0, Math.round(amt * (r.rate || 0)) / 100, iso(), cleanTxt(f.note, 200)).run();
+    return `سُجّل البيع — العمولة ${egp(Math.round(amt * (r.rate || 0)) / 100)}`;
+  }
+  if (f.a === "pay") {
+    const amt = num(f.amount); if (!amt) throw new Error("اكتب المبلغ");
+    await d.prepare("INSERT INTO spay (id, rep, amount, at, note) VALUES (?1,?2,?3,?4,?5)").bind("P" + sid6(), r.id, amt, iso(), cleanTxt(f.note, 200)).run();
+    return "سُجّلت الدفعة ✔";
+  }
+  if (f.a === "reset") {
+    const pw = String(crypto.getRandomValues(new Uint32Array(1))[0] % 90000000 + 10000000), salt = sid6();
+    await d.prepare("UPDATE su SET ph=?, salt=? WHERE id=?").bind(await passHash(pw, salt, env), salt, r.id).run();
+    return `كلمة السر المؤقتة: ${pw} — أرسلها له ليغيّرها من حسابه`;
+  }
+  throw new Error("طلب غير صحيح");
+}
+async function sitePage(env, tok, msg = "", errText = "") {
+  const d = await sdb(env);
+  const reps = {}; for (const r of (await d.prepare("SELECT id, name FROM su WHERE kind='rep'").all()).results || []) reps[r.id] = r.name;
+  const leads = (await d.prepare("SELECT * FROM slead ORDER BY created DESC LIMIT 60").all()).results || [];
+  const users = (await d.prepare("SELECT * FROM su WHERE kind='customer' ORDER BY created DESC LIMIT 80").all()).results || [];
+  const stx = { new: ["جديد", "warn"], contacted: ["تم التواصل", ""], won: ["اشترى", "ok"], lost: ["لم يشترِ", "red"] };
+  const wa = (p) => `https://wa.me/${waNum(p)}`;
+  return apage("الموقع", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}${errText ? `<div class="err">${esc(errText)}</div>` : ""}<h1>🌐 الموقع</h1>
+<div class="card"><h2>📝 الطلبات (${leads.length})</h2><div class="list">${leads.map((l) => { const s2 = stx[l.status] || [l.status, ""];
+    return `<div class="it" style="flex-wrap:wrap"><span style="flex:1"><b>${esc(l.shop || l.name)}</b> <span class="tag ${s2[1]}">${esc(s2[0])}</span>${l.ref ? ` <span class="tag">🤝 ${esc(reps[l.ref] || "")}</span>` : ""}<br>
+<small>${esc(l.name)} · <a href="${wa(l.phone)}">${esc(l.phone)}</a> · ${esc(String(l.created).slice(0, 10))}${l.biz ? " · " + esc(l.biz) : ""}</small>${l.note ? `<br><small>${esc(l.note).slice(0, 200)}</small>` : ""}</span>
+<form method="post" action="/admin/site" class="row" style="width:100%;margin-top:6px"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="id" value="${l.id}">
+<select name="status">${Object.entries(stx).map(([k, v]) => `<option value="${k}"${k === l.status ? " selected" : ""}>${v[0]}</option>`).join("")}</select>
+<input name="amount" inputmode="decimal" placeholder="المبلغ إن اشترى" value="${l.amount || ""}"><button class="btn sm">حفظ</button></form></div>`; }).join("") || '<p class="muted">لا توجد طلبات بعد</p>'}</div></div>
+<div class="card"><h2>👤 العملاء المسجّلون (${users.length})</h2><div class="list">${users.map((u) => `<div class="it"><span><b>${esc(u.name)}</b>${u.shop ? " — " + esc(u.shop) : ""}${u.ref ? ` <span class="tag">🤝 ${esc(reps[u.ref] || "")}</span>` : ""}<br><small>${esc(u.city || "")} ${esc(u.biz || "")}</small></span><small style="text-align:left"><a href="${wa(u.phone)}">${esc(u.phone)}</a><br>${esc(String(u.created).slice(0, 10))}</small></div>`).join("") || '<p class="muted">لا يوجد بعد</p>'}</div></div>`, "/more");
+}
+async function siteAct(env, f) {
+  const d = await sdb(env);
+  const l = await d.prepare("SELECT * FROM slead WHERE id = ?").bind(f.id).first();
+  if (!l) throw new Error("الطلب غير موجود");
+  const st2 = ["new", "contacted", "won", "lost"].includes(f.status) ? f.status : l.status;
+  const amt = Math.max(0, Number(String(f.amount || "0").replace(",", ".")) || 0);
+  await d.prepare("UPDATE slead SET status=?, amount=? WHERE id=?").bind(st2, amt, l.id).run();
+  if (st2 === "won" && amt && l.ref && !(await d.prepare("SELECT id FROM ssale WHERE id = ?").bind("L" + l.id).first())) {
+    const r = await d.prepare("SELECT id, rate FROM su WHERE id = ?").bind(l.ref).first();
+    if (r) await d.prepare("INSERT INTO ssale (id, rep, who, amount, rate, commission, src, at, note) VALUES (?1,?2,?3,?4,?5,?6,'lead',?7,?8)")
+      .bind("L" + l.id, r.id, l.shop || l.name, amt, r.rate || 0, Math.round(amt * (r.rate || 0)) / 100, iso(), "من طلب الموقع").run();
+    return "تم الحفظ ✔ — وسُجّلت عمولة المندوب";
+  }
+  return "تم الحفظ ✔";
 }
 
 // ---------------------------------------------------------------- actions
@@ -1104,27 +1444,27 @@ async function triop(env, st) { return st.ping ? asign(env, "TRIOP", { u: st.pin
 
 async function clientAct(env, st, m, f) {
   const c = st.clients[m];
-  if (!c) throw new Error("العميل مش موجود");
+  if (!c) throw new Error("العميل غير موجود");
   const before = JSON.stringify(c);
   let what = "", lic = "", code = null;
   if (f.a === "info") {
-    c.Name = String(f.name || c.Name).trim() || c.Name; c.Phone = String(f.phone || "").trim(); note(c, "البيانات اتعدلت (موبايل)");
-    await bumpRev(st); await stPut(env, st); return { msg: "اتحفظ ✔" };
+    c.Name = String(f.name || c.Name).trim() || c.Name; c.Phone = String(f.phone || "").trim(); note(c, "عُدّلت البيانات (هاتف)");
+    await bumpRev(st); await stPut(env, st); return { msg: "تم الحفظ ✔" };
   }
   if (f.a === "dev") {
     const ch = String(f.ch || "").toUpperCase().replace(/[^0-9A-F]/g, "");
-    if (ch.length !== 8) throw new Error("كود الطلب 8 حروف/أرقام زي AB12-CD34");
+    if (ch.length !== 8) throw new Error("كود الطلب 8 أحرف/أرقام مثل AB12-CD34");
     const t = await asign(env, "TRIOD", { t: "dev", m, n: ch.slice(0, 4) + "-" + ch.slice(4), e: new Date(Date.now() + 2 * 3600e3).toISOString().slice(0, 10), at: iso() }); // «t» is the code's type here
     note(c, "كود دخول مطور (موبايل)"); await bumpRev(st); await stPut(env, st);
-    return { msg: "الكود صالح النهارده بس — اكتبه عند العميل في «دخول المطور»", code: { title: "كود دخول المطور", text: t } };
+    return { msg: "الكود صالح اليوم فقط — اكتبه لدى العميل في «دخول المطور»", code: { title: "كود دخول المطور", text: t } };
   }
   if (f.a === "stop" || f.a === "resume") {
     st.stopped = st.stopped || {};
     if (f.a === "stop") st.stopped[m] = String(f.why || "البرنامج موقوف مؤقتًا").slice(0, 300); else delete st.stopped[m];
     st.lines.control = await asign(env, "TRIOC", { stop: st.stopped, t: iso() });
-    note(c, f.a === "stop" ? "اتوقف (موبايل): " + st.stopped[m] : "اتشغّل تاني (موبايل)");
+    note(c, f.a === "stop" ? "أُوقف (هاتف): " + st.stopped[m] : "أُعيد تشغيله (هاتف)");
     await bumpRev(st); await publish(env, st, (f.a === "stop" ? "stop " : "resume ") + m); await stPut(env, st);
-    return { msg: f.a === "stop" ? "اتبعت ✔ — البرنامج هيقف عنده خلال ساعة" : "اتبعت ✔ — هيشتغل عنده خلال ساعة" };
+    return { msg: f.a === "stop" ? "تم الإرسال ✔ — سيتوقف البرنامج لديه خلال ساعة" : "تم الإرسال ✔ — سيعمل لديه خلال ساعة" };
   }
   if (f.a === "mods") {
     c.Plan = CAT.plan_names[f.plan] ? f.plan : c.Plan; c.Business = BIZ[f.biz] ? f.biz : c.Business;
@@ -1135,13 +1475,13 @@ async function clientAct(env, st, m, f) {
     if (f.kind === "lifetime") { c.Lifetime = true; what = "رخصة مدى الحياة"; }
     else if (f.kind === "renew") {
       const months = Math.max(1, parseInt(f.months || "12", 10) || 12), start = new Date(((c.Expires || "") > today() ? c.Expires : today()) + "T00:00:00Z");
-      start.setUTCMonth(start.getUTCMonth() + months); c.Lifetime = false; c.Expires = start.toISOString().slice(0, 10); what = "تجديد لحد " + c.Expires;
-    } else what = "الرخصة زي ما هي";
+      start.setUTCMonth(start.getUTCMonth() + months); c.Lifetime = false; c.Expires = start.toISOString().slice(0, 10); what = "تجديد حتى " + c.Expires;
+    } else what = "الرخصة كما هي";
     c.LifetimeUpdates = f.updates === "1";
     if (c.LifetimeUpdates) what += " + التحديثات مدى الحياة";
     lic = await asign(env, "TRIO1", licPayload(st, c));
     what += " (موبايل)";
-  } else throw new Error("طلب مش معروف");
+  } else throw new Error("طلب غير معروف");
   const prev = c.Order;
   c.Order = await orderCode(env, c, lic ? await asign(env, "TRIO1", licPayload(st, c, true)) : "");
   await bumpRev(st);
@@ -1149,13 +1489,13 @@ async function clientAct(env, st, m, f) {
   note(c, what);
   if (lic) { st.licences = st.licences || []; st.licences.push({ Date: cairo(), Client: c.Name, Machine: m, Expires: c.Lifetime ? "9999-12-31" : c.Expires, Plan: c.Plan, Code: lic, Grace: c.Grace || 7 }); code = { title: "كود الرخصة الجديد (لو العميل محتاجه يدوي)", text: lic, wa: true }; }
   await stPut(env, st);
-  return { msg: "اتبعت ✔ — بيتفعّل عند العميل خلال ساعة", code };
+  return { msg: "تم الإرسال ✔ — يُفعَّل لدى العميل خلال ساعة", code };
 }
 
 async function newLicence(env, st, f) {
   const m = String(f.m || "").toUpperCase().replace(/\s/g, "");
   const name = String(f.name || "").trim();
-  if (!name || !MACHINE.test(m)) throw new Error("اكتب اسم العميل وكود الجهاز صح (16 حرف زي ABCD-EFGH-IJKL-MNOP)");
+  if (!name || !MACHINE.test(m)) throw new Error("اكتب اسم العميل وكود الجهاز بشكل صحيح (16 حرفًا مثل ABCD-EFGH-IJKL-MNOP)");
   st.clients = st.clients || {};
   const isNew = !st.clients[m];
   const c = st.clients[m] || (st.clients[m] = { Machine: m, Created: cairo(), Grace: 7, Log: [] });
@@ -1165,7 +1505,7 @@ async function newLicence(env, st, f) {
   if (!c.Lifetime) { const d = new Date(today() + "T00:00:00Z"); d.setUTCMonth(d.getUTCMonth() + (parseInt(f.months || "12", 10) || 12)); c.Expires = d.toISOString().slice(0, 10); }
   if (isNew || c.Self || !(c.Mods || []).length) c.Mods = MODKEYS.filter((k) => defMods(c.Plan, c.Business).has(k));
   const code = await asign(env, "TRIO1", licPayload(st, c));
-  note(c, "رخصة " + licText(c) + (c.LifetimeUpdates ? " + التحديثات مدى الحياة" : "") + (c.Self ? " (تسطيب ذاتي)" : "") + " (موبايل)");
+  note(c, "رخصة " + licText(c) + (c.LifetimeUpdates ? " + التحديثات مدى الحياة" : "") + (c.Self ? " (تثبيت ذاتي)" : "") + " (هاتف)");
   st.licences = st.licences || []; st.licences.push({ Date: cairo(), Client: name, Machine: m, Expires: c.Lifetime ? "9999-12-31" : c.Expires, Plan: c.Plan, Code: code, Grace: c.Grace });
   await bumpRev(st); await stPut(env, st);
   return { text: code, wa: waNum(c.Phone) };
@@ -1173,7 +1513,7 @@ async function newLicence(env, st, f) {
 
 async function takeOrder(env, st, id) {
   const o = await getOrder(env, id);
-  if (!o || o.status !== "paid" || !o.m || !o.code) throw new Error("الطلب ده لسه متفعّلش على جهاز");
+  if (!o || o.status !== "paid" || !o.m || !o.code) throw new Error("هذا الطلب لم يُفعَّل على جهاز بعد");
   const lic = fromB64u(o.code.split(".")[1]);
   st.clients = st.clients || {};
   const c = st.clients[o.m] || (st.clients[o.m] = { Machine: o.m, Name: o.name || lic.c || o.phone, Phone: o.phone, Grace: 7, Created: cairo(), Log: [] });
@@ -1189,12 +1529,12 @@ async function takeOrder(env, st, id) {
 async function adminRoutes(req, env, url) {
   const path = url.pathname.replace(/\/+$/, "") || "/admin";
   if (path === "/admin/manifest.webmanifest") return new Response(JSON.stringify({ name: "Trio — لوحة التحكم", short_name: "Trio", start_url: "/admin", display: "standalone", dir: "rtl", lang: "ar",
-    background_color: "#F3F6FA", theme_color: "#0C4A76", icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icon-512.png", sizes: "512x512", type: "image/png" }] }), { headers: { "Content-Type": "application/manifest+json" } });
+    background_color: "#EEF3F8", theme_color: "#062A4F", icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icon-512.png", sizes: "512x512", type: "image/png" }] }), { headers: { "Content-Type": "application/manifest+json" } });
   // Trio License on the computer: pull / push the register (Secret KEY)
   if (path === "/admin/sync/pull" || path === "/admin/sync/push") {
     if (req.method !== "POST") return err("POST", 405);
     let b; try { b = await req.json(); } catch (e) { return err("bad"); }
-    if (!env.KEY || b.k !== env.KEY) return err("KEY غلط", 403);
+    if (!env.KEY || b.k !== env.KEY) return err("KEY خطأ", 403);
     const cur = await stGet(env);
     if (path === "/admin/sync/pull") return json({ state: cur });
     if (cur && (b.base || 0) !== (cur.rev || 0)) return json({ conflict: true, state: cur }, 409);
@@ -1209,19 +1549,19 @@ async function adminRoutes(req, env, url) {
   if (!env.KEY || !env.BREVO_KEY || !adminEmail(env)) return page("لوحة Trio", "اللوحة محتاجة KEY و BREVO_KEY في الـ Worker الأول.");
   const sid = await session(req, env);
   if (path === "/admin/login" && req.method === "POST") {
-    if ((await bump(env, "al:" + new Date().toISOString().slice(0, 13), 3600)) > 8) return loginPage("", "", "طلبات كتير — استنى ساعة");
+    if ((await bump(env, "al:" + new Date().toISOString().slice(0, 13), 3600)) > 8) return loginPage("", "", "طلبات كثيرة — انتظر ساعة");
     const code = String(crypto.getRandomValues(new Uint32Array(1))[0] % 1000000).padStart(6, "0");
     await env.ACC.put("aotp", JSON.stringify({ h: await sha(code + env.KEY), n: 0 }), { expirationTtl: 600 });
-    try { await mail(env, [adminEmail(env)], "كود دخول لوحة Trio: " + code, `كود الدخول من الموبايل: ${code}\nصالح 10 دقايق. لو مش انت اللي طلبته، تجاهل الرسالة.`, "Trio"); }
-    catch (e) { return loginPage("", "", "مقدرتش أبعت الإيميل — راجع BREVO_KEY"); }
+    try { await mail(env, [adminEmail(env)], "كود دخول لوحة Trio: " + code, `كود الدخول من الموبايل: ${code}\nصالح 10 دقائق. إن لم تطلبه أنت فتجاهل الرسالة.`, "Trio"); }
+    catch (e) { return loginPage("", "", "تعذّر إرسال البريد — راجع BREVO_KEY"); }
     return loginPage("code");
   }
   if (path === "/admin/verify" && req.method === "POST") {
     const f = await form(req), o = JSON.parse((await env.ACC.get("aotp")) || "null");
-    if (!o) return loginPage("", "", "الكود خلص — اطلب واحد جديد");
+    if (!o) return loginPage("", "", "انتهت صلاحية الرمز — اطلب واحدًا جديدًا");
     if (o.h !== (await sha(String(f.code || "").trim() + env.KEY))) {
       o.n++; if (o.n >= 5) await env.ACC.delete("aotp"); else await env.ACC.put("aotp", JSON.stringify(o), { expirationTtl: 600 });
-      return loginPage(o.n >= 5 ? "" : "code", "", o.n >= 5 ? "غلط كتير — اطلب كود جديد" : `الكود غلط — فاضل ${5 - o.n} محاولات`);
+      return loginPage(o.n >= 5 ? "" : "code", "", o.n >= 5 ? "أخطاء كثيرة — اطلب رمزًا جديدًا" : `الرمز غير صحيح — متبقٍ ${5 - o.n} محاولات`);
     }
     await env.ACC.delete("aotp");
     const s = b64u(crypto.getRandomValues(new Uint8Array(24)));
@@ -1235,19 +1575,24 @@ async function adminRoutes(req, env, url) {
   if (!sid) return loginPage("");
   const st = await stGet(env), tok = await csrf(sid);
   const miss = setupMissing(env, st);
+  if (path === "/admin/upload" || path === "/admin/upload/status") return st ? uploadRoute(req, env, st, tok, url) : err("لم يتصل بعد");
   if (req.method === "POST") {
     const f = await form(req);
-    if (f.csrf !== tok) return new Response("طلب غلط", { status: 403 });
-    if (!st || miss.length) return homePage(env, st);
+    if (f.csrf !== tok) return new Response("طلب غير صحيح", { status: 403 });
+    const siteOnly = path === "/admin/reps" || path.startsWith("/admin/rep/") || path === "/admin/site"; // need only the database
+    if (!siteOnly && (!st || miss.length)) return homePage(env, st);
     try {
       if (path === "/admin/new") return newPage(sid, tok, {}, "", await newLicence(env, st, f));
       if (path.startsWith("/admin/c/")) { const r = await clientAct(env, st, path.slice(9), f); return clientPage(env, st, path.slice(9), sid, r.msg, "", r.code); }
-      if (path === "/admin/orders") { await takeOrder(env, st, f.id); return ordersPage(env, st, tok, "اتسجّل ✔"); }
+      if (path === "/admin/orders") { await takeOrder(env, st, f.id); return ordersPage(env, st, tok, "تم التسجيل ✔"); }
       if (path === "/admin/updates") return updatesPage(env, (await stGet(env)) || st, tok, await updatesAct(env, st, f));
+      if (path === "/admin/reps") return repsPage(env, tok, await repAct(env, f.id, f));
+      if (path.startsWith("/admin/rep/")) return repPage(env, path.slice(11), tok, await repAct(env, path.slice(11), f));
+      if (path === "/admin/site") return sitePage(env, tok, await siteAct(env, f));
       if (path === "/admin/settings") {
         if (f.a === "pay" || f.a === "ai") { st[f.a] = !st[f.a]; st.lines.triop = await triop(env, st); await bumpRev(st); await publish(env, st, f.a); await stPut(env, st);
-          return settingsPage(env, st, tok, (f.a === "pay" ? "الدفع بالفيزا " : "الذكاء الاصطناعي ") + (st[f.a] ? "اتفتح ✔" : "اتقفل ✔") + " — عند العملاء خلال ساعة"); }
-        if (f.a === "publish") { await publish(env, st, "يدوي"); await stPut(env, st); return settingsPage(env, st, tok, "اتنشرت ✔"); }
+          return settingsPage(env, st, tok, (f.a === "pay" ? "الدفع الإلكتروني " : "الذكاء الاصطناعي ") + (st[f.a] ? "فُتح ✔" : "أُغلق ✔") + " — عند العملاء خلال ساعة"); }
+        if (f.a === "publish") { await publish(env, st, "يدوي"); await stPut(env, st); return settingsPage(env, st, tok, "نُشرت ✔"); }
       }
     } catch (e) {
       const m = String(e.message || e);
@@ -1255,7 +1600,10 @@ async function adminRoutes(req, env, url) {
       if (path.startsWith("/admin/c/")) return clientPage(env, (await stGet(env)) || st, path.slice(9), sid, "", m);
       if (path === "/admin/settings") return settingsPage(env, st, tok, "", m);
       if (path === "/admin/updates") return updatesPage(env, (await stGet(env)) || st, tok, "", m);
-      return apage("غلط", `<div class="err">${esc(m)}</div>`, "");
+      if (path === "/admin/reps") return repsPage(env, tok, "", m);
+      if (path.startsWith("/admin/rep/")) return repPage(env, path.slice(11), tok, "", m);
+      if (path === "/admin/site") return sitePage(env, tok, "", m);
+      return apage("خطأ", `<div class="err">${esc(m)}</div>`, "");
     }
     return redirect(path);
   }
@@ -1266,6 +1614,12 @@ async function adminRoutes(req, env, url) {
   if (path === "/admin/orders") return ordersPage(env, st, tok);
   if (path === "/admin/settings") return settingsPage(env, st, tok);
   if (path === "/admin/updates") return updatesPage(env, st, tok);
+  if (path === "/admin/more") return settingsPage(env, st, tok);
+  try {
+    if (path === "/admin/reps") return await repsPage(env, tok);
+    if (path.startsWith("/admin/rep/")) return await repPage(env, path.slice(11), tok);
+    if (path === "/admin/site") return await sitePage(env, tok);
+  } catch (e) { return apage("خطأ", `<div class="err">${esc(String(e.message || e))}</div>`, ""); }
   return redirect("/admin");
 }
 
@@ -1278,9 +1632,10 @@ export default {
     if (env.RL && url.pathname !== "/tg" && url.pathname !== "/paymob") {
       const ip = req.headers.get("CF-Connecting-IP") || "?";
       const { success } = await env.RL.limit({ key: ip });
-      if (!success) return new Response(JSON.stringify({ error: "طلبات كتير — استنى دقيقة" }), { status: 429, headers: { "Content-Type": "application/json; charset=utf-8", "Retry-After": "60", ...cors } });
+      if (!success) return new Response(JSON.stringify({ error: "طلبات كثيرة — انتظر دقيقة" }), { status: 429, headers: { "Content-Type": "application/json; charset=utf-8", "Retry-After": "60", ...cors } });
     }
     if (url.pathname === "/admin" || url.pathname.startsWith("/admin/")) return adminRoutes(req, env, url); // Trio's phone app
+    if (url.pathname.startsWith("/site/")) { try { return await siteRoutes(req, env, url); } catch (e) { return err("الخدمة غير متاحة الآن — حاول بعد قليل", 503); } }
     if (req.method === "POST" && url.pathname === "/ping") {
       let d = {};
       try { d = await req.json(); } catch (e) { return new Response("bad", { status: 400 }); }
@@ -1336,7 +1691,7 @@ export default {
     }
     if (url.pathname === "/back") {
       let o = await getOrder(env, q.get("o") || "");
-      if (!o) return page("Trio", "الطلب ده مش موجود.");
+      if (!o) return page("Trio", "هذا الطلب غير موجود.");
       // the browser back from Paymob carries the result signed the same way: settle now if the webhook is late
       const gv = (f) => (f === "order.id" ? q.get("order") ?? q.get("order_id") ?? "" : q.get(f) ?? "");
       if (q.get("hmac") && o.status === "pending" && (await hmacOK(env, HMAC_FIELDS.map(gv), q.get("hmac")))) {
@@ -1346,8 +1701,8 @@ export default {
       const site = (env.SITE || "https://trioerp.pages.dev").replace(/\/$/, "");
       if (o.src === "app") {
         const go = o.back ? o.back + "?id=" + o.id : "";
-        if (o.status === "failed") return page("❌ الدفع ماتمّش", "مااتخصمش منك حاجة. ارجع للبرنامج وجرّب تاني.", go);
-        return page("✔ شكرًا", "ارجع للبرنامج — باقتك بتتفعّل لوحدها خلال دقيقة. رقم طلبك " + o.id, go);
+        if (o.status === "failed") return page("❌ لم يكتمل الدفع", "لم يُخصم منك شيء. ارجع إلى البرنامج وحاول مرة أخرى.", go);
+        return page("✔ شكرًا", "ارجع إلى البرنامج — ستُفعَّل باقتك تلقائيًا خلال دقيقة. رقم طلبك " + o.id, go);
       }
       return Response.redirect(site + "/?order=" + encodeURIComponent(o.id) + "&st=" + o.status, 302);
     }
@@ -1361,10 +1716,10 @@ export default {
       let b = {};
       try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
       const o = await getOrder(env, String(b.id || "").trim().toUpperCase());
-      if (!o || digits(o.phone).slice(-9) !== digits(b.phone).slice(-9)) return err("رقم الطلب أو التليفون غلط", 404);
-      if (o.status !== "paid") return err(o.status === "failed" ? "الطلب ده الدفع بتاعه ماتمّش" : "الطلب ده لسه مااتدفعش");
-      if (!MACHINE.test(b.m || "")) return err("كود الجهاز غلط");
-      if (o.m && o.m !== b.m) return err("الطلب ده اتفعّل على جهاز تاني — كلّم Trio", 409);
+      if (!o || digits(o.phone).slice(-9) !== digits(b.phone).slice(-9)) return err("رقم الطلب أو الهاتف غير صحيح", 404);
+      if (o.status !== "paid") return err(o.status === "failed" ? "لم يكتمل دفع هذا الطلب" : "هذا الطلب لم يُدفع بعد");
+      if (!MACHINE.test(b.m || "")) return err("كود الجهاز غير صحيح");
+      if (o.m && o.m !== b.m) return err("فُعّل هذا الطلب على جهاز آخر — تواصل مع Trio", 409);
       if (!o.code) { o.m = b.m; o.code = await sign(env, licence(o, b.m, true)); o.claimed = iso(); await putOrder(env, o); }
       return json({ code: o.code, rep: o.rep || {} });
     }
