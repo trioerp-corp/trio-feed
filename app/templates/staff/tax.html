@@ -1,0 +1,50 @@
+{% extends "base.html" %}{% load gg %}{% block title %}الإقرارات الضريبية{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🧮 الإقرارات الضريبية</h1><p class="muted" style="margin:0">{{ s.get_tax_regime_display }}{% if s.tax_file_no %} · ملف {{ s.tax_file_no }}{% endif %}{% if s.tax_office %} · مأمورية {{ s.tax_office }}{% endif %}</p></div>
+<div class="actions noprint"><a class="btn light" href="{% url 'start' %}#tax">تعديل الملف الضريبي</a><button type="button" class="light" onclick="print()">🖨 اطبع</button></div></div>
+<div class="msg warning">⚠ هذه <b>مسودة</b> محسوبة من حسابات البرنامج بأرقام القانون وقت الإصدار — راجعها مع المحاسب قبل تقديمها على بوابة مصلحة الضرائب أو التأمينات.</div>
+
+<section class="card" style="margin-bottom:16px" id="vat"><h2 style="margin-top:0">ضريبة القيمة المضافة {% if quarterly %}(ربع سنوي — النظام المبسّط){% else %}(شهري){% endif %}</h2>
+{% if not vat %}<p class="muted">المحل غير مسجّل في القيمة المضافة — إن سُجّلت فعلّم عليها في <a href="{% url 'start' %}#tax">تجهيز المحل</a>.</p>
+{% else %}<form method="get" class="filters noprint"><label>الفترة التي تبدأ<input type="month" name="p" value="{{ d1|date:'Y-m' }}"></label><input type="hidden" name="y" value="{{ y }}"><button>عرض</button></form>
+<p class="muted">من {{ d1|date:"d/m/Y" }} حتى {{ d2|date:"d/m/Y" }}</p>
+<div class="table-wrap"><table><thead><tr><th>النسبة</th><th class="n">المبيعات (بدون الضريبة)</th><th class="n">الضريبة</th></tr></thead><tbody>
+{% for r in vat.rows %}<tr><td>{% if r.rate %}{{ r.rate|floatformat:-2 }}%{% else %}معفى / صفر{% endif %}</td><td class="n">{{ r.sales|money }}</td><td class="n">{{ r.vat|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا توجد مبيعات في الفترة</td></tr>{% endfor %}</tbody></table></div>
+<div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px">
+<div class="kpi"><span class="k">ضريبة المبيعات (المسجلة في الحسابات)</span><span class="v" style="font-size:20px">{{ vat.booked_output|money }}</span></div>
+<div class="kpi"><span class="k">ضريبة المشتريات (المسجلة)</span><span class="v" style="font-size:20px">{{ vat.input|money }}</span></div>
+<div class="kpi gold"><span class="k">المستحق للفترة</span><span class="v" style="font-size:20px">{{ vat.due|money }}</span></div></div>
+<p class="muted" style="font-size:13px">يُقدَّم {% if quarterly %}كل 3 شهور{% else %}كل شهر{% endif %} على بوابة المصلحة. وإن كنت تشتري بفواتير بها قيمة مضافة فالضريبة التي دفعتها تُخصم — سجّلها مع المحاسب.</p>{% endif %}</section>
+
+<section class="card" style="margin-bottom:16px" id="income"><h2 style="margin-top:0">ضريبة الدخل السنوية — {{ y }}</h2>
+<form method="get" class="filters noprint"><label>السنة<select name="y">{% for yy in years %}<option {% if yy == y %}selected{% endif %}>{{ yy }}</option>{% endfor %}</select></label>
+{% if s.tax_regime != 'simplified' %}<label>الشكل القانوني<select name="form"><option value="individual" {% if form == 'individual' %}selected{% endif %}>منشأة فردية / شركة أشخاص</option><option value="company" {% if form == 'company' %}selected{% endif %}>شركة (ذات مسئولية محدودة / مساهمة)</option></select></label>{% endif %}<button>عرض</button></form>
+<div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+<div class="kpi"><span class="k">حجم الأعمال (المبيعات بدون الضريبة)</span><span class="v" style="font-size:20px">{{ income.turnover|money }}</span></div>
+<div class="kpi"><span class="k">صافي الربح من الحسابات</span><span class="v" style="font-size:20px">{{ income.profit|money }}</span><span class="k">إيرادات {{ income.revenue|money:0 }} − مصروفات {{ income.expenses|money:0 }}</span></div>
+<div class="kpi hero"><span class="k">الضريبة التقديرية</span><span class="v" style="font-size:22px">{% if income.tax is None %}—{% else %}{{ income.tax|money }}{% endif %}</span></div></div>
+{% if income.regime == 'simplified' %}{% if income.eligible %}<p>النظام المبسّط (قانون 6 لسنة 2025): <b>{{ income.rate|floatformat:-2 }}%</b> من إجمالي حجم الأعمال حسب الشريحة.</p>{% else %}<p class="bad"><b>تجاوز حجم أعمالك 20 مليونًا — لا يحق لك النظام المبسّط؛ تواصل مع المحاسب.</b></p>{% endif %}
+<details><summary>الشرايح</summary><ul>{% for top, rate in simplified %}<li>أقل من {{ top|money:0 }} ج: {{ rate|floatformat:-2 }}%</li>{% endfor %}</ul></details>
+{% elif form == 'company' %}<p>شركة أموال: {{ income.rate|floatformat:-2 }}% من صافي الربح.</p>
+{% else %}<p>منشأة فردية: الشرائح التصاعدية على صافي الربح السنوي.</p><details><summary>الشرايح</summary><ul>{% for top, rate in brackets %}<li>{% if top %}حتى {{ top|money:0 }} ج{% else %}ما يزيد على ذلك{% endif %}: {{ rate|floatformat:-2 }}%</li>{% endfor %}</ul></details>{% endif %}
+<p class="muted" style="font-size:13px">يُقدَّم الإقرار السنوي{% if income.regime == 'simplified' %} على نموذج الإقرار المبسّط{% endif %} بعد نهاية السنة — يضبط المحاسب المصروفات القابلة للخصم وغير القابلة.</p></section>
+
+<section class="card" style="margin-bottom:16px" id="payroll"><h2 style="margin-top:0">كسب العمل والتأمينات — {{ y }}</h2>
+<div class="table-wrap"><table><thead><tr><th>الشهر</th><th class="n">موظفين</th><th class="n">إجمالي المرتبات</th><th class="n">تأمينات الموظفين</th><th class="n">تأمينات المحل</th><th class="n">ضريبة كسب العمل</th><th class="n">صندوق الشهداء</th></tr></thead><tbody>
+{% for r in payroll.rows %}<tr><td><a href="{% url 'staff_payroll' %}?m={{ r.month|date:'Y-m' }}">{{ r.month|date:"F" }}</a></td><td class="n">{{ r.n }}</td><td class="n">{{ r.gross|money }}</td><td class="n">{{ r.emp_ins|money }}</td><td class="n">{{ r.er_ins|money }}</td><td class="n">{{ r.tax|money }}</td><td class="n">{{ r.martyrs|money }}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد مسيرات معتمدة في هذه السنة — <a href="{% url 'staff_list' %}">الموظفين والمرتبات</a></td></tr>{% endfor %}</tbody>
+<tfoot><tr><th>السنة</th><th></th><th class="n">{{ payroll.total.gross|money }}</th><th class="n">{{ payroll.total.emp_ins|money }}</th><th class="n">{{ payroll.total.er_ins|money }}</th><th class="n">{{ payroll.total.tax|money }}</th><th class="n">{{ payroll.total.martyrs|money }}</th></tr></tfoot></table></div>
+<p class="muted" style="font-size:13px">تُدفع التأمينات كل شهر للهيئة. ضريبة كسب العمل {% if s.tax_regime == 'simplified' %}بإقرار سنوي في النظام المبسّط{% else %}تُورَّد شهريًا وبإقرار ربع سنوي{% endif %}.</p></section>
+
+<section class="card noprint" id="owed"><h2 style="margin-top:0">المستحق عليك للحكومة حتى اليوم</h2>
+<div class="grid" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px">
+<div class="kpi"><span class="k">التأمينات الاجتماعية</span><span class="v" style="font-size:20px">{{ owed.ins|money }}</span></div>
+<div class="kpi"><span class="k">ضريبة كسب العمل</span><span class="v" style="font-size:20px">{{ owed.tax|money }}</span></div>
+<div class="kpi"><span class="k">صندوق الشهداء</span><span class="v" style="font-size:20px">{{ owed.martyrs|money }}</span></div>
+<div class="kpi"><span class="k">القيمة المضافة</span><span class="v" style="font-size:20px">{{ owed.vat|money }}</span></div></div>
+<form method="post" class="actions" style="justify-content:flex-start;align-items:end">{% csrf_token %}
+<label class="field" style="max-width:220px">سدّدت<select name="what"><option value="ins">التأمينات</option><option value="tax">ضريبة كسب العمل</option><option value="martyrs">صندوق الشهداء</option><option value="vat">القيمة المضافة</option></select></label>
+<label class="field" style="max-width:150px">المبلغ<input name="amount" inputmode="decimal" dir="ltr" required></label>
+<label class="field" style="max-width:220px">من<select name="box">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+<label class="field" style="max-width:200px">رقم الإيصال<input name="ref" maxlength="60"></label><button>تسجيل السداد</button></form></section>
+{% endblock %}

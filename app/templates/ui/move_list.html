@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}المخازن{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>حركات المخازن</h1><p class="muted" style="margin:0">إذن الصرف يحدد القطاع، والسولار والزيوت تحدد المعدة</p></div>
+<div class="actions"><a class="btn" href="{% url 'move_new' %}?kind=issue">+ إذن صرف</a><a class="btn light" href="{% url 'move_new' %}?kind=receipt">+ إذن إضافة</a><a class="btn light" href="{% url 'stock_count' %}">جرد وتسوية (رفع ملف)</a><a class="btn light" href="/admin/inventory/item/">الأصناف والأرصدة</a></div></div>
+<form class="filters" method="get"><label>بحث<input name="q" value="{{ g.q|default:'' }}" placeholder="رقم، صنف، مستلم"></label>
+<label>النوع<select name="kind"><option value="">الكل</option>{% for k, n in kinds %}<option value="{{ k }}" {% if g.kind == k %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>المخزن<select name="warehouse"><option value="">الكل</option>{% for w in warehouses %}<option value="{{ w.pk }}" {% if g.warehouse == w.pk|stringformat:'s' %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
+<label>الحالة<select name="state"><option value="">الكل</option>{% for k, n in states %}<option value="{{ k }}" {% if g.state == k %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>من<input type="date" name="from" value="{{ g.from|default:'' }}"></label><label>إلى<input type="date" name="to" value="{{ g.to|default:'' }}"></label><button>عرض</button></form>
+<div class="table-wrap"><table><thead><tr><th>الرقم</th><th>التاريخ</th><th>النوع</th><th>المخزن</th><th>المستلم/المورد</th><th>البيان</th><th>الحالة</th></tr></thead><tbody>
+{% for m in page %}<tr><td><a href="{% url 'move_detail' m.pk %}">{{ m.number|default:"مسودة" }}</a></td><td>{{ m.date|date:"Y-m-d" }}</td><td><span class="badge">{{ m.get_kind_display }}</span></td><td>{{ m.warehouse.name }}</td><td>{{ m.partner|default:m.receiver }}</td><td>{{ m.description|truncatechars:50 }}</td><td><span class="badge {% if m.state == 'draft' %}gold{% endif %}">{{ m.get_state_display }}</span></td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد حركات بعد — نقل حركات مخازن الموقع القديمة في الخطوة التالية</td></tr>{% endfor %}</tbody></table></div>
+{% include "ui/_pager.html" %}
+{% endblock %}

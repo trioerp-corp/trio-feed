@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}التقارير{% endblock %}
+{% block content %}
+<h1>التقارير</h1>
+<div class="grid tiles">
+<a class="card" href="{% url 'trial_balance' %}"><b>ميزان المراجعة</b><div class="muted">أول المدة، الحركة، الرصيد — بأي مستوى</div></a>
+<a class="card" href="{% url 'ledger' %}"><b>كشف حساب</b><div class="muted">حساب، أو طرف (عميل/مورد/موظف)، أو مركز تكلفة</div></a>
+<a class="card" href="{% url 'income_statement' %}"><b>قائمة الدخل</b><div class="muted">المعتمدة بعد إقفال الفترة</div></a>
+<a class="card" href="{% url 'balance_sheet' %}"><b>المركز المالي</b><div class="muted">الميزانية في أي تاريخ</div></a>
+<a class="card" href="{% url 'cash_flow' %}"><b>التدفقات النقدية</b><div class="muted">طريقة مباشرة، أي فترة، جاهزة للـ PDF</div></a>
+</div>
+{% endblock %}

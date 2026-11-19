@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}الرفع من إكسل{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>ابدأ بسرعة — الرفع من إكسل</h1><p class="muted" style="margin:0">بدلًا من إدخال كل شيء يدويًا: نزّل الملف، واملأه، وارفعه — فتُضاف البيانات كلها مرة واحدة</p></div></div>
+<ol class="flow"><li><b>نزّل الملف</b><span>منسّق وفيه شرح ومثال (وبياناتك الحالية إن وُجدت)</span></li><li><b>املاه</b><span>كل سطر عنصر — العناوين الذهبية إجبارية</span></li><li><b>ارفعه</b><span>مراجعة قبل الحفظ وأي خطأ برقم السطر</span></li><li><b>حفظ الكل</b><span>مرة واحدة، وإن رفعته مرة أخرى يُحدّث ولا يكرر</span></li></ol>
+<p class="muted" style="margin:6px 0 14px">الترتيب المقترح لمحل جديد: الأصناف (بكمياتها) ← العملاء والموردين بأرصدتهم ← الموظفين{% if 'recipes' in mods %} ← الوصفات{% endif %}.</p>
+<section class="tiles imp">
+{% for k, v, n in kinds %}<a class="tile" href="{% url 'import_upload' k %}"><span class="ic" aria-hidden="true" style="font-size:30px">{{ v.icon }}</span><b>{{ v.title }}</b><span>{% if n %}موجود {{ n }}{% else %}فارغ حتى الآن{% endif %}</span></a>{% endfor %}
+</section>
+{% endblock %}

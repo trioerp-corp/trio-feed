@@ -1,0 +1,3 @@
+{% extends "base.html" %}{% block title %}{{ code }}{% endblock %}
+{% block content %}<div class="card" style="max-width:480px;margin:40px auto;text-align:center"><h1>{% if code == 404 %}🔎 غير موجود{% elif code == 403 %}🔒 غير مسموح{% else %}⚠️ يوجد خطأ{% endif %}</h1>
+<p class="muted">{{ msg }}</p><p><a class="btn" href="javascript:history.back()">ارجع</a> <a class="btn ghost" href="/">الرئيسية</a></p></div>{% endblock %}

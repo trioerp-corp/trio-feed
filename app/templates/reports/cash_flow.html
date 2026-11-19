@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% load gg %}{% block title %}التدفقات النقدية{% endblock %}
+{% block content %}
+<h1>قائمة التدفقات النقدية (الطريقة المباشرة) <small class="muted">من {{ d1 }} إلى {{ d2 }}</small></h1>
+{% include "reports/_range.html" %}
+<table>
+<tr class="l2"><td>النقدية أول الفترة</td><td class="n">{{ r.opening|money }}</td></tr>
+{% for s in r.sections %}<tr class="l1"><td>{{ s.title }}</td><td></td></tr>
+{% for name, v in s.items %}<tr><td style="padding-inline-start:24px">{{ name }}</td><td class="n">{{ v|money }}</td></tr>{% empty %}<tr><td class="muted" style="padding-inline-start:24px">لا يوجد</td><td></td></tr>{% endfor %}
+<tr class="total"><td>صافي {{ s.title }}</td><td class="n">{{ s.total|money }}</td></tr>{% endfor %}
+<tr class="total"><td>صافي التغير في النقدية</td><td class="n">{{ r.net|money }}</td></tr>
+<tr class="total"><td>النقدية آخر الفترة</td><td class="n">{{ r.closing|money }}</td></tr>
+</table>
+{% if r.closing|floatformat:2 != r.computed_closing|floatformat:2 %}<p class="bad">تنبيه: فرق بين الرصيد المحسوب والفعلي (فروق عملة غالبًا).</p>{% endif %}
+{% endblock %}

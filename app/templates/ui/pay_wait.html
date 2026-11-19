@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}الدفع{% endblock %}
+{% block content %}
+<div class="card" style="max-width:620px;margin:40px auto;text-align:center;padding:30px">
+{% if status == "failed" %}
+<h1 style="margin:0 0 8px">❌ لم يكتمل الدفع</h1><p class="muted">لم يُخصم منك شيء. يمكنك المحاولة مرة أخرى أو الدفع بطريقة أخرى.</p>
+<p><a class="btn" href="{% url 'upgrade' %}">رجوع لـ «التحديثات»</a></p>
+{% elif err %}
+<h1 style="margin:0 0 8px">⏳ مستنيين تأكيد الدفع</h1><p class="muted">{{ err }}</p>
+<p>إن خُصم منك المبلغ: ستصل الرخصة تلقائيًا فور اتصال الجهاز بالإنترنت{% if oid %} — رقم طلبك <b dir="ltr">{{ oid }}</b>{% endif %}.</p>
+<p><a class="btn light" href="?id={{ oid }}">حاول مرة أخرى</a></p>
+{% else %}
+<h1 style="margin:0 0 8px">⏳ جارٍ تأكيد الدفع…</h1>
+<p class="muted">تُحدَّث الصفحة تلقائيًا. فور أن Paymob يتأكد الدفع، تُثبَّت الرخصة ويفتح البرنامج باقتك.</p>
+{% if oid %}<p>رقم الطلب: <b dir="ltr">{{ oid }}</b></p>{% endif %}
+<meta http-equiv="refresh" content="4">
+{% endif %}
+</div>
+{% endblock %}

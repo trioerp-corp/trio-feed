@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}تعديل {{ k.one }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ k.icon }} تعديل {{ k.one }}: {{ obj }}</h1><p class="muted" style="margin:0"><a href="{{ back }}">← رجوع</a></p></div></div>
+<form method="post" class="card form-grid" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="msg error" style="grid-column:1/-1">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+{% for f in form %}<label class="field{% if f.field.widget.input_type == 'checkbox' %} check{% endif %}">{{ f.label }}{% if f.field.required %} <span class="bad" aria-hidden="true">*</span>{% endif %}{{ f }}
+{% if f.help_text %}<small class="muted">{{ f.help_text }}</small>{% endif %}{% if f.errors %}<small class="bad">{{ f.errors|join:" " }}</small>{% endif %}</label>{% endfor %}
+<div class="actions" style="grid-column:1/-1"><button>حفظ</button><a class="btn light" href="{{ back }}">إلغاء</a></div></form>
+<form method="post" class="card" style="margin-top:16px;border-color:var(--bad)" onsubmit="return confirm('تمسح «{{ obj|escapejs }}»؟ إن كانت عليه حركات فسيُوقف بدلًا من حذفه.')">{% csrf_token %}
+<input type="hidden" name="op" value="delete"><h2 style="margin-top:0">حذف</h2>
+<p class="muted">إن لم تكن عليه أي حركة يُحذف نهائيًا. وإن كانت عليه مبيعات أو قيود يُوقف (لن يظهر في الكاشير والقوائم) وتبقى الحسابات السابقة كما هي.</p>
+<button class="danger">🗑 حذف</button></form>
+{% endblock %}

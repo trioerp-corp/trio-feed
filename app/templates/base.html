@@ -1,0 +1,65 @@
+{% load static %}<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0C4A76">
+<title>{% block title %}الرئيسية{% endblock %} — {{ company.name|default:"النظام" }}</title>
+<link rel="icon" href="{% static 'ui/icon.svg' %}">
+<link rel="stylesheet" href="{% static 'ui/app.css' %}">
+<link rel="stylesheet" href="{% static 'ui/acc.css' %}">
+</head>
+<body>
+{% if training %}<div style="background:#B45F06;color:#fff;text-align:center;padding:6px;font-weight:700">نسخة تدريب — لا يؤثر أي شيء هنا على البيانات الحقيقية</div>{% endif %}
+{% if request.license and request.license.state != 'active' and not hide_nav %}<a href="/license/" style="display:block;text-align:center;padding:6px;font-weight:700;color:#fff;background:{% if request.license.state == 'trial' %}#0C4A76{% elif request.license.state == 'warning' %}#B45F06{% else %}#A13A2A{% endif %}">{{ request.license.message }} — اضغط هنا للتفعيل</a>{% endif %}
+{% if user.is_authenticated and not hide_nav %}
+<header class="gg-top">
+  <button type="button" class="gg-burger" aria-label="القائمة" aria-controls="ggSide" aria-expanded="false" onclick="ggSide(true)">☰</button>
+  <a class="gg-brand" href="{% url 'home' %}">{% if company.logo_svg %}<span style="width:42px;height:42px;display:inline-flex" aria-hidden="true">{{ company.logo_svg|safe }}</span>{% else %}<span class="gg-user" style="background:#fff;color:#0C4A76" aria-hidden="true">{{ company.name|slice:":1" }}</span>{% endif %}<span>{{ company.name }}<small>{{ business_label|default:"نظام المبيعات والمخزن" }}</small></span></a>
+  <div class="gg-tools">
+    {% if branch_on %}{% if branch_locked %}<span class="brchip" title="فرعك">🏬 {{ branch_view.name }}</span>{% else %}
+    <form method="post" action="{% url 'branch_switch' %}" class="brsel">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden" for="brs">الفرع</label>
+    <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>{{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
+    <form class="gg-search" action="{% url 'find' %}" role="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D9E7F5" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden">بحث</label><input name="q" type="search" placeholder="ابحث: صنف، عميل، فاتورة، صفحة…"></form>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn light" title="تسجيل الخروج">خروج</button></form>
+    <form method="post" action="/2fa/new-codes/">{% csrf_token %}<button class="gg-user" title="{{ user.get_username }} — اضغط لأكواد احتياطية جديدة لرمز التأكيد">{{ user.get_username|slice:":1"|upper }}</button></form>
+  </div>
+</header>
+{% endif %}
+{% if user.is_authenticated and not hide_nav and menu %}
+<div class="gg-shell">
+<aside class="gg-side" id="ggSide" aria-label="الأقسام">
+  <div class="gg-side-head"><b>القائمة</b><button type="button" class="gg-side-x" aria-label="أغلق القائمة" onclick="ggSide(false)">✕</button></div>
+  <form action="{% url 'find' %}" role="search"><input class="gg-side-find" name="q" type="search" placeholder="ابحث… (Enter = في البرنامج كله)" aria-label="ابحث في القائمة، أو اضغط Enter للبحث في البرنامج كله" oninput="ggFind(this.value)"></form>
+  {% for title, links in menu %}<nav class="gg-group" aria-label="{{ title }}"><h3>{{ title }}</h3>
+  {% for l in links %}<a href="{{ l.url }}"{% if l.on %} class="on" aria-current="page"{% endif %}{% if l.new_tab %} target="_blank" rel="noopener"{% endif %}><span class="ic" aria-hidden="true">{{ l.icon }}</span><span class="tx">{{ l.label }}</span>{% if l.badge %}<span class="badge gold">{{ l.badge }}</span>{% endif %}{% if l.new_tab %}<span class="ext" aria-hidden="true">↗</span>{% endif %}</a>
+  {% endfor %}</nav>{% endfor %}
+</aside>
+<div class="gg-side-back" onclick="ggSide(false)"></div>
+<main class="page">
+{% else %}<main class="page">{% endif %}
+{% if upd_applied and not hide_nav %}<div class="updbar ok"><span>🎉 <b>تم تحديث البرنامج لأحدث إصدار {{ upd_applied.v }}</b>{% if upd_applied.notes %} — الجديد: {{ upd_applied.notes|linebreaksbr }}{% endif %}</span>
+<form method="post" action="{% url 'update_seen' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="light">تمام</button></form></div>{% endif %}
+{% if upd_ready and not hide_nav %}<div class="updbar"><span>⬇ <b>تحديث جديد جاهز ({{ upd_ready.v }})</b> — {% if upd_failed %}لم تكتمل المحاولة السابقة وعاد البرنامج كما كان؛ حاول مرة أخرى أو تواصل مع Trio.{% else %}سيُثبَّت تلقائيًا الساعة 2 ليلًا، أو ثبّته الآن.{% endif %}{% if upd_ready.notes %}<br><small>{{ upd_ready.notes }}</small>{% endif %}</span>
+<form method="post" action="{% url 'update_now' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button>حدّث الآن</button></form></div>{% endif %}
+{% if newer_version and not upd_ready and is_owner and not hide_nav %}<div class="updbar"><span>🆕 <b>متاح إصدار أحدث {{ newer_version }}</b> — سيُنزَّل ويُثبَّت تلقائيًا ليلًا، أو حدّثه الآن.</span>
+<form method="post" action="{% url 'update_now' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button>حدّث الآن</button></form></div>{% endif %}
+{% if upgraded.licence and not hide_nav %}<div class="updbar ok"><span>✨ <b>تم التفعيل لديك:</b> {{ upgraded.licence }}</span>
+<form method="post" action="{% url 'update_seen' %}">{% csrf_token %}<input type="hidden" name="what" value="upgrade"><input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="light">تمام</button></form></div>{% endif %}
+{% if messages %}{% for m in messages %}{% if 'popup' in m.tags %}<div class="popup-back" role="alertdialog" aria-modal="true" aria-labelledby="pp{{ forloop.counter }}"><div class="popup-box">
+<h2 id="pp{{ forloop.counter }}">تنبيه</h2><p>{{ m }}</p><button type="button" onclick="this.closest('.popup-back').remove()" autofocus>تمام</button></div></div>
+{% else %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endif %}{% endfor %}{% endif %}
+{% block content %}{% endblock %}
+</main>{% if user.is_authenticated and not hide_nav and menu %}</div>{% endif %}
+<footer class="gg-foot"><img src="{% static 'ui/trio-mark.png' %}" alt="" style="height:18px;vertical-align:-4px;margin-inline-end:4px"><b>Trio</b> <span dir="ltr">{{ app_version }}</span>{% if newer_version %} · <b>متاح {{ newer_version }}</b>{% endif %} · <a href="tel:01008030459" dir="ltr">01008030459</a> · <a href="tel:01121460640" dir="ltr">01121460640</a></footer>
+<script src="{% static 'ui/app.js' %}"></script>
+<script>
+function ggSide(open){document.body.classList.toggle('side-open',open);const b=document.querySelector('.gg-burger');if(b)b.setAttribute('aria-expanded',open)}
+function ggFind(q){q=(q||'').trim();document.querySelectorAll('.gg-group').forEach(g=>{let any=false;g.querySelectorAll('a').forEach(a=>{const ok=!q||a.textContent.includes(q);a.style.display=ok?'':'none';any=any||ok});g.style.display=any?'':'none'})}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')ggSide(false)});
+(function(){const on=document.querySelector('.gg-side a.on');if(on)on.scrollIntoView({block:'nearest'})})();
+</script>
+{% if user.is_authenticated and not hide_nav %}{% include "core/_ask.html" %}{% endif %}
+</body>
+</html>

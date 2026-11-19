@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% load gg %}{% block title %}قيد {{ e.number }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ e.journal.name }} {{ e.number|default:"(مسودة)" }}</h1><p class="muted" style="margin:0">{{ e.date|date:"Y-m-d" }} — <span class="badge {% if e.state == 'draft' %}gold{% elif e.state == 'reversed' %}red{% endif %}">{{ e.get_state_display }}</span>{% if e.reversal_of %} — عكس للقيد <a href="{% url 'entry_detail' e.reversal_of_id %}">{{ e.reversal_of.number }}</a>{% endif %}</p></div>
+<form method="post" class="actions">{% csrf_token %}{% if e.state == 'draft' %}<a class="btn light" href="{% url 'entry_edit' e.pk %}">تعديل</a><button name="post" value="1">ترحيل</button>{% endif %}
+{% if e.state == 'posted' %}<input name="reason" placeholder="سبب العكس"><button name="reverse" value="1" class="danger">عكس القيد</button>{% endif %}<a class="btn light" href="javascript:print()">🖨 طباعة</a></form></div>
+<p>{{ e.description }}</p>
+<div class="table-wrap"><table><thead><tr><th>الحساب</th><th>الطرف</th><th>المركز</th><th>المعدة</th><th>البيان</th><th class="n">مدين</th><th class="n">دائن</th></tr></thead><tbody>
+{% for l in lines %}<tr><td><a href="{% url 'ledger' %}?account={{ l.account.code }}">{{ l.account }}</a></td><td>{{ l.partner|default:"" }}</td><td>{{ l.dim1.name|default:"" }}</td><td>{{ l.dim2.name|default:"" }}</td><td>{{ l.description }}</td><td class="n">{{ l.debit|money }}</td><td class="n">{{ l.credit|money }}</td></tr>{% endfor %}
+<tr class="total"><td colspan="5">الإجمالي</td><td class="n">{{ e.total_debit|money }}</td><td class="n">{{ e.total_credit|money }}</td></tr></tbody></table></div>
+{% endblock %}

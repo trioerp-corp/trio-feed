@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{{ ins.name }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🛡 {{ ins.name }}</h1><p class="muted" style="margin:0">تتحمّل {{ ins.coverage_pct|floatformat:-2 }}%{% if ins.max_per_visit %} بحد {{ ins.max_per_visit|money:0 }} ج للزيارة{% endif %}{% if ins.contract_no %} · تعاقد {{ ins.contract_no }}{% endif %} — {{ company.name }}</p></div>
+<div class="actions noprint"><a class="btn light" href="?d1={{ d1|date:'Y-m-d' }}&d2={{ d2|date:'Y-m-d' }}&print=1" onclick="setTimeout(()=>print(),300)">🖨 اطبع المطالبة</a><a class="btn light" href="{% url 'clinic_insurance' %}">كل الشركات</a></div></div>
+<form class="filters noprint" method="get"><label>من<input type="date" name="d1" value="{{ d1|date:'Y-m-d' }}"></label><label>حتى<input type="date" name="d2" value="{{ d2|date:'Y-m-d' }}"></label><button>عرض</button></form>
+<div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px">
+<div class="kpi"><span class="k">مطالبة الفترة</span><span class="v">{{ st.billed|money }}</span></div>
+<div class="kpi"><span class="k">المحصّل منها</span><span class="v">{{ st.collected|money }}</span></div>
+<div class="kpi gold"><span class="k">كل ما عليها حتى اليوم</span><span class="v">{{ st.owed|money }}</span></div></div>
+<div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>المريض</th><th>الرقم التأميني</th><th>الطبيب</th><th class="n">الفاتورة</th><th class="n">نصيب الشركة</th><th class="n">الباقي</th><th>الحالة</th></tr></thead><tbody>
+{% for r in st.rows %}<tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.patient.name }} <small class="muted">({{ r.patient.number }})</small></td><td dir="ltr">{{ r.patient.insurance_no }}</td><td>{{ r.visit.doctor|default:"" }}</td>
+<td class="n">{{ r.total|money }}</td><td class="n"><b>{{ r.credit|money }}</b></td><td class="n">{{ r.remaining|money }}</td><td>{{ r.status }}</td></tr>
+{% empty %}<tr><td colspan="8" class="muted">لا توجد زيارات على هذه الشركة في الفترة</td></tr>{% endfor %}</tbody>
+<tfoot><tr><th colspan="5">الإجمالي</th><th class="n">{{ st.billed|money }}</th><th colspan="2"></th></tr></tfoot></table></div>
+{% if owner and not printing %}<div class="split noprint" style="margin-top:16px"><div class="main"><form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="collect"><h2>💵 الشركة دفعت</h2>
+<div class="form-grid"><label class="field">المبلغ<input name="amount" inputmode="decimal" dir="ltr" required></label><label class="field">في<select name="box">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+<label class="field">رقم الشيك / التحويل<input name="ref" maxlength="60"></label></div><button style="margin-top:8px">تسجيل التحصيل</button></form></div>
+<div class="side"><form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="save"><h2>بيانات الشركة</h2>
+<label class="field">الاسم<input name="name" value="{{ ins.name }}" required></label><label class="field">نسبة التحمل %<input name="coverage_pct" value="{{ ins.coverage_pct|floatformat:-2 }}" dir="ltr"></label>
+<label class="field">أقصى مبلغ للزيارة<input name="max_per_visit" value="{{ ins.max_per_visit|default_if_none:'' }}" dir="ltr"></label><label class="field">رقم التعاقد<input name="contract_no" value="{{ ins.contract_no }}" dir="ltr"></label>
+<label class="field">التليفون<input name="phone" value="{{ ins.phone }}" dir="ltr"></label><label class="field">المسؤول<input name="contact" value="{{ ins.contact }}"></label>
+<label class="field">الرقم الضريبي<input name="tax_id" value="{{ ins.tax_id }}" dir="ltr"></label><label class="field">العنوان<input name="address" value="{{ ins.address }}"></label>
+<label class="field">ملاحظات<input name="notes" value="{{ ins.notes }}"></label>
+<label class="field">الحالة<select name="active"><option value="1" {% if ins.active %}selected{% endif %}>شغالة</option><option value="0" {% if not ins.active %}selected{% endif %}>موقوفة</option></select></label><button>حفظ</button></form></div></div>{% endif %}
+{% endblock %}

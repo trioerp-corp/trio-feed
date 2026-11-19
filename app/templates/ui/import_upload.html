@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% load gg %}{% block title %}رفع {{ spec.title }} من إكسل{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ spec.icon }} {{ spec.title }} — من إكسل</h1><p class="muted" style="margin:0">{{ spec.desc }}</p></div>
+<div class="actions"><a class="btn light" href="{% url 'import_hub' %}">كل الأقسام</a><a class="btn light" href="{% url spec.back %}">رجوع</a></div></div>
+{% if preview %}
+<section class="grid" style="margin-bottom:14px">
+<div class="card kpi"><span class="k">سطور في الملف</span><span class="v">{{ total }}</span></div>
+<div class="card kpi {% if errs %}gold{% else %}hero{% endif %}"><span class="k">{% if errs %}سطور بها أخطاء{% else %}كله سليم ✔{% endif %}</span><span class="v">{% if errs %}{{ bad|length }}{% else %}{{ ok }}{% endif %}</span><span class="k">{{ summary }}</span></div></section>
+{% if errs %}<div class="card" style="margin-bottom:14px;border-color:var(--bad)"><h2 class="bad">صحّح هذه في الملف وارفعه مرة أخرى</h2><ul class="errlist">{% for r, e in errs|slice:":60" %}<li><b>سطر {{ r }}:</b> {{ e }}</li>{% endfor %}</ul>{% if errs|length > 60 %}<p class="muted">… و{{ errs|length|add:"-60" }} أخطاء أخرى</p>{% endif %}</div>{% endif %}
+<div class="table-wrap"><table><thead><tr><th>سطر</th>{% for c in cols %}<th>{{ c.0 }}</th>{% endfor %}</tr></thead><tbody>
+{% for r in rows %}<tr {% if r.rown in bad %}class="rowbad"{% endif %}><td>{{ r.rown }}</td>{% for k in keys %}<td>{{ r|get:k|default_if_none:"" }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% if total > 300 %}<p class="muted">معروض أول 300 سطر.</p>{% endif %}
+<form method="post" class="actions" style="margin-top:14px">{% csrf_token %}{% if not errs %}<button name="confirm" value="1">✔ حفظ الكل ({{ total }} سطر)</button>{% endif %}<a class="btn light" href="{% url 'import_upload' kind %}">رفع ملف آخر</a></form>
+{% else %}
+<div class="split"><div class="main">
+<div class="card" style="margin-bottom:14px"><h2>1) نزّل الملف</h2><p class="muted">منسّق وفيه ورقة «طريقة الملء» بمثال لكل عمود{% if spec.rows %}، وفيه بياناتك الحالية لتعدّلها دفعة واحدة{% endif %}.</p>
+<a class="btn" href="{% url 'import_sheet' kind %}">⬇ تنزيل ملف {{ spec.title }}</a></div>
+<form method="post" enctype="multipart/form-data" class="card">{% csrf_token %}<h2>2) ارفعه بعد ملئه</h2><div class="form-grid">
+<label class="field">الملف (xlsx)<input type="file" name="file" accept=".xlsx,.xlsm" required></label>
+{% if spec.opening %}<label class="field">تاريخ أول المدة<input type="date" name="date" value="{{ date }}"></label>{% endif %}
+{% if kind == 'items' or kind == 'opening' %}{% if whs|length > 1 %}<label class="field">المخزن<select name="warehouse">{% for w in whs %}<option>{{ w }}</option>{% endfor %}</select></label>{% endif %}{% endif %}
+</div><div class="actions" style="margin-top:12px"><button>رفع ومراجعة ←</button></div>
+<p class="muted" style="font-size:13px;margin:8px 0 0">لا يُحفظ شيء قبل أن ترى المراجعة وتضغط «حفظ الكل».</p></form></div>
+<div class="side"><div class="card"><h2>الأعمدة</h2><table><tbody>{% for c in cols %}<tr><td><b {% if c.2 %}class="gold-t"{% endif %}>{{ c.0 }}</b>{% if c.2 %} <small class="bad">إجباري</small>{% endif %}<br><small class="muted">{{ c.4|default:"" }}{% if c.3 %} — مثال: {{ c.3 }}{% endif %}</small></td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endif %}
+{% endblock %}

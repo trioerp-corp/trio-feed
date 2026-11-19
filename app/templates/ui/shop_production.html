@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}التصنيع{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>التصنيع (المعمل)</h1><p class="muted" style="margin:0">اصرف الخامات للمعمل، وعند خروج الإنتاج (في اليوم التالي مثلًا) استلمه — تنتقل تكلفة الخامات إلى المنتج النهائي.</p></div></div>
+<datalist id="itemlist">{% for i in items %}<option value="{{ i.name }} | {{ i.code }}"></option>{% endfor %}</datalist>
+<details class="card" id="new" style="margin-bottom:16px" open><summary><b>{% if redo %}تعديل «{{ redo.name }}» — أُلغي، صحّحه وأرسله مرة أخرى{% else %}+ أمر تصنيع جديد{% endif %}</b></summary>
+<form method="post" id="newpo" style="margin-top:12px">{% csrf_token %}
+<div class="form-grid"><label class="field">البيان<input name="name" placeholder="مثلًا: رز بلبن" value="{{ redo.name|default:'' }}"></label><label class="field">تاريخ الصرف<input type="date" name="date" value="{{ today }}"></label>
+<label class="field">الخامات من<select name="from_wh">{% for w in whs %}<option value="{{ w.pk }}">{{ w.name }}</option>{% endfor %}</select></label>
+<label class="field">الإنتاج يدخل<select name="to_wh">{% for w in whs %}<option value="{{ w.pk }}">{{ w.name }}</option>{% endfor %}</select></label></div>
+<div class="split" style="margin-top:12px"><div class="main"><h2>الخامات المصروفة</h2><div id="ins"></div><button type="button" class="light" onclick="row('ins','in')">+ خامة</button></div>
+<div class="side"><h2>الإنتاج المتوقع</h2><div id="outs"></div><button type="button" class="light" onclick="row('outs','out')">+ منتج</button></div></div>
+<p><button name="new" value="1">صرف الخامات للمعمل</button></p></form></details>
+<div class="table-wrap"><table><thead><tr><th>الأمر</th><th>البيان</th><th>الصرف</th><th>الخامات</th><th>الإنتاج</th><th class="n">التكلفة</th><th>الحالة</th>{% if can_edit %}<th>إلغاء / تعديل</th>{% endif %}</tr></thead><tbody>
+{% for o in orders %}<tr><td>{{ o.number }}</td><td>{{ o.name }}</td><td>{{ o.date_out|date:"d/m" }}</td>
+<td>{% for l in o.lines.all %}{% if l.side == 'in' %}{{ l.item.name }} {{ l.qty|floatformat:-3 }}<br>{% endif %}{% endfor %}</td>
+<td>{% if o.state == 'in_kitchen' %}<form method="post">{% csrf_token %}{% for l in o.lines.all %}{% if l.side == 'out' %}<label>{{ l.item.name }} <input name="out_{{ l.pk }}" value="{{ l.qty|unlocalize }}" inputmode="decimal" style="width:90px"></label><br>{% endif %}{% endfor %}
+<input type="date" name="date_in" value="{{ today }}"> <button name="receive" value="{{ o.pk }}">استلام الإنتاج</button></form>
+{% else %}{% for l in o.lines.all %}{% if l.side == 'out' %}{{ l.item.name }} {{ l.qty|floatformat:-3 }}<br>{% endif %}{% endfor %}{% endif %}</td>
+<td class="n">{{ o.cost|money }}</td><td><span class="badge {% if o.state == 'in_kitchen' %}gold{% elif o.state == 'done' %}{% else %}gray{% endif %}">{{ o.get_state_display }}</span></td>
+{% if can_edit %}<td>{% if o.state != 'cancelled' and o.state != 'draft' %}<form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}<input name="reason" required placeholder="السبب" style="width:120px">
+<button class="light" name="redo" value="1" onclick="this.form.cancel.value='{{ o.pk }}'">تعديل</button><button class="danger" onclick="this.form.cancel.value='{{ o.pk }}';return confirm('إلغاء أمر التصنيع؟ سيخرج المنتج النهائي من المخزن وتعود الخامات')">إلغاء</button><input type="hidden" name="cancel" value="{{ o.pk }}"></form>{% endif %}</td>{% endif %}</tr>
+{% empty %}<tr><td colspan="8" class="muted">لا توجد أوامر بعد</td></tr>{% endfor %}</tbody></table></div>
+<script>
+const items={ {% for i in items %}"{{ i.name|escapejs }} | {{ i.code|escapejs }}":{{ i.pk }},{% endfor %} };
+function row(box,side,nm,q){const d=document.createElement('div');d.style.cssText='display:flex;gap:8px;margin-bottom:6px';d.innerHTML='<input list="itemlist" placeholder="الصنف" style="flex:3"><input type="hidden" name="'+side+'_item"><input name="'+side+'_qty" placeholder="الكمية" inputmode="decimal" style="flex:1">';
+const [t,h]=d.querySelectorAll('input');t.onchange=()=>{h.value=items[t.value]||'';t.style.borderColor=h.value?'':'#A13A2A'};if(nm){t.value=nm;h.value=items[nm]||'';d.querySelectorAll('input')[2].value=q}document.getElementById(box).appendChild(d)}
+{% if redo %}{% for l in redo.lines.all %}row('{% if l.side == "in" %}ins{% else %}outs{% endif %}','{{ l.side }}',"{{ l.item.name|escapejs }} | {{ l.item.code|escapejs }}","{{ l.qty|unlocalize }}");{% endfor %}
+{% else %}row('ins','in');row('ins','in');row('outs','out');{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}{{ e.name }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>✏ {{ e.name }}</h1><p class="muted" style="margin:0"><a href="{% url 'staff_list' %}">← الموظفين</a></p></div></div>
+<form method="post" class="card form-grid">{% csrf_token %}{% include "staff/_emp_fields.html" %}
+<label class="field">تاريخ ترك الشغل<input type="date" name="end_date" value="{{ e.end_date|date:'Y-m-d' }}"></label>
+<label class="field">الحالة<select name="active"><option value="1" {% if e.active %}selected{% endif %}>شغال</option><option value="0" {% if not e.active %}selected{% endif %}>ساب الشغل</option></select></label>
+<label class="field" style="grid-column:1/-1">ملاحظات<input name="notes" value="{{ e.notes }}" maxlength="300"></label>
+<div style="grid-column:1/-1" class="actions"><button>حفظ</button><a class="btn light" href="{% url 'staff_list' %}">إلغاء</a></div></form>
+<form method="post" class="card" style="margin-top:14px" onsubmit="return confirm('تمسح {{ e.name|escapejs }}؟ إن كانت له مرتبات مسجّلة فسيُسجّل أنه ترك العمل فقط.')">{% csrf_token %}<input type="hidden" name="op" value="delete"><button class="danger">🗑 حذف</button></form>
+{% endblock %}

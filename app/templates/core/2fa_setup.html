@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}تفعيل رمز التأكيد{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px;margin:24px auto">
+<h1>تفعيل رمز تأكيد الهاتف</h1>
+<p class="muted">خطوة حماية إضافية: بعد كلمة السر سيُطلب منك رقم من هاتفك. فحتى لو عرف أحد كلمة السر لن يتمكن من الدخول.</p>
+<ol>
+<li>نزّل على موبايلك <b>Google Authenticator</b> أو <b>Microsoft Authenticator</b> (مجاني).</li>
+<li>افتح التطبيق ← «+» ← «مسح رمز QR» وامسح هذا المربع:</li>
+</ol>
+<style>.qr svg{width:230px;max-width:100%;height:auto}</style>
+<div class="qr" style="display:flex;justify-content:center;background:#fff;border-radius:12px;padding:8px">{{ qr|safe }}</div>
+<p class="muted" style="font-size:13px">لا تستطيع المسح؟ اختر «إدخال مفتاح» واكتب: <b dir="ltr" style="font-family:monospace">{{ secret }}</b></p>
+<ol start="3"><li>اكتب الرقم الظاهر في التطبيق (6 أرقام):</li></ol>
+{% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+<form method="post">{% csrf_token %}
+<input name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required autofocus dir="ltr"
+ style="width:100%;font-size:28px;text-align:center;letter-spacing:8px" placeholder="000000">
+<p><button style="width:100%">تأكيد وتفعيل</button></p>
+</form>
+<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn light" style="width:100%">خروج</button></form>
+</div>
+{% endblock %}

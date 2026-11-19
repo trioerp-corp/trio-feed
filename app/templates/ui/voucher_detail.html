@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{{ v }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ v.get_kind_display }} {{ v.number|default:"(مسودة)" }}</h1>
+<p class="muted" style="margin:0">{{ v.date|date:"Y-m-d" }} — {{ v.cashbox.name }}{% if v.to_cashbox %} ← {{ v.to_cashbox.name }}{% endif %} — <span class="badge {% if v.state == 'draft' %}gold{% elif v.state == 'cancelled' %}red{% endif %}">{{ v.get_state_display }}</span>{% if v.legacy_number %} — رقم الشيت القديم {{ v.legacy_number }}{% endif %}</p></div>
+<form method="post" class="actions">{% csrf_token %}
+{% if v.state == 'draft' %}<a class="btn light" href="{% url 'voucher_edit' v.pk %}">تعديل</a><button name="post" value="1">ترحيل</button><button name="delete" value="1" class="danger">حذف المسودة</button>{% endif %}
+{% if v.state == 'posted' %}<input name="reason" placeholder="سبب الإلغاء"><button name="cancel" value="1" class="danger">إلغاء بقيد عكسي</button>{% endif %}
+<a class="btn light" target="_blank" href="{% url 'voucher_print' v.pk %}">🖨 طباعة</a></form></div>
+<div class="grid" style="margin-bottom:16px"><div class="card kpi hero"><span class="k">المبلغ</span><span class="v">{{ v.amount|money }}</span><span class="k">{{ v.currency }}</span></div>
+<div class="card"><div class="k">الاسم</div><div style="font-weight:600">{{ v.partner|default:v.payee|default:"—" }}</div></div>
+<div class="card" style="grid-column:span 2"><div class="k">البيان</div><div>{{ v.description }}</div>{% if v.approved_by_text %}<div class="muted">باعتماد {{ v.approved_by_text }}</div>{% endif %}</div></div>
+{% if lines %}<h2>السطور</h2><div class="table-wrap" style="margin-bottom:16px"><table><thead><tr><th>الحساب</th><th>مركز التكلفة</th><th>المعدة</th><th>الطرف</th><th class="n">المبلغ</th></tr></thead><tbody>
+{% for l in lines %}<tr><td>{{ l.account }}</td><td>{{ l.dim1.name|default:"" }}</td><td>{{ l.dim2.name|default:"" }}</td><td>{{ l.partner|default:"" }}</td><td class="n">{{ l.amount|money }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% if entry_lines %}<h2>القيد المحاسبي <a href="{% if user.is_superuser %}{% url 'entry_detail' v.entry_id %}{% else %}#{% endif %}" style="font-size:14px">{{ v.entry.number }}</a></h2><div class="table-wrap"><table><thead><tr><th>الحساب</th><th>المركز</th><th class="n">مدين</th><th class="n">دائن</th></tr></thead><tbody>
+{% for l in entry_lines %}<tr><td>{{ l.account }}</td><td>{{ l.dim1.name|default:"" }}</td><td class="n">{{ l.debit|money }}</td><td class="n">{{ l.credit|money }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endblock %}

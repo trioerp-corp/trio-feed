@@ -1,0 +1,38 @@
+from decimal import Decimal, ROUND_HALF_UP
+
+from django import template
+from django.utils.html import format_html
+
+register = template.Library()
+
+
+@register.filter
+def money(v, places=2):
+    if v is None or v == "":
+        return ""
+    v = Decimal(v).quantize(Decimal(1).scaleb(-int(places)), rounding=ROUND_HALF_UP)
+    s = f"{abs(v):,.{int(places)}f}"
+    if v < 0:
+        return format_html('<span class="neg">({})</span>', s)
+    return s
+
+
+@register.filter
+def neg(v):
+    return -v if v is not None else v
+
+
+@register.filter
+def sub(a, b):
+    try:
+        return Decimal(a or 0) - Decimal(b or 0)
+    except Exception:
+        return ""
+
+
+@register.filter
+def get(d, k):
+    try:
+        return d.get(k)
+    except AttributeError:
+        return None

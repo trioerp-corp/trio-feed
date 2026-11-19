@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load gg %}{% block title %}لوحة صاحب العيادة{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>📊 لوحة صاحب العيادة</h1><p class="muted" style="margin:0">{{ d1|date:"d/m/Y" }} — {{ d2|date:"d/m/Y" }}</p></div></div>
+<form class="filters" method="get"><label>من<input type="date" name="d1" value="{{ d1|date:'Y-m-d' }}"></label><label>حتى<input type="date" name="d2" value="{{ d2|date:'Y-m-d' }}"></label><button>عرض</button></form>
+<section class="grid" style="margin-bottom:16px">
+<div class="card kpi hero"><span class="k">إيراد الفترة</span><span class="v">{{ total|money:0 }}</span><span class="k">{{ visits }} زيارة · {{ new_patients }} مريض جديد</span></div>
+<div class="card kpi"><span class="k">اليوم</span><span class="v">{{ tday.revenue|money:0 }}</span><span class="k">{{ tday.visits }} زيارة · ينتظر {{ tday.waiting }}</span></div>
+<div class="card kpi gold"><span class="k">المتبقي على المرضى</span><span class="v">{{ patients_owed|money:0 }}</span><span class="k">آجل</span></div>
+<div class="card kpi gold"><span class="k">المتبقي على شركات التأمين</span><span class="v">{{ ins_owed|money:0 }}</span><span class="k"><a href="{% url 'clinic_insurance' %}">المطالبات ←</a></span></div></section>
+<div class="split"><div class="main">
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">طرق التحصيل</h2>
+{% with t=total|default:1 %}<div style="display:flex;height:26px;border-radius:8px;overflow:hidden;background:var(--line-2)" role="img" aria-label="نقدًا {{ cash|money:0 }}، بطاقة {{ card|money:0 }}، آجل {{ credit|money:0 }}، تأمين {{ ins|money:0 }}">
+{% if cash %}<span style="flex:{{ cash|floatformat:0 }};background:#0F7A5C"></span>{% endif %}{% if card %}<span style="flex:{{ card|floatformat:0 }};background:#2F5FCB"></span>{% endif %}{% if credit %}<span style="flex:{{ credit|floatformat:0 }};background:#D9821A"></span>{% endif %}{% if ins %}<span style="flex:{{ ins|floatformat:0 }};background:#6D3FC0"></span>{% endif %}</div>{% endwith %}
+<p style="margin:8px 0 0;display:flex;gap:16px;flex-wrap:wrap"><span>🟩 نقدًا {{ cash|money:0 }}</span><span>🟦 بطاقات ومحافظ {{ card|money:0 }}</span><span>🟧 آجل على المرضى {{ credit|money:0 }}</span><span>🟪 على التأمين {{ ins|money:0 }}</span></p></section>
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">آخر 30 يوم</h2>
+<div style="display:flex;align-items:flex-end;gap:3px;height:140px" role="img" aria-label="إيراد كل يوم في آخر 30 يومًا">{% for b in bars %}<span title="{{ b.d|date:'d/m' }}: {{ b.v|money:0 }} ج" style="flex:1;height:{{ b.h }}%;min-height:2px;background:var(--brand);border-radius:4px 4px 0 0;opacity:{% if b.v %}1{% else %}.25{% endif %}"></span>{% endfor %}</div>
+<div style="display:flex;justify-content:space-between;font-size:12px" class="muted"><span>{{ bars.0.d|date:"d/m" }}</span><span>اليوم</span></div></section>
+<section class="card"><h2 style="margin-top:0">الأطباء</h2><div class="table-wrap"><table><thead><tr><th>الطبيب</th><th class="n">زيارات</th><th class="n">الإيراد</th><th class="n">نسبته</th><th class="n">مستحقاته المتبقية</th></tr></thead><tbody>
+{% for r in doc_rows %}<tr><td>{{ r.doctor }}</td><td class="n">{{ r.visits }}</td><td class="n">{{ r.revenue|money:0 }}</td><td class="n">{{ r.share|money:0 }}</td><td class="n"><b>{{ r.balance|money:0 }}</b></td></tr>{% empty %}<tr><td colspan="5" class="muted">لا يوجد</td></tr>{% endfor %}</tbody></table></div>
+<p style="margin:8px 0 0"><a href="{% url 'clinic_doctors' %}">صرف مستحقات الأطباء ←</a></p></section></div>
+<div class="side"><section class="card"><h2 style="margin-top:0">أكثر الخدمات</h2>{% for t in top %}<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line-2)"><span>{{ t.item__name }} <span class="muted">×{{ t.n }}</span></span><b>{{ t.v|money:0 }}</b></div>{% empty %}<p class="muted">لا يوجد</p>{% endfor %}</section>
+<section class="card" style="margin-top:14px"><h2 style="margin-top:0">روابط</h2><p style="line-height:2.2;margin:0"><a href="{% url 'shop_reports' %}">التقارير والأرباح ←</a><br><a href="{% url 'clinic_insurance' %}">التأمين الطبي ←</a><br><a href="{% url 'shop_money' %}">المصروفات ←</a><br><a href="{% url 'shop_close' %}">تقفيل اليوم ←</a></p></section></div></div>
+{% endblock %}

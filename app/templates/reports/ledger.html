@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load gg %}{% block title %}كشف حساب{% endblock %}
+{% block content %}
+<h1>كشف حساب {% if acc %}<small>{{ acc }}</small>{% endif %} {% if partner %}<small>— {{ partner }}</small>{% endif %} {% if cc %}<small>— {{ cc }}</small>{% endif %}</h1>
+<form class="filters" method="get">
+<label>الحساب (الكود)<input name="account" value="{{ acc.code|default:'' }}" placeholder="مثل 1201030101" list="acclist"></label>
+<label>الطرف<select name="partner"><option value="">—</option>{% for p in partners %}<option value="{{ p.pk }}" {% if p == partner %}selected{% endif %}>{{ p.name }}</option>{% endfor %}</select></label>
+<label>مركز التكلفة (الكود)<input name="cc" value="{{ cc.code|default:'' }}"></label>
+<label>من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label>
+<label>إلى<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label>
+<button>عرض</button> <a class="btn light" href="javascript:window.print()">🖨 طباعة / PDF</a>
+</form>
+{% if rows is not None %}
+<div class="scroll"><table>
+<tr><th>التاريخ</th><th>رقم القيد</th><th>البيان</th><th>الحساب</th><th>الطرف</th><th>المركز</th><th class="n">مدين</th><th class="n">دائن</th><th class="n">الرصيد</th></tr>
+<tr class="l2"><td colspan="8">رصيد أول المدة</td><td class="n">{{ opening|money }}</td></tr>
+{% for r in rows %}<tr><td>{{ r.line.entry.date|date:"Y-m-d" }}</td><td><a href="/admin/ledger/journalentry/{{ r.line.entry_id }}/change/">{{ r.line.entry.number }}</a></td><td>{{ r.line.description|default:r.line.entry.description }}</td><td>{{ r.line.account.code }}</td><td>{{ r.line.partner|default:"" }}</td><td>{{ r.line.dim1.name|default:"" }}</td>
+<td class="n">{{ r.line.debit|money }}</td><td class="n">{{ r.line.credit|money }}</td><td class="n">{{ r.balance|money }}</td></tr>{% endfor %}
+<tr class="total"><td colspan="8">الرصيد في آخر المدة</td><td class="n">{{ closing|money }}</td></tr>
+</table></div>
+{% else %}<p class="muted">اختر حسابًا أو طرفًا.</p>{% endif %}
+{% endblock %}

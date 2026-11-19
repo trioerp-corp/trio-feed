@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{% if receipt %}إيصال{% else %}روشتة{% endif %} — {{ v.patient.name }}{% endblock %}
+{% block content %}
+<style>@media print{.noprint,body>*:not(main),.ask-fab{display:none!important}body{background:#fff}main.page{padding:0}}
+.rx{max-width:720px;margin:0 auto;background:#fff;color:#111;padding:28px 32px;border:1px solid #ddd;border-radius:10px;min-height:80vh;display:flex;flex-direction:column}
+.rx header{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid #17698F;padding-bottom:12px}.rx h1{margin:0;font-size:22px;color:#17698F}
+.rx .who{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:14px 0;font-size:15px}.rx .sym{font-size:34px;font-weight:800;color:#17698F;font-family:serif}
+.rx .body{flex:1;font-size:17px;line-height:2}.rx footer{border-top:1px solid #ccc;padding-top:8px;font-size:13px;color:#555;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.rx table{width:100%;border-collapse:collapse}.rx td,.rx th{padding:6px;border-bottom:1px solid #eee;text-align:start}</style>
+<p class="noprint actions" style="justify-content:center;margin-bottom:12px"><button onclick="print()">🖨 اطبع</button><a class="btn light" href="{% url 'clinic_visit' v.pk %}">رجوع</a></p>
+<div class="rx"><header><div>{% if s.logo_svg %}<span style="width:56px;height:56px;display:inline-block">{{ s.logo_svg|safe }}</span>{% endif %}<h1>{{ s.name }}</h1>
+{% if v.doctor %}<b>{{ v.doctor }}</b>{% if v.doctor.specialty %}<br><span>{{ v.doctor.specialty }}</span>{% endif %}{% endif %}</div>
+<div style="text-align:end;font-size:14px">{% if s.address %}{{ s.address }}<br>{% endif %}{% if s.phone %}<span dir="ltr">{{ s.phone }}</span>{% endif %}</div></header>
+<div class="who"><span>الاسم: <b>{{ v.patient.name }}</b></span>{% if v.patient.age %}<span>السن: {{ v.patient.age }}</span>{% endif %}<span>ملف: {{ v.patient.number }}</span><span>التاريخ: {{ v.opened_at|date:"d/m/Y" }}</span></div>
+{% if receipt %}<h2 style="margin:6px 0">إيصال</h2><table><thead><tr><th>البيان</th><th>كمية</th><th>المبلغ</th></tr></thead><tbody>
+{% for ln in lines %}<tr><td>{{ ln.item.name }}</td><td>{{ ln.qty|floatformat:-3 }}</td><td>{{ ln.amount|money }}</td></tr>{% endfor %}
+{% if v.discount %}<tr><td>خصم</td><td></td><td>-{{ v.discount|money }}</td></tr>{% endif %}<tr><th>الإجمالي</th><th></th><th>{{ v.total|money }}</th></tr></tbody></table>
+{% else %}{% if v.diagnosis %}<p style="margin:0 0 8px"><b>التشخيص:</b> {{ v.diagnosis }}</p>{% endif %}<div class="sym">℞</div>
+<div class="body">{% for l in v.prescription.splitlines %}<div dir="auto" style="text-align:start">{% if l %}{{ l }}{% else %}&nbsp;{% endif %}</div>{% endfor %}</div>{% endif %}
+<footer><span>{% if v.next_visit %}ميعاد المتابعة: <b>{{ v.next_visit|date:"l d/m/Y" }}</b>{% endif %}</span><span>{% if not receipt %}توقيع الطبيب: ____________{% endif %}</span></footer></div>
+{% endblock %}

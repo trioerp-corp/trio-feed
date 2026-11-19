@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}حركة مخزن{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{% if m.pk %}تعديل مسودة{% else %}حركة مخزن جديدة{% endif %}</h1></div>
+<form method="post" novalidate>{% csrf_token %}
+<div class="card" style="margin-bottom:16px"><div class="form-grid">
+{% for f in form %}<div class="field {% if f.name == 'description' %}wide{% endif %}">{{ f.label_tag }}{{ f }}{{ f.errors }}</div>{% endfor %}</div></div>
+<div class="card" style="margin-bottom:16px"><h2>الأصناف</h2><p class="muted" style="margin-top:-6px">الصرف بمتوسط التكلفة تلقائيًا. وسعر الوحدة للوارد فقط.</p>
+{{ lines.management_form }}{% if lines.non_form_errors %}<div class="msg error">{{ lines.non_form_errors }}</div>{% endif %}
+<div class="scroll"><table class="lines-table"><thead><tr><th style="min-width:220px">الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th style="min-width:200px">القطاع</th><th style="min-width:150px">المعدة</th><th>العملية</th><th style="min-width:180px">حساب خاص</th><th>حذف</th></tr></thead>
+<tbody data-formset="lines">{% for f in lines %}<tr>{{ f.id }}<td>{{ f.item }}{{ f.item.errors }}</td><td>{{ f.qty }}{{ f.qty.errors }}</td><td>{{ f.unit_cost }}</td><td>{{ f.dim1 }}</td><td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td><td>{{ f.account }}</td><td>{{ f.DELETE }}</td></tr>{% endfor %}</tbody></table></div>
+<button type="button" class="light" data-add-row="lines">+ صنف</button>
+<template id="lines-empty"><tr>{% with f=lines.empty_form %}{{ f.id }}<td>{{ f.item }}</td><td>{{ f.qty }}</td><td>{{ f.unit_cost }}</td><td>{{ f.dim1 }}</td><td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td><td>{{ f.account }}</td><td>{{ f.DELETE }}</td>{% endwith %}</tr></template></div>
+<div class="actions"><button name="post" value="1">ترحيل</button><button name="save" value="1" class="light">حفظ مسودة</button><a class="btn light" href="{% url 'move_list' %}">رجوع</a></div></form>
+{% endblock %}

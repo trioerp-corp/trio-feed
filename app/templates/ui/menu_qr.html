@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load gg %}{% block title %}منيو QR{% endblock %}
+{% block content %}
+<style>.qr svg{width:220px;height:220px;max-width:100%;display:block}.qr{background:#fff;border-radius:14px;padding:8px;border:1px solid var(--line);width:fit-content}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.tcard{border:2px solid #0B1F3A;border-radius:18px;padding:16px;text-align:center;background:#fff;color:#0B1F3A;break-inside:avoid}
+.tcard h3{margin:0 0 4px;font-size:20px}.tcard .qr{margin:8px auto;border:0}.tcard p{margin:4px 0;font-size:15px}
+@media print{.noprint,header.gg-top,footer,.ask-fab{display:none!important}body{background:#fff}.cards{grid-template-columns:1fr 1fr}main.page{padding:0}}</style>
+{% if table %}
+<p class="noprint actions" style="margin-bottom:14px"><button onclick="print()">🖨 اطبع</button><a class="btn light" href="{% url 'menu_qr' %}">رجوع</a></p>
+<div class="cards">{% for i in "123456" %}<div class="tcard"><h3>{{ s.name }}</h3><p>📱 امسح الكود واطّلع على المنيو</p><div class="qr">{{ qr|safe }}</div><p style="font-size:12px">Scan for the menu</p></div>{% endfor %}</div>
+{% else %}
+<div class="page-head"><div><h1>📱 منيو QR للزباين</h1><p class="muted" style="margin:0">يمسح العميل الكود الموجود على الطاولة ← فيفتح المنيو بالأسعار على هاتفه. وأي تغيير في الأسعار يُنشر تلقائيًا.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'shop_recipes' %}">المنيو والمكونات</a></div></div>
+<div class="split"><div class="main">
+<section class="card" style="margin-bottom:16px">
+{% if link %}<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start"><div class="qr">{{ qr|safe }}</div>
+<div style="flex:1 1 260px"><p style="margin:0 0 8px"><b>{{ n_items }}</b> صنف في {{ data.cats|length }} قسم.</p>
+<p class="muted" style="margin:0 0 8px;font-size:13px">{% if last %}آخر نشر: {{ last|date:"d/m H:i" }}{% else %}لم يُنشر بعد — اضغط «انشر المنيو»{% endif %}</p>
+<div class="lnk" style="display:flex;gap:8px;flex-wrap:wrap"><code id="ml" dir="ltr" style="user-select:all;word-break:break-all;background:var(--bg);padding:6px 10px;border-radius:8px;font-size:13px">{{ link }}</code>
+<button type="button" class="light" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('ml').textContent);this.textContent='تم النسخ ✔'">نسخ</button></div>
+<div class="actions" style="margin-top:10px"><a class="btn" href="?print=1">🖨 اطبع كروت الترابيزات</a><a class="btn light" href="{{ link }}" target="_blank" rel="noopener">افتح المنيو</a>
+<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="push"><button class="light">انشر المنيو الآن</button></form></div></div></div>
+{% else %}<p class="muted" style="margin:0">لم يتصل الجهاز بخادم Trio — تأكد من اتصاله بالإنترنت وارجع هنا.</p>{% endif %}
+</section>
+<section class="card"><h2>معاينة</h2>{% for c in data.cats %}<h3 style="margin:10px 0 4px">{{ c.n }}</h3>
+{% for i in c.items %}<div style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:4px 0"><span>{{ i.n }}</span><b>{{ i.p|money:0 }}</b></div>{% endfor %}
+{% empty %}<p class="muted">لا توجد أصناف بسعر بيع في الأقسام الظاهرة.</p>{% endfor %}</section></div>
+<div class="side"><section class="card"><h2>الأقسام الظاهرة</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="cfg">
+{% for c in cats %}<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" name="cat" value="{{ c.pk }}" {% if c.pk not in hide %}checked{% endif %}> {{ c.name }}</label>{% endfor %}
+<label class="field" style="margin-top:8px">ملاحظة تحت المنيو<input name="note" value="{{ s.menu_cfg.note|default:'' }}" placeholder="مثلًا: الأسعار شاملة الضريبة · خدمة توصيل 0100…"></label>
+<button>حفظ وانشر</button></form>
+<p class="muted" style="font-size:12px;margin:10px 0 0">لا تظهر الخامات ومستلزمات التشغيل. ولا يظهر الصنف الذي ليس له سعر بيع.</p></section></div></div>
+{% endif %}
+{% endblock %}

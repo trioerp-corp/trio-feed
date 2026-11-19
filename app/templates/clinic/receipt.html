@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% load gg %}{% block title %}إيصال — {{ v.patient.name }}{% endblock %}
+{% block content %}
+<style>@page{size:80mm auto;margin:3mm}
+@media print{.noprint,body>*:not(main),.ask-fab{display:none!important}body{background:#fff}main.page{padding:0;margin:0}.rc{border:0!important;box-shadow:none!important;margin:0!important;width:auto!important}}
+.rc{width:76mm;margin:0 auto;background:#fff;color:#000;padding:10px 12px;border:1px dashed #bbb;font-size:13px;line-height:1.6}
+.rc h1{font-size:16px;margin:0;text-align:center}.rc .c{text-align:center}.rc hr{border:0;border-top:1px dashed #000;margin:6px 0}
+.rc table{width:100%;border-collapse:collapse}.rc td{padding:2px 0;vertical-align:top}.rc td.n{text-align:end;white-space:nowrap}
+.rc .q{font-size:30px;font-weight:800;text-align:center;line-height:1.2}.rc .kv{display:flex;justify-content:space-between;gap:8px}</style>
+<p class="noprint actions" style="justify-content:center;margin-bottom:12px"><button onclick="print()">🖨 اطبع</button><a class="btn light" href="{% url 'clinic_visit' v.pk %}">الزيارة</a><a class="btn light" href="{% url 'clinic_home' %}">الدور</a></p>
+{% if not pay %}<p class="card noprint">لا يوجد حساب مدفوع لهذه الزيارة.</p>{% else %}
+<div class="rc">
+{% if s.logo_svg %}<div class="c"><span style="width:44px;height:44px;display:inline-block">{{ s.logo_svg|safe }}</span></div>{% endif %}
+<h1>{{ s.name }}</h1>{% if s.address or s.phone %}<div class="c">{{ s.address }}{% if s.phone %} · <span dir="ltr">{{ s.phone }}</span>{% endif %}</div>{% endif %}
+<hr><div class="c"><b>{% if pay.kind == 'booking' %}إيصال حجز{% elif pay.kind == 'extra' %}إيصال حساب إضافي{% else %}إيصال كشف{% endif %}</b></div>
+{% if appt and pay.kind == 'booking' %}<div class="q">دور {{ appt.queue_no }}</div><div class="c">يوم {{ appt.date|date:"l d/m/Y" }}{% if appt.time %} — الساعة {{ appt.time|time:"g:i A" }}{% endif %}</div>{% endif %}
+<hr>
+<div class="kv"><span>المريض</span><b>{{ v.patient.name }}</b></div>
+<div class="kv"><span>رقم الملف</span><span>{{ v.patient.number }}</span></div>
+{% if v.doctor %}<div class="kv"><span>الطبيب</span><span>{{ v.doctor }}</span></div>{% endif %}
+<hr><table>{% for ln in lines %}<tr><td>{{ ln.item.name }}{% if ln.qty != 1 %} × {{ ln.qty|floatformat:-3 }}{% endif %}</td><td class="n">{{ ln.amount|money }}</td></tr>{% endfor %}
+{% if pay.discount %}<tr><td>خصم</td><td class="n">-{{ pay.discount|money }}</td></tr>{% endif %}</table>
+<hr><div class="kv" style="font-size:16px"><b>الإجمالي</b><b>{{ pay.total|money }}</b></div>
+{% if pay.order.paid_cash %}<div class="kv"><span>نقدي</span><span>{{ pay.order.paid_cash|money }}</span></div>{% endif %}
+{% if pay.order.paid_card %}<div class="kv"><span>بطاقة / محفظة</span><span>{{ pay.order.paid_card|money }}</span></div>{% endif %}
+{% if pay.insurance_id %}<div class="kv"><span>على {{ pay.insurance.name }}{% if v.patient.insurance_no %} ({{ v.patient.insurance_no }}){% endif %}</span><span>{{ pay.insurance_amount|money }}</span></div>{% elif pay.order.paid_credit %}<div class="kv"><span>آجل</span><span>{{ pay.order.paid_credit|money }}</span></div>{% endif %}
+<hr><div class="kv" style="font-size:11px"><span dir="ltr">{{ pay.order.uid }}</span><span>{{ pay.created_at|date:"d/m/Y H:i" }}</span></div>
+{% if pay.by %}<div style="font-size:11px">الاستقبال: {{ pay.by }}</div>{% endif %}
+<div class="c" style="margin-top:6px;font-size:12px">{% if pay.kind == 'booking' %}من فضلك احضر قبل موعدك بـ 10 دقائق — ومعك هذا الإيصال{% else %}شفاء عاجل إن شاء الله{% endif %}</div>
+</div>{% endif %}
+{% if auto and pay %}<script>addEventListener('load',function(){setTimeout(function(){print()},300)})</script>{% endif %}
+{% endblock %}

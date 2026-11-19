@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% load gg %}{% block title %}المشتريات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ W.purchases }}</h1><p class="muted" style="margin:0">نقدًا، أو آجلًا على حساب المورد، أو جزء نقدًا والباقي آجل</p></div>
+<div class="actions"><a class="btn" href="{% url 'shop_purchase_new' %}">+ فاتورة مشتريات</a><a class="btn light" href="{% url 'shop_partners' %}?kind=supplier">أرصدة الموردين</a></div></div>
+<div class="table-wrap"><table><thead><tr><th>الإذن</th><th>التاريخ</th><th>رقم الفاتورة</th><th>المورد</th><th>المخزن</th><th class="n">الإجمالي</th><th class="n">مدفوع نقدًا</th><th class="n">آجل</th><th></th></tr></thead><tbody>
+{% for m, total, pd, rest in rows %}<tr><td><a href="{% url 'move_detail' m.pk %}">{{ m.number }}</a></td><td>{{ m.date|date:"d/m/Y" }}</td><td>{{ m.legacy_number }}</td><td>{{ m.partner.name }}</td><td>{{ m.warehouse.name }}</td><td class="n">{{ total|money }}</td><td class="n">{{ pd|money }}</td><td class="n">{% if rest %}<span class="badge gold">{{ rest|money }}</span>{% else %}—{% endif %}</td><td>{% if m.state == 'cancelled' %}<span class="badge red">ملغية</span>{% else %}{% include "ui/_void.html" with what="move" id=m.pk %}{% endif %}</td></tr>
+{% empty %}<tr><td colspan="9" class="muted">لا توجد فواتير بعد</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}{% load static %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ company.name|default:"النظام" }}{% endblock %}
+{% block branding %}<div id="site-name"><a href="{% url 'admin:index' %}">{{ company.name|default:"النظام" }} — الإدخال والإعدادات</a></div>{% endblock %}
+{% block extrastyle %}{{ block.super }}<style>
+:root{--primary:#17698f;--secondary:#0c4a76;--header-bg:#17698f;--breadcrumbs-bg:#0c4a76;--link-fg:#17698f;--link-selected-fg:#062a4f;--button-bg:#17698f;--button-hover-bg:#0c4a76;--default-button-bg:#0c4a76;--selected-row:#eaf3f8}
+#container{overflow-x:clip}
+#content{max-width:100%}
+.inline-group .tabular{overflow-x:auto;display:block}
+.inline-group .tabular table{min-width:900px}
+.inline-group .tabular .select2-container{min-width:11em!important;width:14em!important}
+.inline-group .tabular input[type=text],.inline-group .tabular input[type=number]{width:7em}
+.submit-row .post-btn{background:#b45f06}
+</style>{% endblock %}
+{% block nav-global %}<a href="/" style="color:#fff;margin-inline-start:12px">⬅ الرئيسية والتقارير</a>{% endblock %}

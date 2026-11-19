@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% load gg %}{% block title %}أرباح {{ title }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>الأرباح والشركاء — {{ title }}</h1><p class="muted" style="margin:0">ربح الشهر، ونصيب كل شريك، وأين ذهب هذا الربح</p></div>
+<div class="actions"><a class="btn light" href="?m={{ prev }}">→ الشهر السابق</a>{% if next %}<a class="btn light" href="?m={{ next }}">الشهر الجاي ←</a>{% endif %}
+{% if 'profit_yearly' in mods %}<a class="btn" href="{% url 'shop_profit_year' %}?y={{ y }}">التقرير السنوي</a>{% else %}<span class="btn light" style="opacity:.6;cursor:default" title="إضافة — تواصل مع Trio">التقرير السنوي 🔒</span>{% endif %}
+<button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+
+<section class="grid" style="margin-bottom:18px">
+<div class="card kpi"><span class="k">الإيرادات (مبيعات وخدمات)</span><span class="v">{{ s.income|money:0 }}</span></div>
+<div class="card kpi"><span class="k">التكاليف والمصروفات</span><span class="v">{{ s.expense|money:0 }}</span><span class="k">تكلفة البضاعة + مصاريف التشغيل والأجور</span></div>
+<div class="card kpi {% if s.profit >= 0 %}hero{% else %}gold{% endif %}"><span class="k">{% if s.profit >= 0 %}صافي الربح{% else %}صافي الخسارة{% endif %}</span><span class="v">{{ s.profit|money:0 }}</span><span class="k">هامش {{ margin|floatformat:1 }}%</span></div>
+</section>
+
+<div class="split">
+<div class="main">
+<div class="card" style="margin-bottom:18px"><h2>أين ربحكم؟</h2>
+{% if s.where %}
+{% if bars %}<div class="wbar" role="img" aria-label="توزيع الربح">{% for b in bars %}<span class="w-{{ b.key }}" style="width:{{ b.width|stringformat:".2f" }}%" title="{{ b.label }}"></span>{% endfor %}</div>{% endif %}
+<div class="wlist">{% for w in s.where %}<div class="wrow"><i class="dot w-{{ w.key }}"></i><div><b>{{ w.label }}</b><small>{{ w.hint }}</small></div>
+<span class="n">{{ w.amount|money:0 }}</span><span class="pct">{% if s.profit %}{{ w.pct|floatformat:0 }}%{% endif %}</span></div>{% endfor %}
+<div class="wrow total"><i class="dot"></i><div><b>الإجمالي = صافي الربح</b></div><span class="n">{{ s.profit|money:0 }}</span><span class="pct"></span></div></div>
+{% if s.capital_in %}<p class="muted" style="font-size:13px;margin:10px 0 0">ملاحظة: دخل المحل في هذا الشهر رأس مال أو بضاعة أول المدة بقيمة {{ s.capital_in|money:0 }} — وهذه ليست ربحًا فلا تُحسب هنا.</p>{% endif %}
+{% else %}<p class="muted">لا توجد حركات في هذا الشهر.</p>{% endif %}
+</div>
+
+<div class="card"><h2>نصيب كل شريك</h2>
+<div class="table-wrap" style="border:0"><table><thead><tr><th>الشريك</th><th class="n">النسبة</th><th class="n">نصيبه من الربح</th><th class="n">مسحوبات هذا الشهر</th><th class="n">المتبقي له داخل المحل</th><th class="n">منه نقدي</th><th class="n">منه بضاعة</th><th class="n">منه بنود أخرى</th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.name }}</b></td><td class="n">{{ r.pct|floatformat:"-2" }}%</td><td class="n"><b>{{ r.share|money:0 }}</b></td><td class="n">{{ r.drawn|money:0 }}</td>
+<td class="n"><b>{{ r.left|money:0 }}</b></td><td class="n">{{ r.cash|money:0 }}</td><td class="n">{{ r.stock|money:0 }}</td><td class="n">{{ r.other|money:0 }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% if untagged %}<p class="note">في مسحوبات {{ untagged|money:0 }} سُجّلت من درج الكاشير دون تحديد الشريك — فحُسبت على المحل كله.</p>{% endif %}
+<p class="muted" style="font-size:13px;margin:10px 0 0">«المتبقي له داخل المحل» = نصيبه − ما سحبه. وهو موزّع بنسبة ما تبقّى من ربح المحل نفسها: جزء نقدية في الخزينة، وجزء بضاعة، وجزء بنود أخرى (مستحقات لدى العملاء، سداد موردين…). والرقم السالب في «المتبقي» يعني أنه سحب أكثر من نصيبه.</p>
+</div>
+</div>
+
+<div class="side">
+<div class="card" id="partners"><h2>الشركاء ونسبهم</h2>
+{% if can_edit %}<form method="post" action="{% url 'shop_profit_partners' %}">{% csrf_token %}
+<div id="prow">{% for sp in sps %}<div class="prow"><input name="name" value="{{ sp.partner.name }}" placeholder="اسم الشريك"><input name="share" value="{{ sp.share|floatformat:'-2' }}" inputmode="decimal" placeholder="%"><span>%</span></div>
+{% empty %}<div class="prow"><input name="name" placeholder="اسم الشريك"><input name="share" inputmode="decimal" placeholder="%"><span>%</span></div>{% endfor %}</div>
+<div class="actions" style="margin-top:10px"><button type="button" class="light" id="addP">+ شريك</button><button>حفظ</button></div>
+<p class="muted" style="font-size:13px;margin:8px 0 0">مجموع النسب 100%. لا يوجد شركاء = الربح كله لصاحب المحل. تُسجَّل المسحوبات باسم الشريك من «الأموال وصاحب المحل».</p></form>
+<script>document.getElementById('addP').onclick=()=>{const d=document.createElement('div');d.className='prow';d.innerHTML='<input name="name" placeholder="اسم الشريك"><input name="share" inputmode="decimal" placeholder="%"><span>%</span>';document.getElementById('prow').appendChild(d)}</script>
+{% else %}{% for sp in sps %}<div class="attn" style="margin-bottom:6px"><span>{{ sp.partner.name }}</span><b>{{ sp.share|floatformat:"-2" }}%</b></div>{% empty %}<p class="muted">لا يوجد شركاء — الربح لصاحب المحل.</p>{% endfor %}{% endif %}
+</div>
+<div class="card"><h2>كيف نحسبه؟</h2><p class="muted" style="font-size:13.5px;margin:0">الربح = الإيرادات − (تكلفة البضاعة المباعة + المصروفات والأجور). كل جنيه ربح لا بد أن يكون في مكان ما: سُحب، أو زاد النقدية، أو تحوّل إلى بضاعة، أو لدى العملاء، أو سدّد للموردين — والمجموع يطابق الربح تمامًا.</p></div>
+</div>
+</div>
+{% endblock %}

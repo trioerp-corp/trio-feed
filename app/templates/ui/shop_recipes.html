@@ -1,0 +1,72 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}المنيو والمكونات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>المنيو والمكونات</h1>
+<p class="muted" style="margin:0">أضف أصناف المنيو ومكونات كل صنف وكمياتها. تُحسب التكلفة بسعر الخامة في <b>آخر فاتورة شراء</b> وقت الطلب، ومع كل طلب تُخصم الخامات من المخزن تلقائيًا.</p></div>
+<div class="actions"><a class="btn" href="?new=1#form">+ صنف منيو جديد</a><a class="btn gold" href="{% url 'menu_qr' %}">📱 منيو QR للزباين</a><a class="btn light" href="#ing">+ خامة جديدة</a><a class="btn light" href="{% url 'import_upload' 'recipes' %}">⬆ رفع المنيو من إكسل</a></div></div>
+
+<div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>الصنف</th><th>التصنيف</th><th class="n">التكلفة (آخر شراء)</th><th class="n">السعر المقترح</th><th class="n">سعر البيع</th><th class="n">الهامش الفعلي</th><th></th></tr></thead><tbody>
+{% for x in rows %}<tr><td><b>{{ x.r.item.name }}</b>{% if x.c.missing %}<br><small class="bad">من غير تكلفة: {{ x.c.missing|join:"، " }}</small>{% endif %}</td><td>{{ x.r.item.category.name }}</td>
+<td class="n">{{ x.c.cost|money:2 }}</td><td class="n"><b>{{ x.c.suggested|money:2 }}</b></td>
+<td class="n"><form method="post" style="display:flex;gap:6px;justify-content:flex-end">{% csrf_token %}<input type="hidden" name="op" value="price"><input type="hidden" name="recipe" value="{{ x.r.pk }}">
+<input name="price" value="{{ x.c.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:90px;min-height:36px"><button class="light" style="min-height:36px;padding:4px 10px">حفظ</button></form></td>
+<td class="n">{% if x.c.real_margin is not None %}<span class="badge {% if x.c.low %}red{% endif %}">{{ x.c.real_margin }}%</span>{% else %}—{% endif %}</td>
+<td class="actions"><a href="?edit={{ x.r.pk }}#form">تعديل</a>
+<form method="post" onsubmit="return confirm('إزالة «{{ x.r.item.name }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="remove"><input type="hidden" name="recipe" value="{{ x.r.pk }}"><button class="light" style="min-height:32px;padding:2px 10px">ارفع من المنيو</button></form></td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد أصناف في المنيو بعد — ابدأ بـ «+ صنف منيو جديد»</td></tr>{% endfor %}</tbody></table></div>
+
+{% if edit or request.GET.new or for_item %}
+<form class="card" id="form" method="post" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">{% csrf_token %}
+<h2>{% if edit %}مكونات «{{ edit.item.name }}»{% elif for_item %}مكونات «{{ for_item.name }}»{% else %}صنف منيو جديد{% endif %}</h2>
+{% if edit %}<input type="hidden" name="recipe" value="{{ edit.pk }}">{% endif %}{% if for_item %}<input type="hidden" name="item" value="{{ for_item.pk }}">{% endif %}
+<div class="grid">
+<label class="field">اسم المشروب / الأكلة<input name="item_name" value="{% firstof edit.item.name for_item.name '' %}" required maxlength="150" placeholder="مثلًا: قهوة تركي"></label>
+<label class="field">التصنيف (في المنيو)<select name="category">{% for c in cats %}<option value="{{ c.pk }}" {% if edit and edit.item.category_id == c.pk or for_item and for_item.category_id == c.pk %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+<label class="field">هامش الربح المستهدف %<input name="margin" id="margin" value="{{ edit.target_margin|default:'65'|unlocalize }}" inputmode="decimal" dir="ltr"></label>
+<label class="field">تكاليف إضافية للوحدة (كوب، غطاء…)<input name="extra" id="extra" value="{{ edit.extra_cost|default:'0'|unlocalize }}" inputmode="decimal" dir="ltr"></label>
+</div>
+<div class="table-wrap"><table class="lines-table"><thead><tr><th>الخامة</th><th>الكمية</th><th>هالك %</th><th class="n">سعر آخر شراء</th><th class="n">التكلفة</th><th></th></tr></thead><tbody id="lines"></tbody></table></div>
+<p style="margin:0"><button type="button" class="light" id="addLine">+ خامة</button></p>
+<input type="hidden" name="rows" id="rows" value="0">
+<div class="grid">
+<div class="card kpi"><span class="k">تكلفة الوحدة</span><span class="v" id="cost">0</span></div>
+<div class="card kpi hero"><span class="k">السعر المقترح {% if vat %}({% if incl %}شامل{% else %}من غير{% endif %} ق.م {{ vat|floatformat:'0' }}%){% endif %}</span><span class="v" id="sugg">0</span><span class="k" id="suggx"></span></div>
+<div class="card kpi gold"><span class="k">ربح الوحدة بالسعر المقترح</span><span class="v" id="profit">0</span></div>
+</div>
+<label class="field">طريقة التحضير / ملاحظات<input name="notes" value="{{ edit.notes|default:'' }}" maxlength="300"></label>
+<label class="field" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)"><input type="checkbox" name="use_suggested" value="1" style="width:20px;min-height:0" {% if not edit and not for_item %}checked{% endif %}> استخدم السعر المقترح كسعر بيع</label>
+<div class="actions"><button>حفظ الوصفة</button><a class="btn light" href="{% url 'shop_recipes' %}">رجوع</a></div>
+</form>
+<template id="tpl"><tr><td><select data-k="ing"><option value="">— اختر —</option>{% for i in ings %}<option value="{{ i.pk }}">{{ i.name }} ({{ i.unit }})</option>{% endfor %}</select></td>
+<td><input data-k="qty" inputmode="decimal" dir="ltr" style="width:110px"></td><td><input data-k="waste" inputmode="decimal" dir="ltr" value="0" style="width:80px"></td>
+<td class="n uc">0</td><td class="n lc">0</td><td><button type="button" class="light x" style="min-height:34px;padding:2px 10px" aria-label="إزالة">✕</button></td></tr></template>
+{{ js|json_script:"rdata" }}
+<script>
+(function(){
+const D=JSON.parse(JSON.parse(document.getElementById('rdata').textContent));
+const tb=document.getElementById('lines'),tpl=document.getElementById('tpl');
+const n=v=>Number(String(v||'').replace(',','.'))||0, f=v=>(Math.round(v*100)/100).toLocaleString('en-US',{maximumFractionDigits:2});
+function nice(x){if(x<=0)return 0;const s=x<10?.5:x<50?1:5;return Math.ceil(x/s-1e-9)*s}
+function add(v){const r=tpl.content.firstElementChild.cloneNode(true);if(v){r.querySelector('[data-k=ing]').value=v.ing;r.querySelector('[data-k=qty]').value=v.qty;r.querySelector('[data-k=waste]').value=v.waste}
+ r.querySelector('.x').onclick=()=>{r.remove();calc()};r.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));tb.appendChild(r);calc()}
+function calc(){let t=0;[...tb.children].forEach((r,i)=>{r.querySelectorAll('[data-k]').forEach(e=>e.name=`${e.dataset.k}_${i}`);
+  const id=r.querySelector('[data-k=ing]').value,uc=n(D.costs[id]),q=n(r.querySelector('[data-k=qty]').value)*(1+n(r.querySelector('[data-k=waste]').value)/100),v=uc*q;
+  r.querySelector('.uc').textContent=id?(uc?f(uc)+' / '+D.units[id]:'لا توجد تكلفة'):'';r.querySelector('.lc').textContent=f(v);t+=v});
+  document.getElementById('rows').value=tb.children.length;
+  const cost=t+n(document.getElementById('extra').value),m=Math.min(99,n(document.getElementById('margin').value));
+  const net=cost?cost/(1-m/100):0,gross=D.incl?net*(1+n(D.vat)/100):net,s=nice(gross);
+  document.getElementById('cost').textContent=f(cost);document.getElementById('sugg').textContent=f(s);
+  document.getElementById('suggx').textContent=gross?`بالظبط ${f(gross)}`:'';document.getElementById('profit').textContent=f((D.incl?s/(1+n(D.vat)/100):s)-cost)}
+document.getElementById('addLine').onclick=()=>add();['margin','extra'].forEach(id=>document.getElementById(id).addEventListener('input',calc));
+(D.lines.length?D.lines:[null,null,null]).forEach(v=>add(v));
+})();
+</script>
+{% endif %}
+
+<form class="card" id="ing" method="post" style="display:flex;flex-direction:column;gap:12px">{% csrf_token %}<input type="hidden" name="op" value="ingredient">
+<h2>خامة جديدة</h2><p class="muted" style="margin:0">بن، سكر، لبن، خبز… تُستخدم التكلفة التقديرية حتى تشتري الخامة بفاتورة مشتريات (بعدها يُحسب متوسط التكلفة الحقيقي).</p>
+<div class="grid"><label class="field">اسم الخامة<input name="name" required maxlength="150"></label>
+<label class="field">الوحدة<select name="unit"><option>جرام</option><option>كيلو</option><option>مللي</option><option>لتر</option><option>قطعة</option><option>كيس</option><option>علبة</option></select></label>
+<label class="field">تكلفة الوحدة التقديرية<input name="cost" inputmode="decimal" dir="ltr" placeholder="مثلًا 0.4 للجرام"></label>
+<label class="field">حد الطلب (بنفس الوحدة) <small class="muted">0 = من غير تنبيه</small><input name="reorder" inputmode="decimal" dir="ltr" required placeholder="مثلًا 1000 جرام"></label></div>
+<div class="actions"><button>إضافة الخامة</button></div></form>
+{% endblock %}

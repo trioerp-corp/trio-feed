@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}الرئيسية{% endblock %}
+{% block content %}
+<div class="card" style="max-width:480px;margin:40px auto;text-align:center"><h1>أهلًا {{ user.first_name|default:user.get_username }}</h1>
+<p class="muted">البيع والورديات من {% if 'gaming' in mods %}شاشة الصالة أو {% endif %}لوحة البيع.</p>
+{% if 'gaming' in mods %}<a class="btn" href="/ui/play/" style="height:56px;font-size:18px;width:100%;margin-bottom:8px">🎮 شاشة الصالة (الأجهزة)</a>{% endif %}
+<a class="btn{% if 'gaming' in mods %} light{% endif %}" href="/pos/" style="height:56px;font-size:18px">فتح لوحة البيع</a>
+{% if sell_first %}<div class="note" style="text-align:right;margin-top:14px"><b>⚠ بِع هذه أولًا — اقتربت صلاحيتها من الانتهاء:</b><ul style="margin:6px 0 0;padding-inline-start:18px">{% for r in sell_first %}<li>{{ r.item.name }} — {% if r.days < 0 %}<b class="bad">انتهت</b>{% else %}فاضل {{ r.days }} يوم{% endif %} ({{ r.qty|floatformat:"-3" }} {{ r.item.unit }})</li>{% endfor %}</ul></div>{% endif %}
+{% if company.cashier_can_edit %}<form method="get" action="{% url 'order_find' %}" style="display:flex;gap:6px;margin-top:14px"><input name="uid" placeholder="رقم الفاتورة (من الإيصال)" dir="ltr" required style="flex:1"><button class="light">إلغاء / تعديل فاتورة</button></form>{% endif %}
+<p style="margin-top:14px"><a href="{% url 'shop_requests' %}">طلب إلغاء أو تعديل فاتورة</a> · <a href="{% url 'password_change' %}">تغيير كلمة السر</a></p></div>
+{% endblock %}

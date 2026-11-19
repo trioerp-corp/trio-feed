@@ -1,0 +1,109 @@
+﻿code,name_ar,parent_code,level,postable,currencies,report,account_type,normal_balance,cash_flow_category,is_partner_control,requires_cost_center,dim2_equipment,dim3_reserved
+1,الأصول,,1,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+2,حقوق الملكية والإلتزامات,,1,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+3,المصروفات,,1,no,EGP,profit_loss,expense,debit,,no,no,none,none
+4,الايرادات,,1,no,EGP,profit_loss,income,credit,,no,no,none,none
+11,الأصول غير المتداولة,1,2,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12,الأصول المتداولة,1,2,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+21,حقوق الملكية,2,2,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+23,الإلتزامات المتداولة,2,2,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+31,تكلفة المبيعات,3,2,no,EGP,profit_loss,expense,debit,,no,no,none,none
+32,مصروفات عمومية وإدارية,3,2,no,EGP,profit_loss,expense,debit,,no,no,none,none
+38,تعويضات وغرامات,3,2,no,EGP,profit_loss,expense,debit,,no,no,none,none
+41,المبيعات,4,2,no,EGP,profit_loss,income,credit,,no,no,none,none
+44,إيرادات أخرى,4,2,no,EGP,profit_loss,income,credit,,no,no,none,none
+1101,أصول ثابتة,11,3,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+1201,نقدية وارصدة لدى البنوك,12,3,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+1202,مخزون,12,3,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+1203,عملاء وأوراق قبض ومدينون اخرون,12,3,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+1207,حسابات وسيطة,12,3,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+2101,رأس المال المدفوع,21,3,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+2103,أرباح (خسائر) مرحلة,21,3,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+2301,الإلتزامات المتداولة,23,3,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+2304,جارى المساهمين,23,3,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+3101,تكلفة المبيعات,31,3,no,EGP,profit_loss,expense,debit,,no,no,none,none
+3201,مصروفات عمومية - المرتبات وما في حكمها,32,3,no,EGP,profit_loss,expense,debit,,no,no,none,none
+3202,مصاريف ادارية,32,3,no,EGP,profit_loss,expense,debit,,no,no,none,none
+3204,مصاريف الدعاية والأعلان,32,3,no,EGP,profit_loss,expense,debit,,no,no,none,none
+3801,تعويضات وغرامات,38,3,no,EGP,profit_loss,expense,debit,,no,no,none,none
+4101,المبيعات,41,3,no,EGP,profit_loss,income,credit,,no,no,none,none
+4401,إيرادات أخرى,44,3,no,EGP,profit_loss,income,credit,,no,no,none,none
+110101,أصول ثابتة,1101,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120101,حسابات جارية بالبنوك,1201,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120103,نقدية بالصندوق,1201,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120201,مخزون,1202,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120301,عملاء,1203,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120303,مدينون اخرون,1203,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+120701,حسابات وسيطة,1207,4,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+210101,رأس المال المدفوع,2101,4,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+210301,أرباح (خسائر) مرحلة,2103,4,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+230102,موردون وأوراق دفع ودائنون وأخرون,2301,4,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+230104,حسابات دائنة أخرى,2301,4,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+230105,مصروفات مستحقة,2301,4,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+230401,جارى المساهمين,2304,4,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+310101,تكلفة المبيعات,3101,4,no,EGP,profit_loss,expense,debit,,no,no,none,none
+320101,مصروفات عمومية,3201,4,no,EGP,profit_loss,expense,debit,,no,no,none,none
+320201,مصاريف ادارية,3202,4,no,EGP,profit_loss,expense,debit,,no,no,none,none
+320401,مصاريف الدعاية والاعلان,3204,4,no,EGP,profit_loss,expense,debit,,no,no,none,none
+380101,تعويضات وغرامات,3801,4,no,EGP,profit_loss,expense,debit,,no,no,none,none
+410101,المبيعات,4101,4,no,EGP,profit_loss,income,credit,,no,no,none,none
+440101,إيرادات أخرى,4401,4,no,EGP,profit_loss,income,credit,,no,no,none,none
+11010107,أجهزة حاسب ألى وبرامج,110101,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+11010108,أثاث ومفروشات واجهزة كهربائية,110101,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12010101,بنك مصر,120101,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12010301,نقدية بالصندوق,120103,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12020101,مخزون,120201,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12030101,عملاء,120301,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12030301,مدينون اخرون,120303,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+12070101,حسابات وسيطة,120701,5,no,EGP,balance_sheet,asset,debit,,no,no,none,none
+21010101,رأس المال المدفوع,210101,5,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+21030101,أرباح (خسائر) مرحلة,210301,5,no,EGP,balance_sheet,equity,credit,,no,no,none,none
+23010201,موردون,230102,5,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+23010403,مصلحة الضرائب,230104,5,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+23010501,مصروفات مستحقة,230105,5,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+23040101,جارى المساهمين,230401,5,no,EGP,balance_sheet,liability,credit,,no,no,none,none
+31010101,تكلفة المبيعات,310101,5,no,EGP,profit_loss,expense,debit,,no,no,none,none
+32010101,مصروفات عمومية - اجور ورواتب,320101,5,no,EGP,profit_loss,expense,debit,,no,no,none,none
+32020101,مصاريف ادارية,320201,5,no,EGP,profit_loss,expense,debit,,no,no,none,none
+32040101,مصاريف الدعاية والاعالان,320401,5,no,EGP,profit_loss,expense,debit,,no,no,none,none
+38010101,تعويضات وغرامات,380101,5,no,EGP,profit_loss,expense,debit,,no,no,none,none
+41010101,المبيعات,410101,5,no,EGP,profit_loss,income,credit,,no,no,none,none
+44010101,إيرادات أخرى,440101,5,no,EGP,profit_loss,income,credit,,no,no,none,none
+1101010701,كمبيوتر وأجهزة كاشير,11010107,6,yes,EGP,balance_sheet,asset,debit,investing,no,no,none,none
+1101010801,أجهزة كهربائية وثلاجات,11010108,6,yes,EGP,balance_sheet,asset,debit,investing,no,no,none,none
+1101010802,ديكورات وتجهيزات المحل,11010108,6,yes,EGP,balance_sheet,asset,debit,investing,no,no,none,none
+1101010803,أثاث ورفوف,11010108,6,yes,EGP,balance_sheet,asset,debit,investing,no,no,none,none
+1201010101,البنك,12010101,6,yes,EGP,balance_sheet,asset,debit,cash,no,no,none,none
+1201030101,الخزينة (درج الكاشير),12010301,6,yes,EGP,balance_sheet,asset,debit,cash,no,no,none,none
+1201030103,إنستاباي,12010301,6,yes,EGP,balance_sheet,asset,debit,cash,no,no,none,none
+1201030104,فودافون كاش,12010301,6,yes,EGP,balance_sheet,asset,debit,cash,no,no,none,none
+1202010101,مخزون البضاعة,12020101,6,yes,EGP,balance_sheet,asset,debit,operating,no,no,none,none
+1202010190,إنتاج تحت التشغيل (المعمل),12020101,6,yes,EGP,balance_sheet,asset,debit,operating,no,no,none,none
+1203010101,العملاء (آجل),12030101,6,yes,EGP,balance_sheet,asset,debit,operating,yes,no,none,none
+1203030115,سلف العاملين,12030301,6,yes,EGP,balance_sheet,asset,debit,operating,yes,no,none,none
+1207010101,حساب وسيط (أرصدة افتتاحية ومشتريات),12070101,6,yes,EGP,balance_sheet,asset,debit,operating,no,no,none,none
+2101010101,رأس المال,21010101,6,yes,EGP,balance_sheet,equity,credit,financing,no,no,none,none
+2103010101,أرباح (خسائر) مرحلة,21030101,6,yes,EGP,balance_sheet,equity,credit,non_cash,no,no,none,none
+2301020101,الموردين,23010201,6,yes,EGP,balance_sheet,liability,credit,operating,yes,no,none,none
+2301040301,ضريبة القيمة المضافة,23010403,6,yes,EGP,balance_sheet,liability,credit,operating,no,no,none,none
+2301050101,إيجارات مستحقة,23010501,6,yes,EGP,balance_sheet,liability,credit,operating,no,no,none,none
+2301050102,مرتبات مستحقة,23010501,6,yes,EGP,balance_sheet,liability,credit,operating,no,no,none,none
+2301050104,مصروفات مستحقة,23010501,6,yes,EGP,balance_sheet,liability,credit,operating,no,no,none,none
+2304010101,جاري صاحب المحل,23040101,6,yes,EGP,balance_sheet,liability,credit,financing,no,no,none,none
+3101010101,تكلفة البضاعة المباعة,31010101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3201010101,مرتبات وأجور,32010101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010101,إيجار المحل,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010102,صيانة,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010104,بوفيه وضيافة,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010105,كهرباء ومياه,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010106,انتقالات ونقل بضاعة,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010108,تليفون وإنترنت,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010110,أكياس وتغليف ومطبوعات,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010117,مصاريف بنكية,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010125,مصاريف متنوعة,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3202010127,رسوم وتراخيص,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3204010101,دعاية وإعلان,32040101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3801010102,عجز وتوالف بضاعة,38010101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+4101010101,المبيعات,41010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none
+4101010102,إيرادات خدمات وساعات تشغيل,41010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none
+4401010101,إيرادات أخرى,44010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none

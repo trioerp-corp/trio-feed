@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% load gg %}{% block title %}قائمة الدخل{% endblock %}
+{% block content %}
+<h1>قائمة الدخل <small class="muted">من {{ d1 }} إلى {{ d2 }}</small></h1>
+{% include "reports/_range.html" %}
+<div class="note">تُعتمد القائمة الرسمية بعد إقفال الفترة. تكاليف الزراعة المرسملة على «الأصول الحيوية» لا تظهر هنا؛ بل في المركز المالي.</div>
+<table>
+<tr class="l1"><td>الإيرادات</td><td></td></tr>
+{% for g in r.groups %}{% if g.account.account_type == 'income' %}<tr><td>{{ g.account.name }}</td><td class="n">{{ g.amount|money }}</td></tr>{% endif %}{% endfor %}
+<tr class="total"><td>إجمالي الإيرادات</td><td class="n">{{ r.revenue|money }}</td></tr>
+<tr class="l1"><td>المصروفات</td><td></td></tr>
+{% for g in r.groups %}{% if g.account.account_type == 'expense' %}<tr><td>{{ g.account.name }}</td><td class="n">{{ g.amount|money }}</td></tr>{% endif %}{% endfor %}
+<tr class="total"><td>إجمالي المصروفات</td><td class="n">{{ r.expenses|money }}</td></tr>
+<tr class="total"><td>صافي {% if r.net >= 0 %}الربح{% else %}الخسارة{% endif %}</td><td class="n">{{ r.net|money }}</td></tr>
+</table>
+{% endblock %}

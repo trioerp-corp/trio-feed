@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% load l10n %}{% block title %}المنيو{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🍽 المنيو</h1><p class="muted" style="margin:0">أضف المنتج باسمه وسعره، أو بأحجامه وسعر كل حجم، مع وصف يظهر للعميل في منيو QR. المكونات والمخزون وحساب التكلفة اختيارية.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'import_upload' 'menu' %}">📊 رفع المنيو من إكسل</a><a class="btn light" href="{% url 'shop_recipes' %}">🧪 المكونات والتكلفة (اختياري)</a><a class="btn light" href="{% url 'menu_qr' %}">📱 منيو QR</a></div></div>
+
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;margin-bottom:16px">
+<form method="post" class="card" id="product" novalidate>{% csrf_token %}<input type="hidden" name="op" value="product">{% if edit %}<input type="hidden" name="item" value="{{ edit.pk }}">{% endif %}
+<h2 style="margin:0 0 10px">{% if edit %}تعديل «{{ edit.name }}»{% else %}+ منتج جديد{% endif %}</h2>
+<div class="form-grid" style="grid-template-columns:1fr 1fr">
+<label class="field" style="grid-column:1/-1">اسم المنتج <span class="bad">*</span><input name="name" value="{{ edit.name|default:'' }}" required maxlength="120" placeholder="مثال: شاورما فراخ"></label>
+<label class="field">التصنيف<select name="category">{% for c in cats %}<option value="{{ c.pk }}"{% if edit.category_id == c.pk %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+<label class="field">أو تصنيف جديد<input name="new_category" maxlength="80" placeholder="مثال: ساندويتشات"></label>
+<label class="field" style="grid-column:1/-1">المكونات / الوصف (يظهر للعميل في منيو QR)<textarea name="desc" rows="2" maxlength="200" placeholder="مثال: فراخ متبلة، ثومية، مخلل، بطاطس">{{ edit_desc }}</textarea></label>
+</div>
+<p style="margin:12px 0 6px"><label class="field check" style="display:inline-flex"><input type="checkbox" name="has_sizes" value="1" id="hasSizes"{% if edit and edit.sale_price is None %} checked{% endif %}> للمنتج أحجام مختلفة (صغير، وسط، كبير…)</label></p>
+<label class="field" id="onePrice">السعر <span class="bad">*</span><input name="price" inputmode="decimal" value="{{ edit.sale_price|default_if_none:''|unlocalize }}" placeholder="0.00"></label>
+<div id="sizesBox"><p class="muted" style="margin:0 0 6px">اكتب سعر كل حجم تبيعه، واترك سعر الحجم الذي لا تبيعه فارغًا (مثلًا: صغير وكبير فقط). يمكنك تغيير أسماء الأحجام.</p>
+<table style="width:100%"><thead><tr><th>الحجم</th><th>السعر</th></tr></thead><tbody>
+{% for s in slots %}<tr><td><input name="size_{{ forloop.counter0 }}" value="{% if not s.hint or not edit %}{{ s.n }}{% endif %}" placeholder="{{ s.n|default:'حجم آخر' }}" maxlength="40" style="width:100%"></td>
+<td><input name="sprice_{{ forloop.counter0 }}" value="{{ s.p|default_if_none:''|unlocalize }}" inputmode="decimal" placeholder="0.00" style="width:100%"></td></tr>{% endfor %}</tbody></table></div>
+<div class="actions" style="margin-top:12px"><button>{% if edit %}حفظ التعديل{% else %}إضافة إلى المنيو{% endif %}</button>{% if edit %}<a class="btn light" href="{% url 'shop_menu' %}">إلغاء</a>{% endif %}</div></form>
+
+<form method="post" class="card" id="addon" novalidate>{% csrf_token %}<input type="hidden" name="op" value="addon">{% if edit_addon %}<input type="hidden" name="item" value="{{ edit_addon.pk }}">{% endif %}
+<h2 style="margin:0 0 4px">{% if edit_addon %}تعديل الإضافة «{{ edit_addon.name }}»{% else %}+ إضافة على الطلب{% endif %}</h2>
+<p class="muted" style="margin:0 0 10px">مثل: جبنة زيادة، صوص، بيض. يختارها الكاشير من زر «إضافات» بجوار المنتج، وتُحسب بسعرها.</p>
+<div class="form-grid" style="grid-template-columns:2fr 1fr">
+<label class="field">اسم الإضافة <span class="bad">*</span><input name="name" value="{{ edit_addon.name|default:'' }}" maxlength="100" placeholder="مثال: جبنة شيدر"></label>
+<label class="field">السعر <span class="bad">*</span><input name="price" inputmode="decimal" value="{{ edit_addon.sale_price|default_if_none:''|unlocalize }}" placeholder="0.00"></label></div>
+<p class="muted" style="margin:10px 0 4px">تظهر مع تصنيفات (إن لم تختر شيئًا تظهر مع كل المنتجات):</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">{% for c in cats %}<label class="field check" style="display:inline-flex"><input type="checkbox" name="cats" value="{{ c.pk }}"{% if c.pk in edit_cats %} checked{% endif %}> {{ c.name }}</label>{% endfor %}</div>
+<div class="actions" style="margin-top:12px"><button>{% if edit_addon %}حفظ التعديل{% else %}إضافة{% endif %}</button>{% if edit_addon %}<a class="btn light" href="{% url 'shop_menu' %}">إلغاء</a>{% endif %}</div>
+{% if addons %}<div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>الإضافة</th><th class="n">السعر</th><th>مع</th><th></th></tr></thead><tbody>
+{% for a in addons %}<tr><td>{{ a.name }}</td><td class="n">{{ a.sale_price|unlocalize }}</td><td class="muted">{% for c in a.addon_for.all %}{{ c.name }}{% if not forloop.last %}، {% endif %}{% empty %}كل المنتجات{% endfor %}</td>
+<td style="white-space:nowrap"><a class="btn light" href="?edit={{ a.pk }}#addon">✏</a></td></tr>{% endfor %}</tbody></table></div>{% endif %}
+</form></div>
+
+<h2>المنيو الحالي <span class="badge">{{ n }} منتج</span></h2>
+{% for g, rows in groups.items %}<h3 style="margin:16px 0 6px">{{ g }}</h3>
+<div class="table-wrap"><table><thead><tr><th>المنتج</th><th>السعر / الأحجام</th><th>المكونات للعميل</th><th>المخزون والتكلفة</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.item.name }}</b></td>
+<td>{% if r.sizes %}{% for v in r.sizes %}<span class="badge" style="margin:2px">{{ v.size_name }} {{ v.sale_price|unlocalize }}</span>{% endfor %}{% else %}{{ r.item.sale_price|unlocalize }}{% endif %}</td>
+<td class="muted">{{ r.desc|default:"—" }}</td>
+<td>{% if r.item.item_type == 'stock' %}<span class="badge gray">صنف مخزني</span>{% elif r.sizes %}{% for v in r.sizes %}<a class="badge {% if not v.recipe_id_ %}gray{% endif %}" style="margin:2px" href="{% url 'shop_recipes' %}?{% if v.recipe_id_ %}edit={{ v.recipe_id_ }}{% else %}item={{ v.pk }}{% endif %}#form">{{ v.size_name }}: {% if v.recipe_id_ %}✔ مكونات{% else %}+ مكونات{% endif %}</a>{% endfor %}
+{% elif r.recipe %}<a class="badge" href="{% url 'shop_recipes' %}?edit={{ r.recipe }}#form">✔ له مكونات</a>{% else %}<a class="badge gray" href="{% url 'shop_recipes' %}?item={{ r.item.pk }}#form">+ مكونات (اختياري)</a>{% endif %}</td>
+<td style="white-space:nowrap"><a class="btn light" href="?edit={{ r.item.pk }}#product">✏ تعديل</a>
+<form method="post" style="display:inline" onsubmit="return confirm('رفع «{{ r.item.name|escapejs }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="stop"><input type="hidden" name="item" value="{{ r.item.pk }}"><button class="light">رفع من المنيو</button></form></td></tr>{% endfor %}
+</tbody></table></div>{% empty %}<p class="muted">لا توجد منتجات بعد — أضف أول منتج من الأعلى.</p>{% endfor %}
+<script>(function(){const c=document.getElementById('hasSizes');function t(){document.getElementById('sizesBox').style.display=c.checked?'':'none';document.getElementById('onePrice').style.display=c.checked?'none':''}c.onchange=t;t()})()</script>
+{% endblock %}

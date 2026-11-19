@@ -1,0 +1,10 @@
+{# «دُفع الآن»: pay the booked service at the reception and print the booking receipt #}
+<div class="paynow" style="border:1px dashed var(--line);border-radius:12px;padding:10px;margin-top:10px">
+<label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" name="pay_now" value="1" class="pn"> دُفع الآن — اطبع إيصال الحجز</label>
+<div class="pnb" style="display:none;margin-top:8px"><div class="form-grid">
+<label class="field">الدفع<select name="pay" class="pm"><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option><option value="credit">آجل على المريض</option><option value="split">جزء وجزء</option><option value="insurance">تأمين طبي — ويدفع المريض حصته نقدًا</option><option value="insurance_card">تأمين طبي — ويدفع المريض حصته بالبطاقة</option></select></label>
+<label class="field">خصم<input name="discount" value="0" inputmode="decimal" dir="ltr"></label></div>
+<div class="ps form-grid" style="display:none"><label class="field">بطاقة<input name="card" inputmode="decimal" dir="ltr"></label><label class="field">آجل<input name="credit" inputmode="decimal" dir="ltr"></label></div>
+<p class="muted" style="font-size:12px;margin:4px 0 0">يُحتسب سعر الخدمة المختارة (أو أول خدمة للطبيب). وأي خدمة إضافية يضيفها الطبيب تُحاسب بإيصال آخر.</p></div></div>
+<script>(function(){document.querySelectorAll('.paynow').forEach(function(w){if(w.dataset.on)return;w.dataset.on=1;var c=w.querySelector('.pn'),b=w.querySelector('.pnb'),m=w.querySelector('.pm'),sp=w.querySelector('.ps');
+c.onchange=function(){b.style.display=c.checked?'block':'none'};m.onchange=function(){sp.style.display=m.value=='split'?'grid':'none'}})})();</script>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}التفعيل{% endblock %}
+{% block content %}
+<div class="card" style="max-width:560px;margin:30px auto;display:flex;flex-direction:column;gap:12px">
+<h1>تفعيل البرنامج</h1>
+<div class="msg {% if st.state == 'active' %}{% else %}error{% endif %}">{{ st.message }}{% if st.client %} — {{ st.client }}{% endif %}</div>
+<div><span class="muted">كود هذا الجهاز (أرسله إلى Trio):</span><div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+<code id="mc" dir="ltr" style="font-size:22px;font-weight:700;letter-spacing:2px;user-select:all">{{ st.machine }}</code>
+<button class="light" type="button" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('mc').textContent).catch(()=>{})">نسخ</button></div></div>
+{% if st.state == 'trial' or st.state == 'expired' and not st.client %}<div class="msg" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<span>{% if st.state == 'trial' %}هذه نسخة تجريبية. لتفعيل البرنامج: أرسل إلينا كود الجهاز وسيصلك كود التفعيل.{% else %}انتهت الفترة التجريبية — أرسل إلينا كود الجهاز، وسيصلك كود التفعيل.{% endif %}</span>
+<a class="btn" href="{{ wa }}" target="_blank" rel="noopener">اطلب الاشتراك واتساب</a></div>{% endif %}
+<form method="post">{% csrf_token %}<label class="field">كود التفعيل<textarea name="code" rows="4" dir="ltr" style="width:100%;font-family:monospace" placeholder="TRIO1...."></textarea></label>
+<p><button>تفعيل</button>{% if user.is_authenticated %} <a class="btn light" href="/">رجوع</a>{% endif %}</p></form>
+<details class="card" style="margin:12px 0;padding:12px 16px"{% if request.POST.action == 'claim' %} open{% endif %}><summary style="cursor:pointer;font-weight:700">💳 دفعت عبر الإنترنت من صفحة البيع؟ اكتب رقم الطلب</summary>
+<form method="post" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="action" value="claim">
+<div class="form-grid"><label class="field">رقم الطلب<input name="order" required dir="ltr" placeholder="TRIO-XXXXXX" value="{{ request.POST.order }}"></label>
+<label class="field">الهاتف الذي دفعت به<input name="phone" required dir="ltr" value="{{ request.POST.phone }}"></label></div>
+<p style="margin:8px 0 0"><button>فعّل نسختي</button> <span class="muted">تُصدر الرخصة لهذا الجهاز وحده.</span></p></form></details>
+{% if feed_url %}<form method="post" class="msg" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">{% csrf_token %}
+<span>{% if feed_ok %}متوصل بـ Trio ✔ — آخر اتصال {{ feed_ok|date:"d/m H:i" }}{% else %}لم يتصل بعد بـ Trio{% endif %}</span>
+<button class="light" name="action" value="check">اتصل الآن</button></form>{% endif %}
+<p class="muted">للتجديد أو المساعدة: {{ support }}</p></div>
+{% endblock %}

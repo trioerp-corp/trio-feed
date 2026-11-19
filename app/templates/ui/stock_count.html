@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load gg %}{% block title %}جرد وتسوية مخزنية{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>جرد وتسوية مخزنية</h1><p class="muted" style="margin:0">ارفع ملف الجرد (إكسل أو CSV أو PDF) — يقارنه النظام بالرصيد الدفتري وينشئ حركة تسوية بالزيادة والعجز.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'move_list' %}">حركات المخازن</a></div></div>
+<form method="post" enctype="multipart/form-data" class="filters">{% csrf_token %}
+<label>المخزن<select name="warehouse" onchange="document.getElementById('tpl').href='?template=1&warehouse='+this.value">{% for w in whs %}<option value="{{ w.pk }}" {% if w == wh %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
+<label>تاريخ الجرد<input type="date" name="date" value="{{ date }}"></label>
+<label><span><input type="checkbox" name="opening" value="1" {% if opening %}checked{% endif %}> رصيد أول المدة (بضاعة البداية)</span></label>
+<label>ملف الجرد<input type="file" name="file" accept=".xlsx,.xlsm,.csv,.pdf" required></label>
+<button>رفع ومراجعة</button><a id="tpl" class="btn light" href="?template=1&warehouse={{ wh.pk }}">⬇ قالب الجرد (فيه الأرصدة الحالية)</a></form>
+<div class="note">يجب أن يحتوي الملف على عمود «الكود» أو «الصنف»، وعمود «الكمية الفعلية» (أو «الجرد»). أسهل طريقة: نزّل القالب، واكتب الكميات المعدودة، وارفعه. الأصناف التي تركت كميتها فارغة لا تتغير. وإن كان عمود «سعر التكلفة» مملوءًا تُقيَّم به الزيادة (مهم في رصيد أول المدة ليظهر الربح صحيحًا).</div>
+{% if rows is not None %}
+<div class="grid" style="margin:16px 0"><div class="card kpi"><span class="k">أصناف في الملف</span><span class="v">{{ rows|length }}</span></div>
+<div class="card kpi"><span class="k">زيادة</span><span class="v ok">{{ plus }}</span></div><div class="card kpi"><span class="k">عجز</span><span class="v bad">{{ minus }}</span></div>
+<div class="card kpi {% if missing %}gold{% endif %}"><span class="k">غير معرّفة</span><span class="v">{{ missing|length }}</span></div></div>
+{% if missing %}<div class="msg error">أصناف غير موجودة في النظام (لن تُسوّى): {{ missing|slice:":30"|join:" ، " }}</div>{% endif %}
+<div class="table-wrap"><table><thead><tr><th>الكود</th><th>الصنف</th><th>الوحدة</th><th class="n">الدفتري</th><th class="n">الفعلي</th><th class="n">الفرق</th><th class="n">التكلفة</th></tr></thead><tbody>
+{% for r in diffs %}<tr><td>{{ r.code }}</td><td>{{ r.name }}</td><td>{{ r.unit }}</td><td class="n">{{ r.book|floatformat:-3 }}</td><td class="n">{{ r.counted|floatformat:-3 }}</td><td class="n {% if r.diff < 0 %}bad{% else %}ok{% endif %}"><b>{{ r.diff|floatformat:-3 }}</b></td><td class="n">{{ r.cost|default_if_none:"" }}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد فروق — الرصيد الفعلي مطابق للدفتري</td></tr>{% endfor %}</tbody></table></div>
+{% if diffs %}<form method="post" style="margin-top:12px">{% csrf_token %}<div class="actions"><button name="confirm" value="1">{% if opening %}ترحيل رصيد أول المدة{% else %}ترحيل التسوية{% endif %} ({{ diffs|length }} صنف)</button></div>
+<p class="muted">تُقيَّم الزيادة بمتوسط التكلفة على «إيرادات أخرى»، والعجز بمتوسط التكلفة على «أعباء وخسائر». ويمكنك تغيير الحساب لاحقًا من الحركة نفسها قبل الترحيل إن أنشأتها يدويًا.</p></form>{% endif %}
+{% endif %}
+{% endblock %}

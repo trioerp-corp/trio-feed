@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}طلبات الإلغاء والتعديل{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>طلبات الإلغاء والتعديل</h1><p class="muted" style="margin:0">{% if owner %}لا يلغي الكاشير ولا يعدّل بنفسه — يرسل طلبًا فتعتمده أو ترفضه. الاعتماد يلغي الحركة بقيد عكسي، والتعديل يتم بإلغاء الخطأ وتسجيلها من جديد بشكل صحيح.{% else %}اطلب إلغاء أو تعديل فاتورة أو حركة — يعتمدها صاحب المحل.{% endif %}</p></div></div>
+{% if not owner %}<form method="post" class="card form-grid" style="margin-bottom:16px">{% csrf_token %}
+<label class="field">الطلب<select name="kind"><option value="void">إلغاء</option><option value="edit">تعديل</option></select></label>
+<label class="field">رقم الفاتورة أو الحركة<input name="target" placeholder="MAIN-01-0000012" dir="ltr"></label>
+<label class="field">السبب / التعديل المطلوب<input name="reason"></label><div><button name="new" value="1">إرسال للأونر</button></div></form>{% endif %}
+<h2>مستنية القرار</h2><div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>الوقت</th><th>الطلب</th><th>الحركة</th><th>السبب</th><th>من</th><th></th></tr></thead><tbody>
+{% for r in pending %}<tr><td>{{ r.created_at|date:"d/m H:i" }}</td><td><span class="badge gold">{{ r.get_kind_display }}</span></td><td dir="ltr">{{ r.target }}</td><td>{{ r.reason }}</td><td>{{ r.requested_by }}</td>
+<td>{% if owner %}<form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="decide" value="{{ r.pk }}"><input name="note" placeholder="ملاحظة (اختياري)">
+<button name="approve" value="1">اعتماد</button><button name="approve" value="0" class="danger">رفض</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="6" class="muted">لا توجد طلبات</td></tr>{% endfor %}</tbody></table></div>
+<h2>ما تم البت فيه</h2><div class="table-wrap"><table><thead><tr><th>الوقت</th><th>الطلب</th><th>الحركة</th><th>السبب</th><th>من</th><th>القرار</th><th>ملاحظة</th></tr></thead><tbody>
+{% for r in done %}<tr><td>{{ r.created_at|date:"d/m H:i" }}</td><td>{{ r.get_kind_display }}</td><td dir="ltr">{{ r.target }}</td><td>{{ r.reason }}</td><td>{{ r.requested_by }}</td>
+<td><span class="badge {% if r.state == 'approved' %}{% else %}red{% endif %}">{{ r.get_state_display }}</span> {{ r.decided_by }}</td><td>{{ r.decision_note }}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">—</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

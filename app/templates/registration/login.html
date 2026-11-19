@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}الدخول{% endblock %}
+{% block content %}
+<div class="card" style="max-width:380px;margin:40px auto">
+<h1>تسجيل الدخول</h1>
+{% if locked %}<div class="msg error">{{ locked }}</div>{% elif form.errors %}<div class="msg error">اسم المستخدم أو كلمة المرور غير صحيحة</div>{% endif %}
+<form method="post">{% csrf_token %}
+<p><label>اسم المستخدم<br><input name="username" autofocus required style="width:100%"></label></p>
+<p><label>كلمة المرور<br><input type="password" name="password" required style="width:100%"></label></p>
+<button>دخول</button>
+<input type="hidden" name="next" value="{{ next }}">
+</form></div>
+{% endblock %}

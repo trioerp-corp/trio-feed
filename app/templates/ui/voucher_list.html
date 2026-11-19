@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load gg %}{% block title %}الخزينة{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>سندات الخزينة</h1><p class="muted" style="margin:0">قبض، صرف، تحويلات — كل سند ينشئ قيده تلقائيًا عند الترحيل</p></div>
+<div class="actions"><a class="btn" href="{% url 'voucher_new' %}?kind=payment">+ سند صرف</a><a class="btn light" href="{% url 'voucher_new' %}?kind=receipt">+ سند قبض</a><a class="btn light" href="{% url 'voucher_new' %}?kind=transfer">+ تحويل</a><a class="btn light" href="/admin/treasury/dayclose/">إقفال الأيام</a></div></div>
+<form class="filters" method="get">
+<label>بحث<input name="q" value="{{ g.q|default:'' }}" placeholder="رقم، بيان، اسم"></label>
+<label>النوع<select name="kind"><option value="">الكل</option>{% for k, n in kinds %}<option value="{{ k }}" {% if g.kind == k %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>الحالة<select name="state"><option value="">الكل</option>{% for k, n in states %}<option value="{{ k }}" {% if g.state == k %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></label>
+<label>الخزينة<select name="cashbox"><option value="">الكل</option>{% for b in cashboxes %}<option value="{{ b.pk }}" {% if g.cashbox == b.pk|stringformat:'s' %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select></label>
+<label>من<input type="date" name="from" value="{{ g.from|default:'' }}"></label><label>إلى<input type="date" name="to" value="{{ g.to|default:'' }}"></label>
+<button>عرض</button></form>
+<div class="table-wrap"><table><thead><tr><th>الرقم</th><th>التاريخ</th><th>النوع</th><th>الخزينة</th><th>الاسم</th><th>البيان</th><th class="n">المبلغ</th><th>الحالة</th></tr></thead><tbody>
+{% for v in page %}<tr><td style="white-space:nowrap"><a href="{% url 'voucher_detail' v.pk %}">{{ v.number|default:"مسودة" }}</a></td><td style="white-space:nowrap">{{ v.date|date:"Y-m-d" }}</td>
+<td><span class="badge {% if v.kind == 'payment' %}gold{% elif v.kind == 'transfer' %}gray{% endif %}">{{ v.get_kind_display }}</span></td><td>{{ v.cashbox.name }}{% if v.to_cashbox %} ← {{ v.to_cashbox.name }}{% endif %}</td>
+<td>{{ v.partner|default:v.payee|truncatechars:28 }}</td><td>{{ v.description|truncatechars:50 }}</td><td class="n">{{ v.amount|money }}{% if v.currency != 'EGP' %} {{ v.currency }}{% endif %}</td>
+<td><span class="badge {% if v.state == 'draft' %}gold{% elif v.state == 'cancelled' %}red{% endif %}">{{ v.get_state_display }}</span></td></tr>
+{% empty %}<tr><td colspan="8" class="muted">لا توجد سندات</td></tr>{% endfor %}</tbody></table></div>
+{% include "ui/_pager.html" %}
+{% endblock %}

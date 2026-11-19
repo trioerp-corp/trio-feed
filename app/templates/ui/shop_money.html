@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}{{ W.money }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ W.money }}</h1><p class="muted" style="margin:0">مسحوبات، مصروفات تشغيل، أجور وسلف، وسداد موردين — من الخزينة أو من مال صاحب المحل الخاص</p></div>
+<div class="actions">{% if not branch_locked %}<a class="btn light" href="{% url 'shop_statement' %}?account=2304010101">كشف حساب صاحب المحل</a>{% endif %}</div></div>
+{% if not branch_locked %}<section class="grid" style="margin-bottom:16px">
+<div class="card kpi {% if owner >= 0 %}hero{% else %}gold{% endif %}"><span class="k">{% if shop_partners %}حساب الشركاء (جاري){% else %}رصيد صاحب المحل{% endif %}</span><span class="v">{{ owner|money:0 }}</span><span class="k">{% if owner >= 0 %}ليه عند المحل{% else %}مستحق عليه للمحل (سحب أكثر){% endif %}</span></div>
+<div class="card kpi"><span class="k">إجمالي المسحوبات</span><span class="v">{{ drawings|money:0 }}</span></div>
+<div class="card kpi"><span class="k">ما دفعه من ماله الخاص</span><span class="v">{{ paid_by_owner|money:0 }}</span><span class="k">موردين ومصروفات وأجور</span></div></section>{% endif %}
+<form method="post" class="card" style="margin-bottom:16px">{% csrf_token %}<h2>حركة جديدة</h2><div class="form-grid">
+<label class="field">النوع<select name="kind" id="k">{% for v, n in kinds %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
+<label class="field">من<select name="source">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}<option value="owner">مال صاحب المحل الخاص (يُسجَّل له)</option></select></label>
+<label class="field" data-for="expense">البند<select name="account">{% for a in expenses %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></label>
+<label class="field" data-for="wage advance">الموظف<select name="partner" data-p="emp"><option value="">—</option>{% for p in employees %}<option value="{{ p.pk }}">{{ p.name }}</option>{% endfor %}</select></label>
+{% if shop_partners|length > 1 %}<label class="field" data-for="drawing deposit">الشريك<select name="partner" data-p="sh" required><option value="">— اختر —</option>{% for sp in shop_partners %}<option value="{{ sp.partner.pk }}">{{ sp.partner.name }}</option>{% endfor %}</select></label>{% endif %}
+<label class="field" data-for="supplier">المورد<select name="partner" data-p="sup"><option value="">—</option>{% for p in suppliers %}<option value="{{ p.pk }}">{{ p.name }}</option>{% endfor %}</select></label>
+<label class="field">المبلغ<input name="amount" inputmode="decimal" required></label>
+<label class="field" data-for="wage">خصم سلفة<input name="adv" inputmode="decimal"></label><label class="field" data-for="wage">خصم / جزاء<input name="pen" inputmode="decimal"></label>
+<label class="field">التاريخ<input type="date" name="date" value="{{ today }}"></label><label class="field">بيان<input name="note"></label>
+<div><button>تسجيل</button></div></div></form>
+<h2>آخر الحركات</h2><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>الطرف / البند</th><th>من</th><th class="n">المبلغ</th><th class="n">الصافي من الخزينة</th><th>بواسطة</th></tr></thead><tbody>
+{% for m in moves %}<tr><td>{{ m.date|date:"d/m" }}</td><td>{% if m.entry and user.is_superuser %}<a href="{% url 'entry_detail' m.entry.pk %}">{{ m.get_kind_display }}</a>{% else %}{{ m.get_kind_display }}{% endif %}</td>
+<td>{{ m.partner.name|default:"" }}{{ m.account.name|default:"" }}{% if m.note %} — {{ m.note }}{% endif %}</td><td>{% if m.from_owner %}<span class="badge gold">صاحب المحل</span>{% elif m.shift_id %}درج الكاشير{% else %}الخزينة{% endif %}</td>
+<td class="n">{{ m.amount|money }}</td><td class="n">{{ m.cash_effect|money }}</td><td>{{ m.by }}{% if m.cancelled %} <span class="badge red">ملغية</span>{% else %}{% include "ui/_void.html" with what="cashmove" id=m.pk %}{% endif %}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد حركات</td></tr>{% endfor %}</tbody></table></div>
+<script>
+const k=document.getElementById('k');function sh(){document.querySelectorAll('[data-for]').forEach(l=>{const on=l.dataset.for.split(' ').includes(k.value);l.style.display=on?'':'none';l.querySelectorAll('select,input').forEach(i=>i.disabled=!on)})}k.onchange=sh;sh();
+</script>
+{% endblock %}

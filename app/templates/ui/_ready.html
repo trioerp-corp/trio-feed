@@ -1,0 +1,4 @@
+{% if ready %}<section class="card" style="margin-bottom:18px;border-inline-start:5px solid var(--gold)"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+<div><h2 style="margin:0 0 4px">🧰 تبقّت بعض الخطوات في تجهيز المحل</h2><p class="muted" style="margin:0">املأها مرة واحدة ليعمل البرنامج كله دون أن يوقفك:</p>
+<ul style="margin:6px 0 0;padding-inline-start:20px">{% for r in ready.left|slice:":6" %}<li>{{ r.title }}</li>{% endfor %}{% if ready.left|length > 6 %}<li>و{{ ready.left|length|add:"-6" }} أخرى…</li>{% endif %}</ul></div>
+<a class="btn" href="{{ ready.url }}">كمّل التجهيز ←</a></div></section>{% endif %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% load gg %}{% block title %}الموظفين والمرتبات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🧑‍💼 الموظفين والمرتبات</h1><p class="muted" style="margin:0">تُحسب التأمينات والضريبة تلقائيًا بأرقام {{ f.year }}: الموظف {{ f.emp_ins|floatformat:-2 }}% وصاحب العمل {{ f.er_ins|floatformat:-2 }}% من أجر الاشتراك ({{ f.ins_min|money:0 }} — {{ f.ins_max|money:0 }} ج)، وكسب العمل بالشرائح بعد إعفاء {{ f.exemption|money:0 }} ج في السنة.</p></div>
+<div class="actions"><a class="btn" href="{% url 'staff_payroll' %}">📋 مسير مرتبات الشهر</a><a class="btn light" href="{% url 'tax_home' %}">🧮 الإقرارات الضريبية</a></div></div>
+<details class="card" style="margin-bottom:16px" {% if not rows %}open{% endif %}><summary><b>+ موظف جديد</b></summary>
+<form method="post" class="form-grid" style="margin-top:12px">{% csrf_token %}{% with e=None %}{% include "staff/_emp_fields.html" %}{% endwith %}<div><button>إضافة</button></div></form></details>
+<div class="table-wrap"><table><thead><tr><th>الموظف</th><th class="n">الإجمالي</th><th class="n">تأمينات (عليه)</th><th class="n">تأمينات (على المحل)</th><th class="n">ضريبة</th><th class="n">الصافي التقريبي</th><th class="n">سلف عليه</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr{% if not r.e.active %} style="opacity:.55"{% endif %}><td><b>{{ r.e.name }}</b>{% if r.e.job %}<br><small class="muted">{{ r.e.job }}</small>{% endif %}</td><td class="n">{{ r.e.gross|money }}</td><td class="n">{{ r.ins.emp|money }}</td><td class="n">{{ r.ins.er|money }}</td><td class="n">{{ r.tax|money }}</td><td class="n"><b>{{ r.net|money }}</b></td><td class="n">{{ r.adv|money }}</td>
+<td><a class="btn light" href="{% url 'staff_edit' r.e.pk %}">✏ تعديل</a></td></tr>
+{% empty %}<tr><td colspan="8" class="muted">أضف الموظفين من الأعلى — مرة واحدة، ويُنشأ المسير منهم كل شهر تلقائيًا</td></tr>{% endfor %}</tbody></table></div>
+<p class="muted" style="font-size:13px">تُصرف السلفة من «المصروفات» أو من درج الكاشير، وتُخصم من المرتب في المسير.</p>
+{% endblock %}

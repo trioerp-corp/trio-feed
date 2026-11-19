@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{{ m }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ m.get_kind_display }} {{ m.number|default:"(مسودة)" }}</h1><p class="muted" style="margin:0">{{ m.date|date:"Y-m-d" }} — {{ m.warehouse }} — <span class="badge {% if m.state == 'draft' %}gold{% endif %}">{{ m.get_state_display }}</span></p></div>
+<form method="post" class="actions">{% csrf_token %}{% if m.state == 'draft' %}<a class="btn light" href="{% url 'move_edit' m.pk %}">تعديل</a><button name="post" value="1">ترحيل</button>{% endif %}
+{% if m.entry_id and user.is_superuser %}<a class="btn light" href="{% url 'entry_detail' m.entry_id %}">القيد {{ m.entry.number }}</a>{% endif %}<a class="btn light" href="javascript:print()">🖨 طباعة</a></form></div>
+{% if m.description %}<p>{{ m.description }}</p>{% endif %}
+<div class="table-wrap"><table><thead><tr><th>الصنف</th><th class="n">الكمية</th><th class="n">القيمة</th><th>القطاع</th><th>المعدة</th></tr></thead><tbody>
+{% for l in lines %}<tr><td>{{ l.item }}</td><td class="n">{{ l.qty|floatformat:-3 }} {{ l.item.unit }}</td><td class="n">{{ l.value|money }}</td><td>{{ l.dim1.name|default:"" }}</td><td>{{ l.dim2.name|default:"" }}</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

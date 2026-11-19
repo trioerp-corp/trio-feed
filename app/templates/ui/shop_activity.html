@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}نشاط المحل{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>نشاط المحل</h1><p class="muted" style="margin:0">اكتب نشاطك بكلماتك ويُضبط البرنامج عليه: التصنيفات، والبيانات الإضافية لكل {{ act.item }} (مثل رقم القطعة أو المقاس)، والبحث بها في الكاشير. ولا تتغيّر الأصناف والأرصدة الموجودة لديك.</p></div></div>
+<div class="card" style="max-width:760px">
+<p style="margin:0 0 10px">الآن: <b>{{ act.name }}</b> <span class="muted">({{ act.base_name }})</span></p>
+<form method="post">{% csrf_token %}{% include "core/_activity.html" %}
+<div class="actions" style="margin-top:12px"><button>اضبط البرنامج على هذا النشاط</button><a class="btn light" href="{% url 'shop_settings' %}">رجوع</a></div></form>
+<p class="muted" style="font-size:13px;margin:12px 0 0">صالة الأجهزة والوصفات تبقى كما هي — وإن احتجت تغيير النوع الأساسي فتواصل مع Trio.</p>
+</div>
+{% endblock %}

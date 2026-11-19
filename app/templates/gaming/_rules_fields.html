@@ -1,0 +1,5 @@
+<label class="field">يُحسب الوقت بـ<select name="g_round">{% for v, t in g_round_choices %}<option value="{{ v }}" {% if s.gaming_round_minutes == v %}selected{% endif %}>{{ t }}</option>{% endfor %}</select>
+<small class="muted">أي جزء بدأ منها يُحاسب كاملًا</small></label>
+<label class="field">أقل وقت يُحاسب عليه<select name="g_min">{% for v, t in g_min_choices %}<option value="{{ v }}" {% if s.gaming_min_minutes == v %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></label>
+<label class="field">سماح قبل احتساب جزء جديد (دقيقة)<input name="g_grace" value="{{ s.gaming_grace_minutes }}" inputmode="numeric" dir="ltr">
+<small class="muted">مثلًا 5: إن لعب ساعة و4 دقائق تُحسب ساعة فقط</small></label>

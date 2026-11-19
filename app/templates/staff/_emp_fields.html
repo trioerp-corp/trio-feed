@@ -1,0 +1,13 @@
+{% load l10n %}
+<label class="field">الاسم<input name="name" value="{{ e.name|default:'' }}" required maxlength="120"></label>
+<label class="field">الوظيفة<input name="job" value="{{ e.job|default:'' }}" maxlength="80"></label>
+<label class="field">الموبايل<input name="phone" value="{{ e.phone|default:'' }}" dir="ltr" maxlength="40"></label>
+<label class="field">الرقم القومي<input name="national_id" value="{{ e.national_id|default:'' }}" dir="ltr" inputmode="numeric" maxlength="14"></label>
+<label class="field">المرتب الأساسي الشهري<input name="salary" value="{{ e.salary|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" required></label>
+<label class="field">بدلات ثابتة شهريًا<input name="allowances" value="{{ e.allowances|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr"></label>
+<label class="field">تاريخ التعيين<input type="date" name="hire_date" value="{{ e.hire_date|date:'Y-m-d' }}"></label>
+<div class="field">مؤمّن عليه؟<div style="display:flex;gap:14px"><label><input type="radio" name="insured" value="1" {% if not e or e.insured %}checked{% endif %}> أيوه</label><label><input type="radio" name="insured" value="0" {% if e and not e.insured %}checked{% endif %}> لأ</label></div></div>
+<label class="field">أجر الاشتراك التأميني <small class="muted">(متاح = المرتب)</small><input name="insurable_wage" value="{{ e.insurable_wage|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr"></label>
+<label class="field">الرقم التأميني<input name="insurance_no" value="{{ e.insurance_no|default:'' }}" dir="ltr" maxlength="30"></label>
+<div class="field">ضريبة كسب العمل؟<div style="display:flex;gap:14px"><label><input type="radio" name="taxable" value="1" {% if not e or e.taxable %}checked{% endif %}> تُخصم</label><label><input type="radio" name="taxable" value="0" {% if e and not e.taxable %}checked{% endif %}> لأ</label></div></div>
+<label class="field">طريقة القبض<input name="pay_to" value="{{ e.pay_to|default:'' }}" maxlength="80" placeholder="نقدًا / محفظة 010…"></label>

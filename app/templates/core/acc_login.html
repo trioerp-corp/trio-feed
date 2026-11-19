@@ -1,0 +1,120 @@
+{% extends "base.html" %}{% load static %}{% block title %}واجهة المطور{% endblock %}
+{% block content %}
+<style>
+.acc-box{max-width:460px;margin:28px auto;display:flex;flex-direction:column;gap:14px}
+.acc-head{display:flex;align-items:center;gap:12px}
+.acc-head img{width:56px;height:56px;border-radius:14px}
+.acc-head b{font-size:22px;display:block}
+.otp{width:100%;font-size:30px;text-align:center;letter-spacing:10px;direction:ltr}
+.step{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.step i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--brand-2);color:var(--brand);display:inline-flex;align-items:center;justify-content:center;font-weight:700}
+</style>
+<div class="card acc-box">
+  <div class="acc-head"><img src="{% static 'ui/icon.svg' %}" alt=""><div><b>Trio</b><span class="muted">{% if s.setup_done %}واجهة المطور — {{ s.name }}{% else %}تثبيت نسخة جديدة{% endif %}</span></div></div>
+  {% if self_open %}<details class="card" id="demo" style="margin:0" open><summary style="cursor:pointer;font-weight:700">🎁 جرّب البرنامج 14 يومًا مجانًا</summary>
+  <p class="muted" style="font-size:14px;margin:8px 0">بضعة أسئلة قصيرة ويُجهَّز البرنامج على مقاس محلك — نسخة تجريبية 14 يومًا بكل الإمكانيات.</p>
+  <style>.wz-steps{display:flex;gap:4px;margin:2px 0 10px}.wz-steps i{flex:1;height:5px;border-radius:4px;background:var(--line,#dfe6ef)}.wz-steps i.on{background:var(--accent,#3CC2B5)}
+  .wz{display:none;flex-direction:column;gap:8px}.wz.on{display:flex}.wz h3{margin:0;font-size:17px}.wz-nav{display:flex;gap:8px;justify-content:space-between;margin-top:6px}
+  .yn{display:flex;gap:6px;flex-wrap:wrap}.yn label{display:flex;flex-direction:row;align-items:center;gap:6px;border:1px solid var(--line,#dfe6ef);border-radius:10px;padding:7px 12px;cursor:pointer;color:var(--ink)}
+  .yn input{width:18px!important;height:18px;min-height:0!important;margin:0;flex:none}
+  .sum{background:var(--soft,#f1f6fb);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.9}.sum b{color:var(--brand,#17698f)}.err-l{color:#A13A2A;font-size:13px;min-height:1em}</style>
+  <form method="post" id="wzForm" style="display:flex;flex-direction:column;gap:8px">{% csrf_token %}<input type="hidden" name="action" value="demo">
+    <div class="wz-steps" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+    <section class="wz on" data-step="0"><h3>1 · ما نشاطك؟</h3>
+      {% with act_required=True act_value=demo.activity %}{% include "core/_activity.html" %}{% endwith %}</section>
+    <section class="wz" data-step="1"><h3>2 · بيانات محلك</h3>
+      <label class="field">اسم المحل<input name="shop" maxlength="100" value="{{ demo.shop|default:'' }}" placeholder="مثلًا: الأمير لقطع الغيار"></label>
+      <label class="field">هاتف المحل<input name="phone" dir="ltr" maxlength="40" value="{{ demo.phone|default:'' }}" placeholder="01xxxxxxxxx"></label>
+      <label class="field">العنوان (اختياري — يظهر على الإيصال)<input name="address" maxlength="200" value="{{ demo.address|default:'' }}"></label></section>
+    <section class="wz" data-step="2"><h3>3 · بعض الأسئلة</h3>
+      <label class="field">كم جهاز كاشير لديك (تبيع منه)؟<select name="devices"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <div id="qHall" style="display:none;grid-template-columns:1fr 1fr;gap:8px">
+        <label class="field">كم جهاز بلايستيشن؟<input name="ps_count" value="3" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة (فردي)<input name="ps_rate" value="40" inputmode="decimal" dir="ltr"></label>
+        <label class="field">كم طاولة بلياردو؟<input name="bl_count" value="1" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة<input name="bl_rate" value="50" inputmode="decimal" dir="ltr"></label>
+        <label class="field" style="grid-column:1/-1">يُحسب الوقت بـ<select name="g_round"><option value="15">ربع ساعة (يُحاسب على أي ربع بدأ)</option><option value="30">نصف ساعة</option><option value="60">ساعة</option></select></label></div>
+      <div class="field">لديك أكثر من مخزن أو فرع؟<div class="yn"><label><input type="radio" name="multi" value="0" checked> لأ</label><label><input type="radio" name="multi" value="1"> أيوه</label></div></div>
+      <div class="field">هل نضيف لك أصنافًا نموذجية من نشاطك لتجرّب مباشرة؟<div class="yn"><label><input type="radio" name="samples" value="1" checked> أيوه</label><label><input type="radio" name="samples" value="0"> لا، سأضيف بنفسي</label></div></div></section>
+    <section class="wz" data-step="3"><h3>4 · حسابك</h3>
+      <label class="field">اسمك<input name="owner" maxlength="60" value="{{ demo.owner|default:'' }}"></label>
+      <label class="field">اسم الدخول (إنجليزي)<input name="username" dir="ltr" maxlength="30" autocomplete="username" value="{{ demo.username|default:'' }}" placeholder="ahmed"></label>
+      <label class="field">كلمة السر (8 أحرف أو أكثر)<input name="password" type="password" dir="ltr" autocomplete="new-password"></label></section>
+    <section class="wz" data-step="4"><h3>5 · هذا ما سيُجهَّز لك</h3><div class="sum" id="wzSum"></div></section>
+    <div class="err-l" id="wzErr"></div>
+    <div class="wz-nav"><button type="button" class="light" id="wzBack" style="display:none">→ رجوع</button><span></span><button type="button" id="wzNext">التالي ←</button><button id="wzGo" style="display:none">🚀 ابدأ التجربة</button></div>
+  </form>
+  <script>(function(){const f=document.getElementById('wzForm'),st=[...f.querySelectorAll('.wz')],bars=[...f.querySelectorAll('.wz-steps i')];let i=0;
+  const $=n=>f.querySelector('[name='+n+']'),err=t=>{document.getElementById('wzErr').textContent=t||''};
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const PLAN={basic:'الأساسية',standard:'المتقدمة',pro:'الشاملة'};
+  function show(n){i=n;st.forEach((s,k)=>s.classList.toggle('on',k===n));bars.forEach((b,k)=>b.classList.toggle('on',k<=n));
+    const vis=(id,v)=>{document.getElementById(id).style.display=v?'':'none'};vis('wzBack',n>0);vis('wzNext',n<st.length-1);vis('wzGo',n===st.length-1);err();
+    const p=window.ACC_ACT;document.getElementById('qHall').style.display=(p&&p.hall)?'grid':'none';if(n===st.length-1)summary();const fi=st[n].querySelector('input,select');if(fi)fi.focus()}
+  function ok(n){if(n===0&&(!$('activity').value.trim()||$('activity').value.trim().length<2))return 'اكتب نشاطك (مثلًا: صيدلية، محل قطع غيار…)';
+    if(n===1&&$('shop').value.trim().length<2)return 'اكتب اسم المحل';
+    if(n===3){if(!/^[A-Za-z0-9_.@+-]{2,30}$/.test($('username').value.trim()))return 'اسم الدخول بحروف إنجليزية وأرقام (بدون مسافات)';if($('password').value.length<8)return 'كلمة السر 8 أحرف أو أكثر'}return ''}
+  function summary(){const p=window.ACC_ACT||{name:$('activity').value,categories:[],fields:[],samples:[],plan:'standard'};const multi=f.querySelector('[name=multi]:checked').value==='1';
+    let h='<div>🏪 <b>'+esc($('shop').value)+'</b> — '+esc(p.name)+'</div>';
+    h+='<div>📂 '+(p.categories||[]).length+' تصنيف: '+(p.categories||[]).slice(0,6).map(esc).join('، ')+'…</div>';
+    if((p.fields||[]).length)h+='<div>🏷 بيانات لكل '+esc(p.item||'صنف')+': '+p.fields.map(x=>esc(x.n)).join('، ')+'</div>';
+    h+='<div>🖥 '+$('devices').value+' جهاز كاشير</div>';
+    if(p.hall)h+='<div>🎮 '+(+$('ps_count').value||0)+' بلايستيشن ('+esc($('ps_rate').value)+' ج/ساعة) و'+(+$('bl_count').value||0)+' بلياردو</div>';
+    if(f.querySelector('[name=samples]:checked').value==='1'&&(p.samples||[]).length)h+='<div>🧪 '+p.samples.length+' أصناف أمثلة: '+p.samples.slice(0,3).map(x=>esc(x[0])).join('، ')+'…</div>';
+    h+='<div>👤 دخولك: <b dir="ltr">'+esc($('username').value)+'</b></div>';
+    h+='<div style="margin-top:6px">✔ التجربة 14 يومًا بكل إمكانيات البرنامج.</div>';
+    document.getElementById('wzSum').innerHTML=h}
+  document.getElementById('wzNext').onclick=()=>{const e=ok(i);if(e)return err(e);show(i+1)};document.getElementById('wzBack').onclick=()=>show(i-1);
+  f.addEventListener('keydown',e=>{if(e.key==='Enter'&&i<st.length-1&&e.target.tagName==='INPUT'){e.preventDefault();document.getElementById('wzNext').click()}});
+  f.addEventListener('submit',e=>{for(let k=0;k<st.length-1;k++){const m=ok(k);if(m){e.preventDefault();show(k);err(m);return}}});
+  document.addEventListener('act:profile',()=>{if(i===2)show(2)});{% if demo %}show(0);{% endif %}})();</script></details>
+  <details class="card" id="self" style="margin:0" {% if self_tab %}open{% endif %}><summary style="cursor:pointer;font-weight:700">🛒 اشتريت البرنامج عبر الإنترنت؟ ثبّته بنفسك</summary>
+  <form method="post" style="display:flex;flex-direction:column;gap:8px;margin:10px 0 12px;padding-bottom:12px;border-bottom:1px solid var(--line)">{% csrf_token %}
+    <b>💳 دفعت بالبطاقة من صفحة البيع؟</b>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">رقم الطلب<input name="order" required dir="ltr" placeholder="TRIO-XXXXXX" value="{{ claim.order|default:'' }}"></label><label class="field">الهاتف الذي دفعت به<input name="phone" required dir="ltr" value="{{ claim.phone|default:'' }}"></label></div>
+    <button name="action" value="self_claim">فعّل نسختي وابدأ التثبيت</button></form>
+  <b style="font-size:14px">اشتريت بطريقة أخرى (إنستاباي / فودافون كاش)؟</b>
+  <ol style="font-size:14px;line-height:1.9;padding-inline-start:18px">
+    <li>أرسل كود هذا الجهاز إلى Trio (واتساب 01008030459): <code dir="ltr" style="user-select:all;font-weight:700">{{ machine }}</code></li>
+    <li>بعد الدفع سيصلك «كود التثبيت» — الصقه في الأسفل واضغط «ابدأ التثبيت».</li>
+    <li>املأ بيانات محلك والمستخدمين — و Trio سيحدد معك موعد التدريب.</li></ol>
+  <form method="post" style="display:flex;flex-direction:column;gap:8px">{% csrf_token %}
+    <label class="field">كود التثبيت<textarea name="code" rows="3" dir="ltr" required style="font-family:monospace" placeholder="TRIO1...."></textarea></label>
+    <button name="action" value="self">ابدأ التثبيت</button></form>
+  <form method="post" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px">{% csrf_token %}
+    <b>لم تطلب بعد؟ اطلب من هنا</b>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">اسم المحل<input name="shop" required maxlength="100"></label><label class="field">موبايل / واتساب<input name="phone" required dir="ltr" maxlength="40"></label>
+    <label class="field">النشاط<select name="business"><option>سوبر ماركت</option><option>محل (ملابس / أدوات)</option><option>كافيه</option><option>بلايستيشن / بلياردو</option><option>عيادة / مركز طبي</option></select></label></div>
+    <button class="light" name="action" value="self_request">أرسل الطلب</button>
+    {% if wa %}<a class="btn" href="{{ wa }}" target="_blank" rel="noopener">أرسل الطلب عبر واتساب</a>{% endif %}</form>
+  </details>{% endif %}
+  {% if self_open %}<a class="card" href="/trio/restore/" style="margin:0;display:block;text-decoration:none"><b>♻️ لديك نسخة احتياطية؟</b> <span class="muted" style="font-size:13px">جهاز جديد بدل جهاز تعطّل — استرجع بيانات المحل من ملف جوجل درايف</span></a>{% endif %}
+  {% if self_open %}<details style="margin:0"><summary class="muted" style="cursor:pointer;font-size:13px">دخول المطور (Trio)</summary>{% endif %}
+  <form method="post" style="display:flex;flex-direction:column;gap:12px">{% csrf_token %}
+    <label class="field">اسم المستخدم<input name="username" value="{{ username|default:'Trio' }}" dir="ltr" autocomplete="username" required></label>
+    {% if not sent %}
+      {% if has_sender %}
+      <div class="step"><i>1</i>سيُرسل رمز من 6 أرقام إلى بريد المطور {{ dev_email }}</div>
+      <button name="action" value="send">أرسل الرمز على البريد</button>
+      <button class="light" name="action" value="offline" formnovalidate>لا يوجد إنترنت على هذا الجهاز؟</button>
+      {% else %}
+      <div class="msg">هذه النسخة ليس بها «بريد إرسال» بعد، فلن يمكن إرسال الرمز. ادخل هذه المرة برمز من <b>Trio-License.exe</b>، وجهّز بريد الإرسال من واجهة المطور (مرة واحدة).</div>
+      <button name="action" value="offline" formnovalidate>دخول بكود Trio License</button>
+      {% endif %}
+    {% else %}
+      {% if offline %}
+      <div class="msg">افتح <b>Trio-License.exe</b> على جهازك ← «كود دخول مطور» واكتب:<br>
+        كود الجهاز: <code dir="ltr" style="user-select:all">{{ machine }}</code><br>كود الطلب: <code dir="ltr" style="font-size:18px;user-select:all">{{ challenge }}</code><br>
+        وانسخ الرمز الذي سيظهر لك هنا (صالح اليوم فقط وعلى هذا الجهاز فقط).</div>
+      <label class="field">كود المطور<textarea name="code" rows="3" dir="ltr" required style="font-family:monospace" placeholder="TRIOD...."></textarea></label>
+      {% else %}
+      <div class="step"><i>2</i>اكتب الرمز الذي وصلك (صالح 10 دقائق)</div>
+      <input class="otp" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required autofocus placeholder="••••••">
+      {% endif %}
+      <button name="action" value="verify">دخول</button>
+      <div class="actions"><button class="light" name="action" value="send" formnovalidate>أرسل رمزًا جديدًا</button>
+      {% if not offline %}<button class="light" name="action" value="offline" formnovalidate>لا يوجد إنترنت؟</button>{% endif %}</div>
+    {% endif %}
+  </form>
+  {% if self_open %}</details>{% endif %}
+  <p class="muted" style="font-size:13px;margin:0">يدخل مستخدمو البرنامج من <a href="/login/">صفحة الدخول العادية</a>.</p>
+</div>
+{% endblock %}

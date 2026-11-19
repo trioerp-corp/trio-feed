@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}تجهيز شركة{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>تجهيز شركة / استيراد البيانات الأساسية</h1><p class="muted" style="margin:0">بالترتيب: نزّل القالب ← املأه في إكسل ← ارفعه ← راجع الأخطاء ← أكّد. يمكنك رفع الملف مرة أخرى بعد التصحيح.</p></div></div>
+<div class="tiles">{% for key, s in steps %}<div class="tile"><b>{{ forloop.counter }}. {{ s.title }}</b><span>{{ s.help }}</span>
+<div class="actions"><a class="btn light" href="{% url 'setup_template' key %}">⬇ القالب</a><a class="btn" href="{% url 'setup_upload' key %}">رفع الملف</a></div></div>{% endfor %}</div>
+<p class="note" style="margin-top:18px">بعد الاستيراد: راجع الإعدادات (التصنيفات، الصلاحيات، المستخدمين) من «الإعدادات»، وفعّل نقاط البيع إن كان للشركة فروع بيع.</p>
+{% endblock %}

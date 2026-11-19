@@ -1,0 +1,40 @@
+{% extends "base.html" %}{% block title %}الترابيزات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🪑 الترابيزات وطلبات QR</h1><p class="muted" style="margin:0">الويتر يفتح الترابيزة من شاشة الكاشير ويضيف الطلبات عليها، وكل طلب يذهب للمطبخ، وفي الآخر يطبع الحساب كاملًا ويحصّله.</p></div>
+<div class="actions"><a class="btn" href="{% url 'shop_tables_qr' %}" target="_blank">🖨 اطبع أكواد QR للترابيزات</a><a class="btn light" href="{% url 'data_list' 'table' %}">✏️ تعديل / حذف الترابيزات</a><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
+
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;margin-bottom:16px">
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="cfg">
+<h2 style="margin:0 0 10px">⚙️ الإعدادات</h2>
+<label class="field check"><input type="checkbox" name="tables" value="1"{% if raw.tables is not False %} checked{% endif %}> نظام الترابيزات يعمل في شاشة الكاشير</label>
+<label class="field check"><input type="checkbox" name="qr_order" value="1" id="qo"{% if raw.qr_order %} checked{% endif %}> الزبون يطلب بنفسه من كود QR على الترابيزة</label>
+<div id="qoBox" style="margin-inline-start:26px"><label class="field check"><input type="checkbox" name="qr_confirm" value="1"{% if raw.qr_confirm %} checked{% endif %}> يوافق الويتر على طلب الزبون قبل أن يذهب للمطبخ</label>
+<p class="muted" style="margin:4px 0 0">بدون هذا الاختيار: يصل طلب الزبون للمطبخ مباشرة ويُسجَّل على ترابيزته. يحتاج جهاز البرنامج إلى إنترنت ليستقبل الطلبات.</p></div>
+<p class="muted" style="margin:10px 0">ورقة المطبخ الآن: <b>{{ kitchen }}</b> — تغييرها من <a href="{% url 'shop_settings' %}#kitchen">الإعدادات</a>.</p>
+<button>حفظ</button></form>
+
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="add">
+<h2 style="margin:0 0 10px">+ إضافة ترابيزات</h2>
+<div class="form-grid" style="grid-template-columns:1fr 1fr">
+<label class="field">الاسم<input name="prefix" value="ترابيزة" maxlength="30"></label>
+<label class="field">العدد<input name="count" type="number" min="1" max="100" value="1"></label>
+<label class="field">المكان (اختياري)<input name="area" maxlength="40" placeholder="صالة، تراس…"></label>
+<label class="field">عدد الكراسي (اختياري)<input name="seats" type="number" min="1" max="40"></label></div>
+<p class="muted" style="margin:8px 0">تُرقَّم تلقائيًا: ترابيزة 1، ترابيزة 2… ويمكنك تغيير أي اسم بعد ذلك.</p>
+<button>إضافة</button></form></div>
+
+<div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 10px">🍽 الترابيزات ({{ tables|length }})</h2>
+{% if tables %}<div class="table-wrap"><table><thead><tr><th>الترابيزة</th><th>المكان</th><th>الكراسي</th><th>الحالة</th><th>QR</th></tr></thead><tbody>
+{% for t in tables %}<tr><td><b>{{ t.name }}</b></td><td>{{ t.area|default:"—" }}</td><td>{{ t.seats|default:"—" }}</td><td>{% if not t.active %}<span class="pill">متوقفة</span>{% else %}{% for tb in tabs %}{% if tb.table_id == t.pk %}<span class="pill warn">مشغولة — {{ tb.total }} ج</span>{% endif %}{% empty %}متاحة{% endfor %}{% endif %}</td>
+<td>{% if t.active %}<a href="{% url 'shop_tables_qr' %}?t={{ t.pk }}" target="_blank">🖨 اطبع</a>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="muted">لا توجد ترابيزات بعد — أضفها من الأعلى.</p>{% endif %}</div>
+
+<div class="card"><h2 style="margin:0 0 10px">🧾 الحسابات المفتوحة الآن</h2>
+{% for tb in tabs %}<details style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px"><summary><b>{{ tb.table.name }}</b> — {{ tb.total }} ج · فُتحت {{ tb.opened_at|time:"H:i" }}{% if tb.opened_by %} · {{ tb.opened_by }}{% endif %}</summary>
+<table style="margin-top:8px"><tbody>{% for l in tb.lines %}<tr><td>{{ l.qty }} × {{ l.name }}{% for a in l.adds %}<br><small>+ {{ a.name }}</small>{% endfor %}{% if l.note %}<br><small>📝 {{ l.note }}</small>{% endif %}{% if l.src == "qr" %} <span class="pill">📱 الزبون</span>{% endif %}</td><td>{{ l.price }}</td>
+<td><form method="post" onsubmit="return confirm('إلغاء هذا الصنف من الحساب؟')">{% csrf_token %}<input type="hidden" name="op" value="rm"><input type="hidden" name="tab" value="{{ tb.pk }}"><input type="hidden" name="line" value="{{ l.id }}"><button class="light" style="padding:4px 10px">✕ إلغاء</button></form></td></tr>{% endfor %}</tbody></table>
+{% if tb.log %}<p class="muted" style="font-size:13px">{% for g in tb.log %}{{ g.by }}: {{ g.what }}<br>{% endfor %}</p>{% endif %}
+<form method="post" onsubmit="return confirm('إلغاء حساب الترابيزة كله؟ لا يُسجَّل بيع.')" style="display:flex;gap:8px;margin-top:8px">{% csrf_token %}<input type="hidden" name="op" value="void"><input type="hidden" name="tab" value="{{ tb.pk }}"><input name="reason" placeholder="السبب" style="flex:1"><button class="light">إلغاء الحساب كله</button></form></details>
+{% empty %}<p class="muted">لا توجد حسابات مفتوحة.</p>{% endfor %}</div>
+<script>const qo=document.getElementById('qo');function qs(){document.getElementById('qoBox').style.opacity=qo.checked?1:.4}qo.onchange=qs;qs()</script>
+{% endblock %}

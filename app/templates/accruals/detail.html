@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}استحقاق {{ a.number }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ a.description }}</h1><p class="muted" style="margin:0">{{ a.number }} — {{ a.date|date:"d/m/Y" }} — {{ a.get_source_display }} — {{ a.liability_account }}{% if a.partner %} — {{ a.partner }}{% endif %}</p></div>
+<div class="actions">{% if a.state == 'open' %}<a class="btn" href="{% url 'voucher_new' %}?kind=payment&accrual={{ a.pk }}">صرف من الخزينة</a>{% endif %}
+{% if a.state == 'draft' %}<form method="post">{% csrf_token %}<button name="post" value="1">ترحيل</button></form>{% endif %}
+{% if a.entry %}<a class="btn light" href="{% url 'entry_detail' a.entry.pk %}">القيد</a>{% endif %}<a class="btn light" href="{% url 'accrual_list' %}">كل الاستحقاقات</a></div></div>
+<div class="grid" style="margin-bottom:16px"><div class="card kpi"><span class="k">المبلغ</span><span class="v">{{ a.amount|money }}</span></div><div class="card kpi"><span class="k">صُرف</span><span class="v">{{ a.paid|money }}</span></div>
+<div class="card kpi {% if a.remaining > 0 %}gold{% endif %}"><span class="k">الباقي</span><span class="v">{{ a.remaining|money }}</span></div><div class="card kpi"><span class="k">الحالة</span><span class="v" style="font-size:18px">{{ a.get_state_display }}</span></div></div>
+{% if a.notes %}<div class="note">{{ a.notes }}</div>{% endif %}
+{% if lines %}<h2>المصروف</h2><div class="table-wrap" style="margin-bottom:16px"><table><thead><tr><th>الحساب</th><th>المركز</th><th class="n">المبلغ</th></tr></thead><tbody>{% for l in lines %}<tr><td>{{ l.account }}</td><td>{{ l.dim1|default:"" }}</td><td class="n">{{ l.amount|money }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+<h2>السداد من الخزينة</h2><div class="table-wrap"><table><thead><tr><th>السند</th><th>التاريخ</th><th>الخزينة</th><th>البيان</th><th class="n">المبلغ</th><th>الحالة</th></tr></thead><tbody>
+{% for p in pays %}<tr><td><a href="{% url 'voucher_detail' p.voucher.pk %}">{{ p.voucher.number|default:"مسودة" }}</a></td><td>{{ p.voucher.date|date:"d/m/Y" }}</td><td>{{ p.voucher.cashbox.name }}</td><td>{{ p.voucher.description }}</td><td class="n">{{ p.amount|money }}</td><td>{{ p.voucher.get_state_display }}</td></tr>
+{% endfor %}{% for x in sets %}<tr><td><a href="{% url 'entry_detail' x.entry.pk %}">{{ x.entry.number }}</a></td><td>{{ x.date|date:"d/m/Y" }}</td><td>ربط من {{ x.account.name }}</td><td>{{ x.note }}</td><td class="n">{{ x.amount|money }}</td><td>قيد ربط</td></tr>{% endfor %}
+{% if not pays and not sets %}<tr><td colspan="6" class="muted">لم يُصرف بعد</td></tr>{% endif %}</tbody></table></div>
+{% if a.state == 'open' %}<details class="card" style="margin-top:16px"><summary><b>صُرف من قبل على حساب مصروف؟ اربطه بالاستحقاق</b></summary>
+<p class="muted">يُنشأ قيد: مدين {{ a.liability_account.name }} / دائن الحساب الذي سُجّل عليه الصرف — فلا يُحتسب المصروف مرتين ويُسدَّد الاستحقاق.</p>
+<form method="post" class="form-grid">{% csrf_token %}<label class="field">الحساب{{ w_acc }}</label><label class="field">مركز التكلفة{{ w_cc }}</label>
+<label class="field">المبلغ<input name="amount" inputmode="decimal" value="{{ a.remaining|unlocalize }}"></label><label class="field">التاريخ<input type="date" name="date" value="{{ today }}"></label>
+<label class="field">ملاحظة<input name="note"></label><div><button name="settle" value="1">ربط</button></div></form></details>{% endif %}
+{% endblock %}

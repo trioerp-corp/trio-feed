@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}{{ s.title }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ s.title }}</h1><p class="muted" style="margin:0">{{ s.help }}</p></div><a class="btn light" href="{% url 'setup_template' step %}">⬇ القالب</a></div>
+<form method="post" enctype="multipart/form-data" class="card actions" style="margin-bottom:16px">{% csrf_token %}<label class="field">ملف إكسل أو CSV<input type="file" name="file" accept=".xlsx,.csv" required></label><button>مراجعة الملف</button></form>
+{% if count is not None %}
+{% if errs %}<div class="msg error"><b>فيه {{ errs|length }} خطأ يجب تصحيحها قبل الاستيراد:</b><ul>{% for e in errs|slice:":30" %}<li>{{ e }}</li>{% endfor %}</ul></div>
+{% else %}<div class="msg">✔ الملف سليم: {{ count }} سطر جاهز للاستيراد.</div>
+<form method="post">{% csrf_token %}<button name="confirm" value="1">تأكيد الاستيراد</button></form>{% endif %}
+<h2 style="margin-top:16px">أول {{ rows|length }} سطر</h2><div class="table-wrap"><table><thead><tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr></thead><tbody>
+{% for r in rows %}<tr>{% for c in cols %}<td>{% for k, v in r.items %}{% if k == c %}{{ v|default_if_none:"" }}{% endif %}{% endfor %}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% endif %}
+{% endblock %}

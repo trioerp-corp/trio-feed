@@ -1,0 +1,42 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}فاتورة {{ o.uid }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>فاتورة {{ o.uid }}</h1>
+<p class="muted" style="margin:0">{{ o.created_at_device|date:"d/m/Y H:i" }} · {{ o.device.name }}{% if o.shift %} · {{ o.shift.cashier }}{% endif %}{% if o.customer %} · آجل على {{ o.customer.name }}{% endif %}
+{% if o.cancelled %} · <span class="badge red">ملغية</span>{% endif %}{% if o.flags %} · <span class="badge gold">{{ o.flags }}</span>{% endif %}</p></div>
+<div class="actions">{% if can_cash %}<a class="btn light" href="{% url 'shop_sales' %}">رجوع للمبيعات</a>{% endif %}{% if later %}<a class="btn light" href="{% url 'order_edit' later.pk %}">الفاتورة بعد التعديل: {{ later.uid }}</a>{% endif %}</div></div>
+
+<form method="post" class="card" id="ef">{% csrf_token %}
+<div class="table-wrap"><table class="lines-table"><thead><tr><th>الصنف</th><th class="n">الكمية</th><th class="n">السعر</th><th class="n">خصم</th><th class="n">الإجمالي</th>{% if editable %}<th>إلغاء الصنف</th>{% endif %}</tr></thead>
+<tbody id="lines">{% for ln in lines %}<tr>
+<td>{{ ln.item.name }}<input type="hidden" name="code_{{ forloop.counter0 }}" value="{{ ln.item.code }}"></td>
+<td class="n">{% if editable %}<input name="qty_{{ forloop.counter0 }}" value="{{ ln.qty|unlocalize }}" inputmode="decimal" dir="ltr" style="width:80px" class="calc">{% else %}{{ ln.qty|money:3 }}{% endif %}</td>
+<td class="n">{% if editable %}<input name="price_{{ forloop.counter0 }}" value="{{ ln.price|unlocalize }}" inputmode="decimal" dir="ltr" style="width:90px" class="calc">{% else %}{{ ln.price|money }}{% endif %}</td>
+<td class="n">{% if editable %}<input name="disc_{{ forloop.counter0 }}" value="{{ ln.discount|unlocalize }}" inputmode="decimal" dir="ltr" style="width:70px" class="calc">{% else %}{{ ln.discount|money }}{% endif %}</td>
+<td class="n lt"></td>
+{% if editable %}<td><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="drop_{{ forloop.counter0 }}" value="1" class="calc"> إلغاء</label></td>{% endif %}
+</tr>{% endfor %}</tbody></table></div>
+<p style="margin:10px 0"><b>الإجمالي: <span id="tot">{{ o.total|money }}</span></b> <span class="muted">— مدفوع: نقدي {{ o.paid_cash|money }} · بطاقة {{ o.paid_card|money }} · آجل {{ o.paid_credit|money }}</span></p>
+{% if editable %}
+<datalist id="itemlist">{% for i in items %}<option value="{{ i.code }}" label="{{ i.name }} — {{ i.sale_price }}">{% endfor %}</datalist>
+<p style="margin:0 0 12px"><button type="button" class="light" id="add">+ صنف</button></p>
+<input type="hidden" name="rows" id="rows" value="{{ lines|length }}">
+<div class="grid">
+<label class="field">الدفع بعد التعديل<select name="pay"><option value="">كما كانت</option><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option>{% if o.customer %}<option value="credit">آجل على {{ o.customer.name }}</option>{% endif %}</select></label>
+<label class="field">السبب *<input name="reason" required placeholder="مثلًا: أرجع العميل صنفًا / الكمية خاطئة"></label></div>
+<div class="actions" style="margin-top:12px"><button>حفظ التعديل</button>
+<button class="danger" name="action" value="void" onclick="return confirm('إلغاء الفاتورة كلها؟ ستعود البضاعة إلى المخزن')">إلغاء الفاتورة كلها</button></div>
+<p class="muted" style="font-size:13px;margin:10px 0 0">التعديل يلغي هذه الفاتورة بقيد عكسي ويُعيد البضاعة، ويسجّل فاتورة صحيحة مكانها بالوقت والوردية نفسيهما (ينتهي رقمها بـ ‎-E1). كل شيء مسجّل باسمك مع السبب.</p>
+{% endif %}
+</form>
+<script>
+(function(){const f=document.getElementById('ef');if(!f)return;const prices={ {% for i in items %}"{{ i.code|escapejs }}":"{{ i.sale_price|unlocalize }}",{% endfor %} };
+const n=v=>parseFloat(String(v||'0').replace('٫','.').replace(',','.'))||0;
+function calc(){let t=0;document.querySelectorAll('#lines tr').forEach(tr=>{const g=s=>tr.querySelector('[name^="'+s+'_"]');const d=tr.querySelector('[name^="drop_"]');
+ const v=(g('qty')?n(g('qty').value)*n(g('price').value)-n(g('disc').value):0);tr.querySelector('.lt').textContent=v.toFixed(2);tr.style.opacity=d&&d.checked?.45:1;if(!(d&&d.checked))t+=v});
+ const T=document.getElementById('tot');if(document.getElementById('rows'))T.textContent=t.toFixed(2)}
+f.addEventListener('input',calc);calc();
+const add=document.getElementById('add');if(add)add.onclick=()=>{const r=document.getElementById('rows'),i=+r.value;r.value=i+1;const tr=document.createElement('tr');
+ tr.innerHTML='<td><input name="code_'+i+'" list="itemlist" placeholder="كود الصنف" dir="ltr" style="width:140px"></td><td class="n"><input name="qty_'+i+'" value="1" inputmode="decimal" dir="ltr" style="width:80px"></td><td class="n"><input name="price_'+i+'" inputmode="decimal" dir="ltr" style="width:90px"></td><td class="n"><input name="disc_'+i+'" value="0" inputmode="decimal" dir="ltr" style="width:70px"></td><td class="n lt"></td><td><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="drop_'+i+'" value="1"> إلغاء</label></td>';
+ document.getElementById('lines').appendChild(tr);const c=tr.querySelector('[name^="code_"]');c.addEventListener('change',()=>{const p=tr.querySelector('[name^="price_"]');if(!p.value&&prices[c.value])p.value=prices[c.value];calc()});c.focus()};})();
+</script>
+{% endblock %}

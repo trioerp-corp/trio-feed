@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}إضافة استحقاق{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>إضافة استحقاق</h1><p class="muted" style="margin:0">يُنشأ قيد: مدين المصروف (على مركز التكلفة) / دائن الالتزام. وعند الصرف من الخزينة اختر هذا الاستحقاق في السند.</p></div></div>
+{% if form.errors %}<div class="msg error">راجع الخانات المعلّمة</div>{% endif %}
+<form method="post">{% csrf_token %}
+<div class="card form-grid" style="margin-bottom:16px">
+{% for f in form %}<label class="field">{{ f.label }}{{ f }}{{ f.errors }}</label>{% endfor %}</div>
+<div class="card" style="margin-bottom:16px"><h2>المصروف</h2>{{ lines.management_form }}
+<div class="scroll"><table class="lines-table"><thead><tr><th style="min-width:220px">الحساب</th><th style="min-width:200px">مركز التكلفة</th><th style="min-width:150px">المعدة</th><th style="min-width:110px">المبلغ</th><th>بيان</th><th>حذف</th></tr></thead>
+<tbody data-formset="lines">{% for f in lines %}<tr>{{ f.id }}<td>{{ f.account }}{{ f.account.errors }}</td><td>{{ f.dim1 }}{{ f.dim1.errors }}</td><td>{{ f.dim2 }}</td><td>{{ f.amount }}{{ f.amount.errors }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td></tr>{% endfor %}</tbody>
+<tfoot><tr><td colspan="3"><button type="button" class="light" data-add-row="lines">+ سطر</button></td><td class="n"><b id="lines-total">0.00</b></td><td colspan="2"></td></tr></tfoot></table></div>
+<template id="lines-empty"><tr>{% with f=lines.empty_form %}{{ f.id }}<td>{{ f.account }}</td><td>{{ f.dim1 }}</td><td>{{ f.dim2 }}</td><td>{{ f.amount }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td>{% endwith %}</tr></template></div>
+<div class="actions"><button name="post" value="1">حفظ وترحيل</button><button name="save" value="1" class="light">حفظ مسودة</button><a class="btn light" href="{% url 'accrual_list' %}">رجوع</a></div>
+</form>
+{% endblock %}

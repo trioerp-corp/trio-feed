@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}التحديثات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🔄 التحديثات</h1><p class="muted" style="margin:0">كل إمكانيات البرنامج مفتوحة لديك. يصل أي إصدار جديد تلقائيًا ويُثبَّت ليلًا، أو حدّث الآن بضغطة.</p></div></div>
+<section class="grid" style="margin-bottom:16px">
+<div class="card kpi hero"><span class="k">نسخة البرنامج</span><span class="v" dir="ltr">{{ version }}</span><span class="k">{% if st.ready %}تحديث {{ st.ready.v }} جاهز{% elif nv %}متاح {{ nv }}{% else %}أحدث إصدار ✔{% endif %}</span></div>
+<div class="card kpi {% if lic.state != 'active' %}gold{% endif %}"><span class="k">الرخصة</span><span class="v" style="font-size:18px">{{ lic.message }}</span><span class="k" dir="ltr">{{ machine }}</span></div>
+<div class="card kpi"><span class="k">الإمكانيات</span><span class="v" style="font-size:18px">كلها مفتوحة ✔</span><span class="k">{{ have|length }} جزء</span></div></section>
+<div class="card" id="latest" style="margin-bottom:16px{% if st.ready or nv %};border:2px solid var(--accent,#3CC2B5){% endif %}">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+{% if st.ready %}<div><h2 style="margin:0">⬇ التحديث {{ st.ready.v }} جاهز</h2><p class="muted" style="margin:4px 0 0">{% if st.failed %}لم تكتمل المحاولة السابقة وعاد البرنامج كما كان — حاول مرة أخرى أو تواصل مع Trio.{% else %}سيُثبَّت تلقائيًا الساعة 2 ليلًا، أو ثبّته الآن (يتوقف البرنامج ثوانيَ ثم يعود).{% endif %}</p>{% if st.ready.notes %}<p style="margin:6px 0 0"><b>الجديد:</b> {{ st.ready.notes|linebreaksbr }}</p>{% endif %}</div>
+<form method="post" action="{% url 'update_now' %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'upgrade' %}"><button>حدّث الآن</button></form>
+{% elif nv %}<div><h2 style="margin:0">🆕 متاح إصدار أحدث {{ nv }}</h2><p class="muted" style="margin:4px 0 0">لديك {{ version }}. سيُنزَّل ويُثبَّت تلقائيًا ليلًا — أو اضغط «حدّث الآن» فيُنزَّل ويُثبَّت فورًا.</p></div>
+<form method="post" action="{% url 'update_now' %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'upgrade' %}"><button>حدّث الآن</button></form>
+{% else %}<div><h2 style="margin:0">لديك أحدث إصدار ✔</h2><p class="muted" style="margin:4px 0 0">يبحث البرنامج عن التحديثات تلقائيًا كل ساعة.</p></div>
+<form method="post">{% csrf_token %}<button class="light">ابحث عن تحديث الآن</button></form>{% endif %}
+</div></div>
+{% if st.applied %}<div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 6px">آخر تحديث مُثبَّت: {{ st.applied.v }}</h2>{% if st.applied.notes %}<p style="margin:0">{{ st.applied.notes|linebreaksbr }}</p>{% endif %}</div>{% endif %}
+<div class="card"><h2 style="margin:0 0 6px">تحتاج شيئًا؟</h2><p style="margin:0">تواصل مع Trio: <a href="tel:01008030459" dir="ltr">01008030459</a> · <a href="tel:01121460640" dir="ltr">01121460640</a> · <a href="https://wa.me/201008030459" target="_blank" rel="noopener">واتساب</a></p></div>
+{% endblock %}

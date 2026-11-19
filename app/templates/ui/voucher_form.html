@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{{ v.get_kind_display|default:"سند" }}{% endblock %}
+{% block content %}
+{% with k=form.kind.value adv=user.is_superuser %}
+<div class="page-head"><div><h1>{% if v.pk %}تعديل مسودة{% else %}جديد:{% endif %} {% if k == 'payment' %}سند صرف{% elif k == 'receipt' %}سند قبض{% else %}تحويل داخلي{% endif %}</h1></div>
+<div class="seg" role="group" aria-label="نوع السند">{% if not v.pk %}<a href="?kind=payment" {% if k == 'payment' %}class="on"{% endif %}>صرف</a><a href="?kind=receipt" {% if k == 'receipt' %}class="on"{% endif %}>قبض</a><a href="?kind=transfer" {% if k == 'transfer' %}class="on"{% endif %}>تحويل</a>{% endif %}</div></div>
+<form method="post" novalidate>{% csrf_token %}{{ form.kind }}
+{% if form.non_field_errors %}<div class="msg error">{{ form.non_field_errors }}</div>{% endif %}
+<div class="card" style="margin-bottom:16px"><div class="form-grid">
+  <div class="field">{{ form.date.label_tag }}{{ form.date }}{{ form.date.errors }}</div>
+  <div class="field">{{ form.cashbox.label_tag }}{{ form.cashbox }}{{ form.cashbox.errors }}</div>
+  {% if k == 'transfer' %}<div class="field">{{ form.to_cashbox.label_tag }}{{ form.to_cashbox }}{{ form.to_cashbox.errors }}</div>{% endif %}
+  <div class="field amount-big">{{ form.amount.label_tag }}{{ form.amount }}{{ form.amount.errors }}<span class="muted" style="font-size:12px">{% if k != 'transfer' %}إن تركته فارغًا = مجموع السطور{% endif %}</span></div>
+  <div class="field">{{ form.rate.label_tag }}{{ form.rate }}<span class="muted" style="font-size:12px">للخزائن بالعملة الأجنبية فقط</span></div>
+  {% if k != 'transfer' %}<div class="field">{{ form.partner.label_tag }}{{ form.partner }}</div>{% endif %}
+  <div class="field">{{ form.payee.label_tag }}{{ form.payee }}</div>
+  <div class="field" style="grid-column:1/-1">{{ form.description.label_tag }}{{ form.description }}{{ form.description.errors }}</div>
+  <div class="field">{{ form.approved_by_text.label_tag }}{{ form.approved_by_text }}</div>
+</div></div>
+{% if k != 'transfer' %}
+<div class="card" style="margin-bottom:16px"><h2>{% if k == 'payment' %}صُرف على{% else %}استلمنا مقابل{% endif %}</h2>
+<p class="muted" style="margin-top:-6px">اختر الحساب (البند) والمبلغ، والطرف إن وُجد (عميل / مورد / موظف).</p>
+{{ lines.management_form }}{% if lines.non_form_errors %}<div class="msg error">{{ lines.non_form_errors }}</div>{% endif %}
+<div class="scroll"><table class="lines-table"><thead><tr>{% if k == "payment" and adv %}<th style="min-width:200px">سداد استحقاق</th>{% endif %}<th style="min-width:220px">الحساب</th><th style="min-width:200px">مركز التكلفة</th>{% if adv %}<th style="min-width:150px">المعدة</th><th>العملية</th>{% endif %}<th style="min-width:110px">المبلغ</th><th style="min-width:160px">الطرف</th><th>بيان</th><th>حذف</th></tr></thead>
+<tbody data-formset="lines">{% for f in lines %}<tr>{{ f.id }}{% if k == "payment" and adv %}<td>{{ f.accrual }}{{ f.accrual.errors }}</td>{% endif %}<td>{{ f.account }}{{ f.account.errors }}</td><td>{{ f.dim1 }}{{ f.dim1.errors }}</td>{% if adv %}<td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td>{% endif %}<td>{{ f.amount }}{{ f.amount.errors }}</td><td>{{ f.partner }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td></tr>{% endfor %}</tbody>
+<tfoot><tr><td colspan="{% if adv %}{% if k == "payment" %}5{% else %}4{% endif %}{% else %}2{% endif %}"><button type="button" class="light" data-add-row="lines">+ سطر</button></td><td class="n"><b id="lines-total">0.00</b></td><td colspan="3"></td></tr></tfoot></table></div>
+<template id="lines-empty"><tr>{% with f=lines.empty_form %}{{ f.id }}{% if k == "payment" and adv %}<td>{{ f.accrual }}</td>{% endif %}<td>{{ f.account }}</td><td>{{ f.dim1 }}</td>{% if adv %}<td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td>{% endif %}<td>{{ f.amount }}</td><td>{{ f.partner }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td>{% endwith %}</tr></template>
+</div>
+{% endif %}
+<div class="actions"><button name="post" value="1">ترحيل السند</button><button name="save" value="1" class="light">حفظ مسودة</button><a class="btn light" href="{% url 'voucher_list' %}">رجوع</a></div>
+</form>
+{% endwith %}
+{% endblock %}

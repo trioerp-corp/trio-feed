@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% load gg %}{% block title %}المركز المالي{% endblock %}
+{% block content %}
+<h1>قائمة المركز المالي <small class="muted">في {{ d2 }}</small></h1>
+{% with single_date=True %}{% include "reports/_range.html" %}{% endwith %}
+<table>
+{% for s in r.sections %}<tr class="l1"><td>{{ s.account.name }}</td><td></td></tr>
+{% for i in s.items %}<tr><td style="padding-inline-start:24px">{{ i.account.code }} {{ i.account.name }}</td><td class="n">{{ i.amount|money }}</td></tr>{% endfor %}
+{% if not forloop.first %}{% endif %}
+<tr class="total"><td>إجمالي {{ s.account.name }}</td><td class="n">{{ s.total|money }}</td></tr>{% endfor %}
+<tr><td>أرباح (خسائر) الفترة غير المرحلة</td><td class="n">{{ r.current_profit|money }}</td></tr>
+<tr class="total"><td>إجمالي الأصول</td><td class="n">{{ r.assets|money }}</td></tr>
+<tr class="total"><td>إجمالي حقوق الملكية والالتزامات</td><td class="n">{{ r.liab_eq|money }}</td></tr>
+</table>
+<p class="{% if r.balanced %}ok{% else %}bad{% endif %}">{% if r.balanced %}✔ الميزانية متوازنة{% else %}✖ الميزانية غير متوازنة{% endif %}</p>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{{ W.count }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ W.count }}</h1><p class="muted" style="margin:0">رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا، ويُظهر لك البرنامج الفرق وتُجري التسوية بضغطة</p></div>
+<div class="actions"><a class="btn light" href="{% url 'shop_damage' %}">تسجيل تالف / هالك</a><a class="btn light" href="{% url 'stock_count' %}">رفع ملف جرد (إكسل)</a><a class="btn light" href="{% url 'import_upload' 'opening' %}">رصيد أول المدة من إكسل</a></div></div>
+
+{% if review %}
+<form method="post">{% csrf_token %}<input type="hidden" name="warehouse" value="{{ wh.pk }}"><input type="hidden" name="date" value="{{ date }}"><input type="hidden" name="note" value="{{ note }}">
+{% for r in rows %}<input type="hidden" name="c_{{ r.item }}" value="{{ r.counted }}">{% endfor %}
+<section class="grid" style="margin-bottom:16px">
+<div class="card kpi"><span class="k">أصناف معدودة</span><span class="v">{{ counted_n }}</span><span class="k">{{ wh.name }} — {{ date }}</span></div>
+<div class="card kpi"><span class="k">أصناف فيها فرق</span><span class="v">{{ diffs|length }}</span></div>
+<div class="card kpi {% if loss %}gold{% endif %}"><span class="k">عجز (خساير مخزون)</span><span class="v bad">{{ loss|money }}</span><span class="k">بمتوسط التكلفة</span></div>
+<div class="card kpi"><span class="k">زيادة</span><span class="v ok">{{ gain|money }}</span><span class="k">صافي الفرق {{ net|money }}</span></div></section>
+<div class="table-wrap"><table><thead><tr><th>الكود</th><th>الصنف</th><th class="n">الرصيد في البرنامج</th><th class="n">الجرد الفعلي</th><th class="n">الفرق</th><th class="n">قيمة الفرق</th></tr></thead><tbody>
+{% for r in diffs %}<tr><td>{{ r.code }}</td><td>{{ r.name }} <small class="muted">{{ r.unit }}</small></td><td class="n">{{ r.book|floatformat:"-3" }}</td><td class="n">{{ r.counted|floatformat:"-3" }}</td>
+<td class="n"><b class="{% if r.diff < 0 %}bad{% else %}ok{% endif %}">{% if r.diff > 0 %}+{% endif %}{{ r.diff|floatformat:"-3" }}</b></td><td class="n">{{ r.value|money }}</td></tr>
+{% empty %}<tr><td colspan="6"><b class="ok">✔ لا توجد فروق — الجرد مطابق للبرنامج</b></td></tr>{% endfor %}</tbody></table></div>
+<div class="actions" style="margin-top:14px">{% if diffs and can_post %}<button name="action" value="post" onclick="return confirm('تسوية {{ diffs|length }} صنف؟ سيُسجَّل العجز خسائر مخزون.')">✔ تسوية الفرق</button>{% endif %}
+<button class="light" name="action" value="back" formaction="?warehouse={{ wh.pk }}">رجوع للجرد</button></div>
+{% if diffs and not can_post %}<p class="note">التسوية لصاحب المحل أو المدير — أرسل إليه هذا الجرد.</p>{% endif %}
+<p class="muted" style="font-size:13px">يُسجَّل العجز على «أعباء وخسائر (عجز/توالف)» ويقلل الربح، والزيادة على «إيرادات أخرى». وتُعدَّل الأرصدة في اللحظة نفسها.</p>
+</form>
+{% else %}
+<form method="get" class="filters">
+<label>المخزن<select name="warehouse" onchange="this.form.submit()">{% for w in whs %}<option value="{{ w.pk }}" {% if w == wh %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
+<label>التصنيف<select name="cat" onchange="this.form.submit()"><option value="">الكل</option>{% for c in cats %}<option value="{{ c.pk }}" {% if c.pk|stringformat:"s" == cat %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+<label>بحث<input name="q" value="{{ q }}" placeholder="اسم أو كود أو باركود"></label><button class="light">عرض</button></form>
+
+<form method="post" id="cf">{% csrf_token %}<input type="hidden" name="warehouse" value="{{ wh.pk }}">
+<div class="card" style="margin-bottom:12px"><div class="form-grid">
+<label class="field">تاريخ الجرد<input type="date" name="date" value="{{ date }}"></label>
+<label class="field">ملاحظة<input name="note" value="{{ note }}" placeholder="جرد آخر الشهر…"></label>
+<div class="field">ملخص<div class="cntsum"><span>المعدود <b id="nC">0</b></span><span>فيه فرق <b id="nD">0</b></span><span class="bad">عجز <b id="vL">0.00</b></span><span class="ok">زيادة <b id="vG">0.00</b></span></div></div>
+</div></div>
+<div class="table-wrap"><table class="count-table"><thead><tr><th>الكود</th><th>الصنف</th><th>التصنيف</th><th class="n">الرصيد في البرنامج</th><th style="width:150px">الجرد الفعلي</th><th class="n">الفرق</th><th class="n">قيمة الفرق</th></tr></thead><tbody>
+{% for r in items %}<tr data-book="{{ r.book|stringformat:'s' }}" data-cost="{{ r.it.avg_cost|stringformat:'.4f' }}"><td>{{ r.it.code }}</td><td><b>{{ r.it.name }}</b> <small class="muted">{{ r.it.unit }}</small></td><td class="muted">{{ r.it.category.name }}</td>
+<td class="n">{{ r.book|floatformat:"-3" }}</td><td><input name="c_{{ r.it.pk }}" inputmode="decimal" aria-label="جرد {{ r.it.name }}" autocomplete="off" value="{{ r.val }}"></td><td class="n d">—</td><td class="n v"></td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد أصناف — أضف أصنافًا أولًا</td></tr>{% endfor %}</tbody></table></div>
+<div class="actions sticky-actions"><button name="action" value="review">مراجعة الفروق ←</button><span class="muted" style="align-self:center;font-size:13px">ما تتركه فارغًا لا يُجرد. Enter ينقلك إلى الصنف التالي.</span></div>
+</form>
+
+{% if recent %}<h2 style="margin-top:22px">آخر التسويات</h2><div class="table-wrap"><table><thead><tr><th>الرقم</th><th>التاريخ</th><th>النوع</th><th>البيان</th><th class="n">القيمة</th></tr></thead><tbody>
+{% for m, v in recent %}<tr><td>{{ m.number }}</td><td>{{ m.date|date:"d/m/Y" }}</td><td>{% if m.kind == 'adjust_out' %}<span class="badge red">عجز</span>{% else %}<span class="badge">زيادة</span>{% endif %}</td><td>{{ m.description }}</td><td class="n">{{ v|money }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+<script>
+const n2=v=>{v=String(v||'').trim().replace(',','.').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));return v===''?null:+v};
+function upd(){let nc=0,nd=0,vl=0,vg=0;document.querySelectorAll('.count-table tbody tr[data-book]').forEach(tr=>{const c=n2(tr.querySelector('input').value),d=tr.querySelector('.d'),v=tr.querySelector('.v');
+ if(c===null||isNaN(c)){d.textContent='—';v.textContent='';tr.classList.remove('dneg','dpos');return}nc++;const diff=c-(+tr.dataset.book),val=diff*(+tr.dataset.cost);
+ d.textContent=(diff>0?'+':'')+(+diff.toFixed(3));v.textContent=val?val.toFixed(2):'';tr.classList.toggle('dneg',diff<0);tr.classList.toggle('dpos',diff>0);if(diff){nd++;if(val<0)vl-=val;else vg+=val}});
+ nC.textContent=nc;nD.textContent=nd;vL.textContent=vl.toFixed(2);vG.textContent=vg.toFixed(2)}
+const ins=[...document.querySelectorAll('.count-table input')];ins.forEach((i,k)=>{i.addEventListener('input',upd);i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();(ins[k+1]||i).focus()}})});upd();
+</script>
+{% endif %}
+{% endblock %}

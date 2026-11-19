@@ -1,0 +1,2 @@
+Egyptian drug list: https://github.com/karem505/egyptian-drug-database (CC0-1.0, June 2026 snapshot).
+Columns kept: en, ar, sci, company, cls, route, price (reference retail price, EGP — always check the current price).

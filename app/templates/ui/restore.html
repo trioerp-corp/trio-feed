@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block title %}استرجاع نسخة احتياطية{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>♻️ استرجاع نسخة احتياطية</h1><p class="muted" style="margin:0">{% if who == "fresh" %}جهاز جديد؟ استرجع بيانات المحل من نسخة جوجل درايف أو أي نسخة لديك.{% else %}ستحل بيانات النسخة محل بيانات اليوم — وقبل ذلك نحفظ نسخة أمان من الآن.{% endif %}</p></div>
+{% if who == "owner" %}<a class="btn light" href="{% url 'shop_settings' %}">← الإعدادات</a>{% else %}<a class="btn light" href="/trio/">← رجوع</a>{% endif %}</div>
+{% if step == "confirm" %}
+<div class="card" style="max-width:640px"><h2>محتوى النسخة</h2>
+<table><tbody><tr><th>المحل</th><td><b>{{ facts.shop|default:"—" }}</b>{% if not same %} <span class="badge red">ليس اسم هذا المحل نفسه ({{ s.name }})</span>{% endif %}</td></tr>
+<tr><th>آخر بيع</th><td dir="ltr" style="text-align:right">{{ facts.last_sale|default:"—"|slice:":16" }}</td></tr>
+<tr><th>آخر قيد</th><td>{{ facts.last_entry|default:"—" }}</td></tr><tr><th>عدد الفواتير</th><td>{{ facts.orders|default:"0" }}</td></tr><tr><th>المستخدمين</th><td>{{ facts.users }}</td></tr>
+<tr><th>الملف</th><td dir="ltr" style="text-align:right;font-size:12px">{{ src }}</td></tr></tbody></table>
+<div class="msg error" style="margin-top:12px">سيضيع أي شيء سُجّل في البرنامج بعد وقت هذه النسخة (فواتير الكاشير المنتظرة على الأجهزة سترسل بعدها كالمعتاد).</div>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="go">
+{% if who == "owner" %}<label class="field">كلمة السر الخاصة بك<input type="password" name="password" required autocomplete="current-password"></label>{% endif %}
+<label class="field">اكتب كلمة <b>استرجاع</b> للتأكيد<input name="sure" required autocomplete="off"></label>
+<div class="actions"><button class="danger">استرجع هذه النسخة</button><a class="btn light" href="{{ request.path }}">لا، نسخة أخرى</a></div></form></div>
+{% else %}
+<div class="split"><div class="main">
+{% if who == "owner" %}<h2>النسخ الموجودة</h2><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>مكانها</th><th>الحجم</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.at|date:"d/m/Y H:i" }}</td><td>{{ r.where }}{% if r.locked %} 🔒{% endif %}</td><td>{{ r.size }} ميجا</td>
+<td><form method="post">{% csrf_token %}<input type="hidden" name="action" value="check"><input type="hidden" name="path" value="{{ r.path }}"><button class="light">افحصها</button></form></td></tr>
+{% empty %}<tr><td colspan="4" class="muted">لا توجد نسخ بعد — تُنشأ تلقائيًا كل 12 ساعة.</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+</div><div class="side"><form method="post" enctype="multipart/form-data" class="card">{% csrf_token %}<input type="hidden" name="action" value="check">
+<h2>ارفع ملف نسخة</h2><p class="muted" style="margin:0 0 8px">ملف <span dir="ltr">shop_….trio</span> من مجلد جوجل درايف، أو <span dir="ltr">shop_….zip</span> من مجلد backups.</p>
+<label class="field">الملف<input type="file" name="file" accept=".trio,.zip,.sqlite3" required></label>
+<label class="field">مفتاح الاسترجاع {% if who == "owner" %}<small class="muted">(اتركه فارغًا إن كانت النسخة من هذا الجهاز)</small>{% endif %}<input name="key" dir="ltr" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" autocomplete="off"></label>
+<button>افحص النسخة</button>
+{% if who == "fresh" %}<p class="muted" style="margin:10px 0 0;font-size:13px">المفتاح مكتوب على بطاقة الاسترجاع المطبوعة، وإن فُقدت Trio عنده نسخة منه: 01008030459 · 01121460640</p>{% endif %}</form></div></div>
+{% endif %}
+{% endblock %}

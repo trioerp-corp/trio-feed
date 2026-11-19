@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block title %}{{ k.title }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>{{ k.icon }} {{ k.title }}</h1><p class="muted" style="margin:0"><a href="{% url 'data_hub' %}">البيانات الأساسية</a> ← {{ k.title }}</p></div>
+{% if add_url %}<div class="actions"><a class="btn" href="{{ add_url }}">+ {{ k.one }} جديد</a></div>{% endif %}</div>
+{% if not add_url %}<details class="card" style="margin-bottom:16px" {% if form.errors or not rows %}open{% endif %}><summary><b>+ {{ k.one }} جديد</b></summary>
+<form method="post" class="form-grid" style="margin-top:12px" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="msg error" style="grid-column:1/-1">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+{% for f in form %}<label class="field{% if f.field.widget.input_type == 'checkbox' %} check{% endif %}">{{ f.label }}{% if f.field.required %} <span class="bad" aria-hidden="true">*</span>{% endif %}{{ f }}
+{% if f.help_text %}<small class="muted">{{ f.help_text }}</small>{% endif %}{% if f.errors %}<small class="bad">{{ f.errors|join:" " }}</small>{% endif %}</label>{% endfor %}
+<div><button>إضافة</button></div></form></details>{% endif %}
+<form class="filters" method="get"><label>بحث<input name="q" value="{{ q }}" type="search"></label><button>عرض</button></form>
+<div class="table-wrap"><table><thead><tr>{% for h in heads %}<th>{{ h }}</th>{% endfor %}{% if rows.0.count is not None %}<th class="n">عدد</th>{% endif %}<th></th></tr></thead><tbody>
+{% for r in rows %}<tr{% if r.obj.active is False %} style="opacity:.55"{% endif %}>{% for v in r.vals %}<td>{{ v }}</td>{% endfor %}{% if r.count is not None %}<td class="n">{{ r.count }}</td>{% endif %}
+<td style="white-space:nowrap"><a class="btn light" href="{% url 'data_edit' k.key r.obj.pk %}">✏ تعديل / حذف</a></td></tr>
+{% empty %}<tr><td colspan="{{ heads|length|add:2 }}" class="muted">لا يوجد بعد — أضف من الأعلى</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

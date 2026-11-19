@@ -1,0 +1,249 @@
+{% load static %}<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0E1726"><title>الصالة — {{ s.name }}</title>
+<link rel="icon" href="{% static 'ui/icon.svg' %}">
+<link rel="stylesheet" href="{% static 'ui/fonts.css' %}">
+<style>
+:root{--bg:#0B1220;--panel:#121B2E;--card:#16213A;--line:#24314F;--ink:#E8EEF9;--muted:#93A3C0;--free:#2BB673;--busy:#F2A93B;--late:#E5484D;--acc:#3CC2B5;--r:16px}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 14px;background:var(--acc);color:#fff;font-weight:700;min-height:44px}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}button.red{background:var(--late)}button.green{background:var(--free)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select{font:inherit;background:#0E1628;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-height:44px;width:100%}
+.top{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}.brand .lg{width:38px;height:38px;display:inline-flex;background:#fff;border-radius:10px;overflow:hidden}
+.top .sp{flex:1}.pill{background:#0E1628;border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;color:var(--muted)}
+.pill b{color:var(--ink)}#clock{font-variant-numeric:tabular-nums;font-size:18px;font-weight:700}
+.wrap{display:flex;gap:16px;padding:16px;align-items:flex-start}
+.grid{flex:1;display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.st{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-height:150px;position:relative;text-align:right;color:var(--ink)}
+.st:focus-visible{outline:3px solid var(--acc)}
+.st .nm{font-size:18px;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.st .ic{font-size:22px}.st .k{font-size:12px;color:var(--muted)}
+.st.free{border-color:color-mix(in srgb,var(--free) 60%,var(--line))}.st.free .stt{color:var(--free)}
+.st.busy{border-color:var(--busy);background:linear-gradient(180deg,#2A2414,var(--card))}.st.busy .stt{color:var(--busy)}
+.st.late{border-color:var(--late);animation:pulse 1.4s infinite}.st.late .stt{color:var(--late)}
+.st.sel{box-shadow:0 0 0 3px var(--acc)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(229,72,77,.25)}}
+.timer{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}
+.amt{font-size:15px}.amt b{font-size:18px}
+.side{width:420px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto;display:none}
+.side.on{display:flex;flex-direction:column;gap:10px}
+.side h2{margin:0;font-size:20px;display:flex;justify-content:space-between;align-items:center}
+.lines{display:flex;flex-direction:column;gap:6px}
+.ln{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:10px;padding:8px}.ln .t{flex:1}.ln .t small{display:block;color:var(--muted)}
+.ln button{min-height:34px;padding:4px 10px}
+.tot{display:flex;justify-content:space-between;font-size:20px;font-weight:800;padding:10px;border-radius:12px;background:#0E1628}
+.cats{display:flex;gap:6px;flex-wrap:wrap}.cats button{min-height:34px;padding:4px 10px;font-size:13px;background:#0E1628;border:1px solid var(--line);color:var(--ink);font-weight:600}
+.cats button.on{background:var(--acc);border-color:var(--acc)}
+.menu{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+.menu button{background:var(--card);border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13px;min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.menu button small{color:var(--busy);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.muted{color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
+.modal.on{display:flex}.box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;width:440px;max-width:100%;display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
+.box h3{margin:0;font-size:20px}.seg{display:flex;gap:6px}.seg label{flex:1;border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.seg label:has(input:checked){border-color:var(--acc);background:#16244A}.seg input{display:none}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:12px;display:none;z-index:40;max-width:90%}
+.toast.on{display:block}.toast.err{background:var(--late)}
+.ta{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 8px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:10px}.foot a{color:var(--muted)}
+@media (max-width:860px){.wrap{flex-direction:column}.side{position:static;width:100%;max-height:none}}
+</style></head><body>
+<header class="top">
+  <div class="brand">{% if s.logo_svg %}<span class="lg">{{ s.logo_svg|safe }}</span>{% endif %}<span>{{ s.name }}</span></div>
+  <span class="pill" id="shiftPill">الوردية: …</span>
+  <span class="pill">اليوم: <b id="todayTotal">0</b> ج · <span id="todayCount">0</span> فاتورة</span>
+  <span class="sp"></span>
+  <span id="clock">--:--</span>
+  <button class="ghost" id="takeBtn" title="طلب بوفيه بدون جهاز">🥤 تيك أواي</button>
+  <button class="ghost" id="shiftBtn">فتح وردية</button>
+  <span style="color:var(--muted);font-size:13px" title="طريقة حساب الوقت">⏱ {{ rule }}</span>
+  {% if is_owner %}<a href="/ui/start/#stations" style="color:var(--muted);font-size:13px">⚙ الأجهزة والأسعار وحساب الوقت</a>{% endif %}
+  <a href="/" style="color:var(--muted);font-size:13px">الرئيسية</a>
+</header>
+<div class="ta" id="takeaways"></div>
+<div class="wrap">
+  <main class="grid" id="grid" aria-live="polite"><div class="empty">جارٍ التحميل…</div></main>
+  <aside class="side" id="side" aria-label="فاتورة الجهاز">
+    <h2><span id="sdName"></span><button class="ghost" id="sdClose" style="min-height:34px;padding:2px 10px" aria-label="قفل">✕</button></h2>
+    <div class="muted" id="sdInfo"></div>
+    <div class="row" id="sdModes"></div>
+    <div class="lines" id="sdLines"></div>
+    <div class="tot"><span>الحساب حتى الآن</span><span id="sdTotal">0</span></div>
+    <input id="search" placeholder="ابحث عن صنف أو امسح الباركود…" autocomplete="off">
+    <div class="cats" id="cats"></div>
+    <div class="menu" id="menu"></div>
+    <div class="row"><button class="green" id="payBtn">💵 قفل وحساب</button></div>
+    <div class="row"><button class="ghost" id="moveBtn">نقل إلى جهاز آخر</button><button class="ghost red" id="cancelBtn" style="color:#fff">إلغاء</button></div>
+  </aside>
+</div>
+<div class="foot">powered by <b>Trio</b> · <a href="tel:01008030459">01008030459</a> · <a href="tel:01121460640">01121460640</a></div>
+
+<div class="modal" id="mLow"><div class="box" style="border-top:6px solid #B45F06"><h3>⚠ أصناف وصلت لحد الطلب</h3>
+  <p style="margin:0 0 8px;opacity:.8">وصل الرصيد إلى الحد المحدد للصنف — أبلغ المسؤول عن الشراء.</p><div id="lowList" style="max-height:50vh;overflow:auto"></div>
+  <div class="row"><button data-close>تمام</button></div></div></div>
+<div class="modal" id="mOpen"><div class="box"><h3 id="moTitle">فتح جهاز</h3>
+  <div class="seg" id="moMode"></div>
+  <label class="f">اسم العميل (اختياري)<input id="moCust" maxlength="80"></label>
+  <label class="f">الوقت المحجوز<select id="moPlan"><option value="">مفتوح</option><option value="30">نصف ساعة</option><option value="60">ساعة</option><option value="90">ساعة ونص</option><option value="120">ساعتين</option><option value="180">3 ساعات</option></select></label>
+  <div class="row"><button id="moGo">▶ ابدأ</button><button class="ghost" data-close>رجوع</button></div></div></div>
+
+<div class="modal" id="mPay"><div class="box"><h3>الحساب — <span id="mpName"></span></h3>
+  <div class="lines" id="mpLines"></div>
+  <label class="f">خصم (جنيه)<input id="mpDisc" inputmode="decimal" value="0" dir="ltr"></label>
+  <div class="tot"><span>المطلوب</span><span id="mpTotal">0</span></div>
+  <label class="f">مدفوع ببطاقة / محفظة<input id="mpCard" inputmode="decimal" value="0" dir="ltr"></label>
+  <label class="f">آجل على عميل<select id="mpCust"><option value="">— لا يوجد —</option></select></label>
+  <label class="f" id="mpCreditL" style="display:none">مبلغ الآجل<input id="mpCredit" inputmode="decimal" value="0" dir="ltr"></label>
+  <label class="f">دفع العميل نقدًا<input id="mpGiven" inputmode="decimal" dir="ltr" placeholder="لحساب الباقي"></label>
+  <div class="muted" id="mpChange"></div>
+  <div class="row"><button class="green" id="mpGo">✔ تم الدفع واطبع</button><button class="ghost" data-close>رجوع</button></div></div></div>
+
+<div class="modal" id="mMove"><div class="box"><h3>نقل اللعب إلى جهاز آخر</h3>
+  <p class="muted" style="margin:0">يُحسب الوقت المنقضي بسعر الجهاز القديم، والقادم بسعر الجديد.</p>
+  <select id="mvTo"></select><div class="row"><button id="mvGo">نقل</button><button class="ghost" data-close>رجوع</button></div></div></div>
+
+<div class="modal" id="mShift"><div class="box"><h3 id="msTitle">الوردية</h3>
+  <label class="f" id="msL">رصيد الدرج في البداية<input id="msVal" inputmode="decimal" value="0" dir="ltr"></label>
+  <div class="muted" id="msInfo"></div>
+  <div class="row"><button id="msGo">تأكيد</button><button class="ghost" data-close>رجوع</button></div></div></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+const CSRF="{{ csrf_token }}";
+const $=id=>document.getElementById(id);
+const fmt=n=>(Math.round(Number(n||0)*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
+const ICON={ps5:'🎮',ps4:'🎮',billiard:'🎱',pingpong:'🏓',vr:'🥽',pc:'🖥',other:'⭐'};
+let S=null, catalog=[], customers=[], sel=null, skew=0, cat='';
+function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast on'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3200)}
+// «حد الطلب»: after a bill is closed, the buffet items (and menu ingredients) that reached their limit — once per item per day
+function lowShow(list){if(!list||!list.length)return;const day=new Date().toISOString().slice(0,10);let w={};try{w=JSON.parse(localStorage.getItem('play_low')||'{}')}catch(e){}
+const fresh=list.filter(x=>w[x.code]!==day);if(!fresh.length)return;fresh.forEach(x=>w[x.code]=day);try{localStorage.setItem('play_low',JSON.stringify(w))}catch(e){}
+const box=$('lowList');box.innerHTML='';for(const x of fresh){const d=document.createElement('div');d.style.cssText='padding:8px 0;border-bottom:1px solid rgba(128,128,128,.3)';
+d.innerHTML='<b></b><br><span></span>';d.querySelector('b').textContent=x.name;d.querySelector('span').textContent='الباقي '+(+x.q)+' '+(x.unit||'')+' — حد الطلب '+(+x.r);box.appendChild(d)}show('mLow')}
+async function api(name,body){
+  const r=await fetch(`/ui/play/api/${name}/`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':CSRF},body:JSON.stringify(body||{}),credentials:'same-origin'});
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok||j.error){toast(j.error||'حدثت مشكلة — حاول مرة أخرى',true);throw new Error(j.error)}
+  return j;
+}
+async function load(first){
+  try{const r=await fetch('/ui/play/api/state/'+(first?'?catalog=1':''),{credentials:'same-origin'});
+    if(r.status===302||r.redirected||r.status===403){location.href='/login/?next=/ui/play/';return}
+    S=await r.json();}catch(e){return}
+  skew=Date.now()-new Date(S.now).getTime();
+  if(S.catalog){catalog=S.catalog;customers=S.customers||[];renderCats();}
+  render();
+}
+function elapsed(iso){return Math.max(0,(Date.now()-skew-new Date(iso).getTime())/1000)}
+function hms(sec){sec=Math.floor(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function allSessions(){return [...S.stations.filter(x=>x.session).map(x=>({...x.session,_st:x})),...S.takeaway.map(t=>({...t,_st:null}))]}
+function render(){
+  const sh=S.shift;$('shiftPill').innerHTML=sh?`الوردية: <b>${escapeHtml(sh.cashier)}</b>`:'<b style="color:var(--late)">لا توجد وردية مفتوحة</b>';
+  $('shiftBtn').textContent=sh?'قفل الوردية':'فتح وردية';$('todayTotal').textContent=fmt(S.today.total);$('todayCount').textContent=S.today.count;
+  const g=$('grid');g.innerHTML='';
+  if(!S.stations.length) g.innerHTML='<div class="empty">لا توجد أجهزة مسجّلة — <a href="/ui/data/station/">أضف الأجهزة من هنا</a></div>';
+  S.stations.forEach(st=>{
+    const b=document.createElement('button');b.type='button';const s=st.session;
+    const late=s&&s.planned&&elapsed(s.opened_at)/60>=s.planned;
+    b.className='st '+(s?(late?'busy late':'busy'):'free')+(sel&&s&&sel===s.id?' sel':'');
+    b.innerHTML=`<div class="nm"><span>${escapeHtml(st.name)}</span><span class="ic">${ICON[st.kind]||'⭐'}</span></div>
+      <div class="k">${escapeHtml(st.kind_name)} · ${fmt(st.rate)} ج/س${st.rate_multi?` · مالتي ${fmt(st.rate_multi)}`:''}</div>
+      ${s?`<div class="timer" data-t="${s.opened_at}">${hms(elapsed(s.opened_at))}</div>
+        <div class="stt">${s.mode==='multi'?'مالتي':'فردي'}${s.customer?' · '+escapeHtml(s.customer):''}${s.planned?` · محجوز ${s.planned} د`:''}${late?' · انتهى الوقت!':''}</div>
+        <div class="amt">الحساب <b>${fmt(s.total)}</b>${Number(s.items_amount)?` <span class="k">(طلبات ${fmt(s.items_amount)})</span>`:''}</div>`
+       :`<div class="stt" style="font-size:16px;font-weight:700;margin-top:auto">▶ متاح</div>`}`;
+    b.onclick=()=>s?openSide(s.id):openStart(st);
+    g.appendChild(b);
+  });
+  const ta=$('takeaways');ta.innerHTML='';
+  S.takeaway.forEach(t=>{const b=document.createElement('button');b.className='ghost'+(sel===t.id?' sel':'');b.textContent=`🥤 تيك أواي ${t.customer||'#'+t.id} — ${fmt(t.total)}`;b.onclick=()=>openSide(t.id);ta.appendChild(b)});
+  if(sel){const s=allSessions().find(x=>x.id===sel); if(s) fillSide(s); else closeSide();}
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=hms(elapsed(e.dataset.t)))},1000);
+setInterval(()=>load(false),15000);
+// start a device
+let starting=null,afterShift=null;
+function openStart(st){
+  if(!S.shift){afterShift=()=>openStart(st);$('shiftBtn').click();return}  // no «open the shift first»: open it, then go on
+  starting=st;$('moTitle').textContent=`تشغيل ${st.name}`;
+  $('moMode').innerHTML=`<label><input type="radio" name="mode" value="single" checked><b>فردي</b><br>${fmt(st.rate)} ج/س</label>`+
+    (st.rate_multi?`<label><input type="radio" name="mode" value="multi"><b>مالتي</b><br>${fmt(st.rate_multi)} ج/س</label>`:'');
+  $('moCust').value='';$('moPlan').value='';show('mOpen');
+}
+$('moGo').onclick=async()=>{const mode=(document.querySelector('#moMode input:checked')||{}).value||'single';
+  try{const j=await api('open',{station:starting.id,mode,customer:$('moCust').value,planned:$('moPlan').value});hide('mOpen');await load();openSide(j.session);toast(`${starting.name} اشتغل ✔`)}catch(e){}};
+$('takeBtn').onclick=async()=>{if(S&&!S.shift){afterShift=()=>$('takeBtn').click();$('shiftBtn').click();return}try{const j=await api('takeaway',{});await load();openSide(j.session);toast('طلب تيك أواي جديد')}catch(e){}};
+// side panel (bill of one device)
+function openSide(id){sel=id;const s=allSessions().find(x=>x.id===id);if(!s)return;fillSide(s);$('side').classList.add('on');render();setTimeout(()=>$('search').focus(),50)}
+function closeSide(){sel=null;$('side').classList.remove('on');render()}
+$('sdClose').onclick=closeSide;
+function fillSide(s){
+  const st=s._st;$('sdName').textContent=st?st.name:'تيك أواي '+(s.customer||'#'+s.id);
+  $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} ج`:'طلب بدون جهاز';
+  const m=$('sdModes');m.innerHTML='';
+  if(st&&st.rate_multi){['single','multi'].forEach(md=>{const b=document.createElement('button');b.className=s.mode===md?'':'ghost';b.textContent=md==='multi'?`مالتي ${fmt(st.rate_multi)}`:`فردي ${fmt(st.rate)}`;
+    b.onclick=async()=>{if(s.mode===md)return;try{await api('switch',{session:s.id,mode:md});await load();toast('تغيّر السعر بدءًا من الآن')}catch(e){}};m.appendChild(b)})}
+  const L=$('sdLines');L.innerHTML='';
+  if(s.segments&&s.segments.length>1) s.segments.forEach(g=>{const d=document.createElement('div');d.className='ln';d.innerHTML=`<div class="t">${escapeHtml(g.station)} — ${g.mode==='multi'?'مالتي':'فردي'}<small>${g.minutes} دقيقة × ${fmt(g.rate)}/س</small></div>`;L.appendChild(d)});
+  s.items.forEach(i=>{const d=document.createElement('div');d.className='ln';
+    d.innerHTML=`<div class="t">${escapeHtml(i.name)}<small>${fmt(i.qty)} × ${fmt(i.price)} = ${fmt(i.total)}</small></div><button class="ghost" data-q="-1" aria-label="ناقص">−</button><button class="ghost" data-q="1" aria-label="زيادة">+</button>`;
+    d.querySelectorAll('button').forEach(b=>b.onclick=async()=>{try{await api('add',{session:s.id,code:i.code,qty:b.dataset.q});await load()}catch(e){}});L.appendChild(d)});
+  if(!s.items.length) L.innerHTML+='<div class="muted" style="font-size:13px">لا توجد طلبات — اختر من المنيو في الأسفل</div>';
+  $('sdTotal').textContent=fmt(s.total)+' ج';
+  $('moveBtn').style.display=st?'':'none';
+}
+function renderCats(){const c=$('cats');c.innerHTML='';const cats=[...new Set(catalog.map(i=>i.cat))];
+  ['',...cats].forEach(k=>{const b=document.createElement('button');b.textContent=k||'الكل';b.className=k===cat?'on':'';b.onclick=()=>{cat=k;renderCats();renderMenu()};c.appendChild(b)});renderMenu()}
+function renderMenu(){const q=$('search').value.trim().toLowerCase();const m=$('menu');m.innerHTML='';
+  catalog.filter(i=>(!cat||i.cat===cat)&&(!q||i.name.toLowerCase().includes(q)||i.code.toLowerCase()===q||i.barcode===q)).slice(0,80).forEach(i=>{
+    const b=document.createElement('button');b.innerHTML=`<span>${escapeHtml(i.name)}</span><small>${fmt(i.price)}</small>`;b.onclick=()=>addItem(i.code);m.appendChild(b)});
+  if(!m.children.length) m.innerHTML='<div class="muted" style="font-size:13px">لا توجد أصناف — أضفها من «الأصناف» أو «الوصفات»</div>';}
+async function addItem(code){if(!sel)return;try{await api('add',{session:sel,code,qty:1});await load();toast('تمت الإضافة ✔')}catch(e){}}
+$('search').addEventListener('input',renderMenu);
+$('search').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();const hit=catalog.find(i=>i.barcode===v||i.code===v);
+  if(hit){addItem(hit.code);e.target.value='';renderMenu()}else{const f=$('menu').querySelector('button');if(f)f.click()}}});
+$('cancelBtn').onclick=async()=>{if(!sel||!confirmBox('إلغاء هذه الجلسة؟'))return;try{await api('cancel',{session:sel});sel=null;$('side').classList.remove('on');await load();toast('أُلغيت')}catch(e){}};
+function confirmBox(m){return window.confirm(m)}
+// move
+$('moveBtn').onclick=()=>{const free=S.stations.filter(x=>!x.session);if(!free.length){toast('لا يوجد جهاز متاح',true);return}
+  $('mvTo').innerHTML=free.map(x=>`<option value="${x.id}">${escapeHtml(x.name)} — ${fmt(x.rate)} ج/س</option>`).join('');show('mMove')};
+$('mvGo').onclick=async()=>{try{await api('switch',{session:sel,station:+$('mvTo').value});hide('mMove');await load();toast('نُقل ✔')}catch(e){}};
+// pay
+let paying=null;
+$('payBtn').onclick=async()=>{await load();const s=allSessions().find(x=>x.id===sel);if(!s)return;paying=s;
+  $('mpName').textContent=$('sdName').textContent;const L=$('mpLines');
+  L.innerHTML=(s._st?`<div class="ln"><div class="t">وقت اللعب<small>${s.billed} دقيقة محسوبة (لعب ${s.minutes})</small></div><b>${fmt(s.time_amount)}</b></div>`:'')+
+    (Number(s.items_amount)?`<div class="ln"><div class="t">الطلبات<small>${s.items.length} صنف</small></div><b>${fmt(s.items_amount)}</b></div>`:'');
+  $('mpDisc').value='0';$('mpCard').value='0';$('mpGiven').value='';$('mpCredit').value='0';
+  $('mpCust').innerHTML='<option value="">— لا يوجد —</option>'+customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  $('mpCreditL').style.display='none';payCalc();show('mPay');};
+function due(){return Math.max(0,(paying?Number(paying.total)+Number(paying.discount||0):0)-Number($('mpDisc').value||0))}
+function payCalc(){const d=due();$('mpTotal').textContent=fmt(d)+' ج';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
+  const g=Number($('mpGiven').value||0);$('mpChange').textContent=`نقدًا مطلوب ${fmt(cash)}`+(g?` · الباقي للعميل ${fmt(g-cash)}`:'');}
+['mpDisc','mpCard','mpGiven','mpCredit'].forEach(id=>$(id).addEventListener('input',payCalc));
+$('mpCust').onchange=()=>{$('mpCreditL').style.display=$('mpCust').value?'':'none';if($('mpCust').value)$('mpCredit').value=fmt(due()).replace(/,/g,'');payCalc()};
+$('mpGo').onclick=async()=>{const btn=$('mpGo');btn.disabled=true;
+  try{const j=await api('close',{session:paying.id,discount:$('mpDisc').value,card:$('mpCard').value,customer_id:$('mpCust').value||null,credit:$('mpCust').value?$('mpCredit').value:0});
+    hide('mPay');sel=null;$('side').classList.remove('on');window.open(j.receipt,'_blank','width=420,height=640');await load();toast(`أُغلق — ${fmt(j.total)} ج ✔`);lowShow(j.low)}catch(e){}finally{btn.disabled=false}};
+// shift
+$('shiftBtn').onclick=()=>{const open=!!S.shift;$('msTitle').textContent=open?'قفل الوردية':'فتح وردية';
+  $('msL').firstChild.textContent=open?'النقدية الموجودة في الدرج الآن (عُدّها)':'رصيد الدرج في البداية';$('msVal').value='0';
+  const busy=S.stations.filter(x=>x.session).length;$('msInfo').textContent=open&&busy?`فيه ${busy} جهاز مشغول — ستستمر وتُحسب على الوردية التالية`:'';show('mShift')};
+$('msGo').onclick=async()=>{try{if(S.shift){const j=await api('shift_close',{counted:$('msVal').value});hide('mShift');
+  const d=Number(j.diff);toast(`أُغلقت — المتوقع ${fmt(j.expected)} · العجز/الزيادة ${fmt(d)}`,d<0)}else{await api('shift_open',{float:$('msVal').value});hide('mShift');toast('فُتحت الوردية ✔')}await load();if(afterShift&&S.shift){const f=afterShift;afterShift=null;f()}}catch(e){}};
+function show(id){$(id).classList.add('on');const f=$(id).querySelector('input,select,button');if(f)setTimeout(()=>f.focus(),30)}
+function hide(id){$(id).classList.remove('on')}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('on'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on'))});
+load(true);
+})();
+</script>
+</body></html>

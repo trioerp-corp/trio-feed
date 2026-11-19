@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% load gg %}{% block title %}التأمين الطبي{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🛡 التأمين الطبي</h1><p class="muted" style="margin:0">الشركات والنقابات وجهات العمل المتعاقدة: تدفع كل شركة نسبتها من حساب المريض، وتُحاسب عليه آخر الشهر.</p></div></div>
+{% if owner %}<details class="card" style="margin-bottom:16px" {% if not rows %}open{% endif %}><summary><b>+ شركة / جهة جديدة</b></summary>
+<form method="post" class="form-grid" style="margin-top:12px">{% csrf_token %}
+<label class="field">اسم الشركة / الجهة<input name="name" required maxlength="120"></label>
+<label class="field">نسبة التحمل % (تدفعها الشركة)<input name="coverage_pct" value="80" inputmode="decimal" dir="ltr" required></label>
+<label class="field">أقصى مبلغ للزيارة (اختياري)<input name="max_per_visit" inputmode="decimal" dir="ltr"></label>
+<label class="field">رقم التعاقد<input name="contract_no" maxlength="60" dir="ltr"></label>
+<label class="field">التليفون<input name="phone" maxlength="40" dir="ltr"></label><label class="field">المسؤول<input name="contact" maxlength="100"></label>
+<label class="field">الرقم الضريبي<input name="tax_id" maxlength="40" dir="ltr"></label><label class="field">العنوان<input name="address" maxlength="200"></label>
+<label class="field" style="grid-column:1/-1">ملاحظات (ما يغطيه وما لا يغطيه)<input name="notes" maxlength="300"></label>
+<div><button>إضافة</button></div></form></details>{% endif %}
+<div class="table-wrap"><table><thead><tr><th>الشركة</th><th class="n">النسبة</th><th class="n">مرضى</th><th class="n">المتحمَّل</th><th class="n">المتبقي عليها</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr{% if not r.ins.active %} style="opacity:.55"{% endif %}><td><b>{{ r.ins.name }}</b>{% if r.ins.contract_no %}<br><small class="muted">تعاقد {{ r.ins.contract_no }}</small>{% endif %}</td><td class="n">{{ r.ins.coverage_pct|floatformat:-2 }}%{% if r.ins.max_per_visit %}<br><small class="muted">حد {{ r.ins.max_per_visit|money:0 }}</small>{% endif %}</td>
+<td class="n">{{ r.patients }}</td><td class="n">{{ r.billed|money }}</td><td class="n"><b>{{ r.owed|money }}</b></td><td><a href="{% url 'clinic_insurance_detail' r.ins.pk %}">كشف الحساب والمطالبة</a></td></tr>
+{% empty %}<tr><td colspan="6" class="muted">لا توجد شركات بعد</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

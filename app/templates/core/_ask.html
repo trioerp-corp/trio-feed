@@ -1,0 +1,23 @@
+{# «؟ اسأل» — the assistant on every page (core/help + Trio's AI) #}
+<button type="button" id="askBtn" class="ask-btn" aria-label="اسأل عن البرنامج">؟ اسأل</button>
+<div id="askBox" class="ask-box" hidden role="dialog" aria-label="مساعد Trio">
+<div class="ask-head"><b>مساعد Trio</b><button type="button" id="askX" aria-label="قفل">✕</button></div>
+<div id="askLog" class="ask-log"><div class="ask-a">أهلًا 👋 اسألني عن أي شيء في البرنامج: «كيف أعمل مرتجعًا؟»، «أين تقرير الأرباح؟»، «كيف أضيف كاشيرًا جديدًا؟»</div></div>
+<form id="askF" class="ask-f">{% csrf_token %}<input id="askQ" maxlength="500" autocomplete="off" placeholder="اكتب سؤالك…"><button>اسأل</button></form></div>
+<style>.ask-btn{position:fixed;inset-inline-end:18px;bottom:18px;z-index:60;border:0;border-radius:24px;padding:11px 18px;font-weight:700;font-size:15px;font-family:inherit;background:#17698F;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.2);cursor:pointer}
+.ask-box{position:fixed;inset-inline-end:18px;bottom:72px;z-index:61;width:min(380px,calc(100vw - 36px));max-height:min(560px,calc(100vh - 110px));display:flex;flex-direction:column;background:#fff;color:#0B1F3A;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.25);overflow:hidden}
+.ask-box[hidden]{display:none}.ask-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#17698F;color:#fff}.ask-head button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer}
+.ask-log{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.75}.ask-q{align-self:flex-start;background:#E3F0F6;border-radius:12px;padding:7px 11px;max-width:85%}
+.ask-a{align-self:flex-end;background:#F5F8FB;border:1px solid #DCE5EF;border-radius:12px;padding:8px 11px;white-space:pre-wrap;max-width:92%}.ask-a a{display:inline-block;margin:6px 0 0 6px;background:#17698F;color:#fff;border-radius:9px;padding:3px 10px;text-decoration:none;font-size:13px}
+.ask-a small{display:block;color:#66788F;font-size:11.5px;margin-top:4px}.ask-f{display:flex;gap:6px;padding:10px;border-top:1px solid #E1E9F2}.ask-f input{flex:1;min-width:0;border:1px solid #CFDCEA;border-radius:10px;padding:9px 10px;font:inherit}
+.ask-f button{border:0;border-radius:10px;background:#3CC2B5;color:#04213F;font-weight:700;padding:0 14px;font-family:inherit;cursor:pointer}@media print{.ask-btn,.ask-box{display:none!important}}</style>
+<script>(function(){const $=id=>document.getElementById(id),box=$('askBox'),log=$('askLog');
+$('askBtn').onclick=()=>{box.hidden=!box.hidden;if(!box.hidden)$('askQ').focus()};$('askX').onclick=()=>{box.hidden=true};
+const csrf=(document.querySelector('#askF [name=csrfmiddlewaretoken]')||{}).value||'';
+function add(cls,text){const d=document.createElement('div');d.className=cls;d.textContent=text;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+$('askF').onsubmit=async e=>{e.preventDefault();const q=$('askQ').value.trim();if(q.length<2)return;$('askQ').value='';add('ask-q',q);const w=add('ask-a','⏳ …');
+try{const r=await fetch('{% url "ask" %}',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':csrf},body:JSON.stringify({q,page:document.title})});
+const d=await r.json();w.textContent=d.answer||d.error||'تعذّر الرد الآن';
+for(const l of d.links||[]){const a=document.createElement('a');a.href=l.url;a.textContent='افتح «'+l.name+'»';w.appendChild(a)}
+if(d.src==='local'){const s=document.createElement('small');s.textContent='من دليل البرنامج';w.appendChild(s)}else if(d.left!=null&&d.left<6){const s=document.createElement('small');s.textContent='فاضل '+d.left+' سؤال اليوم';w.appendChild(s)}
+}catch(err){w.textContent='تعذّر الاتصال — حاول مرة أخرى'}log.scrollTop=log.scrollHeight}})();</script>

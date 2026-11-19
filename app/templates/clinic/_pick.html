@@ -1,0 +1,14 @@
+{# patient picker: search an existing file (name / phone / file number) or type a new patient #}
+<div class="pick" style="position:relative">
+<label class="field">المريض (اسم / هاتف / رقم ملف)<input class="pq" autocomplete="off" placeholder="اكتب للبحث…" value="{% if pick %}{{ pick.name }} (ملف {{ pick.number }}){% endif %}"></label>
+<input type="hidden" name="patient" class="pid" value="{{ pick.pk|default:'' }}">
+<div class="pres card" style="display:none;position:absolute;z-index:5;inset-inline:0;top:100%;padding:4px;max-height:240px;overflow:auto"></div>
+<div class="pnew" style="display:none;gap:8px;flex-wrap:wrap"><label class="field" style="flex:2">مريض جديد — الاسم<input name="new_name"></label><label class="field" style="flex:1">الموبايل<input name="new_phone" inputmode="tel" dir="ltr"></label></div>
+</div>
+<script>(function(){document.querySelectorAll('.pick').forEach(function(w){if(w.dataset.on)return;w.dataset.on=1;
+var q=w.querySelector('.pq'),id=w.querySelector('.pid'),r=w.querySelector('.pres'),nw=w.querySelector('.pnew'),t;
+function show(list,val){r.innerHTML='';list.forEach(function(x){var b=document.createElement('button');b.type='button';b.className='light';b.style.cssText='display:block;width:100%;text-align:start;margin:2px 0';b.textContent=x.label;b.onclick=function(){id.value=x.id;q.value=x.label;r.style.display='none';nw.style.display='none'};r.appendChild(b)});
+var n=document.createElement('button');n.type='button';n.className='light';n.style.cssText='display:block;width:100%;text-align:start;margin:2px 0;font-weight:700';n.textContent='+ مريض جديد: '+val;n.onclick=function(){id.value='';r.style.display='none';nw.style.display='flex';nw.querySelector('[name=new_name]').value=/^\d+$/.test(val)?'':val;if(/^0?1\d{8,}$/.test(val))nw.querySelector('[name=new_phone]').value=val;nw.querySelector('[name=new_name]').focus()};r.appendChild(n);r.style.display='block'}
+q.addEventListener('input',function(){id.value='';clearTimeout(t);var v=q.value.trim();if(!v){r.style.display='none';return}
+t=setTimeout(function(){fetch('{% url "clinic_patient_find" %}?q='+encodeURIComponent(v)).then(function(x){return x.json()}).then(function(d){show(d.items,v)})},200)});
+document.addEventListener('click',function(e){if(!w.contains(e.target))r.style.display='none'});})})();</script>

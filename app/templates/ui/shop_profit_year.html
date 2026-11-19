@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load gg %}{% block title %}أرباح سنة {{ y }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>أرباح سنة {{ y }}</h1><p class="muted" style="margin:0">السنة شهرًا بشهر، ونصيب كل شريك في السنة كلها</p></div>
+<div class="actions"><a class="btn light" href="?y={{ prev }}">→ {{ prev }}</a>{% if next %}<a class="btn light" href="?y={{ next }}">{{ next }} ←</a>{% endif %}
+<a class="btn light" href="{% url 'shop_profit' %}">التقرير الشهري</a><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+
+<section class="grid" style="margin-bottom:18px">
+<div class="card kpi"><span class="k">إيرادات السنة</span><span class="v">{{ total.income|money:0 }}</span></div>
+<div class="card kpi"><span class="k">التكاليف والمصروفات</span><span class="v">{{ total.expense|money:0 }}</span></div>
+<div class="card kpi {% if total.profit >= 0 %}hero{% else %}gold{% endif %}"><span class="k">صافي ربح السنة</span><span class="v">{{ total.profit|money:0 }}</span></div>
+<div class="card kpi gold"><span class="k">مسحوبات الشركاء</span><span class="v">{{ total.groups.drawings|money:0 }}</span></div>
+</section>
+
+<div class="card" style="margin-bottom:18px"><h2>الربح شهر بشهر</h2>
+<div class="ychart" role="img" aria-label="الربح شهر بشهر">{% for m in table %}<a href="{% url 'shop_profit' %}?m={{ m.key }}" class="ycol" title="{{ m.name }}: {{ m.profit }}">
+<span class="yv">{{ m.profit|money:0 }}</span><span class="ybar{% if m.profit < 0 %} neg{% endif %}" style="height:{{ m.h|stringformat:".1f" }}%"></span><span class="yl">{{ m.name }}</span></a>{% endfor %}</div>
+<div class="table-wrap" style="border:0;margin-top:14px"><table><thead><tr><th>الشهر</th><th class="n">الإيرادات</th><th class="n">المصروفات</th><th class="n">صافي الربح</th><th class="n">مسحوبات</th><th class="n">نقدية</th><th class="n">بضاعة</th><th class="n">أخرى</th></tr></thead><tbody>
+{% for m in table %}<tr><td><a href="{% url 'shop_profit' %}?m={{ m.key }}">{{ m.name }}</a></td><td class="n">{{ m.income|money:0 }}</td><td class="n">{{ m.expense|money:0 }}</td><td class="n"><b>{{ m.profit|money:0 }}</b></td>
+<td class="n">{{ m.drawings|money:0 }}</td><td class="n">{{ m.cash|money:0 }}</td><td class="n">{{ m.stock|money:0 }}</td><td class="n">{{ m.rest|money:0 }}</td></tr>{% endfor %}
+<tr class="total"><td>السنة</td><td class="n">{{ total.income|money:0 }}</td><td class="n">{{ total.expense|money:0 }}</td><td class="n">{{ total.profit|money:0 }}</td><td class="n">{{ total.groups.drawings|money:0 }}</td>
+<td class="n">{{ total.groups.cash|money:0 }}</td><td class="n">{{ total.groups.stock|money:0 }}</td><td class="n"></td></tr></tbody></table></div></div>
+
+<div class="split">
+<div class="main"><div class="card"><h2>نصيب كل شريك في السنة</h2>
+<div class="table-wrap" style="border:0"><table><thead><tr><th>الشريك</th><th class="n">النسبة</th><th class="n">نصيبه</th><th class="n">سحب في السنة</th><th class="n">المتبقي له داخل المحل</th><th class="n">منه نقدي</th><th class="n">منه بضاعة</th><th class="n">منه أخرى</th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.name }}</b></td><td class="n">{{ r.pct|floatformat:"-2" }}%</td><td class="n"><b>{{ r.share|money:0 }}</b></td><td class="n">{{ r.drawn|money:0 }}</td><td class="n"><b>{{ r.left|money:0 }}</b></td>
+<td class="n">{{ r.cash|money:0 }}</td><td class="n">{{ r.stock|money:0 }}</td><td class="n">{{ r.other|money:0 }}</td></tr>{% endfor %}</tbody></table></div>
+{% if untagged %}<p class="note">مسحوبات {{ untagged|money:0 }} من درج الكاشير دون تحديد شريك.</p>{% endif %}</div></div>
+<div class="side"><div class="card"><h2>أين ربح السنة؟</h2>
+{% if bars %}<div class="wbar">{% for b in bars %}<span class="w-{{ b.key }}" style="width:{{ b.width|stringformat:".2f" }}%"></span>{% endfor %}</div>{% endif %}
+<div class="wlist">{% for w in total.where %}<div class="wrow"><i class="dot w-{{ w.key }}"></i><div><b>{{ w.label }}</b></div><span class="n">{{ w.amount|money:0 }}</span><span class="pct"></span></div>{% endfor %}</div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+<form class="filters" method="get">
+{% if not single_date %}<label>من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label>{% endif %}
+<label>{% if single_date %}في تاريخ{% else %}إلى{% endif %}<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label>
+{% block extra %}{{ extra|default:"" }}{% endblock %}
+<button>عرض</button> <a class="btn light noprint" href="javascript:window.print()">🖨 طباعة / PDF</a>
+</form>

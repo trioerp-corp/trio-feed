@@ -1,0 +1,37 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الخدمات والأطباء{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>الخدمات والأسعار والأطباء</h1><p class="muted" style="margin:0">الكشف والخدمات بأسعارها، والمستهلكات التي تصرفها كل خدمة من المخزن، ونسبة كل طبيب.</p></div></div>
+<div class="split"><div class="main">
+<section class="card" style="margin-bottom:18px"><h2>الخدمات والكشوفات</h2>
+<div class="table-wrap"><table><thead><tr><th>الكود</th><th>الخدمة</th><th class="n">السعر</th><th>الطبيب</th><th class="n">النسبة</th><th>المستهلكات</th><th></th></tr></thead><tbody>
+{% for s in services %}<tr><td>{{ s.item.code }}</td><td>{{ s.item.name }}</td><td class="n">{{ s.item.sale_price|money }}</td><td>{{ s.doctor|default:"أي طبيب" }}</td>
+<td class="n">{% if s.share_pct is not None %}{{ s.share_pct|floatformat:-2 }}%{% else %}<span class="muted">نسبة الطبيب</span>{% endif %}</td>
+<td style="font-size:13px">{% if s.item.recipe %}{% for l in s.item.recipe.lines.all %}{{ l.ingredient.name }} {{ l.qty|floatformat:-3 }}{% if not forloop.last %}، {% endif %}{% endfor %}{% else %}<span class="muted">—</span>{% endif %}</td>
+<td><a class="btn light" href="?svc={{ s.pk }}#svc">تعديل</a> <form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="service_off"><input type="hidden" name="pk" value="{{ s.pk }}"><button class="light" onclick="return confirm('إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي')">إزالة</button></form></td></tr>
+{% empty %}<tr><td colspan="7" class="muted">أضف أول خدمة — مثلًا «كشف» و«استشارة»</td></tr>{% endfor %}</tbody></table></div></section>
+
+<section class="card" id="svc"><h2>{% if edit_svc %}تعديل «{{ edit_svc.item.name }}»{% else %}+ خدمة جديدة{% endif %}</h2>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="service"><input type="hidden" name="pk" value="{{ edit_svc.pk|default:'' }}">
+<div class="form-grid"><label class="field">الاسم *<input name="name" required value="{{ edit_svc.item.name|default:'' }}" placeholder="كشف / استشارة / حشو عصب / جلسة…"></label>
+<label class="field">السعر *<input name="price" required inputmode="decimal" dir="ltr" value="{% if edit_svc %}{{ edit_svc.item.sale_price|unlocalize }}{% endif %}"></label>
+<label class="field">الطبيب<select name="doctor"><option value="">أي طبيب</option>{% for d in doctors %}<option value="{{ d.pk }}" {% if edit_svc and edit_svc.doctor_id == d.pk %}selected{% endif %}>{{ d }}</option>{% endfor %}</select></label>
+<label class="field">نسبة الطبيب % لهذه الخدمة<input name="share_pct" inputmode="decimal" dir="ltr" placeholder="متاح = نسبته العادية" value="{% if edit_svc and edit_svc.share_pct is not None %}{{ edit_svc.share_pct|unlocalize }}{% endif %}"></label>
+<label class="field">المدة (دقيقة)<input name="minutes" inputmode="numeric" value="{{ edit_svc.minutes|default:15 }}"></label></div>
+<h3 style="margin:14px 0 6px">المستهلكات التي تُصرف في كل مرة</h3><p class="muted" style="margin:0 0 8px;font-size:13px">قفاز، سرنجة، قطن، بنج… تُخصم من المخزن تلقائيًا مع كل زيارة محاسَبة (يجب أن تكون مسجّلة كأصناف وتُشترى من «المشتريات»).</p>
+<datalist id="stk">{% for i in stock_items %}<option value="{{ i.code }}">{{ i.name }} ({{ i.unit }})</option>{% endfor %}</datalist>
+<div id="cons">{% for l in edit_cons %}<div style="display:flex;gap:8px;margin-bottom:6px"><input name="c_item" list="stk" value="{{ l.ingredient.code }}" dir="ltr" style="flex:3" title="{{ l.ingredient.name }}"><input name="c_qty" value="{{ l.qty|floatformat:-4|unlocalize }}" inputmode="decimal" style="flex:1"></div>{% endfor %}</div>
+<button type="button" class="light" onclick="addc()">+ مستهلك</button>
+<p style="margin:12px 0 0"><button>حفظ الخدمة</button>{% if edit_svc %} <a class="btn light" href="{% url 'clinic_setup' %}">جديدة</a>{% endif %}</p></form></section></div>
+
+<div class="side"><section class="card"><h2>الأطباء</h2>
+{% for d in all_doctors %}<p style="margin:0 0 8px;{% if not d.active %}opacity:.5{% endif %}"><b>{{ d }}</b>{% if d.specialty %} — {{ d.specialty }}{% endif %} · {{ d.share_pct|floatformat:-2 }}% <a href="?doc={{ d.pk }}">تعديل</a></p>{% empty %}<p class="muted">لا يوجد بعد</p>{% endfor %}
+<form method="post" style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px">{% csrf_token %}<input type="hidden" name="action" value="doctor"><input type="hidden" name="pk" value="{{ edit_doc.pk|default:'' }}">
+<h3 style="margin:0 0 6px">{% if edit_doc %}تعديل {{ edit_doc }}{% else %}+ طبيب{% endif %}</h3>
+<label class="field">الاسم *<input name="name" required value="{{ edit_doc.name|default:'' }}"></label><label class="field">التخصص<input name="specialty" value="{{ edit_doc.specialty|default:'' }}"></label>
+<label class="field">الموبايل<input name="phone" dir="ltr" value="{{ edit_doc.phone|default:'' }}"></label>
+<label class="field">نسبته % من الكشف والخدمات<input name="share_pct" inputmode="decimal" dir="ltr" value="{% if edit_doc %}{{ edit_doc.share_pct|unlocalize }}{% else %}0{% endif %}"></label>
+<p class="muted" style="font-size:12px;margin:-4px 0 8px">0 = صاحب العيادة أو براتب (الراتب من «الأموال»).</p>
+{% if edit_doc %}<label class="field">الحالة<select name="active"><option value="1">شغال</option><option value="0" {% if not edit_doc.active %}selected{% endif %}>موقوف</option></select></label>{% endif %}
+<button>حفظ</button></form></section></div></div>
+<script>function addc(){var d=document.createElement('div');d.style.cssText='display:flex;gap:8px;margin-bottom:6px';d.innerHTML='<input name="c_item" list="stk" placeholder="كود الصنف" dir="ltr" style="flex:3"><input name="c_qty" value="1" inputmode="decimal" style="flex:1">';document.getElementById('cons').appendChild(d)}{% if not edit_cons %}addc();{% endif %}</script>
+{% endblock %}

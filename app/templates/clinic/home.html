@@ -1,0 +1,43 @@
+{% extends "base.html" %}{% load gg %}{% block title %}{% if reception %}الاستقبال{% else %}العيادة — اليوم{% endif %}{% endblock %}
+{% block content %}
+<style>.lanes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:20px}.lane h3{margin:0 0 8px;font-size:15px}
+.pt{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;background:var(--bg)}.pt b{font-size:15px}.pt .q{float:inline-end;font-weight:800;color:#17698F}
+.pt form{display:inline}.pt .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.pt button,.pt .btn{padding:4px 10px;font-size:13px}</style>
+{% if reception %}<meta http-equiv="refresh" content="60">{% endif %}
+<div class="page-head"><div><h1>{% if reception %}🛎 الاستقبال{% else %}🩺 العيادة — اليوم{% endif %}</h1><p class="muted" style="margin:0">{{ company.name }} — {{ today|date:"l j F Y" }}</p></div>
+<div class="actions"><a class="btn" href="{% url 'clinic_appointments' %}">+ حجز</a><a class="btn light" href="{% url 'clinic_patients' %}">ملفات المرضى</a>
+{% if 'money' in mods %}<a class="btn light" href="{% url 'shop_money' %}">مصروفات (إيجار، مرتبات، كهرباء)</a>{% endif %}<a class="btn light" href="{% url 'shop_close' %}">تقفيل اليوم</a></div></div>
+{% include "ui/_ready.html" %}
+
+{% if sum %}<section class="grid" style="margin-bottom:18px">
+<div class="card kpi hero"><span class="k">إيراد اليوم</span><span class="v">{{ sum.revenue|money:0 }}</span><span class="k">{{ sum.visits }} زيارة متحاسبة</span></div>
+<div class="card kpi"><span class="k">نسب الأطباء اليوم</span><span class="v">{{ sum.shares|money:0 }}</span><span class="k"><a href="{% url 'clinic_doctors' %}">الأطباء ونسبهم ←</a></span></div>
+<div class="card kpi gold"><span class="k">في العيادة الآن</span><span class="v">{{ sum.waiting|add:sum.inside }}</span><span class="k">{{ sum.booked }} لم يصلوا بعد · {{ upcoming }} حجز الأيام الجاية</span></div></section>{% endif %}
+
+<details class="card" style="margin-bottom:18px" {% if not lanes.waiting and not lanes.inside %}open{% endif %}><summary><b>+ مريض وصل بدون حجز</b></summary>
+<form method="post" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="action" value="walkin">
+<div class="form-grid">{% include "clinic/_pick.html" %}
+<label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}">{{ d }}{% if d.specialty %} ({{ d.specialty }}){% endif %}</option>{% endfor %}</select></label>
+<label class="field">الخدمة<select name="service"><option value="">—</option>{% for s in services %}<option value="{{ s.pk }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label></div>
+{% include "clinic/_paynow.html" %}
+<p style="margin:10px 0 0"><button>دخّله الدور</button></p></form></details>
+
+<form action="{% url 'find' %}" method="get" style="display:flex;gap:8px;margin-bottom:14px" role="search"><input name="q" type="search" placeholder="🔎 ابحث عن مريض: اسم، هاتف، رقم ملف…" style="flex:1;font-size:16px;padding:10px 14px" aria-label="ابحث عن مريض"><input type="hidden" name="go" value="1"><button>بحث</button></form>
+{% if unpaid %}<section class="card" style="margin-bottom:16px;border-inline-start:5px solid var(--gold)"><h2 style="margin-top:0">💵 حسابات مستنية تتدفع ({{ unpaid|length }})</h2>
+{% for v in unpaid %}<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-2);flex-wrap:wrap"><span><b>{{ v.patient.name }}</b> <span class="muted">{{ v.doctor|default:"" }}</span></span>
+<span><b>{{ v.unbilled|money }}</b> <a class="btn" href="{% url 'clinic_visit' v.pk %}#pay">حاسب</a></span></div>{% endfor %}</section>{% endif %}
+<section class="lanes">
+<div class="card lane"><h3>⏳ محجوز ولم يصل بعد ({{ lanes.booked|length }})</h3>{% for a in lanes.booked %}<div class="pt"><span class="q">{{ a.queue_no }}</span><b>{{ a.patient.name }}</b><br><span class="muted" style="font-size:13px">{% if a.time %}{{ a.time|time:"H:i" }} · {% endif %}{{ a.doctor|default:"" }}{% if a.service %} · {{ a.service }}{% endif %}</span>
+{% if a.visit and a.visit.total %}<br><span class="badge">مدفوع {{ a.visit.total|money:0 }}</span>{% endif %}
+<div class="row"><form method="post">{% csrf_token %}<input type="hidden" name="appt" value="{{ a.pk }}"><button name="action" value="arrive">وصل ✔</button> <button class="light" name="action" value="noshow">لم يحضر</button></form></div></div>{% empty %}<p class="muted">لا يوجد</p>{% endfor %}</div>
+<div class="card lane"><h3>🪑 ينتظر ({{ lanes.waiting|length }})</h3>{% for a in lanes.waiting %}<div class="pt"><span class="q">{{ a.queue_no }}</span><b>{{ a.patient.name }}</b><br><span class="muted" style="font-size:13px">{{ a.doctor|default:"" }}{% if a.service %} · {{ a.service }}{% endif %}</span>{% if a.visit and a.visit.total %} <span class="badge">مدفوع</span>{% endif %}
+<div class="row"><form method="post">{% csrf_token %}<input type="hidden" name="appt" value="{{ a.pk }}"><button name="action" value="inside">دخل للدكتور</button> <button class="light" name="action" value="cancelled" onclick="return confirm('إلغاء الحجز؟{% if a.visit and a.visit.total %} سيُعاد المبلغ المدفوع بقيد عكسي{% endif %}')">إلغاء</button></form>{% if a.visit and a.visit.total %}<a class="btn light" href="{% url 'clinic_receipt' a.visit_id %}" target="_blank">🧾</a>{% endif %}</div></div>{% empty %}<p class="muted">لا أحد ينتظر</p>{% endfor %}</div>
+<div class="card lane"><h3>👨‍⚕️ عند الطبيب ({{ lanes.inside|length }})</h3>{% for a in lanes.inside %}<div class="pt"><span class="q">{{ a.queue_no }}</span><b>{{ a.patient.name }}</b><br><span class="muted" style="font-size:13px">{{ a.doctor|default:"" }}</span>
+<div class="row"><a class="btn" href="{% url 'clinic_visit' a.visit_id %}">الكشف والحساب</a></div></div>{% empty %}<p class="muted">لا يوجد</p>{% endfor %}</div>
+<div class="card lane"><h3>✅ انتهى ({{ lanes.done|length }})</h3>{% for a in lanes.done %}<div class="pt"><b>{{ a.patient.name }}</b> <span class="muted" style="font-size:13px">{{ a.visit.total|money:0 }}</span>
+<div class="row"><a class="btn light" href="{% url 'clinic_visit' a.visit_id %}">فتح</a><a class="btn light" href="{% url 'clinic_print' a.visit_id %}" target="_blank">🖨 روشتة</a><a class="btn light" href="{% url 'clinic_receipt' a.visit_id %}" target="_blank">🧾 إيصال</a></div></div>{% empty %}<p class="muted">بعد</p>{% endfor %}</div>
+</section>
+{% if follow %}<section class="card" style="margin-bottom:16px"><h2>متابعات موعدها اليوم</h2>{% for v in follow %}<a href="{% url 'clinic_patient' v.patient_id %}">{{ v.patient.name }}</a>{% if v.patient.phone %} <span class="muted" dir="ltr">{{ v.patient.phone }}</span>{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}</section>{% endif %}
+{% if others %}<p class="muted" style="font-size:13px">أُلغي / لم يحضر: {% for a in others %}{{ a.patient.name }}{% if not forloop.last %}، {% endif %}{% endfor %}</p>{% endif %}
+{% if not doctors or not services %}<p class="card" style="border-color:#C9A227">ابدأ من <a href="{% url 'clinic_setup' %}">«الخدمات والأسعار»</a>: سجّل الأطباء ونسبة كل منهم، والكشف والخدمات بأسعارها والمستهلكات التي تُصرف فيها.</p>{% endif %}
+{% endblock %}

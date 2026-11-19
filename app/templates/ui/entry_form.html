@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}قيد يومية{% endblock %}
+{% block content %}
+<div class="page-head"><h1>{% if e.pk %}تعديل مسودة قيد{% else %}قيد يومية جديد{% endif %}</h1></div>
+<form method="post" novalidate>{% csrf_token %}
+<div class="card" style="margin-bottom:16px"><div class="form-grid">{% for f in form %}<div class="field">{{ f.label_tag }}{{ f }}{{ f.errors }}</div>{% endfor %}</div></div>
+<div class="card" style="margin-bottom:16px">{{ lines.management_form }}
+<div class="scroll"><table class="lines-table"><thead><tr><th style="min-width:220px">الحساب</th><th style="min-width:160px">الطرف</th><th>مدين</th><th>دائن</th><th style="min-width:180px">المركز</th><th style="min-width:140px">المعدة</th><th>العملية</th><th>بيان</th><th>حذف</th></tr></thead>
+<tbody data-formset="lines">{% for f in lines %}<tr>{{ f.id }}<td>{{ f.account }}{{ f.account.errors }}</td><td>{{ f.partner }}</td><td>{{ f.debit }}</td><td>{{ f.credit }}</td><td>{{ f.dim1 }}</td><td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td></tr>{% endfor %}</tbody></table></div>
+<button type="button" class="light" data-add-row="lines">+ سطر</button>
+<template id="lines-empty"><tr>{% with f=lines.empty_form %}{{ f.id }}<td>{{ f.account }}</td><td>{{ f.partner }}</td><td>{{ f.debit }}</td><td>{{ f.credit }}</td><td>{{ f.dim1 }}</td><td>{{ f.dim2 }}</td><td>{{ f.dim3 }}</td><td>{{ f.description }}</td><td>{{ f.DELETE }}</td>{% endwith %}</tr></template></div>
+<div class="actions"><button name="post" value="1">ترحيل</button><button name="save" value="1" class="light">حفظ مسودة</button><a class="btn light" href="{% url 'entry_list' %}">رجوع</a></div></form>
+{% endblock %}

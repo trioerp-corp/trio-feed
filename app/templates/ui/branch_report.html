@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% load gg %}{% block title %}تقرير {{ b.name }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🏬 {{ b.name }} — {{ title }}</h1><p class="muted" style="margin:0">{{ b.address }}{% if b.phone %} · {{ b.phone }}{% endif %}</p></div>
+<div class="actions"><div class="seg"><a href="?p=day" class="{% if kind == 'day' %}on{% endif %}">اليوم</a><a href="?p=month" class="{% if kind == 'month' %}on{% endif %}">الشهر</a><a href="?p=year" class="{% if kind == 'year' %}on{% endif %}">السنة</a></div>
+<form method="get" class="actions"><input type="hidden" name="p" value="{{ kind }}"><input type="date" name="date" value="{{ day|date:'Y-m-d' }}" aria-label="التاريخ"><button class="light">عرض</button></form>
+<button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+<section class="grid" style="margin-bottom:16px">
+<div class="card kpi hero"><span class="k">صافي المبيعات</span><span class="v">{{ r.t.net|money:0 }}</span><span class="k">{{ r.t.n }} فاتورة{% if r.t.returns %} — مرتجع {{ r.t.returns|money:0 }}{% endif %}</span></div>
+<div class="card kpi"><span class="k">نقدي / بطاقة / آجل</span><span class="v">{{ r.t.cash|money:0 }}</span><span class="k">بطاقة {{ r.t.card|money:0 }} — آجل {{ r.t.credit|money:0 }}</span></div>
+<div class="card kpi"><span class="k">مجمل الربح</span><span class="v">{{ r.gross|money:0 }}</span><span class="k">هامش {{ r.margin|floatformat:1 }}%</span></div>
+<div class="card kpi {% if r.net >= 0 %}{% else %}gold{% endif %}"><span class="k">صافي الربح</span><span class="v">{{ r.net|money:0 }}</span><span class="k">بعد مصروفات {{ r.exp_total|money:0 }}</span></div>
+<div class="card kpi gold"><span class="k">رصيد درج الفرع</span><span class="v">{{ r.drawer|money:0 }}</span><span class="k">المخزون {{ r.stock|money:0 }}</span></div></section>
+<div class="split"><div class="main">
+<div class="card" style="margin-bottom:16px"><h2>الأكتر مبيعًا</h2><div class="table-wrap" style="border:0;box-shadow:none"><table><thead><tr><th>الصنف</th><th class="n">الكمية</th><th class="n">المبيعات</th></tr></thead><tbody>
+{% for n, v in r.top %}<tr><td>{{ n }}</td><td class="n">{{ v.0|floatformat:"-3" }}</td><td class="n">{{ v.1|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا توجد مبيعات</td></tr>{% endfor %}</tbody></table></div></div>
+<div class="card"><h2>المصروفات والخساير</h2><div class="table-wrap" style="border:0;box-shadow:none"><table><tbody>
+{% for n, v in r.expenses %}<tr><td>{{ n }}</td><td class="n">{{ v|money }}</td></tr>{% empty %}<tr><td class="muted">لا توجد مصروفات</td></tr>{% endfor %}
+<tr class="total"><td>الإجمالي</td><td class="n">{{ r.exp_total|money }}</td></tr></tbody></table></div></div>
+</div><div class="side">
+<div class="card"><h2>المخزن</h2><div class="attn" style="margin-bottom:6px"><span>مشتريات الفترة</span><b>{{ r.bought|money:0 }}</b></div><div class="attn" style="margin-bottom:6px"><span>تالف وعجز جرد</span><b>{{ r.damage|money:0 }}</b></div><div class="attn"><span>قيمة المخزون الآن</span><b>{{ r.stock|money:0 }}</b></div></div>
+<div class="card"><h2>الورديات والأجهزة</h2><div class="attn" style="margin-bottom:6px"><span>ورديات الفترة</span><b>{{ r.shifts }}</b></div>{% if r.open_shifts %}<div class="attn gold" style="margin-bottom:6px"><span>ورديات مفتوحة</span><b>{{ r.open_shifts }}</b></div>{% endif %}<div class="attn"><span>آخر مزامنة</span><b>{{ r.last_sync|date:"d/m H:i"|default:"بعد" }}</b></div></div>
+<div class="card"><h2>فريق الفرع</h2>{% for st in staff %}<div class="attn" style="margin-bottom:6px"><span>{{ st.user.first_name|default:st.user.username }}</span><b>{{ st.title }}</b></div>{% empty %}<p class="muted">لا يوجد موظفون مسجّلون على الفرع</p>{% endfor %}</div>
+</div></div>
+{% endblock %}

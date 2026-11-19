@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}البيانات الأساسية{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>البيانات الأساسية</h1><p class="muted" style="margin:0">كل ما يعمل به المحل: أضف، أو عدّل، أو احذف. وما عليه حركات يُوقف بدلًا من حذفه لتبقى الحسابات السابقة صحيحة.</p></div></div>
+<section class="tiles">
+{% for k in kinds %}<a class="tile" href="{% url 'data_list' k.key %}"><span class="ic" style="font-size:30px">{{ k.icon }}</span><b>{{ k.title }}</b></a>{% endfor %}
+</section>
+{% endblock %}

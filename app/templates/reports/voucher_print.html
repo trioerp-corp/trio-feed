@@ -1,0 +1,13 @@
+{% load static %}{% load gg %}<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>{{ v }}</title>
+<link rel="stylesheet" href="{% static 'ui/fonts.css' %}"><style>body{font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;margin:24px;color:#000}h1{text-align:center;margin:0 0 4px}table{width:100%;border-collapse:collapse;margin-top:12px}td,th{border:1px solid #444;padding:6px 8px;text-align:right}.n{direction:ltr;text-align:left}.head{display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:8px}.sig{display:flex;justify-content:space-between;margin-top:48px}.sig div{width:30%;text-align:center;border-top:1px solid #000;padding-top:6px}.cancel{color:#b00;font-size:28px;text-align:center;border:3px solid #b00;margin:10px}@media print{button{display:none}}</style></head>
+<body><button onclick="window.print()">🖨 طباعة / PDF</button>
+<div class="head"><div><b>{{ company.name }}</b><br><small>{{ company.name_en }}</small></div><div><h1>{{ v.get_kind_display }}</h1>رقم: <b>{{ v.number|default:"مسودة" }}</b>{% if v.legacy_number %} <small>(قديم {{ v.legacy_number }})</small>{% endif %}<br>التاريخ: {{ v.date|date:"Y-m-d" }}</div></div>
+{% if v.state == 'cancelled' %}<div class="cancel">لاغي</div>{% endif %}
+<table>
+<tr><th>{% if v.kind == 'receipt' %}استلمنا من{% else %}صُرف إلى{% endif %}</th><td>{{ v.partner|default:v.payee }}</td><th>المبلغ</th><td class="n">{{ v.amount|money }} {{ v.currency }}</td></tr>
+<tr><th>{% if v.kind == 'transfer' %}من{% else %}الخزينة{% endif %}</th><td>{{ v.cashbox }}</td>{% if v.to_cashbox %}<th>إلى</th><td>{{ v.to_cashbox }}</td>{% else %}<th>باعتماد</th><td>{{ v.approved_by_text }}</td>{% endif %}</tr>
+<tr><th>البيان</th><td colspan="3">{{ v.description }}</td></tr>
+</table>
+{% if lines %}<table><tr><th>الحساب</th><th>مركز التكلفة</th><th>المعدة</th><th>البيان</th><th>المبلغ</th></tr>{% for l in lines %}<tr><td>{{ l.account }}</td><td>{{ l.dim1.name|default:"" }}</td><td>{{ l.dim2.name|default:"" }}</td><td>{{ l.description }}</td><td class="n">{{ l.amount|money }}</td></tr>{% endfor %}</table>{% endif %}
+<div class="sig"><div>المستلم</div><div>أمين الخزينة</div><div>المدير المالي</div></div>
+</body></html>

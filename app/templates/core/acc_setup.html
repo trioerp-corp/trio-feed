@@ -1,0 +1,285 @@
+{% extends "base.html" %}{% load static %}{% block title %}{% if first %}تثبيت Trio{% else %}واجهة المطور{% endif %}{% endblock %}
+{% block content %}
+<style>
+.wz{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.wz-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wz-head img{width:48px;height:48px;border-radius:12px}
+.wz-head .grow{flex:1}
+.wz-steps{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0}
+.wz-steps a{padding:6px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--ink)}
+.wz-steps a b{color:var(--brand);margin-inline-end:4px}
+.sec{scroll-margin-top:60px}
+.sec h2{display:flex;align-items:center;gap:8px}
+.sec h2 i{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.g2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.choice{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.choice label{border:2px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;background:var(--card)}
+.choice label:has(input:checked){border-color:var(--brand);background:var(--brand-2)}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice b{font-size:16px}.choice span{font-size:12.5px;color:var(--muted)}
+.mods{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.mods label{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer}
+.mods label:has(input:checked){border-color:var(--brand);background:var(--brand-2)}
+.mods input{width:20px;height:20px;min-height:0;margin-top:3px;accent-color:var(--brand)}
+.mods small{display:block;color:var(--muted);font-size:12px}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;gap:8px;grid-template-columns:1.2fr 1fr 1fr 1fr auto;align-items:end;border:1px solid var(--line-2);border-radius:12px;padding:10px}
+.row.st{grid-template-columns:1.2fr 1fr .6fr .8fr .8fr auto}
+.row .x{min-height:42px;background:var(--card);color:var(--bad);border-color:var(--bad-2)}
+@media (max-width:720px){.row,.row.st{grid-template-columns:1fr 1fr}}
+.logo-prev{width:96px;height:96px;border-radius:16px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff}
+.logo-prev img,.logo-prev svg{max-width:100%;max-height:100%}
+.go{position:sticky;bottom:0;background:var(--bg);padding:12px 0;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--line)}
+.go button{min-width:200px;font-size:17px}
+.hide{display:none!important}
+.row.ur{grid-template-columns:repeat(4,1fr) auto}.row.ur .wide{grid-column:1/-1}
+.row.br{grid-template-columns:1.3fr 1fr .8fr .5fr auto}.row.br .wide{grid-column:1/-1}
+.row details summary{cursor:pointer;color:var(--brand);font-size:13px;font-weight:700}
+.capgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px 10px;margin-top:6px}.capgrid label{display:flex;gap:6px;align-items:center;font-size:13px}
+.capgrid input{min-height:0;width:17px;height:17px;accent-color:var(--brand)}
+.subhead{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--muted);margin-top:4px}
+@media (max-width:720px){.row.ur,.row.br{grid-template-columns:1fr 1fr}}
+</style>
+<form class="wz" method="post" enctype="multipart/form-data" id="wz">{% csrf_token %}
+<div class="wz-head">
+  <img src="{% static 'ui/icon.svg' %}" alt="">
+  <div class="grow">{% if self_lic %}<h1>أهلًا بك في Trio — جهّز برنامجك</h1>
+  <span class="muted">باقتك: <b>{{ self_plan }}</b>{% if self_extra %} + {{ self_extra|join:"، " }}{% endif %}. املأ هذه الخطوات وفي النهاية «متابعة» — و Trio سيتواصل معك لتحديد موعد التدريب.</span></div>
+  {% else %}<h1>{% if first %}تثبيت Trio عند عميل جديد{% else %}واجهة المطور — {{ s.name }}{% endif %}</h1>
+  <span class="muted">{% if first %}اختر النشاط والخطة والمستخدمين، ثم «متابعة» — سيُجهَّز البرنامج ويُفتح للمستخدمين.{% else %}يُحفظ أي تعديل هنا مباشرة. ولا تتغير كلمة سر المستخدمين الحاليين إلا إذا كتبت كلمة جديدة.{% endif %}</span></div>{% endif %}
+  {% if not self_lic %}<a class="btn light" href="/trio/logout/">خروج المطور</a>{% endif %}
+</div>
+<nav class="wz-steps" aria-label="الخطوات"><a href="#s1"><b>1</b>العميل</a><a href="#s2"><b>2</b>النشاط</a><a href="#s3"><b>3</b>الخطة</a><a href="#sB" class="branches-only"><b>4</b>الفروع</a><a href="#s4"><b>4</b>المستخدمين</a>
+<a href="#s5" class="gaming-only"><b>5</b>الأجهزة</a><a href="#s6"><b>6</b>التفعيل</a></nav>
+
+<section class="card sec" id="s1"><h2><i>1</i>بيانات العميل</h2>
+<div class="g2">
+  <label class="field">اسم المشروع (يظهر في البرنامج والإيصال) *<input name="name" value="{% if not first %}{{ s.name }}{% endif %}" required maxlength="200" placeholder="مثلًا: بلايستيشن زون"></label>
+  <label class="field">الاسم بالإنجليزي<input name="name_en" dir="ltr" value="{% if not first %}{{ s.name_en }}{% endif %}" maxlength="200"></label>
+  <label class="field">التليفون<input name="phone" dir="ltr" value="{{ s.phone }}" maxlength="60"></label>
+  <label class="field">العنوان<input name="address" value="{{ s.address }}" maxlength="200"></label>
+  <label class="field">واتساب صاحب المحل (لملخص اليوم)<input name="owner_whatsapp" dir="ltr" value="{{ s.owner_whatsapp }}" maxlength="20" placeholder="01xxxxxxxxx" inputmode="tel"></label>
+  <label class="field">بريد صاحب المحل (لملخص اليوم)<input name="email_to" dir="ltr" value="{{ s.email_to }}" maxlength="300" placeholder="name@gmail.com" inputmode="email"></label>
+</div>
+<p class="muted" style="font-size:13px;margin:6px 0 0">إن اخترت ملخص اليوم أو المتابعة من الهاتف في الخطة — تُرسل إلى هؤلاء، ويُربط تليجرام بعد التثبيت من «📱 الموبايل والتقارير».</p>
+<div style="display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap">
+  <div class="logo-prev" id="logoPrev">{% if s.logo_svg and not first %}{{ s.logo_svg|safe }}{% else %}<span class="muted" style="font-size:12px">اللوجو</span>{% endif %}</div>
+  <label class="field" style="flex:1;min-width:220px">لوجو العميل (صورة من الجهاز: PNG / JPG / SVG)<input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg,.webp,image/*" id="logo"></label>
+</div>
+<div class="g2" style="margin-top:14px">
+  <label class="field" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)"><input type="checkbox" name="vat" value="1" style="width:20px;min-height:0" {% if s.default_vat_rate and not first %}checked{% endif %}> مسجل قيمة مضافة</label>
+  <label class="field">نسبة القيمة المضافة %<input name="vat_rate" value="{% if s.default_vat_rate %}{{ s.default_vat_rate|floatformat:'0' }}{% else %}14{% endif %}" inputmode="decimal" dir="ltr"></label>
+</div>
+</section>
+
+<section class="card sec" id="s2"><h2><i>2</i>نوع النشاط</h2>
+<div style="margin-bottom:12px">{% include "core/_activity.html" %}</div>
+{% if not first %}<input type="hidden" name="business" value="{{ s.business }}">
+<p style="margin:0">النوع الأساسي: <b>{% for k, b in business %}{% if k == s.business %}{{ b.0 }}{% endif %}{% endfor %}</b> — <span class="muted">ثابت ولا يتغير بعد تجهيز المحل.</span></p>
+{% else %}<p class="muted" style="margin:0 0 8px;font-size:13px">النوع الأساسي (يُحدَّد تلقائيًا من النشاط المكتوب):</p>
+<div class="choice">{% for k, b in business %}
+<label><input type="radio" name="business" value="{{ k }}" {% if s.business == k and not first or first and k == 'market' or business|length == 1 %}checked{% endif %}><b>{{ b.0 }}</b>
+<span>{% if k == 'market' %}باركود، ميزان، وحدات وكراتين{% elif k == 'retail' %}أصناف ومقاسات بالباركود{% elif k == 'cafe' %}منيو بوصفات وسعر مقترح من تكلفة الخامات{% else %}حجز الأجهزة بالساعة والطلبات على نفس الفاتورة{% endif %}</span></label>{% endfor %}
+</div>{% endif %}</section>
+
+<section class="card sec" id="s3"><h2><i>3</i>خطة الأسعار والأجزاء المفتوحة</h2>
+<div class="choice">{% for k, p in plans %}
+<label><input type="radio" name="plan" value="{{ k }}" {% if s.plan == k and not first or first and k == 'standard' or self_lic %}checked{% endif %}><b>{{ p.0 }}</b>
+<span>{% if k == 'basic' %}بيع، أصناف، جرد وتالف، مشتريات (نقدًا/آجل/جزئي)، صلاحية، عملاء وموردون، مصروفات، خزينة، أرباح الشهر والشركاء{% elif k == 'standard' %}+ أكثر من مخزن، مرتجع للمورد، عروض، وحدات، ملصقات، تقييم المخزون{% else %}كل شيء: + تقرير الأرباح السنوي، تصنيع، وصفات، فروع، ملخص اليوم بالقنوات الثلاث، جوجل درايف{% endif %}</span></label>{% endfor %}
+</div>
+{% if self_lic %}<p class="muted" style="margin:12px 0 0">كل إمكانيات البرنامج مفتوحة لديك.</p>{% endif %}
+<div {% if self_lic %}hidden{% endif %}><p class="muted" style="margin:12px 0 8px">اختيار الخطة والنشاط بيعلّم الأجزاء تلقائي — وتقدر تزوّد أو تشيل أي جزء (ميزة إضافية بسعرها):</p>
+<div class="mods">{% for k, m in modules %}
+<label><input type="checkbox" name="modules" value="{{ k }}" {% if k in enabled %}checked{% endif %} {% if k in always %}onclick="return false"{% endif %}><span><b>{{ m.0 }}</b><small>{{ m.1 }}</small></span></label>{% endfor %}
+</div></div>
+</section>
+
+<section class="card sec branches-only" id="sB"><h2><i>4</i>الفروع</h2>
+<p class="muted" style="margin-top:0">الفرع الرئيسي موجود تلقائيًا (باسم المشروع). أضف الفروع الأخرى: يُنشأ لكل فرع مخزن وخزينة وأجهزة كاشير، ويرى مديره فرعه فقط — ويرى صاحب النشاط الجميع.
+تعمل الفروع على البرنامج المثبت على جهاز الفرع الرئيسي من خلال رابط آمن (يستمر الكاشير في البيع إن انقطع الإنترنت ويزامن عند عودته).</p>
+{% if branches_existing %}<div class="attn" style="margin-bottom:8px"><span>الفروع الموجودة</span><b>{% for b in branches_existing %}{{ b.name }}{% if not forloop.last %} · {% endif %}{% endfor %}</b></div>{% endif %}
+<div class="g2" style="max-width:520px"><label class="field">{% if first %}عدد الفروع غير الرئيسي{% else %}فروع جديدة تتضاف{% endif %}<input type="number" id="bcount" min="0" max="30" value="{% if first %}1{% else %}0{% endif %}" dir="ltr"></label></div>
+<div class="rows" id="brs" style="margin-top:10px"></div>
+<input type="hidden" name="branch_rows" id="branch_rows" value="0">
+</section>
+
+<section class="card sec" id="s4"><h2><i>4</i>المستخدمين</h2>
+<p class="muted" style="margin-top:0">لكل مستخدم اسمه وكلمة سره. «صاحب المحل / المدير» هو من يعتمد الإلغاء والتعديل ويطّلع على الأموال. والكاشير يبيع ويفتح الأجهزة فقط.</p>
+<div class="g2" style="max-width:520px"><label class="field">عدد المستخدمين<input type="number" id="ucount" min="1" max="50" value="2" dir="ltr"></label></div>
+<div class="rows" id="users" style="margin-top:10px"></div>
+<input type="hidden" name="user_rows" id="user_rows" value="0">
+<label class="field" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink);margin-top:10px"><input type="checkbox" name="force_change" value="1" style="width:20px;min-height:0"> يغيّر كل مستخدم كلمة السر بنفسه عند أول دخول</label>
+</section>
+
+<section class="card sec gaming-only" id="s5"><h2><i>5</i>الأجهزة والترابيزات (بالساعة)</h2>
+<p class="muted" style="margin-top:0">اكتب كل نوع وعدده وسعر الساعة. «مالتي» = سعر الساعة عند لعب أكثر من شخصين (اختياري).</p>
+<div class="rows" id="stations"></div>
+<input type="hidden" name="station_rows" id="station_rows" value="0">
+<p><button type="button" class="light" id="addSt">+ نوع أجهزة آخر</button></p>
+<div class="g2">
+  {% include "gaming/_rules_fields.html" %}
+</div>
+{% if stations and s.business == "gaming" %}<h3 style="margin:16px 0 8px">الأجهزة الموجودة</h3>
+<p class="muted" style="margin:0 0 8px">لتعديل الأسعار أو إيقاف جهاز: من <a href="#stEdit">الجدول في الأسفل</a> (يُحفظ تلقائيًا).</p>{% endif %}
+</section>
+
+<section class="card sec" id="s6"><h2><i>6</i>التفعيل (الرخصة)</h2>
+<p style="margin-top:0">كود هذا الجهاز: <code dir="ltr" style="font-size:20px;font-weight:700;user-select:all">{{ machine }}</code></p>
+{% if lic %}<div class="msg {% if lic.state != 'active' %}error{% endif %}">{{ lic.message }}</div>{% endif %}
+{% if self_lic %}<div class="msg">تم التفعيل بكود الشراء الخاص بك ✔ — لا تحتاج إلى فعل شيء هنا.</div>{% else %}
+<label class="field">كود التفعيل (اختياري الآن — بدونه يعمل البرنامج 14 يومًا تجريبيًا)<textarea name="license_code" rows="3" dir="ltr" style="font-family:monospace" placeholder="TRIO1...."></textarea></label>{% endif %}
+</section>
+
+<div class="go">
+  {% if not first %}<button class="light" name="finish" value="0">حفظ</button>{% endif %}
+  <button name="finish" value="1">{% if first %}متابعة ← تجهيز البرنامج{% else %}حفظ وخروج للمستخدمين{% endif %}</button>
+</div>
+</form>
+
+{% if not self_lic %}<form method="post" action="/trio/mail/" class="wz card" id="mailbox" style="margin-top:16px">{% csrf_token %}
+<h2>بريد إرسال رموز المطور</h2>
+<p class="muted" style="margin:0">{% if mail %}متجهز ✔ — تُرسل الرموز من <b dir="ltr">{{ mail.user }}</b> لإيميلك.{% else %}<b class="bad">غير مُجهّز</b> — بدونه لن يُرسل رمز الدخول إلى البريد.{% endif %}
+ بريد البرنامج trioerp.corp@gmail.com + «كلمة سر التطبيقات» الخاصة به (حساب جوجل ← الأمان ← التحقق بخطوتين ← كلمات مرور التطبيقات). ويستقبل البريد نفسه أوامر الإيقاف عن بُعد.</p>
+<div class="g2"><label class="field">بريد الإرسال<input name="mail_user" dir="ltr" type="email" placeholder="trioerp.corp@gmail.com" value="{{ mail.user|default:'trioerp.corp@gmail.com' }}"></label>
+<label class="field">كلمة سر التطبيقات (16 حرفًا)<input name="mail_password" dir="ltr" autocomplete="off" placeholder="xxxx xxxx xxxx xxxx"></label></div>
+<p><button>حفظ وإرسال رسالة تجربة</button></p></form>
+
+{% if not first %}<div class="wz card" id="control" style="margin-top:16px">
+<h2>إيقاف البرنامج لدى العميل</h2>
+<p class="muted" style="margin:0">إن حدث خلاف على الأتعاب أو مشكلة: يتوقف البرنامج كله (الكاشير والصالة والتقارير)، وتبقى البيانات كلها محفوظة. وتُعيده بزر واحد.</p>
+{% if s.suspended %}<div class="msg error">موقوف الآن {% if s.suspend_source == 'remote' %}(من ملف التحكم عن بُعد){% endif %} من {{ s.suspended_at|date:"d/m/Y H:i" }} — «{{ s.suspend_note }}»</div>
+<form method="post" action="/trio/control/">{% csrf_token %}<button name="action" value="resume">▶ تشغيل البرنامج مرة أخرى</button></form>
+{% else %}<form method="post" action="/trio/control/" style="display:flex;flex-direction:column;gap:8px">{% csrf_token %}
+<label class="field">الرسالة التي ستظهر للعميل<input name="note" maxlength="200" placeholder="البرنامج موقوف مؤقتًا — برجاء التواصل مع Trio"></label>
+<p><button class="btn danger" name="action" value="stop" onclick="return confirm('إيقاف البرنامج لدى العميل الآن؟')">⏸ إيقاف البرنامج</button></p></form>{% endif %}
+<div class="msg" style="margin-top:10px">الإيقاف عن بعد: Trio-License.exe صفحة «إيقاف / تشغيل عميل» ترسل أمرًا موقّعًا إلى بريد البرنامج، ويراجع هذا الجهاز البريد كل ساعة.
+{% if mail %}آخر مراجعة: {{ s.control_checked|date:"d/m H:i"|default:"بعد" }}{% else %}<b>يحتاج إلى تجهيز «بريد إرسال الرموز».</b>{% endif %}</div>
+<form method="post" action="/trio/control/">{% csrf_token %}<input type="hidden" name="control_url" value="{{ s.control_url }}"><button class="light" name="action" value="url">مراجعة الأوامر الآن</button></form>
+</div>{% endif %}
+
+{% if stations and s.business == "gaming" %}<form method="post" action="/trio/stations/" class="wz" id="stEdit" style="margin-top:16px">{% csrf_token %}
+<div class="table-wrap"><table><thead><tr><th>الجهاز</th><th>النوع</th><th>سعر الساعة</th><th>مالتي</th><th>شغال</th></tr></thead><tbody>
+{% for st in stations %}<tr><td><input name="st{{ st.pk }}_name" value="{{ st.name }}" maxlength="40"></td><td>{{ st.get_kind_display }}</td>
+<td><input name="st{{ st.pk }}_rate" value="{{ st.rate|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
+<td><input name="st{{ st.pk }}_rate_multi" value="{{ st.rate_multi|default_if_none:''|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
+<td><select name="st{{ st.pk }}_active"><option value="1" {% if st.active %}selected{% endif %}>شغال</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td></tr>{% endfor %}
+</tbody></table></div><p><button>حفظ الأجهزة</button></p></form>{% endif %}{% endif %}
+
+{{ js|json_script:"wzdata" }}
+<script>
+(function(){
+const D=JSON.parse(document.getElementById('wzdata').textContent);
+const FIRST={{ first|yesno:"true,false" }};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const ROLES={% autoescape off %}{ {% for k, r in roles %}"{{ k }}":"{{ r.1 }}"{% if not forloop.last %},{% endif %}{% endfor %} }{% endautoescape %};
+const KINDS={% autoescape off %}[{% for k, n in kinds %}["{{ k }}","{{ n }}"]{% if not forloop.last %},{% endif %}{% endfor %}]{% endautoescape %};
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+// presets: plan + business tick the modules
+function preset(){
+  const plan=($('input[name=plan]:checked')||{}).value, bus=($('input[name=business]:checked')||$('input[name=business][type=hidden]')||{}).value;
+  const want=new Set(D.self||[...(D.plans[plan]||[]),...(D.business[bus]||[]),...D.always]);
+  $$('input[name=modules]').forEach(c=>c.checked=want.has(c.value)&&fits(c.value,bus));
+  fitBusiness();
+}
+// a part that does not fit the business (gaming hall / manufacturing for a clothes shop) is hidden and unticked
+function fits(k,bus){return !D.only[k]||D.only[k].includes(bus)}
+function fitBusiness(){
+  const bus=($('input[name=business]:checked')||$('input[name=business][type=hidden]')||{}).value;
+  $$('input[name=modules]').forEach(c=>{const ok=fits(c.value,bus);c.closest('label').classList.toggle('hide',!ok);if(!ok)c.checked=false});
+  toggle();
+}
+function toggle(){
+  const g=$$('input[name=modules]').some(c=>c.value==='gaming'&&c.checked);
+  $$('.gaming-only').forEach(e=>e.classList.toggle('hide',!g));
+  const bo=brOn();$$('.branches-only').forEach(e=>e.classList.toggle('hide',!bo));
+  if(bo&&FIRST&&!brs.children.length)setBranches(1);bnum();stepNums();
+  if(g&&!$('#stations').children.length) addStation();
+}
+$$('input[name=plan],input[name=business]').forEach(r=>r.addEventListener('change',preset));
+$$('input[name=modules]').forEach(c=>c.addEventListener('change',toggle));
+// numbers of the visible steps (branches / gaming steps come and go)
+function stepNums(){let n=0;$$('section.sec').forEach(sec=>{if(sec.classList.contains('hide'))return;n++;const i=sec.querySelector('h2 i');if(i)i.textContent=n;
+  const a=document.querySelector(`.wz-steps a[href="#${sec.id}"] b`);if(a)a.textContent=n})}
+// branches (plan «شامل» / module «branches»)
+const brs=$('#brs');
+function brOn(){return $$('input[name=modules]').some(c=>c.value==='branches'&&c.checked)}
+function brRow(i){
+  const d=document.createElement('div');d.className='row br';d.dataset.key='new'+i;
+  d.innerHTML=`<label class="field">اسم الفرع<input data-k="name" maxlength="100" placeholder="فرع المعادي"></label>
+  <label class="field">العنوان<input data-k="address" maxlength="200"></label><label class="field">التليفون<input data-k="phone" dir="ltr" maxlength="40"></label>
+  <label class="field">أجهزة كاشير<input data-k="devices" value="1" inputmode="numeric" dir="ltr"></label><button type="button" class="x" title="إزالة">✕</button>
+  <div class="subhead">مدير الفرع (يرى فرعه فقط، ويصله تقريره اليومي والشهري)</div>
+  <label class="field">الاسم<input data-k="m_name" maxlength="150"></label><label class="field">اسم الدخول<input data-k="m_username" dir="ltr" maxlength="30" autocomplete="off"></label>
+  <label class="field">كلمة السر<input data-k="m_password" dir="ltr" autocomplete="new-password" maxlength="60"></label><label class="field">بريد التقارير<input data-k="m_email" type="email" dir="ltr"></label>`;
+  d.querySelector('.x').onclick=()=>{d.remove();bnum();};
+  d.querySelector('[data-k=name]').addEventListener('input',brOptions);
+  return d;
+}
+let bseq=0;
+function bnum(){[...brs.children].forEach((row,i)=>{row.querySelectorAll('[data-k]').forEach(el=>el.name=`b${i}_${el.dataset.k}`);
+  let k=row.querySelector('input[type=hidden]');if(!k){k=document.createElement('input');k.type='hidden';row.appendChild(k)}k.name=`b${i}_key`;k.value=row.dataset.key.slice(3)});
+  $('#branch_rows').value=brOn()?brs.children.length:0;$('#bcount').value=brs.children.length;brOptions()}
+function setBranches(n){n=Math.max(0,Math.min(30,n|0));while(brs.children.length<n)brs.appendChild(brRow(bseq++));while(brs.children.length>n)brs.lastElementChild.remove();bnum()}
+$('#bcount').addEventListener('change',e=>setBranches(+e.target.value));
+function branchChoices(){
+  const out=[['','كل الفروع (الإدارة)']];
+  if(brOn()){out.push(['MAIN','الفرع الرئيسي']);(D.branches||[]).forEach(b=>{if(b.code!=='MAIN')out.push([b.code,b.name])});
+  [...brs.children].forEach(r=>{const n=r.querySelector('[data-k=name]').value.trim();if(n)out.push([r.dataset.key,n])})}
+  return out}
+function brOptions(){const ch=branchChoices();$$('select.ubr').forEach(sel=>{const v=sel.value||sel.dataset.v||'';sel.innerHTML=ch.map(([k,n])=>`<option value="${k}" ${k===v?'selected':''}>${esc(n)}</option>`).join('');
+  sel.closest('label').classList.toggle('hide',!brOn())})}
+// users
+const users=$('#users');
+function capsHtml(i,caps){return D.caps.map(([k,n])=>`<label><input type="checkbox" name="u${i}_caps" value="${k}" ${caps.includes(k)?'checked':''}> ${n}</label>`).join('')}
+function userRow(u,i,existing){
+  const d=document.createElement('div');d.className='row ur';
+  const caps=(u.caps&&u.caps.length)?u.caps:((D.templates[u.role]||['',[]])[1]);
+  d.innerHTML=`<label class="field">الاسم<input name="u${i}_name" value="${esc(u.name)}" maxlength="150" placeholder="مثلًا: محمد"></label>
+  <label class="field">اسم الدخول${existing?' (موجود)':''}<input name="u${i}_username" value="${esc(u.username)}" dir="ltr" ${existing?'readonly':''} maxlength="30" autocomplete="off"></label>
+  <label class="field">كلمة السر${existing?' (متاح = كما هي)':''}<input name="u${i}_password" dir="ltr" autocomplete="new-password" maxlength="60" ${existing?'':'required'}></label>
+  <label class="field">الوظيفة<select name="u${i}_role" class="urole">${Object.entries(D.templates).map(([k,v])=>`<option value="${k}" ${u.role===k?'selected':''}>${v[0]}</option>`).join('')}</select></label>
+  ${existing?`<label class="field">الحالة<select name="u${i}_active"><option value="1" ${u.active?'selected':''}>شغال</option><option value="0" ${u.active?'':'selected'}>موقوف</option></select></label>`:'<button type="button" class="x" title="إزالة">✕</button>'}
+  <label class="field">الفرع<select name="u${i}_branch" class="ubr" data-v="${esc(u.branch||'')}"></select></label>
+  <label class="field">المسمى الوظيفي<input name="u${i}_title" value="${esc(u.title||'')}" maxlength="60" placeholder="مثلًا: مشرف صالة"></label>
+  <label class="field">البريد (للتقارير)<input name="u${i}_email" value="${esc(u.email||'')}" type="email" dir="ltr"></label>
+  <details class="wide" ${u.role==='custom'?'open':''}><summary>الصلاحيات (حُددت حسب الوظيفة — عدّلها إن أردت)</summary><div class="capgrid">${capsHtml(i,caps)}</div></details>`;
+  const x=d.querySelector('.x'); if(x) x.onclick=()=>{d.remove();renum();};
+  d.querySelector('.urole').addEventListener('change',e=>{const c=(D.templates[e.target.value]||['',[]])[1];d.querySelectorAll('.capgrid input').forEach(cb=>cb.checked=c.includes(cb.value));
+    if(e.target.value==='custom')d.querySelector('details').open=true;const t=d.querySelector(`[name$=_title]`);if(!t.value&&e.target.value!=='custom')t.placeholder=D.templates[e.target.value][0]});
+  return d;
+}
+function renum(){
+  [...users.children].forEach((row,i)=>row.querySelectorAll('[name]').forEach(el=>el.name=el.name.replace(/^u\d+_/,`u${i}_`)));
+  $('#user_rows').value=users.children.length; $('#ucount').value=users.children.length; brOptions();
+}
+function setUsers(n){
+  n=Math.max(1,Math.min(50,n|0));
+  while(users.children.length<n){const k=users.children.length;users.appendChild(userRow(k===0&&!D.existing.length?{name:'صاحب المحل',username:'',role:'owner'}:{name:'',username:'',role:'cashier'},k,false));}
+  while(users.children.length>n && users.lastElementChild.querySelector('.x')) users.lastElementChild.remove();
+  renum();
+}
+D.existing.forEach((u,i)=>users.appendChild(userRow(u,i,true)));
+$('#ucount').addEventListener('change',e=>setUsers(+e.target.value));
+setUsers(D.existing.length? D.existing.length : 2);
+// stations
+const sts=$('#stations');
+function addStation(v){
+  v=v||{kind:sts.children.length?'billiard':'ps5',prefix:sts.children.length?'ترابيزة':'جهاز',count:FIRST?4:0,rate:'',rate_multi:''};
+  const d=document.createElement('div');d.className='row st';
+  d.innerHTML=`<label class="field">النوع<select data-k="kind">${KINDS.map(([k,n])=>`<option value="${k}" ${v.kind===k?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="field">يبدأ الاسم بـ<input data-k="prefix" value="${esc(v.prefix)}" maxlength="30"></label>
+  <label class="field">${FIRST?'العدد':'زوّد عدد'}<input data-k="count" value="${v.count}" inputmode="numeric" dir="ltr"></label>
+  <label class="field">سعر الساعة<input data-k="rate" value="${esc(v.rate)}" inputmode="decimal" dir="ltr" placeholder="مثلًا 40"></label>
+  <label class="field">مالتي<input data-k="rate_multi" value="${esc(v.rate_multi)}" inputmode="decimal" dir="ltr" placeholder="اختياري"></label>
+  <button type="button" class="x" title="إزالة">✕</button>`;
+  d.querySelector('.x').onclick=()=>{d.remove();snum();};
+  sts.appendChild(d);snum();
+}
+function snum(){[...sts.children].forEach((row,i)=>row.querySelectorAll('[data-k]').forEach(el=>el.name=`s${i}_${el.dataset.k}`));$('#station_rows').value=sts.children.length;}
+$('#addSt').onclick=()=>addStation();
+// logo preview
+$('#logo').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#logoPrev').innerHTML=`<img alt="" src="${r.result}">`;};r.readAsDataURL(f);});
+if(FIRST) preset(); else fitBusiness();
+})();
+</script>
+{% endblock %}

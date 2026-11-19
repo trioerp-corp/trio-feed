@@ -1,0 +1,67 @@
+{% extends "base.html" %}{% block title %}الموبايل والتقارير{% endblock %}
+{% block content %}
+<style>.qr svg{width:200px;height:200px;max-width:100%;display:block}.qr{background:#fff;border-radius:14px;padding:6px;border:1px solid var(--line);width:fit-content}
+.lnk{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.lnk code{user-select:all;direction:ltr;background:var(--bg);padding:6px 10px;border-radius:8px;font-size:13px;word-break:break-all}
+.how{margin:10px 0 0;padding-inline-start:20px;color:var(--muted);font-size:14px}.how li{margin:3px 0}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2E9E5B;margin-inline-end:6px}
+.dot.off{background:#C9A227}.two{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}.two>div{flex:1 1 260px}</style>
+<div class="page-head"><div><h1>📱 الموبايل والتقارير</h1><p class="muted" style="margin:0">تابع محلك من هاتفك، واختر أين يصلك ملخص اليوم.</p></div></div>
+<div class="split"><div class="main">
+
+<section class="card" style="margin-bottom:18px"><h2>📱 {{ names.mobile }}</h2>
+{% if link %}
+<div class="two"><div>
+<p style="margin:0 0 8px">هذا الرابط خاص بك وحدك: يفتح على هاتفك صفحة فيها <b>مبيعات اليوم والخزينة والنواقص وآخر الفواتير</b> وتُحدَّث تلقائيًا كل 10 دقائق طالما البرنامج يعمل.</p>
+<p class="muted" style="margin:0 0 10px;font-size:13px">{% if last %}<span class="dot"></span>آخر تحديث أُرسل: {{ last|date:"d/m H:i" }}{% else %}<span class="dot off"></span>لم يُرسل بعد — اضغط «حدّث الآن»{% endif %}</p>
+<div class="lnk"><code id="mlink">{{ link }}</code><button type="button" class="light" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('mlink').textContent);this.textContent='تم النسخ ✔'">نسخ</button></div>
+<div class="actions" style="margin-top:10px">{% if s.owner_whatsapp %}<a class="btn" href="{{ send_self }}" target="_blank" rel="noopener">أرسله إلى هاتفي على واتساب</a>{% endif %}
+<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="action" value="push"><button class="light">حدّث الآن</button></form></div>
+<ol class="how"><li>افتح الرابط على هاتفك (امسح الكود بالكاميرا، أو أرسله لنفسك عبر واتساب).</li>
+<li><b>أندرويد:</b> من كروم اضغط ⋮ ← «إضافة إلى الشاشة الرئيسية» (أو «تثبيت التطبيق»).</li>
+<li><b>آيفون:</b> من Safari اضغط زر المشاركة ⬆️ ← «إضافة إلى الشاشة الرئيسية».</li>
+<li>ستجد أيقونة <b>Trio</b> على هاتفك — اضغطها في أي وقت لمتابعة محلك.</li></ol>
+</div><div><div class="qr">{{ qr|safe }}</div><p class="muted" style="font-size:12px;margin:6px 0 0">امسحه بكاميرا الهاتف</p></div></div>
+{% if owner %}<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)"><h3 style="margin:0 0 6px">🔐 هاتف صاحب المحل: سحب وموافقات ومشتريات</h3>
+<p class="muted" style="margin:0 0 8px;font-size:14px">اربط هاتفك مرة واحدة، وبعدها من الأيقونة نفسها Trio تقدر: <b>تسحب مبالغ على حسابك</b> (من الدرج أو أرصدة البطاقات)، <b>توافق على طلبات الكاشير أو ترفضها</b>، و<b>تضيف فاتورة مشتريات</b> أثناء الشراء. يُنفَّذ كل أمر هنا على البرنامج خلال دقيقة إن كان الجهاز يعمل (أو فور تشغيله)، ويُوقَّع بمفتاح هاتفك فقط.</p>
+{% if pair %}<div class="two"><div><p style="margin:0 0 6px">امسح الكود بهاتفك — أو افتح أيقونة Trio واضغط «اربط الهاتف» واكتب:</p>
+<p style="margin:0 0 6px"><b dir="ltr" style="font-size:22px;letter-spacing:2px;user-select:all">{{ pair.code }}</b></p>
+<p class="muted" style="font-size:13px;margin:0">الكود صالح 15 دقيقة ولمرة واحدة. سيطلب منك الهاتف اختيار <b>رقم سري (PIN)</b> يُطلب قبل أي سحب أو فاتورة. بعد الربط حدّث هذه الصفحة.</p></div>
+<div><div class="qr">{{ pair_qr|safe }}</div></div></div>
+{% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="pair"><button>🔗 اربط موبايلي</button></form>{% endif %}
+{% for p in phones %}<form method="post" class="lnk" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="action" value="unpair"><input type="hidden" name="pk" value="{{ p.pk }}">
+<span>📱 {{ p.name }} — {{ p.user.get_username }}{% if p.last_seen %} · آخر ظهور {{ p.last_seen|date:"d/m H:i" }}{% endif %}</span><button class="light" onclick="return confirm('فصل هذا الهاتف؟')">افصله</button></form>{% endfor %}
+</div>{% endif %}
+<details style="margin-top:12px"><summary class="muted">وصل الرابط إلى شخص آخر؟</summary><form method="post" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="action" value="rotate">
+<p class="muted" style="font-size:13px;margin:0 0 6px">أنشئ رابطًا جديدًا — يتوقف القديم فورًا (وسيحتاج تليجرام إلى ربط جديد).</p><button class="light">أنشئ رابطًا جديدًا</button></form></details>
+{% elif 'mobile' in mods %}
+<p class="muted" style="margin:0">لم يتصل الجهاز بخادم Trio — تأكد من اتصاله بالإنترنت واضغط «اتصل الآن» من صفحة التفعيل، ثم ارجع هنا.</p>
+{% else %}
+<p style="margin:0 0 10px">تابع مبيعات اليوم والخزينة والنواقص وآخر الفواتير من هاتفك من أي مكان — بأيقونة Trio على الشاشة الرئيسية.</p>
+<a class="btn" href="{% url 'upgrade' %}">⭐ ضيفها لنسختك</a>
+{% endif %}
+</section>
+
+<section class="card"><h2>📨 ملخص اليوم</h2>
+{% if any_report %}
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="contacts">
+{% if 'report_whatsapp' in mods %}<label class="field">رقم واتساب صاحب المحل<input name="whatsapp" value="{{ s.owner_whatsapp }}" placeholder="01xxxxxxxxx" dir="ltr" inputmode="tel"></label>
+<p class="muted" style="font-size:13px;margin:-4px 0 10px">واتساب: زر «📲 الملخص على واتساب» في تقفيل اليوم يفتح الرسالة جاهزة لرقمك.</p>{% else %}<input type="hidden" name="whatsapp" value="{{ s.owner_whatsapp }}">{% endif %}
+{% if 'report_email' in mods %}<label class="field">البريد الذي يصله الملخص كل يوم<input name="email" value="{{ s.email_to }}" placeholder="name@gmail.com" dir="ltr" inputmode="email"></label>
+<p class="muted" style="font-size:13px;margin:-4px 0 10px">{% if own_mail %}يُرسل من بريد المحل المسجّل.{% else %}يُرسل تلقائيًا من Trio — لا يحتاج إلى كلمة سر.{% endif %} أكثر من بريد: افصل بفاصلة.</p>{% else %}<input type="hidden" name="email" value="{{ s.email_to }}">{% endif %}
+{% if 'report_telegram' in mods or 'report_email' in mods %}<label class="field">ساعة الإرسال إن لم يُقفل اليوم (0–23)<input name="report_hour" value="{{ s.report_hour }}" inputmode="numeric" style="max-width:120px"></label>{% endif %}
+<div class="actions"><button>حفظ</button></div></form>
+{% if 'report_telegram' in mods %}<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><h3 style="margin:0 0 6px">تليجرام</h3>
+{% if own_bot %}<p class="muted" style="margin:0">يُرسل إلى بوت المحل المسجّل.</p>
+{% elif tg %}<div class="two"><div><p style="margin:0 0 8px">اضغط الزر من هاتفك (أو امسح الكود) ← سيفتح تليجرام ← اضغط <b>Start</b>. تم — سيصلك الملخص هناك كل يوم.</p>
+<p class="muted" style="margin:0 0 8px;font-size:13px">{% if tg_chats %}<span class="dot"></span>مربوط على {{ tg_chats }} حساب تليجرام{% elif tg_chats == 0 %}<span class="dot off"></span>لم يربط أحد بعد — بعد أن تضغط Start ارجع حدّث الصفحة{% else %}تعذّر معرفة الحالة الآن (الإنترنت؟){% endif %}</p>
+<a class="btn" href="{{ tg }}" target="_blank" rel="noopener">افتح تليجرام واربط</a> <span class="muted" style="font-size:12px">يمكن لشريكك الربط بالطريقة نفسها.</span></div>
+<div><div class="qr">{{ tg_qr|safe }}</div></div></div>
+{% else %}<p class="muted" style="margin:0">سيظهر ربط تليجرام هنا فور اتصال الجهاز بخادم Trio.</p>{% endif %}</div>{% endif %}
+<form method="post" class="actions" style="margin-top:12px">{% csrf_token %}<input type="hidden" name="action" value="test"><button class="light">أرسل ملخص تجربة الآن</button></form>
+<p class="muted" style="font-size:13px;margin:8px 0 0">يُرسل الملخص تلقائيًا بعد التقفيل النهائي لليوم، أو الساعة {{ s.report_hour }} إن لم يُقفل اليوم. آخر ملخص: {{ s.last_report|date:"d/m"|default:"بعد" }}</p>
+{% else %}
+<p style="margin:0 0 10px">يصلك ملخص كل يوم (المبيعات، النقدي والبطاقات، الربح، رصيد الدرج) على واتساب أو تليجرام أو البريد.</p>
+<a class="btn" href="{% url 'upgrade' %}">⭐ ضيفه لنسختك</a>
+{% endif %}
+</section>
+</div></div>
+{% endblock %}
