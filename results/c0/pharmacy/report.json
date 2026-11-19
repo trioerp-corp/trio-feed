@@ -1,0 +1,178 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "صيدلية",
+   "business": "retail",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (3.8s)",
+    "✔ كل الصفحات (3.1s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "✔ النماذج (12.3s)",
+    "✔ الكاشير والبيع (49.6s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.6161653995513916
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.9963719844818115
+    ],
+    [
+     "/ui/shop/pharmacy/",
+     0.9419975280761719
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10309672355651855
+    ],
+    [
+     "/ui/shop/close/",
+     0.09321236610412598
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "صيدلية",
+   "business": "retail",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "✔ النماذج (9.3s)",
+    "✔ الكاشير والبيع (48.6s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4732470512390137
+    ],
+    [
+     "/ui/shop/pharmacy/",
+     0.9356153011322021
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7901291847229004
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43821191787719727
+    ],
+    [
+     "/ui/shop/profit/",
+     0.13353204727172852
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "unlabeled-button",
+   "where": "/ (أول تشغيل)",
+   "msg": "4 زر بدون نص أو وصف: <button name=\"action\" value=\"self_claim\">فعّل نسختي وابدأ التثبيت</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/items/",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "الأصناف",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "الأصناف ← إضافة صنف",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/ ← نموذج 3 (فارغ)",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/ ← نموذج 3 (بقيم)",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/connect/",
+   "msg": "1 زر بدون نص أو وصف: <button class=\"light\">أنشئ رابطًا جديدًا</button>",
+   "sev": "low",
+   "runs": [
+    2
+   ],
+   "shot": ""
+  }
+ ]
+}
