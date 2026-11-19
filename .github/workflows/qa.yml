@@ -44,11 +44,12 @@ jobs:
         if: always()
         shell: bash
         run: |
+          set +e +o pipefail
           D="results/c${{ github.event.inputs.cycle }}/${{ matrix.biz }}"
           git config --global user.name "Trio QA"; git config --global user.email "trioerp.corp@gmail.com"
           git clone -q --depth 1 --branch qa-results "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" res || { mkdir res; cd res; git init -q -b qa-results; git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; cd ..; }
           mkdir -p "res/$D/shots"
           cp out/report.json out/report.html "res/$D/" 2>/dev/null || echo '{"runs":[],"issues":[],"error":"no report"}' > "res/$D/report.json"
-          ls out/shots/*.jpg 2>/dev/null | head -25 | xargs -r -I{} cp {} "res/$D/shots/"
+          for f in $(ls out/shots/ 2>/dev/null | head -25); do cp "out/shots/$f" "res/$D/shots/"; done
           cd res && git add -A && git commit -q -m "QA c${{ github.event.inputs.cycle }} ${{ matrix.biz }} (run ${{ github.run_id }})"
           for i in 1 2 3 4 5 6 7 8; do git push -q origin HEAD:qa-results && break; git pull -q --rebase origin qa-results || true; sleep $((RANDOM % 9 + 2)); done
