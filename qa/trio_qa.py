@@ -162,7 +162,7 @@ class Run:
         broken = page.evaluate("()=>[...document.images].filter(i=>i.complete&&i.naturalWidth===0&&i.src).map(i=>i.src).slice(0,3)")
         if broken:
             self.I.add("broken-image", where, ", ".join(broken), self.n, page, "low")
-        empty = page.evaluate("()=>[...document.querySelectorAll('button,a.btn')].filter(b=>b.offsetParent&&!b.innerText.trim()&&!b.getAttribute('aria-label')&&!b.title).map(b=>b.outerHTML.slice(0,140))")
+        empty = page.evaluate("()=>[...document.querySelectorAll('button,a.btn')].filter(b=>b.offsetParent&&!b.textContent.trim()&&!b.getAttribute('aria-label')&&!b.title).map(b=>b.outerHTML.slice(0,140))")
         if empty:
             self.I.add("unlabeled-button", where, f"{len(empty)} زر بدون نص أو وصف: {empty[0]}", self.n, None, "low")
 
@@ -231,6 +231,7 @@ class Run:
         if not links:
             links = ["/ui/"]
         self.links = links
+        self.steps.append(f"pages in the menu: {len(links)}")
         for url in links:
             try:
                 self.goto(p, url)
