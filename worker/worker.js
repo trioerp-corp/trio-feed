@@ -571,11 +571,12 @@ async function menuPut(req, env) {
   await env.ACC.put("mn:" + id, JSON.stringify({ d: b.d, at: iso() }));
   return json({ ok: true, id });
 }
-function menuPage(rec) {
+function menuPage(rec, t, id) {
   const d = rec.d, fmt = (n) => Number(n || 0).toLocaleString("ar-EG", { maximumFractionDigits: 2 });
+  const table = t && d.tb && d.tb[t] ? d.tb[t] : "", canOrder = !!(table && d.order);
   const tabs = d.cats.map((c, i) => `<a href="#c${i}">${esc(c.n)}</a>`).join("");
-  const secs = d.cats.map((c, i) => `<section id="c${i}"><h2>${esc(c.n)}</h2>${c.items.map((x) =>
-    `<div class="it"><div><b>${esc(x.n)}</b>${x.d ? `<small>${esc(x.d)}</small>` : ""}${Array.isArray(x.s) && x.s.length ? `<div class="sz">${x.s.map((z) => `<em>${esc(z[0])} <b>${fmt(z[1])}</b></em>`).join("")}</div>` : ""}</div>${Array.isArray(x.s) && x.s.length ? "" : `<span>${fmt(x.p)} <i>ج</i></span>`}</div>`).join("")}</section>`).join("")
+  const secs = d.cats.map((c, i) => `<section id="c${i}"><h2>${esc(c.n)}</h2>${c.items.map((x, j) =>
+    `<div class="it"${canOrder && x.c ? ` data-o="${i}:${j}"` : ""}><div><b>${esc(x.n)}</b>${x.d ? `<small>${esc(x.d)}</small>` : ""}${Array.isArray(x.s) && x.s.length ? `<div class="sz">${x.s.map((z) => `<em>${esc(z[0])} <b>${fmt(z[1])}</b></em>`).join("")}</div>` : ""}</div>${Array.isArray(x.s) && x.s.length ? (canOrder && x.c ? '<button class="plus" type="button">＋</button>' : "") : `<span>${fmt(x.p)} <i>ج</i>${canOrder && x.c ? '<button class="plus" type="button">＋</button>' : ""}</span>`}</div>`).join("")}</section>`).join("")
     + (Array.isArray(d.add) && d.add.length ? `<section id="add"><h2>الإضافات</h2><div class="adds">${d.add.map((a) => `<em>${esc(a.n)} <b>+${fmt(a.p)}</b></em>`).join("")}</div></section>` : "");
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(d.name)} — المنيو</title><meta name="theme-color" content="#0B1F3A"><link rel="preconnect" href="https://fonts.googleapis.com">
@@ -589,18 +590,117 @@ main{max-width:720px;margin:0 auto;padding:6px 14px 30px}h2{margin:22px 0 8px;fo
 .it b{font-size:16px}.it small{display:block;color:#66788F;font-size:13px}.it span{font-weight:800;color:#17698F;white-space:nowrap;font-size:17px}.it i{font-style:normal;font-size:13px}
 .sz,.adds{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.sz em,.adds em{font-style:normal;background:#E3F0F6;border-radius:99px;padding:3px 10px;font-size:13px}.sz em b,.adds em b{color:#17698F}
 .adds{background:#fff;border-radius:14px;padding:12px 14px}
-.note{text-align:center;color:#66788F;font-size:13px;margin:20px 0 0}footer{text-align:center;font-size:12px;color:#7F8EA3;padding:16px}footer a{color:#17698F}</style></head><body>
-<header><h1>${esc(d.name)}</h1>${d.address || d.phone ? `<p>${[d.address ? esc(d.address) : "", d.phone ? `<span dir="ltr">${esc(d.phone)}</span>` : ""].filter(Boolean).join(" · ")}</p>` : ""}</header>
+.note{text-align:center;color:#66788F;font-size:13px;margin:20px 0 0}footer{text-align:center;font-size:12px;color:#7F8EA3;padding:16px 16px 90px}footer a{color:#17698F}
+.tb{display:inline-block;margin-top:8px;background:#3CC2B5;color:#04203f;border-radius:99px;padding:3px 14px;font-weight:800;font-size:14px}
+.plus{border:0;background:#17698F;color:#fff;width:36px;height:36px;border-radius:12px;font:800 20px Cairo,sans-serif;margin-inline-start:10px;cursor:pointer;vertical-align:middle}
+.bar{position:fixed;inset:auto 0 0 0;background:#0B1F3A;color:#fff;padding:12px 16px;display:none;align-items:center;justify-content:space-between;gap:12px;z-index:5;box-shadow:0 -4px 16px #0003}
+.bar button,.sh .go{border:0;background:#3CC2B5;color:#04203f;font:800 16px Cairo,sans-serif;border-radius:12px;padding:10px 18px;cursor:pointer}
+.sh{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:9}.sh>div{background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:18px;max-height:88vh;overflow:auto}
+.sh h3{margin:0 0 10px}.sh .opt{display:flex;justify-content:space-between;align-items:center;border:1.5px solid #DCE5EF;border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer}.sh .opt.on{border-color:#17698F;background:#E3F0F6}
+.sh input,.sh textarea{width:100%;font:inherit;border:1.5px solid #DCE5EF;border-radius:12px;padding:10px;margin:6px 0}.sh .row{display:flex;gap:8px}.sh .row>*{flex:1}
+.sh .ln{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #EEF2F7;padding:8px 0}.sh .ln small{display:block;color:#66788F}.sh .x{border:0;background:#FDECEA;color:#B42318;border-radius:8px;padding:2px 10px;cursor:pointer}
+.sh .q{display:flex;align-items:center;gap:10px;justify-content:center;margin:10px 0}.sh .q button{width:42px;height:42px;border-radius:12px;border:1.5px solid #DCE5EF;background:#fff;font:800 20px Cairo}
+.sh .cl{border:0;background:#EEF2F7;border-radius:12px;padding:10px 18px;font:700 15px Cairo;cursor:pointer}.ok{text-align:center;padding:20px 6px}.ok b{font-size:22px;display:block;margin-bottom:6px}</style></head><body>
+<header><h1>${esc(d.name)}</h1>${d.address || d.phone ? `<p>${[d.address ? esc(d.address) : "", d.phone ? `<span dir="ltr">${esc(d.phone)}</span>` : ""].filter(Boolean).join(" · ")}</p>` : ""}${table ? `<span class="tb">🍽 ${esc(table)}</span>` : ""}</header>
 ${d.cats.length > 1 ? `<nav>${tabs}</nav>` : ""}<main>${secs || "<p class=note>جارٍ تجهيز المنيو…</p>"}
 ${d.note ? `<p class="note">${esc(d.note)}</p>` : ""}${d.vat ? `<p class="note">الأسعار لا تشمل ضريبة القيمة المضافة</p>` : ""}</main>
-<footer>يُحدَّث المنيو تلقائيًا من برنامج المطعم · <a href="https://trioerp.pages.dev/" rel="noopener">Trio</a></footer></body></html>`;
+<footer>يُحدَّث المنيو تلقائيًا من برنامج المطعم · <a href="https://trioerp.pages.dev/" rel="noopener">Trio</a></footer>
+${canOrder ? `<div class="bar" id="bar"><span id="barT"></span><button type="button" id="barB">مراجعة الطلب</button></div><div class="sh" id="sh"><div id="shB"></div></div>
+<script>const D=${JSON.stringify({ cats: d.cats, add: d.add || [] }).replace(/</g, "\\u003c")},T=${JSON.stringify(t)},U="/menu/${id}/order";
+const $=i=>document.getElementById(i),F=n=>Number(n||0).toLocaleString("ar-EG",{maximumFractionDigits:2}),H=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+let cart=[];try{cart=JSON.parse(sessionStorage.getItem("trio_cart_"+T)||"[]")}catch(e){}
+function keep(){try{sessionStorage.setItem("trio_cart_"+T,JSON.stringify(cart))}catch(e){}const n=cart.reduce((s,x)=>s+x.q,0),tot=cart.reduce((s,x)=>s+x.q*(x.p+x.a.reduce((a,b)=>a+b.p,0)),0);
+$("bar").style.display=n?"flex":"none";$("barT").textContent=F(n)+" صنف · "+F(tot)+" ج"}
+function sheet(h){$("shB").innerHTML=h;$("sh").style.display="flex"}function shut(){$("sh").style.display="none"}
+$("sh").onclick=e=>{if(e.target.id==="sh")shut()};
+function pick(ci,ii){const x=D.cats[ci].items[ii],sz=Array.isArray(x.s)&&x.s.length?x.s:null,cn=D.cats[ci].n,ads=D.add.filter(a=>a.c&&(!a.k||!a.k.length||a.k.includes(cn)));
+let s=sz?0:-1,q=1,on=new Set();
+function draw(){sheet("<h3>"+H(x.n)+"</h3>"+(x.d?"<p style='color:#66788F;margin:0 0 8px'>"+H(x.d)+"</p>":"")+
+(sz?"<b>الحجم</b>"+sz.map((z,k)=>"<div class='opt"+(k===s?" on":"")+"' data-s='"+k+"'><span>"+H(z[0])+"</span><b>"+F(z[1])+" ج</b></div>").join(""):"")+
+(ads.length?"<b>إضافات</b>"+ads.map((a,k)=>"<div class='opt"+(on.has(k)?" on":"")+"' data-a='"+k+"'><span>"+(on.has(k)?"✔ ":"")+H(a.n)+"</span><b>+"+F(a.p)+"</b></div>").join(""):"")+
+"<input id='nt' maxlength='120' placeholder='ملاحظة (مثال: بدون بصل)'><div class='q'><button type='button' id='qm'>−</button><b id='qv'>"+F(q)+"</b><button type='button' id='qp'>+</button></div>"+
+"<div class='row'><button class='go' type='button' id='addB'>أضف إلى الطلب</button><button class='cl' type='button' id='clB'>إلغاء</button></div>");
+$("shB").querySelectorAll("[data-s]").forEach(e=>e.onclick=()=>{s=+e.dataset.s;const v=$("nt").value;draw();$("nt").value=v});
+$("shB").querySelectorAll("[data-a]").forEach(e=>e.onclick=()=>{const k=+e.dataset.a;on.has(k)?on.delete(k):on.add(k);const v=$("nt").value;draw();$("nt").value=v});
+$("qm").onclick=()=>{if(q>1){q--;$("qv").textContent=F(q)}};$("qp").onclick=()=>{if(q<20){q++;$("qv").textContent=F(q)}};$("clB").onclick=shut;
+$("addB").onclick=()=>{const z=sz?sz[s]:null;cart.push({c:z?z[2]:x.c,n:x.n+(z?" — "+z[0]:""),p:z?z[1]:x.p,q,a:[...on].map(k=>({c:ads[k].c,n:ads[k].n,p:ads[k].p})),nt:$("nt").value.trim()});shut();keep()}}
+draw()}
+document.querySelectorAll("[data-o]").forEach(el=>el.querySelector(".plus").onclick=()=>{const [ci,ii]=el.dataset.o.split(":").map(Number);pick(ci,ii)});
+$("barB").onclick=()=>{const tot=cart.reduce((s,x)=>s+x.q*(x.p+x.a.reduce((a,b)=>a+b.p,0)),0);
+sheet("<h3>طلبك — "+H(${JSON.stringify(table).replace(/</g, "\\u003c")})+"</h3>"+cart.map((x,k)=>"<div class='ln'><span>"+F(x.q)+" × "+H(x.n)+x.a.map(a=>"<small>+ "+H(a.n)+"</small>").join("")+(x.nt?"<small>📝 "+H(x.nt)+"</small>":"")+"</span><span>"+F(x.q*(x.p+x.a.reduce((a,b)=>a+b.p,0)))+" <button class='x' data-k='"+k+"' type='button'>حذف</button></span></div>").join("")+
+"<p style='text-align:left;font-size:20px;font-weight:800'>الإجمالي "+F(tot)+" ج</p><input id='nm' maxlength='40' placeholder='اسمك (اختياري)'><textarea id='on' maxlength='150' rows='2' placeholder='ملاحظة على الطلب (اختياري)'></textarea>"+
+"<div class='row'><button class='go' type='button' id='send'>أرسل الطلب</button><button class='cl' type='button' id='clB'>رجوع</button></div><p id='er' style='color:#B42318'></p>");
+$("shB").querySelectorAll(".x").forEach(b=>b.onclick=()=>{cart.splice(+b.dataset.k,1);keep();cart.length?$("barB").onclick():shut()});$("clB").onclick=shut;
+$("send").onclick=async()=>{$("send").disabled=true;$("er").textContent="";try{const r=await fetch(U,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({t:T,name:$("nm").value.trim(),note:$("on").value.trim(),lines:cart.map(x=>({c:x.c,q:x.q,a:x.a.map(a=>a.c),n:x.nt}))})});
+const j=await r.json();if(!r.ok)throw new Error(j.error||"تعذّر الإرسال");cart=[];keep();wait(j.id)}catch(e){$("er").textContent=e.message;$("send").disabled=false}}};
+async function wait(oid){sheet("<div class='ok'><b>⏳ جارٍ إرسال طلبك…</b><span id='st'>ينتظر استلام المطعم</span></div>");for(let i=0;i<40;i++){await new Promise(r=>setTimeout(r,i<6?3000:8000));
+try{const j=await (await fetch(U+"/"+oid)).json();if(j.status==="taken"){sheet("<div class='ok'><b>✔ "+H(j.msg||"وصل طلبك")+"</b><span>يمكنك الطلب مرة أخرى في أي وقت.</span><br><br><button class='go' type='button' onclick='shut()'>تمام</button></div>");return}
+if(j.status==="refused"){sheet("<div class='ok'><b>⚠ لم يُقبل الطلب</b><span>"+H(j.msg||"")+"</span><br><br><button class='cl' type='button' onclick='shut()'>رجوع</button></div>");return}}catch(e){}}
+$("st").textContent="لم يصل رد بعد — أبلغ الويتر برقم ترابيزتك"}
+keep();</script>` : ""}</body></html>`;
 }
-async function menuGet(env, id) {
+async function menuGet(env, id, t) {
   if (!/^[0-9a-f]{20}$/.test(id)) return new Response("not found", { status: 404 });
+  t = /^[A-Za-z0-9]{6,12}$/.test(t || "") ? t : "";
   const v = await env.ACC.get("mn:" + id);
   if (!v) return new Response("<!doctype html><meta charset=utf-8><p style='font-family:sans-serif;text-align:center;margin-top:40px'>المنيو غير متاح الآن</p>",
     { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } });
-  return new Response(menuPage(JSON.parse(v)), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=60" } });
+  return new Response(menuPage(JSON.parse(v), t, id), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": t ? "no-store" : "public, max-age=60" } });
+}
+
+// ---------------------------------------------------------------- 1.23: the customer orders from the QR on his table
+// The order waits here (D1 qord) until the shop's program picks it up (pos/qr_orders.py), prices it itself and answers.
+let qReady = false;
+async function qdb(env) {
+  const d = await db(env);
+  if (!d) throw new Error("لا توجد قاعدة بيانات");
+  if (!qReady) {
+    await d.batch([d.prepare("CREATE TABLE IF NOT EXISTS qord (id TEXT PRIMARY KEY, shop TEXT, t TEXT, at TEXT, body TEXT, status TEXT, msg TEXT, sent TEXT)"),
+      d.prepare("CREATE INDEX IF NOT EXISTS qord_s ON qord (shop, status)")]);
+    qReady = true;
+  }
+  return d;
+}
+async function qrOrder(req, env, id) {
+  if (!/^[0-9a-f]{20}$/.test(id)) return err("غير موجود", 404);
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  const v = await env.ACC.get("mn:" + id);
+  if (!v) return err("المنيو غير متاح الآن", 404);
+  const dd = JSON.parse(v).d;
+  if (!dd.order || !dd.tb || !dd.tb[b.t]) return err("الطلب من الهاتف غير متاح لهذه الترابيزة — اطلب من الويتر", 403);
+  const codes = new Set(), adds = new Set();
+  for (const c of dd.cats) for (const x of c.items) { if (x.c) codes.add(x.c); for (const z of x.s || []) if (z[2]) codes.add(z[2]); }
+  for (const a of dd.add || []) if (a.c) adds.add(a.c);
+  const lines = (Array.isArray(b.lines) ? b.lines : []).slice(0, 30).map((x) => ({ c: String(x.c || ""), q: Math.max(1, Math.min(20, parseInt(x.q) || 1)),
+    a: (Array.isArray(x.a) ? x.a : []).map(String).filter((a) => adds.has(a)).slice(0, 10), n: cleanTxt(x.n, 120) })).filter((x) => codes.has(x.c));
+  if (!lines.length) return err("الطلب فارغ");
+  const k = `qr:${id}:${b.t}`, n = parseInt((await env.ACC.get(k)) || "0");
+  if (n >= 8) return err("طلبات كثيرة من هذه الترابيزة — انتظر قليلًا أو اطلب من الويتر", 429);
+  await env.ACC.put(k, String(n + 1), { expirationTtl: 600 });
+  const d = await qdb(env), oid = sid6();
+  await d.prepare("INSERT INTO qord (id, shop, t, at, body, status, msg, sent) VALUES (?, ?, ?, ?, ?, 'new', '', '')")
+    .bind(oid, id, b.t, iso(), JSON.stringify({ lines, name: cleanTxt(b.name, 40), note: cleanTxt(b.note, 150) })).run();
+  return json({ ok: true, id: oid });
+}
+async function qrStatus(env, id, oid) {
+  const r = await (await qdb(env)).prepare("SELECT status, msg FROM qord WHERE id = ? AND shop = ?").bind(oid, id).first();
+  return r ? json({ status: r.status === "sent" ? "new" : r.status, msg: r.msg }) : err("غير موجود", 404);
+}
+async function qrPull(req, env) { // the shop's program: new orders, and its answers to the ones it took
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "")) return err("طلب ناقص");
+  const id = await menuId(b.k), d = await qdb(env);
+  if (Array.isArray(b.res) && b.res.length) {
+    for (const r of b.res.slice(0, 50)) await d.prepare("UPDATE qord SET status = ?, msg = ? WHERE id = ? AND shop = ?").bind(r.ok ? "taken" : "refused", cleanTxt(r.msg, 200), String(r.id || ""), id).run();
+    return json({ ok: true });
+  }
+  const old = new Date(Date.now() - 60e3).toISOString();
+  const rows = (await d.prepare("SELECT * FROM qord WHERE shop = ? AND (status = 'new' OR (status = 'sent' AND sent < ?)) ORDER BY at LIMIT 20").bind(id, old).all()).results || [];
+  for (const r of rows) await d.prepare("UPDATE qord SET status = 'sent', sent = ? WHERE id = ?").bind(iso(), r.id).run();
+  await d.prepare("DELETE FROM qord WHERE at < ?").bind(new Date(Date.now() - 3 * 864e5).toISOString()).run();
+  return json({ orders: rows.map((r) => ({ id: r.id, t: r.t, at: r.at, ...JSON.parse(r.body) })) });
 }
 
 // ======================================================================= the owner's phone: orders to the shop program
@@ -1905,7 +2005,11 @@ export default {
       mobile: true, db: !!env.DB, tg: env.TG_TOKEN ? await tgBot(env) : "", mail: !!(env.BREVO_KEY && env.MAIL_FROM) });
     if (req.method === "POST" && url.pathname === "/snap") return snap(req, env);
     if (req.method === "POST" && url.pathname === "/menu") return menuPut(req, env);
-    if (req.method === "GET" && url.pathname.startsWith("/menu/")) return menuGet(env, url.pathname.slice(6));
+    if (req.method === "POST" && url.pathname === "/menu/orders") return qrPull(req, env);
+    { const mo = /^\/menu\/([0-9a-f]{20})\/order(?:\/([A-Za-z0-9]{6,16}))?$/.exec(url.pathname);
+      if (mo && req.method === "POST" && !mo[2]) return qrOrder(req, env, mo[1]);
+      if (mo && req.method === "GET" && mo[2]) return qrStatus(env, mo[1], mo[2]); }
+    if (req.method === "GET" && url.pathname.startsWith("/menu/")) return menuGet(env, url.pathname.slice(6), q.get("t"));
     if (req.method === "POST" && url.pathname === "/notify") return notify(req, env);
     if (req.method === "POST" && url.pathname === "/bk") return bkPut(req, env);
     if (req.method === "POST" && ["/m/q", "/m/pair", "/m/unpair", "/m/cat"].includes(url.pathname)) return ownProg(req, env, url);
