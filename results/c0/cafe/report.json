@@ -1,0 +1,138 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 61,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (2.7s)",
+    "✔ كل الصفحات (1.6s)",
+    "✔ إضافة منتجات بيد المالك (0.7s)",
+    "✔ النماذج (9.3s)",
+    "✔ الكاشير والبيع (32.6s)",
+    "✔ الترابيزات (9.4s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     0.9159579277038574
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.7681987285614014
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0768589973449707
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.07204580307006836
+    ],
+    [
+     "الكاشير (ترابيزات)",
+     0.06238222122192383
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (2.0s)",
+    "✔ كل الصفحات (2.2s)",
+    "✔ إضافة منتجات بيد المالك (0.7s)",
+    "✔ النماذج (6.8s)",
+    "✔ الكاشير والبيع (52.9s)",
+    "✔ الترابيزات (8.8s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     0.7704675197601318
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6998419761657715
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.26822328567504883
+    ],
+    [
+     "/ui/shop/menu/",
+     0.10597562789916992
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09894561767578125
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "unlabeled-button",
+   "where": "/ (أول تشغيل)",
+   "msg": "4 زر بدون نص أو وصف: <button name=\"action\" value=\"self_claim\">فعّل نسختي وابدأ التثبيت</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/items/",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/connect/",
+   "msg": "1 زر بدون نص أو وصف: <button class=\"light\">أنشئ رابطًا جديدًا</button>",
+   "sev": "low",
+   "runs": [
+    2
+   ],
+   "shot": ""
+  }
+ ]
+}
