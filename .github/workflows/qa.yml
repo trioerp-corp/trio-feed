@@ -1,0 +1,48 @@
+# Trio QA on real Windows (GitHub-hosted windows-latest). Each business type: N fresh copies of the program set up from
+# zero and used like a shop (tools/qa/trio_qa.py). The base is the public download (latest release) + the code under test
+# in app/ (no secrets: the same files as the public package). Results = the run's artifacts (report.json / html / shots).
+name: QA on Windows
+on:
+  workflow_dispatch:
+    inputs:
+      cycle: { description: "cycle number (seed)", required: true, default: "1" }
+      runs: { description: "runs per business", required: true, default: "50" }
+concurrency: { group: qa, cancel-in-progress: false }
+permissions: { contents: read }
+jobs:
+  qa:
+    runs-on: windows-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        biz: [market, pharmacy, retail, cafe, gaming, clinic]
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: The program (public download + the code under test)
+        shell: pwsh
+        run: |
+          gh release download -R $env:GITHUB_REPOSITORY -p Trio-online.zip -D base
+          Expand-Archive base\Trio-online.zip -DestinationPath C:\qa
+          robocopy app C:\qa\Trio /E /NFL /NDL /NJH /NJS /NP; if ($LASTEXITCODE -ge 8) { exit 1 } else { exit 0 }
+      - name: Version under test
+        shell: pwsh
+        run: Get-Content C:\qa\Trio\core\version.py | Select-String VERSION; systeminfo | Select-String "OS Name","OS Version","Total Physical Memory"
+      - name: Test tools
+        run: |
+          python -m pip install -q playwright==1.49.1
+          python -m playwright install chromium
+      - name: ${{ matrix.biz }} × ${{ github.event.inputs.runs }}
+        shell: pwsh
+        run: python qa\trio_qa.py --app C:\qa\Trio --python C:\qa\Trio\python\python.exe --runs ${{ github.event.inputs.runs }} --only ${{ matrix.biz }} --seed ${{ github.event.inputs.cycle }} --out out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-c${{ github.event.inputs.cycle }}-${{ matrix.biz }}
+          path: out
+          retention-days: 7
