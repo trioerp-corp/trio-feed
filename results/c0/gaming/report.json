@@ -1,0 +1,180 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (3.9s)",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "✔ النماذج (12.5s)",
+    "✔ الكاشير والبيع (45.1s)",
+    "✔ صالة البلايستيشن (4.5s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5503463745117188
+    ],
+    [
+     "/ (أول تشغيل)",
+     1.142232894897461
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10583996772766113
+    ],
+    [
+     "/ui/shop/tables/",
+     0.09261226654052734
+    ],
+    [
+     "/ui/shop/close/",
+     0.08805298805236816
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "✔ النماذج (8.8s)",
+    "✔ الكاشير والبيع (44.5s)",
+    "✔ صالة البلايستيشن (4.5s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4440340995788574
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8611483573913574
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42667698860168457
+    ],
+    [
+     "/ui/shop/partners/",
+     0.10215449333190918
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08446717262268066
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "unlabeled-button",
+   "where": "/ (أول تشغيل)",
+   "msg": "4 زر بدون نص أو وصف: <button name=\"action\" value=\"self_claim\">فعّل نسختي وابدأ التثبيت</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/items/",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "الأصناف",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "الأصناف ← إضافة صنف",
+   "msg": "1 زر بدون نص أو وصف: <button name=\"new\" value=\"1\">إضافة</button>",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    2
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/ ← نموذج 3 (فارغ)",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/settings/ ← نموذج 3 (بقيم)",
+   "msg": "1 زر بدون نص أو وصف: <a class=\"btn light\" href=\"#\" onclick=\"event.preventDefault();var w=window.open('','_blank');w.document.write('<html dir=rtl><body style=\\'f",
+   "sev": "low",
+   "runs": [
+    1
+   ],
+   "shot": ""
+  },
+  {
+   "kind": "unlabeled-button",
+   "where": "/ui/shop/connect/",
+   "msg": "1 زر بدون نص أو وصف: <button class=\"light\">أنشئ رابطًا جديدًا</button>",
+   "sev": "low",
+   "runs": [
+    2
+   ],
+   "shot": ""
+  }
+ ]
+}
