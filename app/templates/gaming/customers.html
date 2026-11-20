@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% load gg %}{% block title %}أرصدة الباقات{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🎟 أرصدة الباقات</h1><p class="muted" style="margin:0">رصيد كل عميل من دقائق الباقات التي دفعها مقدمًا.</p></div>
+<div class="actions"><form style="display:inline-flex;gap:6px"><input name="q" value="{{ q }}" placeholder="اسم أو موبايل" aria-label="بحث"><button class="light">بحث</button></form><a class="btn light" href="/ui/play/">🎮 الصالة</a></div></div>
+<div class="split"><div class="main"><section class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>الموبايل</th><th>الرصيد</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.c.name }}</td><td dir="ltr">{{ r.c.phone }}</td><td>{% for k, m in r.bal %}<span class="badge">{{ k }}: {{ m }} دقيقة</span> {% empty %}<span class="muted">لا يوجد رصيد</span>{% endfor %}</td>
+<td><a class="btn light" href="?c={{ r.c.pk }}{% if q %}&q={{ q|urlencode }}{% endif %}">الحركة</a></td></tr>
+{% empty %}<tr><td colspan="4" class="muted">لا يوجد عملاء باقات بعد — تُباع الباقة من شاشة الصالة «🎟 باقة»</td></tr>{% endfor %}</tbody></table></div></section></div>
+{% if one %}<div class="side"><section class="card"><h2 style="margin-top:0">{{ one.name }}</h2><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>البيان</th><th class="n">دقائق</th></tr></thead><tbody>
+{% for m in moves %}<tr><td>{{ m.at|date:"d/m H:i" }}</td><td>{% if m.package %}شراء {{ m.package.name }} ({{ m.amount|money }}){% elif m.session %}لعب {{ m.session.station|default:"" }}{% endif %}{% if m.by %} <span class="muted" style="font-size:12px">— {{ m.by }}</span>{% endif %}</td>
+<td class="n" dir="ltr">{% if m.minutes > 0 %}+{% endif %}{{ m.minutes }}</td></tr>{% endfor %}</tbody></table></div></section></div>{% endif %}</div>
+{% endblock %}

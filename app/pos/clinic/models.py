@@ -16,6 +16,7 @@ class Doctor(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="clinic_doctor",
                                 verbose_name="حساب الدخول", help_text="المستخدم الذي يفتح «شاشة الطبيب» الخاصة به")
     hours = models.CharField("مواعيد العيادة", max_length=200, blank=True, help_text="تُطبع على الروشتة، مثلًا: السبت إلى الخميس 5 – 10 مساءً")
+    max_per_day = models.PositiveSmallIntegerField("أقصى عدد كشوفات في اليوم", null=True, blank=True, help_text="فارغ = بلا حد")
     order = models.PositiveSmallIntegerField("الترتيب", default=0)
     active = models.BooleanField("شغال", default=True)
 
@@ -37,6 +38,10 @@ class Service(models.Model):
     share_pct = models.DecimalField("نسبة الطبيب % لهذه الخدمة", max_digits=5, decimal_places=2, null=True, blank=True,
                                     help_text="متاح = نسبة الطبيب العادية")
     minutes = models.PositiveSmallIntegerField("المدة (دقيقة)", default=15)
+    followup_days = models.PositiveSmallIntegerField("الإعادة خلال (يوم)", null=True, blank=True,
+                                                     help_text="فارغ = إعداد العيادة العام · 0 = لا إعادة لهذه الخدمة")
+    followup_price = models.DecimalField("سعر الإعادة", max_digits=12, decimal_places=2, null=True, blank=True,
+                                         help_text="فارغ = سعر الإعادة العام للعيادة")
 
     class Meta:
         verbose_name = "خدمة"
@@ -130,6 +135,10 @@ class Visit(models.Model):
     by = models.CharField("سجّلها", max_length=100, blank=True)
     paid_by = models.CharField("حاسب", max_length=100, blank=True)
     note = models.CharField("سبب الإلغاء / التعديل", max_length=300, blank=True)
+    followup_of = models.ForeignKey("self", null=True, blank=True, on_delete=models.SET_NULL, related_name="followups",
+                                    verbose_name="إعادة لكشف")
+    followup_note = models.CharField("بيان الإعادة", max_length=120, blank=True)
+    followup_reminded_at = models.DateTimeField("أُرسل تذكير المتابعة", null=True, blank=True)
 
     class Meta:
         verbose_name = "زيارة"
@@ -200,6 +209,8 @@ class Appointment(models.Model):
     state = models.CharField("الحالة", max_length=10, choices=STATES, default="booked")
     note = models.CharField("ملاحظة", max_length=200, blank=True)
     visit = models.OneToOneField(Visit, null=True, blank=True, on_delete=models.SET_NULL, related_name="appointment")
+    followup_of = models.ForeignKey(Visit, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    reminded_at = models.DateTimeField("أُرسل التذكير", null=True, blank=True)
     created_by = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -239,3 +250,33 @@ class PatientFile(models.Model):
     @property
     def is_image(self):
         return self.content_type.startswith("image/")
+
+
+class DoctorShift(models.Model):
+    """One working day of a doctor: the weekday and the hours (a doctor can have two rows on one day)."""
+
+    DAYS = [(5, "السبت"), (6, "الأحد"), (0, "الاثنين"), (1, "الثلاثاء"), (2, "الأربعاء"), (3, "الخميس"), (4, "الجمعة")]
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="shifts")
+    weekday = models.PositiveSmallIntegerField("اليوم", choices=DAYS)
+    start = models.TimeField("من")
+    end = models.TimeField("إلى")
+
+    class Meta:
+        verbose_name = "موعد طبيب"
+        verbose_name_plural = "مواعيد الأطباء"
+        ordering = ["doctor", "weekday", "start"]
+
+
+class ClinicSettings(models.Model):
+    """The clinic's general rules (one row)."""
+
+    followup_days = models.PositiveSmallIntegerField("الإعادة خلال (يوم)", default=0, help_text="0 = لا توجد إعادة")
+    followup_price = models.DecimalField("سعر الإعادة", max_digits=12, decimal_places=2, default=0, help_text="0 = إعادة مجانية")
+
+    class Meta:
+        verbose_name = "إعدادات العيادة"
+        verbose_name_plural = "إعدادات العيادة"
+
+    @classmethod
+    def get(cls):
+        return cls.objects.order_by("pk").first() or cls.objects.create()

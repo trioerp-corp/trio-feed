@@ -46,6 +46,12 @@ def _url(name, *args):
         return None
 
 
+def _plus(s):
+    from pos.plus import cfg
+
+    return cfg(s)
+
+
 def build(request, ctx):
     """[(group title, [dict(label, url, on, icon, badge, new_tab)])] for the logged-in user."""
     from .models import CompanySettings
@@ -78,11 +84,13 @@ def build(request, ctx):
 
     # ---- the day's work
     home = link(w["home"], _url("home"), "🏠", ("/", "/ui/clinic/"), exact=True)
+    front_doctor = clinic and u.groups.filter(name="دكتور").exists() and not owner
     if clinic:
         group("العيادة", home,
               link("الاستقبال", _url("clinic_reception"), "🛎", ("/ui/clinic/reception",)),
               link("شاشة الطبيب", _url("clinic_doctor_screen"), "🩺", ("/ui/clinic/doctor",)),
               link("الحجوزات", _url("clinic_appointments"), "📅", ("/ui/clinic/appointments",)),
+              link("التذكيرات", _url("clinic_reminders") if not front_doctor else None, "📨", ("/ui/clinic/reminders",)),
               link("المرضى", _url("clinic_patients"), "🧑‍⚕️", ("/ui/clinic/patients", "/ui/clinic/visits")),
               link("التأمين الطبي", _url("clinic_insurance") if owner or cash else None, "🛡", ("/ui/clinic/insurance",)),
               link("الأطباء ونسبهم", _url("clinic_doctors") if owner else None, "👨‍⚕️", ("/ui/clinic/doctors",)),
@@ -92,6 +100,8 @@ def build(request, ctx):
         hall = "gaming" in mods and business == "gaming"
         group(w["sell"], home,
               link("🎮 الصالة", "/ui/play/" if "gaming" in mods else None, "", ("/ui/play/",), exact=True),
+              link("حجوزات الأجهزة", _url("play_bookings") if hall else None, "📅", ("/ui/play/bookings",)),
+              link("أرصدة الباقات", _url("play_customers") if hall else None, "🎟", ("/ui/play/customers",)),
               link("🎮 الأجهزة والأسعار", _url("play_devices") if hall and owner else None, "", ("/ui/play/devices",)),
               link("تقرير الصالة", _url("play_report") if hall and (owner or cash) else None, "📊", ("/ui/play/report",)),
               # a hall sells its buffet from the hall screen (its own drawer): no second drawer on the till
@@ -103,6 +113,7 @@ def build(request, ctx):
     if view_items and not front_desk:
         group(w["stock"],
               link(w["items"], _url("shop_items"), "📦", ("/ui/shop/items",)),
+              link("المقاسات والألوان", _url("shop_variants") if shelf and _variants_on(s) else None, "👕", ("/ui/shop/variants",)),
               link("💊 مكتبة الأدوية والشريط", _url("pharmacy") if ctx.get("is_pharmacy") else None, "", ("/ui/shop/pharmacy",)),
               link("المنيو", _url("shop_menu") if "recipes" in mods else None, "🍽", ("/ui/shop/menu",)),
               link("الترابيزات وطلبات QR", _url("shop_tables") if "recipes" in mods and owner and business != "gaming" else None, "🪑", ("/ui/shop/tables",)),
@@ -116,7 +127,8 @@ def build(request, ctx):
               link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods and shelf else None, "📐", ("/ui/shop/units",)),
               link("ملصقات الباركود", _url("shop_labels") if "labels" in mods and shelf else None, "🏷", ("/ui/shop/labels",)),
               link("الصلاحية", _url("shop_expiry") if "expiry" in mods else None, "⏳", ("/ui/shop/expiry",)),
-              link("العروض والخصومات", _url("shop_promos") if owner and "promos" in mods and shelf else None, "🎁", ("/ui/shop/promos",)))
+              link("العروض والخصومات", _url("shop_promos") if owner and "promos" in mods and shelf else None, "🎁", ("/ui/shop/promos",)),
+              link("التخفيض الموسمي والراكد", _url("plus_season") if owner and "promos" in mods and shelf else None, "🏷", ("/ui/shop/season",)))
 
     # ---- money
     if cash:
@@ -131,6 +143,8 @@ def build(request, ctx):
               link("الإقرارات الضريبية", _url("tax_home") if owner else None, "🧮", ("/ui/tax",)))
         group("التقارير",
               link(w["reports"], _url("shop_reports"), "📈", ("/ui/shop/reports", "/ui/shop/valuation")),
+              link("عمولات البائعين", _url("plus_commission") if owner and _plus(s)["sp"]["on"] else None, "🧑‍💼", ("/ui/shop/commission",)),
+              link("نقاط الولاء", _url("plus_loyalty") if owner and _plus(s)["loy"]["on"] else None, "⭐", ("/ui/shop/loyalty",)),
               link("الأرباح والشركاء", _url("shop_profit") if "profit_monthly" in mods else None, "💰", ("/ui/shop/profit",)),
               link("الفروع", _url("branches") if ctx.get("branch_on") and not ctx.get("branch_locked") else None, "🏬",
                    ("/ui/shop/branches",)),
@@ -152,3 +166,12 @@ def build(request, ctx):
               link("إعدادات المطور", "/admin/", "🔧", ("/admin/",)),
               link("التثبيت والخطة", "/trio/setup/" if u.username == "ACC" else None, "🔧", ("/trio/setup",)))
     return groups
+
+
+def _variants_on(s):
+    from inventory.variants import enabled
+
+    try:
+        return enabled(s)
+    except Exception:  # a menu never breaks on a half-set-up copy
+        return False

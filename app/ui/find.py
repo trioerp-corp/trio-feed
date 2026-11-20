@@ -54,7 +54,10 @@ def find(request):
         if u.has_perm("inventory.view_item"):
             from inventory.models import Item
 
-            items = Item.objects.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q), active=True).exclude(code="0")[:12]
+            words = Q()
+            for w in q.split():  # 1.25: «قميص أزرق L» finds «قميص — L / أزرق» (every word, in the name or the size / colour)
+                words &= Q(name__icontains=w) | Q(extra__icontains=w) | Q(aliases__icontains=w)
+            items = Item.objects.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q) | words, active=True).exclude(code="0")[:12]
             groups.append(("الأصناف", [dict(title=i.name, sub=f"كود {i.code} · الرصيد {i.qty_on_hand.normalize():f} {i.unit}"
                                           + (f" · {i.sale_price} ج" if i.sale_price is not None else ""),
                                           url=f"/ui/shop/items/?q={i.code}", icon="📦") for i in items]))

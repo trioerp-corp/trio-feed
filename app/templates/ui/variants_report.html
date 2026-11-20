@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}الرصيد حسب المقاس{% endblock %}
+{% block content %}
+<style>.vm th,.vm td{text-align:center;padding:4px 8px}.vm td.z{color:var(--muted,#888)}.vm td.t,.vm tr.t td{font-weight:800}.vcards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}</style>
+<div class="page-head"><div><h1>📊 الرصيد حسب المقاس واللون</h1><p class="muted" style="margin:0">رصيد كل صنف موزعًا على مقاساته وألوانه، وما بيع أكثر حسب المقاس.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'shop_variants' %}">👕 الأصناف بمقاسات</a><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+<form class="filters" method="get"><label>بحث<input name="q" value="{{ q }}"></label><label>التصنيف<select name="cat"><option value="">الكل</option>{% for c in cats %}<option value="{{ c.pk }}"{% if cat == c.pk|stringformat:"s" %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+<label>المبيعات من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label><label>إلى<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label><button>عرض</button></form>
+<div class="kpis" style="display:flex;gap:12px;flex-wrap:wrap;margin:8px 0"><div class="card"><div class="muted">إجمالي القطع</div><b style="font-size:20px">{{ tq }}</b></div><div class="card"><div class="muted">قيمة المخزون (بالتكلفة)</div><b style="font-size:20px">{{ tv|money }} ج</b></div></div>
+{% for m in mats %}<div class="card" style="margin:10px 0"><h3 style="margin:0 0 6px">{{ m.item.name }} <span class="muted" style="font-size:14px">· {{ m.item.category.name }} · {{ m.qty }} قطعة · {{ m.value|money }} ج</span>
+<a class="btn light" style="float:left" href="{% url 'shop_labels' %}?parent={{ m.item.pk }}">🏷 ملصقات</a></h3>
+<div class="table-wrap"><table class="vm"><thead><tr><th>اللون \ المقاس</th>{% for s in m.sizes %}<th>{{ s|default:"—" }}</th>{% endfor %}<th>الإجمالي</th></tr></thead><tbody>
+{% for r in m.rows %}<tr><th>{{ r.color|default:"—" }}</th>{% for q, zero in r.cells %}<td{% if zero %} class="z"{% endif %}>{{ q|default:"—" }}</td>{% endfor %}<td class="t">{{ r.total }}</td></tr>{% endfor %}
+{% if m.rows|length > 1 %}<tr class="t"><th>الإجمالي</th>{% for x in m.col_tot %}<td>{{ x }}</td>{% endfor %}<td>{{ m.qty }}</td></tr>{% endif %}</tbody></table></div></div>
+{% empty %}<p class="muted">لا توجد أصناف بمقاسات وألوان{% if cat or q %} بهذا البحث{% endif %}.</p>{% endfor %}
+<h2 style="margin-top:20px">الأكثر مبيعًا من {{ d1|date:"j/n/Y" }} إلى {{ d2|date:"j/n/Y" }}</h2>
+<div class="vcards">
+<div class="card"><h3 style="margin:0 0 6px">حسب المقاس</h3><table><thead><tr><th>المقاس</th><th class="n">القطع</th><th class="n">المبلغ</th></tr></thead><tbody>{% for r in sold.sizes %}<tr><td>{{ r.k }}</td><td class="n">{{ r.q }}</td><td class="n">{{ r.amt|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا مبيعات في هذه الفترة</td></tr>{% endfor %}</tbody></table></div>
+<div class="card"><h3 style="margin:0 0 6px">حسب اللون</h3><table><thead><tr><th>اللون</th><th class="n">القطع</th><th class="n">المبلغ</th></tr></thead><tbody>{% for r in sold.colors %}<tr><td>{{ r.k }}</td><td class="n">{{ r.q }}</td><td class="n">{{ r.amt|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا مبيعات في هذه الفترة</td></tr>{% endfor %}</tbody></table></div>
+<div class="card"><h3 style="margin:0 0 6px">أكثر الأصناف</h3><table><thead><tr><th>الصنف</th><th class="n">القطع</th><th class="n">المبلغ</th></tr></thead><tbody>{% for r in sold.items %}<tr><td>{{ r.k }}</td><td class="n">{{ r.q }}</td><td class="n">{{ r.amt|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا مبيعات في هذه الفترة</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

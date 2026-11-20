@@ -17,10 +17,10 @@
 {% if auto_guide %}<script>window.addEventListener('load',()=>setTimeout(()=>{const a=document.getElementById('guideDl');if(a)a.click()},600))</script>{% endif %}
 <nav class="st-prog" aria-label="الخطوات">{% for r in rows %}<a href="#{{ r.key }}" class="{% if r.done %}ok{% endif %}">{% if r.done %}✔{% else %}○{% endif %} {{ r.title }}</a>{% endfor %}</nav>
 
-{% with st=status.shop %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="shop"><h2><span class="n">1</span> بيانات المحل</h2>
+{% with st=status.shop %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="shop"><h2><span class="n">1</span> {% if s.business == 'clinic' %}بيانات العيادة{% else %}بيانات المحل{% endif %}</h2>
 <p class="muted why">تظهر على الإيصال وعلى الفاتورة.</p>
 <form method="post" class="form-grid" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="op" value="shop">
-<label class="field">اسم المحل<input name="name" value="{{ s.name }}" required maxlength="60"><small class="muted">حتى 60 حرفًا — يظهر على الإيصال وفي أعلى الشاشة</small></label>
+<label class="field">{% if s.business == 'clinic' %}اسم العيادة{% else %}اسم المحل{% endif %}<input name="name" value="{{ s.name }}" required maxlength="60"><small class="muted">حتى 60 حرفًا — يظهر على الإيصال وفي أعلى الشاشة</small></label>
 <label class="field">التليفون<input name="phone" value="{{ s.phone }}" dir="ltr" maxlength="40"></label>
 <label class="field">العنوان<input name="address" value="{{ s.address }}" maxlength="250"></label>
 <label class="field">آخر سطر في الإيصال<input name="footer" value="{{ footer }}" maxlength="200" placeholder="شكرًا لزيارتكم"></label>
@@ -99,7 +99,7 @@
 {% if not status.kitchen.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="kitchen"><button class="skip">لا أحتاج ورقة للمطبخ — تخطٍّ</button></form>{% endif %}</section>
 {% if no_limit %}<section class="card st-sec" id="reorder"><h2><span class="n">✦</span> حد الطلب</h2><p class="muted why"><b class="bad">{{ no_limit|count:"صنف" }} من غير حد طلب</b> — اكتبه ليعمل التنبيه.</p>
 <div class="actions" style="justify-content:flex-start"><a class="btn light" href="{% url 'shop_items' %}?noreorder=1">اكتب حد الطلب الناقص</a></div></section>{% endif %}
-{% else %}<section class="card st-sec {% if status.items.done and status.reorder.done %}ok{% endif %}" id="items"><h2><span class="n">✦</span> الأصناف</h2>
+{% else %}<section class="card st-sec {% if status.items.done and status.reorder.done %}ok{% endif %}" id="items"><h2><span class="n">✦</span> {% if s.business == 'clinic' %}المستلزمات{% else %}الأصناف{% endif %}</h2>
 <p class="muted why">لديك {{ items|count:"صنف" }}.{% if no_limit %} <b class="bad">{{ no_limit|count:"صنف" }} من غير حد طلب</b> — اكتبه ليعمل التنبيه.{% endif %}</p>
 <div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'import_upload' 'items' %}">⬆ ارفع الأصناف من إكسل</a><a class="btn light" href="{% url 'shop_items' %}{% if no_limit %}?noreorder=1{% endif %}">{% if no_limit %}اكتب حد الطلب الناقص{% else %}أضف صنفًا يدويًا{% endif %}</a>
 {% if is_pharmacy %}<a class="btn light" href="{% url 'pharmacy' %}">💊 من مكتبة الأدوية</a>{% endif %}</div></section>
@@ -111,11 +111,11 @@
 <div class="actions" style="justify-content:flex-start;margin-top:8px"><button>حفظ</button></div></form>
 {% if not status.suppliers.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="suppliers"><button class="skip">تخطّي</button></form>{% endif %}</section>{% endif %}
 
-{% if 'partners' in mods %}<section class="card st-sec {% if status.customers.done %}ok{% endif %}" id="customers"><h2><span class="n">✦</span> العملاء الآجل</h2>
+{% if 'partners' in mods %}<section class="card st-sec {% if status.customers.done %}ok{% endif %}" id="customers"><h2><span class="n">✦</span> {% if s.business == 'clinic' %}المرضى بالآجل{% else %}العملاء الآجل{% endif %}</h2>
 {% if customers %}<div class="st-chips">{% for n in customers %}<span>{{ n }}</span>{% endfor %}</div>{% endif %}
-<form method="post">{% csrf_token %}<input type="hidden" name="op" value="customers"><label class="field">كل عميل في سطر (يمكنك كتابة الهاتف بعد فاصلة)<textarea name="names" rows="3"></textarea></label>
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="customers"><label class="field">{% if s.business == 'clinic' %}كل مريض في سطر{% else %}كل عميل في سطر{% endif %} (يمكنك كتابة الهاتف بعد فاصلة)<textarea name="names" rows="3"></textarea></label>
 <div class="actions" style="justify-content:flex-start;margin-top:8px"><button>حفظ</button></div></form>
-{% if not status.customers.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="customers"><button class="skip">لا أبيع بالآجل — تخطٍّ</button></form>{% endif %}</section>{% endif %}
+{% if not status.customers.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="customers"><button class="skip">{% if s.business == 'clinic' %}لا يوجد مرضى بالآجل — تخطٍّ{% else %}لا أبيع بالآجل — تخطٍّ{% endif %}</button></form>{% endif %}</section>{% endif %}
 
 <section class="card st-sec {% if status.employees.done %}ok{% endif %}" id="employees"><h2><span class="n">✦</span> الموظفين</h2>
 <p class="muted why">{{ status.employees.hint }}.</p>

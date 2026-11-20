@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% load gg %}{% block title %}عمولات البائعين{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🧑‍💼 عمولات البائعين</h1><p class="muted" style="margin:0">يختار الكاشير «البائع» على كل فاتورة، والمرتجع يتبع فاتورته الأصلية. العمولة على قيمة البيع بعد الخصم.</p></div>
+<div class="actions"><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+{% if not c.on %}<div class="msg">«البائع» غير مفعل على شاشة الكاشير — فعّله من النموذج أدناه.</div>{% endif %}
+<form class="filters" method="get"><label>من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label><label>إلى<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label><button>عرض</button></form>
+<div class="table-wrap" style="margin:10px 0 20px"><table><thead><tr><th>البائع</th><th class="n">الفواتير</th><th class="n">المبيعات</th><th class="n">المرتجعات</th><th class="n">الصافي</th><th class="n">العمولة</th></tr></thead><tbody>
+{% for r in rows %}<tr><td>{{ r.name }}</td><td class="n">{{ r.n }}</td><td class="n">{{ r.sales|money }}</td><td class="n">{{ r.ret|money }}</td><td class="n">{{ r.net|money }}</td><td class="n"><b>{{ r.comm|money }}</b></td></tr>
+{% empty %}<tr><td colspan="6" class="muted">لا توجد فواتير عليها بائع في هذه الفترة</td></tr>{% endfor %}
+{% if rows %}<tr><th>الإجمالي</th><th></th><th class="n">{{ tot.sales|money }}</th><th class="n">{{ tot.ret|money }}</th><th class="n">{{ tot.net|money }}</th><th class="n">{{ tot.comm|money }}</th></tr>{% endif %}</tbody></table></div>
+<form method="post" class="card">{% csrf_token %}<h2>الإعدادات ونسب العمولة</h2>
+<label class="field check"><input type="checkbox" name="on" value="1"{% if c.on %} checked{% endif %}> إظهار «البائع» على شاشة الكاشير</label>
+<label class="field check"><input type="checkbox" name="need" value="1"{% if c.need %} checked{% endif %}> اختيار البائع إلزامي في كل فاتورة</label>
+<label class="field">العمولة العامة لكل بائع (%)<input name="pct" inputmode="decimal" value="{{ c.pct|floatformat:-2 }}" dir="ltr" style="max-width:120px"></label>
+<details{% if people %} open{% endif %}><summary>نسبة خاصة لبائع (اتركها فارغة لتُطبّق العامة)</summary>
+{% for p, v in people %}<label class="field">{{ p.name }}<input name="p{{ p.pk }}" inputmode="decimal" value="{% if v != '' %}{{ v|floatformat:-2 }}{% endif %}" dir="ltr" style="max-width:120px"></label>
+{% empty %}<p class="muted">البائعون هم الموظفون — أضفهم من <a href="{% url 'staff_list' %}">الموظفين والمرتبات</a>.</p>{% endfor %}</details>
+<details><summary>نسبة خاصة لتصنيف (تُقدَّم على نسبة البائع)</summary>
+{% for x, v in cats %}<label class="field">{{ x.name }}<input name="c{{ x.pk }}" inputmode="decimal" value="{% if v != '' %}{{ v|floatformat:-2 }}{% endif %}" dir="ltr" style="max-width:120px"></label>{% endfor %}</details>
+<button>حفظ</button></form>
+{% endblock %}

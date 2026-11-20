@@ -12,11 +12,71 @@ from . import services as INV
 from .models import StockMove, StockMoveLine
 
 Z = Decimal("0")
+SUP_ACC, VAT_ACC = "2301020101", "2301040301"
+
+
+def vat_of(mv):
+    """The input VAT booked with a purchase invoice (0 when none)."""
+    from ledger.models import JournalLine
+
+    return sum((l.debit for l in JournalLine.objects.filter(entry__source=f"inventory.purchase-vat:{mv.pk}", entry__state="posted",
+                                                            account__code=VAT_ACC)), Z)
+
+
+def lines_from_invoice(rows, *, discount=None, vat_pct=None, vat_registered=False):
+    """A supplier's invoice as it is printed → stock lines in base units.
+    rows: [dict(item, qty, factor, cost, bonus=0, public=None, disc_pct=None, produced, expiry)] — qty / bonus / cost per the unit
+    bought (a box = factor strips); cost empty = public price − the pharmacist's discount %. Bonus units come free: the paid value
+    is spread over all the units received. The invoice discount (an amount) is spread over the lines by value; the VAT % on the
+    net goes into the costs unless the shop is VAT-registered (then it is returned to be booked as input VAT).
+    → (lines for record(), vat amount for record())"""
+    out, gross = [], Z
+    for r in rows:
+        f = Decimal(r.get("factor") or 1)
+        if f <= 0:
+            raise ValidationError("يجب أن يكون محتوى الوحدة أكبر من صفر")
+        qty, bonus = Decimal(r["qty"]), Decimal(r.get("bonus") or 0)
+        if qty <= 0:
+            raise ValidationError("يجب أن تكون الكمية أكبر من صفر")
+        if bonus < 0:
+            raise ValidationError("لا يمكن أن يكون البونص بالسالب")
+        cost, public, dp = r.get("cost"), r.get("public"), r.get("disc_pct")
+        if dp is not None and not (0 <= dp < 100):
+            raise ValidationError("نسبة الخصم من 0 إلى أقل من 100")
+        if cost is None and public is not None:
+            cost = public * (100 - (dp or 0)) / 100
+        if cost is None or cost < 0:
+            raise ValidationError(f"اكتب سعر الشراء لـ «{r['item'].name}»")
+        value = qty * Decimal(cost)
+        gross += value
+        out.append(dict(item=r["item"], value=value, base=(qty + bonus) * f, produced=r.get("produced"), expiry=r.get("expiry")))
+    discount = Decimal(discount or 0)
+    if discount < 0 or (gross and discount > gross):
+        raise ValidationError(f"خصم الفاتورة من صفر إلى إجمالي الأصناف ({gross:,.2f})")
+    net = gross - discount
+    vat = (net * Decimal(vat_pct or 0) / 100).quantize(Decimal("0.01"))
+    if vat_pct is not None and not (0 <= vat_pct <= 100):
+        raise ValidationError("نسبة الضريبة من 0 إلى 100")
+    in_cost = Z if vat_registered else vat
+    k = ((net + in_cost) / gross) if gross else Decimal(1)
+    # exact money per line: the lines add up to the invoice to the piaster (largest remainder), so the supplier's balance equals
+    # the printed invoice; the cost per base unit is only for the average cost
+    payable, c = (net + in_cost).quantize(Decimal("0.01")), Decimal("0.01")
+    vals = [(o["value"] * k).quantize(c, rounding="ROUND_DOWN") for o in out]
+    left = int(((payable - sum(vals, Z)) / c).to_integral_value())
+    order = sorted(range(len(out)), key=lambda i: -((out[i]["value"] * k) - vals[i]))
+    for i in order[:max(left, 0)]:
+        vals[i] += c
+    lines = [dict(item=o["item"], qty=o["base"], unit_cost=(v / o["base"]), value=v, produced=o["produced"], expiry=o["expiry"])
+             for o, v in zip(out, vals)]
+    return lines, (vat if vat_registered else Z)
 
 
 @transaction.atomic
-def record(*, warehouse, supplier, date, lines, invoice="", pay="credit", paid=None, box=None, user=None, note=""):
+def record(*, warehouse, supplier, date, lines, invoice="", pay="credit", paid=None, box=None, user=None, note="", vat=None):
     """lines: [dict(item=Item, qty=base-unit qty, unit_cost=cost per base unit, produced=None, expiry=None)].
+    vat: the invoice's input VAT for a VAT-registered shop (Dr ضريبة القيمة المضافة / Cr the supplier, on its own entry); a shop
+         that is not registered puts the tax in the line costs instead (see lines_from_invoice).
     pay: cash (all now from box) | credit (all on the supplier) | split (paid now, the rest on the supplier)
          | owner (the owner paid it from his own pocket: Dr الموردين / Cr جاري صاحب المحل — the drawer is not touched). → (move, total, message)"""
     mv = StockMove.objects.create(kind="receipt", date=date, warehouse=warehouse, partner=supplier, legacy_number=(invoice or "")[:30],
@@ -31,12 +91,23 @@ def record(*, warehouse, supplier, date, lines, invoice="", pay="credit", paid=N
         if ln.get("produced") and ln.get("expiry") and ln["expiry"] <= ln["produced"]:
             raise ValidationError("يجب أن يكون تاريخ الانتهاء بعد تاريخ الإنتاج")
         StockMoveLine.objects.create(move=mv, item=ln["item"], qty=qty, unit_cost=Decimal(cost).quantize(Decimal("0.0001")),
+                                     value=Decimal(ln.get("value") or 0).quantize(Decimal("0.01")),  # exact line money (lines_from_invoice)
                                      produced=ln.get("produced"), expiry=ln.get("expiry"))
         n += 1
     if not n:
         raise ValidationError("أضف صنفًا واحدًا على الأقل")
     INV.post_move(mv, user=user)
     total = sum((l.value or Z for l in mv.lines.all()), Z)
+    vat = Decimal(vat or 0).quantize(Decimal("0.01"))
+    if vat < 0:
+        raise ValidationError("لا يمكن أن تكون الضريبة بالسالب")
+    if vat:
+        from ledger import services as L
+
+        L.create_entry("JV", date, f"ضريبة مدخلات فاتورة {invoice or mv.number} — {supplier.name}"[:300],
+                       [dict(account=Account.objects.get(code=VAT_ACC), debit=vat),
+                        dict(account=Account.objects.get(code=SUP_ACC), credit=vat, partner=supplier)], source=f"inventory.purchase-vat:{mv.pk}", user=user)
+        total += vat
     if pay == "owner":
         from pos import money
 

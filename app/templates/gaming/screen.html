@@ -54,6 +54,8 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
 .foot{text-align:center;color:var(--muted);font-size:12px;padding:10px}.foot a{color:var(--muted)}
 @media (max-width:860px){.wrap{flex-direction:column}.side{position:static;width:100%;max-height:none}}
 .st .qb{display:flex;gap:6px;margin-top:4px}.st .qb button{min-height:34px;padding:4px 10px;font-size:13px;flex:1}
+.st .bk{font-size:12.5px;color:#9DB8FF;background:#16244A;border-radius:8px;padding:3px 8px;align-self:flex-start}.st .bk.now{color:#fff;background:#7A3FBF}
+#bookings button{border-color:#3B4F86}#bookings button.late{border-color:var(--late);color:#FFB4B6}
 .timer.down{color:var(--busy)}.st.late .timer{color:var(--late)}.st.soon{border-color:var(--late)}
 @media (max-width:520px){.wrap{padding:10px;gap:10px}.grid{grid-template-columns:1fr 1fr;gap:8px}.st{min-height:118px;padding:9px;gap:3px}.st .nm{font-size:15px}.st .ic{font-size:17px}
 .timer{font-size:20px}.amt b{font-size:15px}.st .k{font-size:11px}.top{padding:8px 10px;gap:8px}.top .pill{font-size:12px;padding:4px 9px}.top>span[title]{display:none}}
@@ -65,11 +67,14 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <span class="sp"></span>
   <span id="clock">--:--</span>
   <button class="ghost" id="takeBtn" title="طلب بوفيه بدون جهاز">🥤 تيك أواي</button>
+  <button class="ghost" id="pkgBtn" title="بيع باقة ساعات مدفوعة مقدمًا" style="display:none">🎟 باقة</button>
+  <a href="{% url 'play_bookings' %}" style="color:var(--muted);font-size:13px">📅 الحجوزات</a><a href="{% url 'play_customers' %}" style="color:var(--muted);font-size:13px">🎟 الأرصدة</a>
   <button class="ghost" id="shiftBtn">فتح وردية</button>
   <span style="color:var(--muted);font-size:13px" title="طريقة حساب الوقت">⏱ {{ rule }}</span>
   {% if is_owner %}<a href="{% url 'play_devices' %}" style="color:var(--muted);font-size:13px">⚙ الأجهزة والأسعار</a><a href="{% url 'play_report' %}" style="color:var(--muted);font-size:13px">📊 تقرير الصالة</a>{% endif %}
   <a href="/" style="color:var(--muted);font-size:13px">الرئيسية</a>
 </header>
+<div class="ta" id="bookings" aria-label="حجوزات اليوم"></div>
 <div class="ta" id="takeaways"></div>
 <div class="wrap">
   <main class="grid" id="grid" aria-live="polite"><div class="empty">جارٍ التحميل…</div></main>
@@ -99,6 +104,8 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
 
 <div class="modal" id="mPay"><div class="box"><h3>الحساب — <span id="mpName"></span></h3>
   <div class="lines" id="mpLines"></div>
+  <div id="mpPre" style="border:1px dashed #3B4F86;border-radius:12px;padding:10px"><label class="f">🎟 رصيد باقة — موبايل العميل<input id="mpPhone" inputmode="tel" dir="ltr" maxlength="40" placeholder="اختياري"></label>
+  <label style="display:none;gap:8px;align-items:center;margin-top:6px" id="mpUseL"><input type="checkbox" id="mpUse" style="width:auto;min-height:0"> <span id="mpPreInfo"></span></label><div class="muted" id="mpPreMsg" style="font-size:13px"></div></div>
   <label class="f">خصم (جنيه)<input id="mpDisc" inputmode="decimal" value="0" dir="ltr"></label>
   <div class="tot"><span>المطلوب</span><span id="mpTotal">0</span></div>
   <label class="f">مدفوع ببطاقة / محفظة<input id="mpCard" inputmode="decimal" value="0" dir="ltr"></label>
@@ -119,6 +126,16 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <label class="f" id="msL">رصيد الدرج في البداية<input id="msVal" inputmode="decimal" value="0" dir="ltr"></label>
   <div class="muted" id="msInfo"></div>
   <div class="row"><button id="msGo">تأكيد</button><button class="ghost" data-close>رجوع</button></div></div></div>
+<div class="modal" id="mBook"><div class="box"><h3 id="mbTitle">حجز</h3><div class="muted" id="mbInfo"></div>
+  <label class="f">الجهاز<select id="mbSt"></select></label>
+  <div class="row"><button class="green" id="mbGo">▶ وصل — ابدأ</button></div>
+  <div class="row"><button class="ghost" id="mbNo">لم يحضر</button><button class="ghost" id="mbCancel">إلغاء الحجز</button><button class="ghost" data-close>رجوع</button></div></div></div>
+<div class="modal" id="mPkg"><div class="box"><h3>🎟 بيع باقة ساعات</h3>
+  <label class="f">الباقة<select id="pkSel"></select></label>
+  <label class="f">موبايل العميل *<input id="pkPhone" inputmode="tel" dir="ltr" maxlength="40"></label>
+  <label class="f">اسم العميل<input id="pkName" maxlength="80"></label><div class="muted" id="pkInfo"></div>
+  <div class="seg"><label><input type="radio" name="pkPay" value="cash" checked><b>نقدي</b></label><label><input type="radio" name="pkPay" value="card"><b>بطاقة / محفظة</b></label></div>
+  <div class="row"><button class="green" id="pkGo">✔ تم الدفع واطبع</button><button class="ghost" data-close>رجوع</button></div></div></div>
 <div class="toast" id="toast" role="status"></div>
 <script>
 (function(){
@@ -173,7 +190,8 @@ function render(){
         <div class="stt">${[mode,s.customer?escapeHtml(s.customer):'',s.planned?`محجوز ${s.planned} د`:'',late?'انتهى الوقت!':''].filter(Boolean).join(' · ')}</div>
         <div class="amt">الحساب <b>${fmt(s.total)}</b>${Number(s.items_amount)?` <span class="k">(طلبات ${fmt(s.items_amount)})</span>`:''}</div>
         ${s.planned?`<div class="qb"><button type="button" class="ghost" data-x="ext">+30 د</button><button type="button" class="red" data-x="pay">قفّل</button></div>`:''}`
-       :`<div class="stt" style="font-size:16px;font-weight:700;margin-top:auto">▶ متاح</div>`}`;
+       :`<div class="stt" style="font-size:16px;font-weight:700;margin-top:auto">▶ متاح</div>`}
+      ${st.booking?`<div class="bk${(new Date(st.booking.start).getTime()-(Date.now()-skew))<1800e3?' now':''}">📅 محجوز ${escapeHtml(st.booking.at)} — ${escapeHtml(st.booking.customer)}</div>`:''}`;
     b.onclick=()=>s?openSide(s.id):openStart(st);
     b.onkeydown=e=>{if(e.key==='Enter'&&e.target===b)b.click()};
     b.querySelectorAll('[data-x]').forEach(x=>x.onclick=async e=>{e.stopPropagation();
@@ -182,6 +200,9 @@ function render(){
     if(s)watch(s,st.name);
     g.appendChild(b);
   });
+  const bk=$('bookings');bk.innerHTML='';(S.bookings||[]).forEach(r=>{const b=document.createElement('button');b.className='ghost'+(r.late?' late':'');
+    b.textContent=`📅 ${r.at} — ${r.customer} · ${r.where}${r.late?' (متأخر)':''}`;b.onclick=()=>openBook(r);bk.appendChild(b)});
+  $('pkgBtn').style.display=(S.packages||[]).length?'':'none';
   const ta=$('takeaways');ta.innerHTML='';
   S.takeaway.forEach(t=>{const b=document.createElement('button');b.className='ghost'+(sel===t.id?' sel':'');b.textContent=`🥤 تيك أواي #${t.no||t.id}${t.customer?' '+t.customer:''} — ${fmt(t.total)}`;b.onclick=()=>openSide(t.id);ta.appendChild(b)});
   if(sel){const s=allSessions().find(x=>x.id===sel); if(s) fillSide(s); else closeSide();}
@@ -201,8 +222,29 @@ function openStart(st){
   $('moCust').value='';$('moPlan').value='';show('mOpen');
 }
 $('moGo').onclick=async()=>{const mode=(document.querySelector('#moMode input:checked')||{}).value||'single';
-  try{const j=await api('open',{station:starting.id,mode,customer:$('moCust').value,planned:$('moPlan').value});hide('mOpen');await load();openSide(j.session);toast(`${starting.name} اشتغل ✔`)}catch(e){}};
+  try{const body={station:starting.id,mode,customer:$('moCust').value,planned:$('moPlan').value};let j=await api('open',body);
+    if(j.warn){if(!confirmBox('⚠ '+j.warn+'\n\nتشغيل الجهاز رغم الحجز؟'))return;body.force=1;j=await api('open',body)}hide('mOpen');await load();openSide(j.session);toast(`${starting.name} اشتغل ✔`)}catch(e){}};
 $('takeBtn').onclick=async()=>{if(S&&!S.shift){afterShift=()=>$('takeBtn').click();$('shiftBtn').click();return}try{const j=await api('takeaway',{});await load();openSide(j.session);toast('طلب تيك أواي جديد')}catch(e){}};
+// bookings: the booked customer arrived → his device starts with his name and time
+let booking=null;
+function openBook(r){booking=r;$('mbTitle').textContent=`حجز ${r.customer} — ${r.at}`;
+  $('mbInfo').textContent=`${r.where} · ${r.minutes} دقيقة${r.phone?' · '+r.phone:''}${r.note?' · '+r.note:''}`;
+  const free=S.stations.filter(x=>!x.session&&x.kind===r.kind);
+  $('mbSt').innerHTML=free.map(x=>`<option value="${x.id}" ${x.id===r.station?'selected':''}>${escapeHtml(x.name)}</option>`).join('')||'<option value="">لا يوجد جهاز متاح الآن</option>';
+  $('mbGo').disabled=!free.length;show('mBook')}
+$('mbGo').onclick=async()=>{if(!S.shift){hide('mBook');afterShift=()=>openBook(booking);$('shiftBtn').click();return}
+  try{const j=await api('book_start',{booking:booking.id,station:+$('mbSt').value});hide('mBook');await load();openSide(j.session);toast(`${booking.customer}: بدأ اللعب ✔`)}catch(e){}};
+async function bookState(st){try{await api('book_state',{booking:booking.id,state:st});hide('mBook');await load();toast(st==='noshow'?'سُجّل عدم الحضور':'أُلغي الحجز')}catch(e){}}
+$('mbNo').onclick=()=>bookState('noshow');$('mbCancel').onclick=()=>{if(confirmBox('إلغاء الحجز؟'))bookState('cancelled')};
+// packages: sold at the hall, the balance goes on the customer's mobile number
+$('pkgBtn').onclick=()=>{if(S&&!S.shift){afterShift=()=>$('pkgBtn').click();$('shiftBtn').click();return}
+  $('pkSel').innerHTML=S.packages.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} — ${fmt(p.price)} ج (${escapeHtml(p.kind)})</option>`).join('');
+  $('pkPhone').value='';$('pkName').value='';$('pkInfo').textContent='';show('mPkg')};
+$('pkPhone').addEventListener('change',async()=>{const v=$('pkPhone').value.trim();if(v.length<8)return;
+  try{const r=await fetch('/ui/play/api/balance/?phone='+encodeURIComponent(v),{credentials:'same-origin'});const j=await r.json();
+    $('pkInfo').textContent=j.found?`عميل مسجّل: ${j.name} — رصيده ${j.balance} دقيقة`:'عميل جديد';if(j.found&&!$('pkName').value)$('pkName').value=j.name}catch(e){}});
+$('pkGo').onclick=async()=>{const btn=$('pkGo');btn.disabled=true;try{const j=await api('package',{package:+$('pkSel').value,phone:$('pkPhone').value,name:$('pkName').value,
+  pay:(document.querySelector('input[name=pkPay]:checked')||{}).value});hide('mPkg');window.open(j.receipt,'_blank','width=420,height=640');await load();toast(`${j.name}: رصيده الآن ${j.balance} دقيقة ✔`)}catch(e){}finally{btn.disabled=false}};
 // side panel (bill of one device)
 function openSide(id){sel=id;const s=allSessions().find(x=>x.id===id);if(!s)return;fillSide(s);$('side').classList.add('on');render();setTimeout(()=>$('search').focus(),50)}
 function closeSide(){sel=null;$('side').classList.remove('on');render()}
@@ -249,16 +291,26 @@ $('payBtn').onclick=async()=>{await load();const s=allSessions().find(x=>x.id===
   $('mpDisc').value='0';$('mpCard').value='0';$('mpGiven').value='';$('mpCredit').value='0';
   $('mpCust').innerHTML='<option value="">— لا يوجد —</option><option value="new">+ عميل جديد</option>'+customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
   $('mpNewName').value=s.customer||'';$('mpNewPhone').value='';$('mpNew').style.display='none';$('mpOwnerU').value='';$('mpOwnerP').value='';
-  $('mpCreditL').style.display='none';payCalc();show('mPay');};
-function gross(){return paying?Number(paying.total)+Number(paying.discount||0):0}
+  $('mpCreditL').style.display='none';pre=null;preP=null;preV='';$('mpUse').checked=false;$('mpUseL').style.display='none';$('mpPreMsg').textContent='';
+  $('mpPre').style.display=s._st?'':'none';$('mpPhone').value=s.phone||'';if(s.phone)preCheck();payCalc();show('mPay');};
+let pre=null,preP=null,preV='';
+function preCheck(){const v=$('mpPhone').value.trim();if(preP&&v===preV)return preP;preV=v;preP=preRun(v);return preP}
+async function preRun(v){pre=null;$('mpUseL').style.display='none';$('mpPreMsg').textContent='';if(v.length<8){payCalc();return}
+  try{const r=await fetch(`/ui/play/api/balance/?phone=${encodeURIComponent(v)}&session=${paying.id}`,{credentials:'same-origin'});const j=await r.json();
+    if(!j.found){$('mpPreMsg').textContent='لا يوجد عميل باقة بهذا الرقم';payCalc();return}
+    if(!j.use){$('mpPreMsg').textContent=`${j.name}: لا يوجد رصيد لهذا الجهاز`;payCalc();return}
+    pre=j;$('mpPreInfo').textContent=`خصم ${j.use} دقيقة من رصيد ${j.name} (${j.balance} دقيقة) = ${fmt(j.value)} ج`;$('mpUseL').style.display='flex';$('mpUse').checked=true}catch(e){}payCalc()}
+$('mpPhone').addEventListener('change',preCheck);$('mpUse').addEventListener('change',()=>payCalc());
+function preVal(){return pre&&$('mpUse').checked?Number(pre.value):0}
+function gross(){return paying?Number(paying.total)+Number(paying.discount||0)-preVal():0}
 function needOwner(){return !S.owner&&Number($('mpDisc').value||0)>Math.round(gross()*Number(S.max_disc||0))/100+0.001}
-function due(){return Math.max(0,(paying?Number(paying.total)+Number(paying.discount||0):0)-Number($('mpDisc').value||0))}
+function due(){return Math.max(0,gross()-Number($('mpDisc').value||0))}
 function payCalc(){const o=needOwner();$('mpOwner').style.display=o?'':'none';if(o)$('mpOwnerMsg').textContent=`الخصم أكبر من ${fmt(S.max_disc)}% من الحساب — يكتب صاحب المحل اسمه وكلمة سره للموافقة`;const d=due();$('mpTotal').textContent=fmt(d)+' ج';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
   const g=Number($('mpGiven').value||0);$('mpChange').textContent=`نقدًا مطلوب ${fmt(cash)}`+(g?` · الباقي للعميل ${fmt(g-cash)}`:'');}
 ['mpDisc','mpCard','mpGiven','mpCredit'].forEach(id=>$(id).addEventListener('input',payCalc));
 $('mpCust').onchange=()=>{const v=$('mpCust').value;$('mpCreditL').style.display=v?'':'none';$('mpNew').style.display=v==='new'?'flex':'none';if(v)$('mpCredit').value=fmt(due()).replace(/,/g,'');if(v==='new')setTimeout(()=>$('mpNewName').focus(),30);payCalc()};
-$('mpGo').onclick=async()=>{const btn=$('mpGo');btn.disabled=true;
-  const cv=$('mpCust').value,body={session:paying.id,discount:$('mpDisc').value,card:$('mpCard').value,customer_id:cv&&cv!=='new'?cv:null,credit:cv?$('mpCredit').value:0};
+$('mpGo').onclick=async()=>{const btn=$('mpGo');btn.disabled=true;if($('mpPhone').value.trim().length>=8){try{await preCheck()}catch(e){}}
+  const cv=$('mpCust').value,body={session:paying.id,discount:$('mpDisc').value,card:$('mpCard').value,customer_id:cv&&cv!=='new'?cv:null,credit:cv?$('mpCredit').value:0,use_balance:preVal()>0,phone:$('mpPhone').value};
   if(cv==='new'){if(!$('mpNewName').value.trim()){toast('اكتب اسم العميل الجديد',true);btn.disabled=false;$('mpNewName').focus();return}body.customer_new={name:$('mpNewName').value.trim(),phone:$('mpNewPhone').value.trim()}}
   if(needOwner()){body.owner=$('mpOwnerU').value.trim();body.password=$('mpOwnerP').value}
   try{const j=await api('close',body);if(cv==='new')load(true);

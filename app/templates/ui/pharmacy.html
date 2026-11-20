@@ -7,8 +7,8 @@
 <div class="table-wrap"><table><thead><tr><th><input type="checkbox" onclick="document.querySelectorAll('.pk').forEach(c=>c.checked=this.checked)"></th><th>الدواء</th><th>المادة الفعالة / الشركة</th><th class="n">سعر العلبة</th><th class="n">شرايط في العلبة</th><th class="n">سعر الشريط</th></tr></thead><tbody>
 {% for r in results %}<tr>{% if r.have %}<td></td><td><b dir="ltr">{{ r.en }}</b><br><span class="muted">{{ r.ar }}</span> <span class="badge">موجود لديك</span></td>
 {% else %}<td><input type="checkbox" class="pk" name="id" value="{{ r.id }}"></td><td><b dir="ltr">{{ r.en }}</b><br><span class="muted">{{ r.ar }}{% if r.route %} · {{ r.route }}{% endif %}</span></td>{% endif %}
-<td style="font-size:13px" dir="ltr">{{ r.sci|truncatechars:60 }}<br><span class="muted">{{ r.company }}</span></td>
-<td class="n">{% if not r.have %}<input name="p_{{ r.id }}" value="{{ r.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:80px">{% else %}{{ r.price|default_if_none:'' }}{% endif %}</td>
+<td style="font-size:13px"><span dir="ltr">{{ r.sci|truncatechars:60 }}</span>{% if r.sci_ar %}<br><span>{{ r.sci_ar }}</span>{% endif %}<br><span class="muted" dir="ltr">{{ r.company }}</span></td>
+<td class="n">{% if not r.have %}<input name="p_{{ r.id }}" value="{{ r.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:80px"{% if not r.price %} placeholder="السعر" class="need"{% endif %}>{% else %}{{ r.price|default_if_none:'' }}{% endif %}</td>
 <td class="n">{% if not r.have %}<input name="n_{{ r.id }}" value="{{ r.strips }}" inputmode="numeric" dir="ltr" style="width:56px">{% endif %}</td>
 <td class="n">{% if r.strip_price %}{{ r.strip_price|money }}{% endif %}</td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد نتائج — جرّب كتابة أخرى</td></tr>{% endfor %}</tbody></table></div>

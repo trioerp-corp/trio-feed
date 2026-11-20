@@ -283,6 +283,9 @@ class Run:
                         self.page_checks(p, f"{url} ← نموذج {k + 1} ({'فارغ' if mode == 'empty' else 'بقيم'})")
             except Exception as e:  # noqa: BLE001
                 self.I.add("form", url, str(e)[:300], self.n, p, "low")
+        bad = self.q("SELECT name, sale_price FROM inventory_item WHERE sale_price < 0")
+        if bad:
+            self.I.add("validation", "الأصناف", f"صفحة قبلت سعر بيع بالسالب للصنف «{bad[0][0]}» ({bad[0][1]}) — الكاشير يبيعه بالسالب والخادم يرفض الفاتورة", self.n, None, "high")
 
     def fill_form(self, f):
         r = self.rnd
@@ -450,15 +453,21 @@ class Run:
         if p.is_visible("#retOwner"):
             p.fill("#retU", "owner")
             p.fill("#retP", "wrong-" + PASSWORD)
+            p.evaluate("()=>{const e=document.getElementById('retErr');e.textContent='';e.style.display='none'}")  # the earlier «no reason» error
             p.click("#retOk")
-            p.wait_for_timeout(1500)
+            with contextlib.suppress(Exception):  # the server checks the password (slow hashing on a slow PC)
+                p.wait_for_function("()=>{const e=document.getElementById('retErr'),m=document.getElementById('retModal');"
+                                    "return (e.textContent.trim()&&getComputedStyle(e).display!=='none')||getComputedStyle(m).display==='none'}", timeout=10000)
             if not p.is_visible("#retModal") or not p.is_visible("#retErr"):
                 self.I.add("till-return", "الكاشير", "المرتجع قُبل بكلمة سر خاطئة للمالك", self.n, p, "high")
             elif p.inner_text("#tot").strip() in ("0.00", "0"):
                 self.I.add("till-return", "الكاشير", "بعد رفض كلمة السر الخاطئة اختفت الفاتورة", self.n, p, "high")
             p.fill("#retP", PASSWORD)
+            p.evaluate("()=>{const e=document.getElementById('retErr');e.textContent='';e.style.display='none'}")
             p.click("#retOk")
-            p.wait_for_timeout(1500)
+            with contextlib.suppress(Exception):
+                p.wait_for_function("()=>{const e=document.getElementById('retErr'),m=document.getElementById('retModal');"
+                                    "return (e.textContent.trim()&&getComputedStyle(e).display!=='none')||getComputedStyle(m).display==='none'}", timeout=10000)
             if p.is_visible("#retModal"):
                 self.I.add("till-return", "الكاشير", f"المرتجع رُفض بكلمة سر المالك الصحيحة: {p.inner_text('#retErr')[:200]}", self.n, p, "high")
                 p.click("#retCancel")
@@ -1115,7 +1124,6 @@ class Run:
             self.step("كل الصفحات", self.crawl)
             self.step("إضافة منتجات بيد المالك", self.products)
             self.step("تجهيز المحل: الشعار", self.logo)
-            self.step("النماذج", self.forms)
             self.step("الكاشير والبيع", self.till)
             if self.act[1] == "cafe":
                 self.step("الترابيزات", self.tables)
@@ -1128,6 +1136,9 @@ class Run:
             self.step("مرتجع مشتريات / هالك", self.returns)
             self.step("التقارير (تقفيل اليوم، الأرباح، قيمة المخزون)", self.reports)
             self.step("الحسابات متوازنة", self.books)
+            # the made-up values (prices 100000 / -5 / empty, removed services, the day closed …) go in LAST:
+            # earlier they changed the catalog the till / tables / clinic / purchase steps then used (false findings)
+            self.step("النماذج", self.forms)
         finally:
             with contextlib.suppress(Exception):
                 ctx and ctx.close()

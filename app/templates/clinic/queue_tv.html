@@ -1,0 +1,29 @@
+{% load static %}<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شاشة الانتظار — {{ s.name }}</title><link rel="icon" href="{% static 'ui/icon.svg' %}"><link rel="stylesheet" href="{% static 'ui/fonts.css' %}">
+<style>:root{--bg:#07182B;--card:#0E2A47;--ink:#F2F7FF;--mut:#9FB6D1;--acc:#3CC2B5;--gold:#F2C14E}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Cairo,"Segoe UI",Tahoma,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 28px;border-bottom:1px solid #1C3A5E}header .lg{width:54px;height:54px;background:#fff;border-radius:12px;overflow:hidden;display:inline-flex}
+header h1{margin:0;font-size:clamp(20px,3vw,38px);flex:1}#clock{font-size:clamp(20px,3vw,40px);font-weight:800;font-variant-numeric:tabular-nums}
+main{display:grid;gap:22px;padding:24px 28px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.d{background:var(--card);border-radius:24px;padding:22px 26px;border:2px solid #1C3A5E}.d.flash{animation:fl 1.2s 3}@keyframes fl{50%{border-color:var(--gold);box-shadow:0 0 0 10px rgba(242,193,78,.25)}}
+.d h2{margin:0;font-size:clamp(22px,2.6vw,36px)}.d h2 small{display:block;font-size:.55em;color:var(--mut);font-weight:600}
+.cur{display:flex;align-items:baseline;gap:16px;margin:12px 0}.cur span{font-size:clamp(18px,2vw,28px);color:var(--mut)}.cur b{font-size:clamp(72px,11vw,170px);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.nx{font-size:clamp(18px,2vw,28px);color:var(--mut)}.nx b{display:inline-block;background:#163A60;color:var(--ink);border-radius:12px;padding:2px 14px;margin:4px;font-size:1.15em}
+.empty{grid-column:1/-1;text-align:center;color:var(--mut);font-size:clamp(22px,3vw,40px);padding:12vh 0}
+#snd{position:fixed;bottom:14px;left:14px;background:#163A60;color:var(--ink);border:0;border-radius:12px;padding:10px 16px;font:inherit;cursor:pointer}
+footer{position:fixed;bottom:12px;right:20px;color:var(--mut);font-size:13px}</style></head><body>
+<header>{% if s.logo_svg %}<span class="lg">{{ s.logo_svg|safe }}</span>{% endif %}<h1>{{ s.name }}</h1><span id="clock">--:--</span></header>
+<main id="m" aria-live="polite">{% for r in rows %}<section class="d"><h2>{{ r.doctor }}</h2></section>{% empty %}<div class="empty">لا يوجد مرضى في الانتظار الآن</div>{% endfor %}</main>
+<button id="snd" type="button">🔔 تفعيل الصوت</button><footer>Trio</footer>
+<script>(function(){const m=document.getElementById('m');let last={},AC=null,on=false;
+const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.getElementById('snd').onclick=function(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();on=true;this.textContent='🔔 الصوت مفعّل';chime()}catch(e){}};
+function chime(){if(!on||!AC)return;const t=AC.currentTime;[660,880,1100].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(.3,t+i*.28);g.gain.exponentialRampToValueAtTime(.001,t+i*.28+.6);o.connect(g);g.connect(AC.destination);o.start(t+i*.28);o.stop(t+i*.28+.6)})}
+function draw(j){document.getElementById('clock').textContent=j.now;if(!j.rows.length){m.innerHTML='<div class="empty">لا يوجد مرضى في الانتظار الآن</div>';return}
+  let changed=false;m.innerHTML=j.rows.map(r=>{const k=r.doctor,ch=r.current!=null&&last[k]!==undefined&&last[k]!==r.current;if(ch)changed=true;last[k]=r.current;
+  return `<section class="d${ch?' flash':''}"><h2>${E(r.doctor)}${r.specialty?`<small>${E(r.specialty)}</small>`:''}</h2>
+  <div class="cur"><span>الدور الحالي</span><b>${r.current!=null?r.current:'—'}</b></div>
+  <div class="nx">${r.next.length?'التالي: '+r.next.map(n=>`<b>${n}</b>`).join(''):'لا يوجد من ينتظر'}</div></section>`}).join('');
+  if(changed)chime()}
+async function load(){try{const r=await fetch('?data=1',{credentials:'same-origin',cache:'no-store'});if(r.redirected||!r.ok)return;draw(await r.json())}catch(e){}}
+load();setInterval(load,5000)})();</script></body></html>

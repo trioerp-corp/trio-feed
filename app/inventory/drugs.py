@@ -17,6 +17,52 @@ FILE = Path(__file__).resolve().parent.parent / "core" / "data" / "eg_drugs.csv.
 ROUTES = {"ORAL.SOLID": "أقراص وكبسولات", "ORAL.LIQUID": "شراب ونقط", "TOPICAL": "كريمات ومراهم", "INJECTION": "حقن", "EFF": "فوار",
           "SPRAY": "بخاخ", "EYE": "قطرة عين", "EAR": "قطرة أذن", "VAGINAL": "لبوس مهبلي", "RECTAL": "لبوس", "MOUTH": "فم وأسنان", "SOAP": "صابون"}
 _AR = str.maketrans("أإآٱةىؤئ", "اااايويي")
+# The library has the trade name in Arabic but the active ingredient in English only: the common ingredients in Arabic, as the
+# pharmacist and the customer say them, so «باراسيتامول» / «ديكلوفيناك» find the drugs (saved on the item too).
+GENERIC_AR = {
+    "PARACETAMOL": "باراسيتامول", "ACETAMINOPHEN": "باراسيتامول", "IBUPROFEN": "ايبوبروفين", "DICLOFENAC": "ديكلوفيناك", "KETOPROFEN": "كيتوبروفين",
+    "NAPROXEN": "نابروكسين", "MELOXICAM": "ميلوكسيكام", "PIROXICAM": "بيروكسيكام", "CELECOXIB": "سيليكوكسيب", "ETORICOXIB": "ايتوريكوكسيب",
+    "ACETYLSALICYLIC": "اسبرين", "ASPIRIN": "اسبرين", "TRAMADOL": "ترامادول", "ORPHENADRINE": "اورفينادرين", "CAFFEINE": "كافيين",
+    "AMOXICILLIN": "اموكسيسيلين", "CLAVULANIC": "كلافيولانيك", "AMPICILLIN": "امبيسيلين", "AZITHROMYCIN": "ازيثرومايسين",
+    "CLARITHROMYCIN": "كلاريثرومايسين", "CIPROFLOXACIN": "سيبروفلوكساسين", "LEVOFLOXACIN": "ليفوفلوكساسين", "CEFTRIAXONE": "سيفترياكسون",
+    "CEFIXIME": "سيفيكسيم", "CEFUROXIME": "سيفوروكسيم", "CEPHALEXIN": "سيفالكسين", "CEFADROXIL": "سيفادروكسيل", "DOXYCYCLINE": "دوكسيسيكلين",
+    "METRONIDAZOLE": "ميترونيدازول", "NITAZOXANIDE": "نيتازوكسانيد", "FLUCONAZOLE": "فلوكونازول", "MICONAZOLE": "ميكونازول",
+    "CLOTRIMAZOLE": "كلوتريمازول", "FUSIDIC": "فيوسيديك", "MUPIROCIN": "ميوبيروسين", "GENTAMICIN": "جنتاميسين", "ACYCLOVIR": "اسيكلوفير",
+    "OMEPRAZOLE": "اوميبرازول", "ESOMEPRAZOLE": "ايسوميبرازول", "PANTOPRAZOLE": "بانتوبرازول", "LANSOPRAZOLE": "لانسوبرازول",
+    "RABEPRAZOLE": "رابيبرازول", "FAMOTIDINE": "فاموتيدين", "RANITIDINE": "رانيتيدين", "DOMPERIDONE": "دومبيريدون",
+    "METOCLOPRAMIDE": "ميتوكلوبراميد", "HYOSCINE": "هيوسين", "MEBEVERINE": "ميبيفرين", "DROTAVERINE": "دروتافيرين", "SIMETHICONE": "سيميثيكون",
+    "LOPERAMIDE": "لوبيراميد", "LACTULOSE": "لاكتيولوز", "BISACODYL": "بيساكوديل", "ONDANSETRON": "اوندانسيترون",
+    "CHLORPHENIRAMINE": "كلورفينيرامين", "PSEUDOEPHEDRINE": "سودوافيدرين", "LORATADINE": "لوراتادين", "DESLORATADINE": "ديسلوراتادين",
+    "CETIRIZINE": "سيتريزين", "LEVOCETIRIZINE": "ليفوسيتريزين", "FEXOFENADINE": "فيكسوفينادين", "MONTELUKAST": "مونتيلوكاست",
+    "SALBUTAMOL": "سالبيوتامول", "AMBROXOL": "امبروكسول", "BROMHEXINE": "برومهيكسين", "GUAIFENESIN": "جوايفينيسين",
+    "DEXTROMETHORPHAN": "ديكستروميثورفان", "BUDESONIDE": "بوديزونيد", "PREDNISOLONE": "بريدنيزولون", "DEXAMETHASONE": "ديكساميثازون",
+    "BETAMETHASONE": "بيتاميثازون", "HYDROCORTISONE": "هيدروكورتيزون", "METFORMIN": "ميتفورمين", "GLIMEPIRIDE": "جليميبيريد",
+    "GLICLAZIDE": "جليكلازيد", "SITAGLIPTIN": "سيتاجليبتين", "VILDAGLIPTIN": "فيلداجليبتين", "EMPAGLIFLOZIN": "امباجليفلوزين",
+    "DAPAGLIFLOZIN": "داباجليفلوزين", "INSULIN": "انسولين", "AMLODIPINE": "املوديبين", "BISOPROLOL": "بيسوبرولول", "ATENOLOL": "اتينولول",
+    "PROPRANOLOL": "بروبرانولول", "CARVEDILOL": "كارفيديلول", "VALSARTAN": "فالسارتان", "LOSARTAN": "لوسارتان", "CANDESARTAN": "كانديسارتان",
+    "TELMISARTAN": "تلميسارتان", "CAPTOPRIL": "كابتوبريل", "ENALAPRIL": "اينالابريل", "LISINOPRIL": "ليزينوبريل", "RAMIPRIL": "راميبريل",
+    "HYDROCHLOROTHIAZIDE": "هيدروكلوروثيازيد", "FUROSEMIDE": "فوروسيميد", "SPIRONOLACTONE": "سبيرونولاكتون", "INDAPAMIDE": "انداباميد",
+    "ATORVASTATIN": "اتورفاستاتين", "ROSUVASTATIN": "روزوفاستاتين", "SIMVASTATIN": "سيمفاستاتين", "EZETIMIBE": "ايزيتيميب",
+    "CLOPIDOGREL": "كلوبيدوجريل", "WARFARIN": "وارفارين", "RIVAROXABAN": "ريفاروكسابان", "APIXABAN": "ابيكسابان",
+    "LEVOTHYROXINE": "ليفوثيروكسين", "CARBIMAZOLE": "كاربيمازول", "PREGABALIN": "بريجابالين", "GABAPENTIN": "جابابنتين",
+    "CARBAMAZEPINE": "كاربامازيبين", "VALPROATE": "فالبروات", "LEVETIRACETAM": "ليفيتيراسيتام", "SERTRALINE": "سيرترالين",
+    "ESCITALOPRAM": "اسيتالوبرام", "FLUOXETINE": "فلوكستين", "PAROXETINE": "باروكستين", "OLANZAPINE": "اولانزابين",
+    "SILDENAFIL": "سيلدينافيل", "TADALAFIL": "تادالافيل", "TAMSULOSIN": "تامسولوسين", "FINASTERIDE": "فيناسترايد", "ALFUZOSIN": "الفوزوسين",
+    "FOLIC ACID": "حمض الفوليك", "VITAMIN C": "فيتامين سي", "ASCORBIC": "فيتامين سي", "VITAMIN D": "فيتامين د", "CHOLECALCIFEROL": "فيتامين د",
+    "VITAMIN B12": "فيتامين ب12", "CYANOCOBALAMIN": "فيتامين ب12", "VITAMIN E": "فيتامين ه", "IRON": "حديد", "FERROUS": "حديد", "CALCIUM": "كالسيوم",
+    "MAGNESIUM": "ماغنسيوم", "ZINC": "زنك", "OMEGA": "اوميجا", "LIDOCAINE": "ليدوكايين", "CHLORHEXIDINE": "كلورهيكسيدين",
+    "XYLOMETAZOLINE": "زيلوميتازولين", "OXYMETAZOLINE": "اوكسيميتازولين", "TOBRAMYCIN": "توبرامايسين", "NAPHAZOLINE": "نافازولين",
+    "ORLISTAT": "اورليستات", "ALLOPURINOL": "الوبيورينول", "COLCHICINE": "كولشيسين", "FEBUXOSTAT": "فيبوكسوستات",
+}
+
+
+def generic_ar(sci):
+    """The active ingredient(s) in Arabic, from GENERIC_AR («PARACETAMOL+CAFFEINE» → «باراسيتامول + كافيين»), '' when unknown."""
+    s, out = str(sci or "").upper(), []
+    for k, v in GENERIC_AR.items():
+        if re.search(r"(?<![A-Z])" + re.escape(k), s) and v not in out:
+            out.append(v)
+    return " + ".join(out)
 
 
 def norm(t):
@@ -30,9 +76,11 @@ def library():
         return []
     with gzip.open(FILE, "rt", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
+    rows = [r for r in rows if "N/A" not in r["en"].upper()]  # not on the market (yet): never offered
     for i, r in enumerate(rows):
         r["id"] = i
-        r["_s"] = " " + norm(" ".join([r["en"], r["ar"], r["sci"], r["company"]])) + " "
+        r["sci_ar"] = generic_ar(r["sci"])
+        r["_s"] = " " + norm(" ".join([r["en"], r["ar"], r["sci"], r["sci_ar"], r["company"]])) + " "
         r["_k"] = _skel(r["_s"])
     return rows
 
@@ -45,8 +93,10 @@ def _skel(t):
 
 def count_in_pack(en):
     """How many tablets / capsules the pack holds, from its English name («AUGMENTIN 1 GM 14 F.C. TABS.» → 14)."""
-    m = re.search(r"(\d{1,3})\s*(?:(?:F\.?\s*C\.?|S\.?R\.?|E\.?C\.?|M\.?R\.?|X\.?R\.?|CHEW(?:ABLE)?\.?|ORODISP(?:ERSIBLE)?\.?|DISP\.?|"
-                  r"E\.?R\.?|P\.?R\.?|COATED|FILM|HARD|SOFT|GELATIN|VAG(?:INAL)?\.?|EFF(?:ERVESCENT)?\.?|SUBLINGUAL)\s*)*(?:TAB|CAP|PILL|SACHET)", en.upper())
+    # the count, then up to four describing words («F.C.», «SUGAR C.», «DISCMELT ORALLY DIS.»…), then the dosage form; a strength
+    # («25 MG») is never the count because a describing word cannot start with a unit or hold a digit
+    m = re.search(r"(?<![\d,/])(?<!\d\.)(\d{1,3})\s*(?!(?:MG|MCG|GM|G|ML|IU|MIU|KG|MMOL)\b|%)(?:[A-Z][A-Z.\-]*\s*){0,4}?(?<![A-Z])(?:TAB(?:LET|LE)?S?|TAPS|CAP(?:SULE?)?S?|PILLS?|SACHETS?|"
+                  r"CAPLETS?|LOZENGES?)(?![A-Z])", en.upper())
     return int(m.group(1)) if m else None
 
 
@@ -73,8 +123,24 @@ def search(q, limit=60):
     if not out:  # Arabic spelled another way
         sk = [_skel(w) for w in words if _skel(w)]
         out = [r for r in lib if sk and all(w in r["_k"] for w in sk)]
-    out.sort(key=lambda r: (not r["_s"].startswith(" " + words[0]), not norm(r["en"]).startswith(words[0]), len(r["en"])))
+    out.sort(key=lambda r: (_rank(r, q, words[0]), len(r["en"]), r["en"]))
     return out[:limit]
+
+
+def _rank(r, q, w):
+    """0 = the trade name is what was typed («بروفين» → BRUFEN), 1 = it starts with it, 2 = a word starts with it, 3 = anywhere
+    (MEPABRUFEN), 4 / 5 = found by the spelling-tolerant form only (the name starting with it first)."""
+    ar, en = norm(r["ar"]), norm(r["en"])
+    first = {(ar.split() or [""])[0], (en.split() or [""])[0]}
+    if q in first or w in first:
+        return 0
+    if ar.startswith(q) or en.startswith(q):
+        return 1
+    if (" " + w) in r["_s"]:
+        return 2
+    if all(x in r["_s"] for x in q.split()):
+        return 3
+    return 4 if _skel(ar).startswith(_skel(w)) or _skel(en).startswith(_skel(w)) else 5
 
 
 def get(ids):
@@ -88,7 +154,7 @@ def view(r):
 
     strips = guess_strips(r["en"], r["route"])
     price = Decimal(r["price"]) if r["price"] else None
-    return dict(id=r["id"], en=r["en"], ar=r["ar"], sci=r["sci"], company=r["company"], cls=r["cls"], route=ROUTES.get(r["route"], ""),
+    return dict(id=r["id"], en=r["en"], ar=r["ar"], sci=r["sci"], sci_ar=r.get("sci_ar", ""), company=r["company"], cls=r["cls"], route=ROUTES.get(r["route"], ""),
                 price=price, strips=strips, strip_price=(price / strips).quantize(Decimal("0.01")) if price and strips > 1 else None,
                 have=Item.objects.filter(name=r["en"]).values_list("pk", flat=True).first())
 
@@ -129,8 +195,12 @@ def add(r, *, box_price=None, strips=None, reorder_boxes=None):
     if it:
         return it, False
     price = Decimal(str(box_price)) if box_price not in (None, "") else (Decimal(r["price"]) if r["price"] else None)
+    if price is None or price <= 0:  # never a drug at no price on the till: the pharmacist writes it
+        raise ValidationError(f"اكتب سعر بيع العلبة لـ «{r['en']}» — لا يوجد له سعر في المكتبة")
+    sci_ar = r.get("sci_ar") or generic_ar(r["sci"])
     it = Item.objects.create(code=_next_code(), name=r["en"][:150], category=_category(r), unit="علبة", sale_price=price, vat_rate=0,
-                             aliases=r["ar"], extra={"generic": r["sci"][:120], "company": r["company"][:80]},
+                             aliases=" ".join(x for x in (r["ar"], sci_ar) if x),  # Arabic trade name + Arabic generic: the till finds both
+                             extra=dict({"generic": r["sci"][:120], "company": r["company"][:80]}, **({"generic_ar": sci_ar[:120]} if sci_ar else {})),
                              reorder_level=Decimal(str(reorder_boxes)) if reorder_boxes not in (None, "") else Decimal(1))  # in boxes; ×strips below
     n = guess_strips(r["en"], r["route"]) if strips in (None, "") else int(strips)
     if n and n > 1:

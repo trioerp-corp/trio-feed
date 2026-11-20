@@ -79,6 +79,8 @@ def post_move(move: StockMove, user=None, allow_negative=False):
     for ln in lines:
         item = Item.objects.select_for_update().get(pk=ln.item_id)
         cat = item.category
+        if item.variant_of_id is None and isinstance((item.extra or {}).get("grid"), dict):  # 1.25: stock lives on its sizes / colours
+            raise ValidationError(f"«{item.name}» صنف بمقاسات وألوان — اختر المقاس واللون")
         if ln.qty <= 0:
             raise ValidationError(f"{item}: يجب أن تكون الكمية أكبر من صفر")
         if move.kind in INCOMING:
@@ -88,7 +90,7 @@ def post_move(move: StockMove, user=None, allow_negative=False):
                 if ln.unit_cost is None:
                     raise ValidationError(f"{item}: سعر الوحدة مطلوب للوارد")
                 cost = ln.unit_cost
-            value = L.q2(ln.qty * cost)
+            value = ln.value if (move.kind == "receipt" and ln.value) else L.q2(ln.qty * cost)  # a purchase line keeps its invoice money
             q = _quant(item, move.warehouse)
             q.qty += ln.qty
             q.save()

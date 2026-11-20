@@ -219,7 +219,7 @@ def _queue(date, doctor):
 
 @transaction.atomic
 def book(patient, date, *, doctor=None, service=None, time=None, note="", user=None, pay=None, paid_card=0, paid_credit=0, discount=0,
-         allow_overlap=False):
+         allow_overlap=False, followup=None):
     """A booking. With `pay` («cash» / «card» / «credit» / «split») the visit is opened now and its service paid: the booking receipt.
     Two bookings of the same doctor at the same time are refused unless the reception confirms it (allow_overlap)."""
     if Appointment.objects.filter(patient=patient, date=date, state__in=["booked", "waiting", "inside"]).exists():
@@ -235,10 +235,21 @@ def book(patient, date, *, doctor=None, service=None, time=None, note="", user=N
             raise ValidationError(f"{doctor} لديه حجز {a.patient.name} الساعة {a.time:%H:%M} — "
                                   + (f"أول موعد متاح {free}" if free else "لا يوجد موعد متاح بعدها في هذا اليوم")
                                   + " (أو أكّد الحجز في الوقت نفسه)")
+    if doctor and not allow_overlap:  # outside his days / hours, or his day is full: the reception confirms
+        from . import followup as FU
+
+        w = FU.schedule_warnings(doctor, date, time)
+        if w:
+            raise ValidationError(" · ".join(w) + " (أو أكّد الحجز)")
+    fu = None
+    if followup is not False:  # a free / reduced «إعادة» of a paid «كشف» within N days: offered automatically
+        from . import followup as FU
+
+        fu = FU.followup_for(patient, doctor, service or _default_service(doctor), date)
     appt = Appointment.objects.create(patient=patient, date=date, doctor=doctor, service=service, time=time, note=(note or "")[:200],
-                                      queue_no=_queue(date, doctor), created_by=_name(user))
+                                      queue_no=_queue(date, doctor), created_by=_name(user), followup_of=fu["base"] if fu else None)
     if pay:
-        v = open_visit(patient, doctor=doctor, service=service, user=user)
+        v = open_visit(patient, doctor=doctor, service=service, user=user, followup=fu)
         if not v.lines.exists():
             raise ValidationError("اختر الخدمة التي ستُدفع")
         total = v.unbilled - L.q2(Decimal(str(discount or 0)))
@@ -260,7 +271,15 @@ def arrive(appt: Appointment, user=None):
         raise ValidationError("هذا الحجز ليس في انتظار الوصول")
     if appt.date != timezone.localdate():
         appt.date, appt.queue_no = timezone.localdate(), _queue(timezone.localdate(), appt.doctor)
-    appt.visit = appt.visit or open_visit(appt.patient, doctor=appt.doctor, service=appt.service, user=user)
+    fu = None
+    if not appt.visit_id and appt.followup_of_id:
+        from . import followup as FU
+
+        fu = FU.followup_for(appt.patient, appt.doctor, appt.service or _default_service(appt.doctor), timezone.localdate(),
+                            exclude_appt=appt.pk)
+        if fu and fu["base"].pk != appt.followup_of_id:
+            fu = None
+    appt.visit = appt.visit or open_visit(appt.patient, doctor=appt.doctor, service=appt.service, user=user, followup=fu)
     appt.state = "waiting"
     appt.save()
     return appt
@@ -268,6 +287,7 @@ def arrive(appt: Appointment, user=None):
 
 def walk_in(patient, *, doctor=None, service=None, user=None, **pay):
     """No booking: straight into today's queue (paid at the reception when `pay` is given)."""
+    pay.setdefault("allow_overlap", True)  # the patient is here: the schedule warnings are shown, never a refusal
     appt = book(patient, timezone.localdate(), doctor=doctor, service=service, user=user, **pay)
     return arrive(appt, user)
 
@@ -291,14 +311,19 @@ def set_state(appt: Appointment, state, user=None, reason=""):
 
 # ---------------------------------------------------------------- visits
 @transaction.atomic
-def open_visit(patient, *, doctor=None, service=None, user=None):
+def open_visit(patient, *, doctor=None, service=None, user=None, followup=None):
     if service is None:  # no service picked: the doctor's first service, else the clinic's first («كشف»)
-        live = Service.objects.filter(item__active=True).order_by("id")
-        service = (live.filter(doctor=doctor).first() if doctor else None) or live.filter(doctor__isnull=True).first()
-    v = Visit.objects.create(patient=patient, doctor=doctor or (service.doctor if service else None), opened_at=timezone.now(), by=_name(user))
+        service = _default_service(doctor)
+    v = Visit.objects.create(patient=patient, doctor=doctor or (service.doctor if service else None), opened_at=timezone.now(), by=_name(user),
+                             followup_of=followup["base"] if followup else None, followup_note=followup["note"] if followup else "")
     if service:
-        VisitLine.objects.create(visit=v, item=service.item, price=service.item.sale_price or Z)
+        VisitLine.objects.create(visit=v, item=service.item, price=followup["price"] if followup else (service.item.sale_price or Z))
     return v
+
+
+def _default_service(doctor):
+    live = Service.objects.filter(item__active=True).order_by("id")
+    return (live.filter(doctor=doctor).first() if doctor else None) or live.filter(doctor__isnull=True).first()
 
 
 def _need_live(v):
@@ -391,6 +416,12 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     total = sum((ln.amount for ln in lines), Z) - disc
     if total < 0:
         raise ValidationError("الخصم أكبر من الحساب")
+    if total == 0 and not disc and all(ln.amount == 0 for ln in lines):  # a free «إعادة»: nothing to invoice, the visit is settled
+        v.state, v.paid_by = "paid", _name(user)
+        v.save(update_fields=["state", "paid_by"])
+        if kind != "booking":
+            Appointment.objects.filter(visit=v).update(state="done")
+        return v
     paid_card, paid_credit = L.q2(Decimal(str(paid_card or 0))), L.q2(Decimal(str(paid_credit or 0)))
     ins, ins_amt = None, Z
     if insured:

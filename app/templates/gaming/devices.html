@@ -32,5 +32,20 @@
 {% include "gaming/_rules_fields.html" %}
 <label class="field">أقصى خصم يعطيه العامل وحده (% من الحساب)<input name="max_discount_pct" value="{{ hs.max_discount_pct|floatformat:-2|unlocalize }}" inputmode="decimal" dir="ltr">
 <small class="muted">خصم أكبر يحتاج إلى اسم صاحب المحل وكلمة سره على شاشة الصالة، ويظهر في تقرير الوردية والتقرير.</small></label>
-<button>حفظ</button></form></section></div></div>
+<button>حفظ</button></form></section>
+<section class="card" style="margin-top:16px" id="pkg"><h2 style="margin-top:0">🎟 باقات الساعات</h2>
+<p class="muted" style="font-size:12.5px;margin:0 0 8px">يدفع العميل الباقة مقدمًا على شاشة الصالة ويُضاف رصيدها إلى رقم موبايله، وعند قفل حسابه تُخصم دقائق اللعب من رصيده ويدفع الباقي فقط. يُسجَّل ثمن الباقة إيرادًا يوم بيعها.</p>
+{% for p in packages %}<form method="post" class="form-grid" style="border-bottom:1px solid var(--line-2);padding-bottom:8px;margin-bottom:8px;{% if not p.active %}opacity:.6{% endif %}">{% csrf_token %}<input type="hidden" name="op" value="pkg_save"><input type="hidden" name="pk" value="{{ p.pk }}">
+<label class="field">الاسم<input name="name" value="{{ p.name }}" required></label>
+<label class="field">الساعات<input name="hours" value="{{ p.hours|unlocalize }}" inputmode="decimal" dir="ltr" required></label>
+<label class="field">السعر<input name="price" value="{{ p.price|floatformat:-2|unlocalize }}" inputmode="decimal" dir="ltr" required></label>
+<label class="field">على أجهزة<select name="kind"><option value="">أي جهاز</option>{% for k, t in KINDS %}<option value="{{ k }}" {% if p.kind == k %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></label>
+<label class="field">الحالة<select name="active"><option value="1">متاحة</option><option value="0" {% if not p.active %}selected{% endif %}>موقوفة</option></select></label>
+<div class="field"><button class="light">حفظ</button></div></form>{% endfor %}
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="pkg_add"><h3 style="margin:6px 0">+ باقة جديدة</h3>
+<div class="form-grid"><label class="field">الاسم<input name="name" required placeholder="مثلًا: 10 ساعات"></label>
+<label class="field">عدد الساعات<input name="hours" inputmode="decimal" dir="ltr" required placeholder="10"></label>
+<label class="field">السعر<input name="price" inputmode="decimal" dir="ltr" required placeholder="300"></label>
+<label class="field">على أجهزة<select name="kind"><option value="">أي جهاز</option>{% for k, t in KINDS %}<option value="{{ k }}">{{ t }}</option>{% endfor %}</select></label></div>
+<button>أضف الباقة</button></form></section></div></div>
 {% endblock %}

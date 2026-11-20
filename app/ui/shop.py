@@ -204,6 +204,8 @@ def items(request):
                 messages.error(request, "اكتب اسم الصنف")
             elif NM.clash(name):
                 messages.error(request, f"يوجد صنف باسم «{NM.clash(name)}» بالفعل — عدّل الصنف الموجود أو اكتب اسمًا يميّزه")
+            elif (num(request.POST.get("price")) or 0) < 0:
+                messages.error(request, "سعر البيع لا يكون سالبًا")
             else:
                 last = Item.objects.filter(code__regex=r"^\d+$").order_by("-id").first()
                 code = request.POST.get("code", "").strip() or str((int(last.code) + 1) if last else 1001)
@@ -217,7 +219,15 @@ def items(request):
                     messages.success(request, f"تمت الإضافة «{name}» بكود {code}")
         elif "save" in request.POST:
             it = Item.objects.get(pk=request.POST["save"])
+            from inventory import variants as VR
+
+            if VR.is_parent(it):  # its price / barcode live on its sizes and colours
+                messages.info(request, f"«{it.name}» صنف بمقاسات وألوان — عدّله من هنا")
+                return redirect(f"/ui/shop/variants/?edit={it.pk}#vform")
             p = request.POST.get(f"price_{it.pk}", "").strip()
+            if (num(p) or 0) < 0:
+                messages.error(request, f"«{it.name}»: سعر البيع لا يكون سالبًا")
+                return redirect(request.get_full_path())
             it.sale_price = num(p)
             it.barcode = request.POST.get(f"barcode_{it.pk}", "").strip()
             from inventory.reorder import parse as reorder_of
@@ -240,6 +250,9 @@ def items(request):
 
         k = nz(q)
         ids = [pk for pk, n, a, x in Item.objects.values_list("pk", "name", "aliases", "extra") if k and k in nz(f"{n} {a} {' '.join(map(str, (x or {}).values()))}")]
+        words = [w for w in k.split() if w]  # 1.25: «قميص أزرق L» finds «قميص — L / أزرق»
+        ids += [pk for pk, n, a, x in Item.objects.values_list("pk", "name", "aliases", "extra")
+                if len(words) > 1 and all(w in nz(f"{n} {a} {' '.join(map(str, (x or {}).values()))}") for w in words)]
         qs = qs.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q) | Q(extra__icontains=q) | Q(pk__in=ids))
     if request.GET.get("cat"):
         qs = qs.filter(category_id=request.GET["cat"])
@@ -251,7 +264,7 @@ def items(request):
     for i in rows:
         i.xvals = [(f, (i.extra or {}).get(f["k"], "")) for f in fields]
     return render(request, "ui/shop_items.html", dict(items=rows, q=q, cats=sorted(ItemCategory.objects.all(), key=lambda c: (c.name == "أخرى" or c.name.startswith("مستلزمات تشغيل"), c.name)),
-                                                      g=request.GET, act=act, fields=fields))
+                                                      g=request.GET, act=act, fields=fields, variants_on=__import__("inventory.variants", fromlist=["x"]).enabled()))
 
 
 def _extra(P, pat, fields, keep_empty=False):
@@ -338,9 +351,15 @@ def purchases(request):
     paid = {}
     for v in Voucher.objects.filter(legacy_number__startswith="PUR-", state="posted").values("legacy_number", "amount"):
         paid[v["legacy_number"]] = paid.get(v["legacy_number"], Z) + v["amount"]
+    vat = {}
+    for src, d in JournalLine.objects.filter(entry__source__startswith="inventory.purchase-vat:", entry__state="posted", account__code="2301040301") \
+            .values_list("entry__source", "debit"):
+        vat[src] = vat.get(src, Z) + (d or Z)
+    for v in CashMove.objects.filter(uid__startswith="PUR-", uid__endswith="-OWNER", cancelled=False).values("uid", "amount"):
+        paid[v["uid"][:-6]] = paid.get(v["uid"][:-6], Z) + v["amount"]  # paid by the owner from his pocket
     rows = []
     for m in qs:
-        total = sum((l.value or Z for l in m.lines.all()), Z)
+        total = sum((l.value or Z for l in m.lines.all()), Z) + vat.get(f"inventory.purchase-vat:{m.pk}", Z)
         pd = paid.get(f"PUR-{m.pk}", Z)
         rows.append((m, total, pd, total - pd))
     return render(request, "ui/shop_purchases.html", dict(rows=rows))
@@ -351,6 +370,7 @@ def purchase_new(request):
     if not request.user.has_perm("inventory.add_stockmove"):
         raise PermissionDenied
     from core.modules import enabled
+    from inventory import purchases as PUR
 
     b = _b(request)
     whs = Warehouse.objects.filter(active=True, **({"pk": b.warehouse_id} if b else {}))
@@ -361,19 +381,28 @@ def purchase_new(request):
         for k, item_id in enumerate(P.getlist("item")):
             g = lambda n: (P.getlist(n)[k] if k < len(P.getlist(n)) else "")  # noqa: E731
             if item_id or g("qty"):
-                old.append(dict(item=item_id, text=g("item_text").strip()[:150], qty=g("qty"), factor=g("factor") or "1", cost=g("cost"),
-                                produced=g("produced"), expiry=g("expiry")))
+                old.append(dict(item=item_id, text=g("item_text").strip()[:150], qty=g("qty"), unit=g("unit"), factor=g("factor") or "1", cost=g("cost"),
+                                bonus=g("bonus"), public=g("public"), disc=g("disc"), produced=g("produced"), expiry=g("expiry")))
+    items = list(Item.objects.filter(active=True).order_by("name"))
     ctx = dict(whs=whs, boxes=boxes, suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"),
-               items=Item.objects.filter(active=True).order_by("name"), today=timezone.localdate().isoformat(), p=P, old_lines=old,
-               units_on="units" in enabled())
+               items=items, item_units=_purchase_units(items), today=timezone.localdate().isoformat(), p=P, old_lines=old,
+               units_on="units" in enabled(), vat_registered=CompanySettings.get().vat_registered, ask=[])
     if request.method == "POST":
         try:
             with transaction.atomic():
                 sup = Partner.objects.filter(pk=P.get("supplier") or 0).first()
                 if not sup and P.get("new_supplier", "").strip():
-                    sup = Partner.objects.create(name=P["new_supplier"].strip(), kind="supplier", phone=P.get("phone", ""))
+                    sup = _purchase_supplier(P["new_supplier"], P.get("phone", ""), ok=P.get("confirm") == "1", ask=ctx["ask"])
                 if not sup:
                     raise ValidationError("اختر المورد أو اكتب اسم مورد جديد")
+                inv_no = P.get("invoice", "").strip()[:30]
+                if inv_no and sup.pk and P.get("confirm") != "1":
+                    dup = StockMove.objects.filter(kind="receipt", partner=sup, legacy_number=inv_no).exclude(state="cancelled").first()
+                    if dup:
+                        ctx["ask"].append(f"فاتورة رقم {inv_no} من «{sup.name}» مسجّلة من قبل ({dup.number} بتاريخ {dup.date:%d/%m/%Y}) — "
+                                          "راجعها حتى لا تدخل البضاعة مرتين")
+                if ctx["ask"]:
+                    raise ValidationError("راجع التنبيه في أعلى الصفحة، ثم علّم «نعم، سجّلها» واضغط حفظ مرة أخرى إن كانت صحيحة")
                 date = dt.date.fromisoformat(P["date"])
                 rows, new_items = [], []
                 for ln in (dict(x) for x in old):  # copies: a refused save rolls the new item back, the form keeps its text
@@ -385,23 +414,34 @@ def purchase_new(request):
                         if ln["qty"] and not ln["item"]:
                             raise ValidationError("يوجد سطر بلا اسم صنف — اكتب اسم الصنف أو اختره من القائمة")
                         continue
-                    f = num(ln["factor"]) or Decimal(1)
-                    qty, cost = num(ln["qty"]), num(ln["cost"])
+                    item = Item.objects.get(pk=ln["item"])
+                    unit = item.units.filter(name=ln["unit"]).first() if ln["unit"] else None
+                    f = unit.factor if unit else (num(ln["factor"]) or Decimal(1))  # a known unit's content comes from the item, never the page
+                    qty = num(ln["qty"])
                     if not qty or qty <= 0:
                         raise ValidationError("يجب أن تكون الكمية أكبر من صفر")
-                    if cost is None or cost < 0:
-                        raise ValidationError("اكتب سعر الشراء لكل صنف")
-                    rows.append(dict(item=Item.objects.get(pk=ln["item"]), qty=qty * f, unit_cost=cost / f,
+                    public = num(ln["public"])
+                    rows.append(dict(item=item, qty=qty, factor=f, cost=num(ln["cost"]), bonus=num(ln["bonus"]) or Z, public=public, disc_pct=num(ln["disc"]),
                                      produced=dt.date.fromisoformat(ln["produced"]) if ln["produced"] else None,
                                      expiry=dt.date.fromisoformat(ln["expiry"]) if ln["expiry"] else None))
+                    if public and public > 0:  # the public price printed on the invoice becomes the selling price when there is none
+                        if unit and unit.sale_price is None:
+                            unit.sale_price = public.quantize(Decimal("0.01"))
+                            unit.save(update_fields=["sale_price"])
+                        elif not unit and f == 1 and item.sale_price is None:
+                            item.sale_price = public.quantize(Decimal("0.01"))
+                            item.save(update_fields=["sale_price"])
+                if not rows:
+                    raise ValidationError("أضف صنفًا واحدًا على الأقل")
+                lines, vat = PUR.lines_from_invoice(rows, discount=num(P.get("inv_disc")), vat_pct=num(P.get("vat_pct")),
+                                                    vat_registered=ctx["vat_registered"])
                 pay = P.get("pay", "credit") if P.get("pay") in ("credit", "cash", "split", "owner") else "credit"
                 box = boxes.filter(pk=P.get("cashbox") or 0).first() if pay in ("cash", "split") else None
                 if pay in ("cash", "split") and not box:
                     raise CashBox.DoesNotExist
-                from inventory import purchases as PUR
 
-                mv, total, msg = PUR.record(warehouse=whs.get(pk=P["warehouse"]), supplier=sup, date=date, lines=rows, invoice=P.get("invoice", ""),
-                                            pay=pay, paid=num(P.get("paid")) or Z, box=box, user=request.user)
+                mv, total, msg = PUR.record(warehouse=whs.get(pk=P["warehouse"]), supplier=sup, date=date, lines=lines, invoice=inv_no,
+                                            pay=pay, paid=num(P.get("paid")) or Z, box=box, user=request.user, vat=vat)
             if new_items:
                 msg += f" — وأُضيف صنف جديد: {'، '.join(new_items)} (اضبط وحدته وحد الطلب من الأصناف)"
             messages.success(request, msg)
@@ -409,6 +449,45 @@ def purchase_new(request):
         except (ValidationError, ValueError, KeyError, CashBox.DoesNotExist) as e:
             _errs(request, e)
     return render(request, "ui/shop_purchase_form.html", ctx)
+
+
+def _purchase_units(items):
+    """{item pk: [base unit, [[unit, factor]…], the unit bought by default]} for the purchase / return pages: a drug sold by the strip
+    is bought by the box («علبة»), a supermarket item with a carton by the carton (its biggest unit)."""
+    from inventory.models import ItemUnit
+    from inventory.units import BOX, STRIP
+
+    by = defaultdict(list)
+    for u in ItemUnit.objects.filter(item__active=True).order_by("factor"):
+        by[u.item_id].append([u.name, float(u.factor)])
+    out = {}
+    for i in items:
+        us = by.get(i.pk)
+        if us:
+            dflt = BOX if i.unit == STRIP and any(u[0] == BOX for u in us) else us[-1][0]
+            out[i.pk] = [i.unit, us, dflt]
+    return out
+
+
+def _purchase_supplier(name, phone, ok, ask):
+    """A supplier typed by name: the existing one when it is the same name written another way («شركة النيل» = «شركه النيل»),
+    a question when it is close to one («النيل للتوزيع» / «النيل للتوزيغ»), else a new supplier."""
+    import difflib
+
+    from inventory import names as NM
+
+    name = NM.clean(name, 200)
+    k = NM.norm(name)
+    sups = list(Partner.objects.filter(kind="supplier", active=True))
+    same = next((s for s in sups if NM.norm(s.name) == k), None)
+    if same:
+        return same
+    near = [s.name for s in sups if difflib.SequenceMatcher(None, NM.norm(s.name), k).ratio() >= 0.8
+            or (min(len(k), len(NM.norm(s.name))) >= 4 and (k in NM.norm(s.name) or NM.norm(s.name) in k))]
+    if near and not ok:
+        ask.append(f"المورد «{name}» قريب من مورد موجود: {'، '.join('«' + n + '»' for n in near[:3])} — اختره من القائمة إن كان هو نفسه")
+        return Partner(name=name, kind="supplier")  # not saved: the page asks first
+    return Partner.objects.create(name=name, kind="supplier", phone=(phone or "")[:40])
 
 
 def _purchase_new_item(text):
@@ -423,6 +502,13 @@ def _purchase_new_item(text):
     got = NM.clash(name)
     if got:
         return Item.objects.filter(name=got, active=True, variant_of__isnull=True).first()
+    if (CompanySettings.get().activity or {}).get("key") == "pharmacy":  # a drug of the library: its Arabic names, generic, strips and price
+        from inventory import drugs as D
+
+        k = D.norm(name)
+        r = next((r for r in D.library() if D.norm(r["en"]) == k), None)
+        if r:
+            return D.add(r)[0]
     cat = (ItemCategory.objects.filter(name__startswith="خامات").order_by("pk").first() if CompanySettings.get().business in ("cafe", "gaming") else None) \
         or ItemCategory.objects.filter(name="أخرى").first() or ItemCategory.objects.exclude(name__startswith="مستلزمات").order_by("pk").first()
     if not cat:
@@ -629,10 +715,17 @@ def returns(request):
                 cc = None
                 p = mv.warehouse.project
                 cc = p if p.is_postable else p.children.filter(is_postable=True).first()
+                from inventory.models import ItemUnit
+
                 n = 0
-                for item_id, qty in zip(request.POST.getlist("item"), request.POST.getlist("qty")):
+                units = request.POST.getlist("unit")
+                for k, (item_id, qty) in enumerate(zip(request.POST.getlist("item"), request.POST.getlist("qty"))):
                     if item_id and qty:
-                        StockMoveLine.objects.create(move=mv, item_id=item_id, qty=num(qty), dim1=cc)
+                        q = num(qty)
+                        if not q or q <= 0:
+                            raise ValidationError("يجب أن تكون الكمية أكبر من صفر")
+                        u = ItemUnit.objects.filter(item_id=item_id, name=units[k]).first() if k < len(units) and units[k] else None
+                        StockMoveLine.objects.create(move=mv, item_id=item_id, qty=q * (u.factor if u else 1), dim1=cc)  # 2 boxes = 2 × strips
                         n += 1
                 if not n:
                     raise ValidationError("أضف صنفًا واحدًا على الأقل")
@@ -642,10 +735,18 @@ def returns(request):
             _errs(request, e)
         return redirect("shop_returns")
     qs = StockMove.objects.filter(kind__in=["preturn", "expired"]).select_related("partner", "warehouse").order_by("-date", "-id")[:200]
+    items = list(Item.objects.filter(active=True).exclude(code="0").order_by("name"))
+    G = request.GET  # from the expiry page: «مرتجع للمورد» on a batch → this page filled in
+    pre = None
+    if (G.get("item") or "").isdigit():
+        it = next((i for i in items if i.pk == int(G["item"])), None)
+        if it:
+            pre = dict(item=it.pk, text=f"{it.name} | {it.code}", qty=G.get("qty", "")[:12], unit="")
     return render(request, "ui/shop_returns.html", dict(
         rows=[(m, sum((l.value or Z for l in m.lines.all()), Z)) for m in qs], whs=Warehouse.objects.filter(active=True),
-        suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"),
-        items=Item.objects.filter(active=True).exclude(code="0").order_by("name"), today=timezone.localdate().isoformat()))
+        suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"), item_units=_purchase_units(items),
+        items=items, today=timezone.localdate().isoformat(), pre=pre, pre_supplier=G.get("supplier", ""),
+        pre_kind="expired" if G.get("kind") == "expired" else "preturn"))
 
 
 # ------------------------------------------------------------------ stock valuation (cost and selling price)
@@ -763,6 +864,13 @@ def shop_settings(request):
                     s.scale_prefix, s.scale_item_digits, s.scale_mode = SCALE_PRESETS[pre][1:]
                     s.save(update_fields=["scale_prefix", "scale_item_digits", "scale_mode"])
                 messages.success(request, "تم حفظ إعدادات الكاشير ✔ — تُطبّق على شاشة الكاشير خلال دقائق أو عند إعادة فتحها")
+            except ValidationError as e:
+                messages.error(request, "؛ ".join(e.messages))
+        elif a == "plus" and V.is_owner(request.user):  # 1.26 optional till features (switches; details on their pages)
+            from . import plus as PP
+
+            try:
+                PP.settings_post(request)
             except ValidationError as e:
                 messages.error(request, "؛ ".join(e.messages))
         elif a == "backup":
@@ -889,7 +997,7 @@ def shop_settings(request):
                                                           users=U.objects.filter(is_superuser=False).order_by("username"),
                                                           s=CompanySettings.get(), br=Branch.objects.first(), bkey=_bkey(request),
                                                           printers=__import__("pos.kitchen", fromlist=["x"]).printers(),
-                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), scale_presets=[
+                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), plus=__import__("pos.plus", fromlist=["x"]).cfg(), scale_presets=[
                                                               (k, v[0]) for k, v in SCALE_PRESETS.items()], scale_now=_scale_now(),
                                                           **_user_roles()))
 
@@ -1103,12 +1211,19 @@ def labels(request):
     qs = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code="0").order_by("name")
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(barcode=q) | Q(code=q))
+    parent = Item.objects.filter(pk=request.GET.get("parent") or 0, variant_of__isnull=True).first()
+    if parent:  # 1.25: the labels of one product's sizes / colours, as many as are in stock
+        from inventory import variants as VR
+
+        qs = VR.variants(parent)
+        for v in qs:
+            v.n_default, v.lbl_on = (max(1, int(v.qty_on_hand)), True) if v.qty_on_hand > 0 else (1, False)  # only what is on the shelf
     chosen = []
     if request.method == "POST":
-        for it in Item.objects.filter(pk__in=request.POST.getlist("item")):
+        for it in Item.objects.filter(pk__in=request.POST.getlist("item")).select_related("variant_of"):
             n = int(num(request.POST.get(f"n_{it.pk}")) or 1)
             chosen += [it] * max(1, min(n, 200))
-    return render(request, "ui/shop_labels.html", dict(items=qs[:300], chosen=chosen, q=q, company=CompanySettings.get()))
+    return render(request, "ui/shop_labels.html", dict(items=qs[:300], chosen=chosen, q=q, company=CompanySettings.get(), parent=parent))
 
 
 def expiring(days=30):
@@ -1200,6 +1315,8 @@ def recipes(request):
                     messages.success(request, f"أُزيل «{r.item.name}» من المنيو — يمكنك إعادته من الأصناف")
                 elif request.POST.get("op") == "price":
                     r = Recipe.objects.select_related("item").get(pk=request.POST["recipe"])
+                    if (num(request.POST.get("price")) or 0) < 0:
+                        raise ValueError("السعر لا يكون سالبًا")
                     r.item.sale_price = num(request.POST.get("price"))
                     r.item.save(update_fields=["sale_price"])
                     messages.success(request, f"سعر «{r.item.name}» أصبح {r.item.sale_price}")

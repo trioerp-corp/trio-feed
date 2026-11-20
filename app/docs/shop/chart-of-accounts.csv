@@ -104,6 +104,8 @@
 3202010127,رسوم وتراخيص,32020101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
 3204010101,دعاية وإعلان,32040101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
 3801010102,عجز وتوالف بضاعة,38010101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
+3801010104,عجز نقدية,38010101,6,yes,EGP,profit_loss,expense,debit,operating,no,no,none,none
 4101010101,المبيعات,41010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none
 4101010102,إيرادات خدمات وساعات تشغيل,41010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none
 4401010101,إيرادات أخرى,44010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none
+4401010102,زيادة نقدية,44010101,6,yes,EGP,profit_loss,income,credit,operating,no,no,none,none

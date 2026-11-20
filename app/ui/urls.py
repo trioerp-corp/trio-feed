@@ -1,6 +1,7 @@
 from django.urls import path
 
-from . import branches, connect, delivery_page, find, guide, imports, manage, menu_page, pharmacy, profit, restore, setup, shop, start, tables_page, upgrade, views
+from . import plus as plus_page
+from . import branches, connect, delivery_page, find, guide, imports, manage, menu_page, pharmacy, profit, restore, setup, shop, start, tables_page, upgrade, variants, views
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -56,8 +57,13 @@ urlpatterns = [
     path("ui/ask/", views.ask, name="ask"),
     path("ui/shop/void/", shop.void, name="shop_void"),
     path("ui/shop/promos/", shop.promos, name="shop_promos"),
+    path("ui/shop/season/", plus_page.season, name="plus_season"),
+    path("ui/shop/commission/", plus_page.commission, name="plus_commission"),
+    path("ui/shop/loyalty/", plus_page.loyalty, name="plus_loyalty"),
     path("ui/shop/units/", shop.units, name="shop_units"),
     path("ui/shop/labels/", shop.labels, name="shop_labels"),
+    path("ui/shop/variants/", variants.page, name="shop_variants"),
+    path("ui/shop/variants/stock/", variants.report, name="shop_variants_report"),
     path("ui/shop/expiry/", shop.expiry, name="shop_expiry"),
     path("ui/shop/requests/", shop.requests_page, name="shop_requests"),
     path("ui/shop/recipes/", shop.recipes, name="shop_recipes"),

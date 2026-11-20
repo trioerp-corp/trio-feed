@@ -19,4 +19,6 @@ urlpatterns = [
     path("reception/", views.reception, name="clinic_reception"),
     path("doctor/", views.doctor_screen, name="clinic_doctor_screen"),
     path("owner/", views.owner_board, name="clinic_owner"),
+    path("reminders/", views.reminders, name="clinic_reminders"),
+    path("queue/tv/", views.queue_tv, name="clinic_queue_tv"),
 ]

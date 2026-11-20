@@ -10,13 +10,14 @@ hr{border:0;border-top:1px dashed #000;margin:6px 0}.big{font-size:16px;font-wei
 <div class="r">
 <div class="c">{% if s.logo_svg %}<div class="logo">{{ s.logo_svg|safe }}</div>{% endif %}<b style="font-size:15px">{{ s.name }}</b>
 {% if s.phone %}<br><span dir="ltr">{{ s.phone }}</span>{% endif %}{% if s.address %}<br>{{ s.address }}{% endif %}</div><hr>
-<table><tr><td>فاتورة رقم</td><td class="n">{{ ses.order.shift_seq|default:ses.pk }}</td></tr>
+<table>{% if ses.order %}<tr><td>فاتورة رقم</td><td class="n">{{ ses.order.shift_seq|default:ses.pk }}</td></tr>{% else %}<tr><td colspan="2" style="text-align:center;font-weight:700">إيصال لعب من رصيد الباقة</td></tr>{% endif %}
 <tr><td>{% if ses.station %}{{ ses.station }}{% else %}تيك أواي{% if ses.daily_no %} #{{ ses.daily_no }}{% endif %}{% endif %}</td><td class="n">{{ ses.closed_at|date:"d/m/Y H:i" }}</td></tr>
 {% if ses.customer %}<tr><td>العميل</td><td>{{ ses.customer }}</td></tr>{% endif %}</table><hr>
 {% if b.segments %}<table>{% for g in b.segments %}<tr><td>{{ g.station }}{% if g.multi %} — {% if g.mode == 'multi' %}مالتي{% else %}فردي{% endif %}{% endif %}<br><small>{{ g.start|date:"H:i" }} ← {{ g.end|date:"H:i" }} ({{ g.minutes }} د) × {{ g.rate|floatformat:"-2" }}/س</small></td><td></td></tr>{% endfor %}
 <tr><td>وقت اللعب المحسوب {{ b.billed }} دقيقة{% if rule %}<br><small>{{ rule }}</small>{% endif %}</td><td class="n">{{ b.time_amount|floatformat:2 }}</td></tr></table><hr>{% endif %}
 {% if b.items %}<table>{% for i in b.items %}<tr><td>{{ i.name }}<br><small>{{ i.qty|floatformat:"-3" }} × {{ i.price|floatformat:"-2" }}</small></td><td class="n">{{ i.total|floatformat:2 }}</td></tr>{% endfor %}</table><hr>{% endif %}
-<table>{% if ses.discount %}<tr><td>خصم</td><td class="n">-{{ ses.discount|floatformat:2 }}</td></tr>{% endif %}
+<table>{% if ses.prepaid_minutes %}<tr><td>من رصيد الباقة {{ ses.prepaid_minutes }} دقيقة{% if ses.hall_customer %}<br><small>{{ ses.hall_customer.name }} — الباقي {{ left }} دقيقة</small>{% endif %}</td><td class="n">-{{ ses.prepaid_value|floatformat:2 }}</td></tr>{% endif %}
+{% if ses.discount %}<tr><td>خصم</td><td class="n">-{{ ses.discount|floatformat:2 }}</td></tr>{% endif %}
 <tr class="big"><td>الإجمالي</td><td class="n">{{ ses.total|floatformat:2 }}</td></tr>
 {% if ses.order.paid_card %}<tr><td>بطاقة / محفظة</td><td class="n">{{ ses.order.paid_card|floatformat:2 }}</td></tr>{% endif %}
 {% if ses.order.paid_credit %}<tr><td>آجل</td><td class="n">{{ ses.order.paid_credit|floatformat:2 }}</td></tr>{% endif %}</table><hr>

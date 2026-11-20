@@ -230,7 +230,7 @@ SAMPLES = {
     "koshary": ("basic", [("كشري", 30, {}, {"sizes": [("صغير", 30), ("وسط", 40), ("كبير", 55)]}), ("ساندوتش فول", 10, {}), ("ساندوتش طعمية", 10, {}),
                           ("طبق طعمية", 20, {}), ("أرز باللبن", 25, {}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12})]),
     "juice": ("basic", [("عصير قصب", 15, {}), ("مانجو", 40, {}), ("فراولة", 35, {}), ("كوكتيل", 50, {}), ("آيس كريم بولة", 20, {}), ("سموزي", 55, {})]),
-    "gaming": ("basic", [("شاي", 15, {}), ("قهوة تركي", 30, {}), ("نسكافيه", 35, {}), ("إندومي", 35, {}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12}), ("مياه صغيرة", 10, {}, {"stock": True, "unit": "زجاجة", "reorder": 12})]),
+    "gaming": ("basic", [("شاي", 15, {}), ("قهوة تركي", 30, {}), ("نسكافيه", 35, {}), ("إندومي", 35, {}, {"stock": True, "unit": "كيس", "reorder": 12}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12}), ("مياه صغيرة", 10, {}, {"stock": True, "unit": "زجاجة", "reorder": 12})]),
     # clinics: consumables / medicines kept in stock (services and their prices are set on «الخدمات والأسعار»)
     "clinic": ("basic", [("جوانتي طبي (زوج)", 5, {}), ("سرنجة 5 سم", 4, {}), ("قطن طبي", 25, {}), ("كحول 70%", 40, {}), ("بلاستر", 15, {}), ("خافض حرارة شراب", 35, {})]),
     "dental": ("standard", [("جوانتي طبي (زوج)", 5, {}), ("أمبول بنج", 35, {}), ("حشو كومبوزيت", 450, {}), ("سرنجة أسنان", 6, {}), ("قطن رول", 30, {}), ("فرشة أسنان", 40, {})]),
@@ -481,6 +481,8 @@ def add_samples(p):
             unit = opt.get("unit") or (p.get("units") or ["قطعة"])[0]
             if p.get("base") in ("cafe", "gaming") and not opt.get("unit"):
                 unit = "علبة"
+            if p.get("base") == "clinic" and not opt.get("unit"):  # a consumable is counted in pieces / boxes, never «خدمة» / «جلسة»
+                unit = "علبة" if any(w in name for w in ("قطن", "بلاستر", "شاش", "قطرة", "شراب", "كريم", "جل ", "سيرم", "محلول", "أمبول")) else "قطعة"
             reorder = opt.get("reorder", DEFAULT_REORDER)
             Item.objects.create(code=MN._code(), name=name[:150], category=cat, unit=unit, sale_price=price, extra=extra or {},
                                 reorder_level=reorder)

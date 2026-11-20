@@ -154,8 +154,10 @@ def snapshot(now=None):
     if s.business == "gaming":
         from gaming.models import PlaySession
 
+        from gaming.services import bill as _bill
+
         data["play"] = [dict(n=p.station.name if p.station_id else "تيك أواي", at=timezone.localtime(p.opened_at).strftime("%H:%M"),
-                             m=int((now - p.opened_at).total_seconds() // 60))
+                             m=int((now - p.opened_at).total_seconds() // 60), v=_f(_bill(p, now)["total"]), c=p.customer[:40])
                         for p in PlaySession.objects.filter(state="open").select_related("station")[:20]]
         from django.db.models import Sum as _S
 

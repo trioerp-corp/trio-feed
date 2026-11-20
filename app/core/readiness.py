@@ -23,7 +23,8 @@ def checklist(s=None):
     def add(key, title, done, hint=""):
         rows.append(dict(key=key, title=title, done=bool(done) or _skipped(s, key), hint=hint, skipped=_skipped(s, key) and not done))
 
-    add("shop", "بيانات المحل على الإيصال (الهاتف والعنوان)", s.phone and s.address)
+    cl = s.business == "clinic"
+    add("shop", f"بيانات {'العيادة' if cl else 'المحل'} على الإيصال (الهاتف والعنوان)", s.phone and s.address)
     add("tax", "الملف الضريبي (النظام الضريبي والقيمة المضافة)", ob.get("tax"))
     add("money", "طرق الدفع التي تقبلها ورصيد الدرج في البداية", ob.get("money"))
     if "clinic" in mods:
@@ -46,17 +47,17 @@ def checklist(s=None):
         add("kitchen", "ورقة المطبخ (تُطبع مع كل طلب)", s.kitchen_ticket != "off" or ob.get("kitchen"))
     else:
         sellable = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code="0")
-        add("items", "الأصناف وأسعار البيع", sellable.exists(), "أضفهم واحدًا تلو الآخر أو ارفع ملف إكسل مرة واحدة")
+        add("items", "المستلزمات وأسعارها" if cl else "الأصناف وأسعار البيع", sellable.exists(), "أضفهم واحدًا تلو الآخر أو ارفع ملف إكسل مرة واحدة")
     no_limit = Item.objects.filter(active=True, item_type="stock", reorder_level__isnull=True).exclude(code="0").count()
     if s.business != "cafe" or no_limit:  # a menu holds no stock; only the café's stock items (cans) need it
         from .templatetags.ar import count_ar
 
         left = f" (ناقص في {count_ar(no_limit, 'صنف')})" if no_limit else ""
-        add("reorder", f"حد الطلب لكل صنف{left}", not no_limit)
+        add("reorder", f"حد الطلب لكل {'مستلزم' if cl else 'صنف'}{left}", not no_limit)
     if "purchases" in mods:
         add("suppliers", "الموردون الذين تشتري منهم", Partner.objects.filter(kind="supplier", active=True).exists())
     if "partners" in mods:
-        add("customers", "عملاء الآجل (إن كنت تبيع بالآجل)", Partner.objects.filter(kind="customer", active=True).exists())
+        add("customers", "المرضى بالآجل (إن كان لديك مرضى بالآجل)" if cl else "عملاء الآجل (إن كنت تبيع بالآجل)", Partner.objects.filter(kind="customer", active=True).exists())
     add("employees", "الموظفين ومرتباتهم", _employees_done(), "من أجل المرتبات والسلف وضريبة كسب العمل والتأمينات")
     return rows
 

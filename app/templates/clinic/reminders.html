@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}التذكيرات{% endblock %}
+{% block content %}
+<style>.rm{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line-2);flex-wrap:wrap}.rm.sent{opacity:.55}
+.rm p{margin:4px 0 0;font-size:13px;color:var(--muted);max-width:620px}.rm .a{display:flex;gap:6px;flex-wrap:wrap}.rm form{display:inline}</style>
+<div class="page-head"><div><h1>📨 التذكيرات</h1><p class="muted" style="margin:0">حجوزات الغد ({{ r.tomorrow|date:"l j F" }}) والمتابعات المستحقة — رسالة جاهزة على واتساب لكل مريض.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'clinic_reception' %}">🛎 الاستقبال</a></div></div>
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">📅 حجوزات الغد ({{ r.bookings|length }})</h2>
+{% for x in r.bookings %}<div class="rm {% if x.a.reminded_at %}sent{% endif %}"><div><b>{{ x.a.patient.name }}</b> <span class="muted">· دور {{ x.a.queue_no }}{% if x.a.time %} · {{ x.a.time|time:"H:i" }}{% endif %}{% if x.a.doctor %} · {{ x.a.doctor }}{% endif %}</span>
+{% if x.a.reminded_at %} <span class="badge">أُرسل {{ x.a.reminded_at|date:"d/m H:i" }}</span>{% endif %}<p>{{ x.text }}</p></div>
+<div class="a">{% if x.wa %}<a class="btn" href="{{ x.wa }}" target="_blank" rel="noopener" data-mark="appt" data-id="{{ x.a.pk }}">واتساب</a>{% else %}<span class="muted" style="font-size:13px">لا يوجد رقم موبايل صحيح</span>{% endif %}
+<form method="post">{% csrf_token %}<input type="hidden" name="appt" value="{{ x.a.pk }}">{% if x.a.reminded_at %}<button class="light" name="undo" value="1">لم يُرسل</button>{% else %}<button class="light">تم الإرسال ✔</button>{% endif %}</form></div></div>
+{% empty %}<p class="muted">لا توجد حجوزات غدًا</p>{% endfor %}</section>
+<section class="card"><h2 style="margin-top:0">⟲ متابعات مستحقة ({{ r.followups|length }})</h2>
+{% for x in r.followups %}<div class="rm {% if x.v.followup_reminded_at %}sent{% endif %}"><div><b>{{ x.v.patient.name }}</b> <span class="muted">· موعد المتابعة {{ x.v.next_visit|date:"l d/m" }}{% if x.v.doctor %} · {{ x.v.doctor }}{% endif %}</span>
+{% if x.v.followup_reminded_at %} <span class="badge">أُرسل {{ x.v.followup_reminded_at|date:"d/m H:i" }}</span>{% endif %}<p>{{ x.text }}</p></div>
+<div class="a">{% if x.wa %}<a class="btn" href="{{ x.wa }}" target="_blank" rel="noopener" data-mark="visit" data-id="{{ x.v.pk }}">واتساب</a>{% else %}<span class="muted" style="font-size:13px">لا يوجد رقم موبايل صحيح</span>{% endif %}
+<a class="btn light" href="{% url 'clinic_appointments' %}?d={{ x.v.next_visit|date:'Y-m-d' }}&p={{ x.v.patient_id }}">احجز له</a>
+<form method="post">{% csrf_token %}<input type="hidden" name="visit" value="{{ x.v.pk }}">{% if x.v.followup_reminded_at %}<button class="light" name="undo" value="1">لم يُرسل</button>{% else %}<button class="light">تم الإرسال ✔</button>{% endif %}</form></div></div>
+{% empty %}<p class="muted">لا توجد متابعات مستحقة</p>{% endfor %}</section>
+<script>document.querySelectorAll('[data-mark]').forEach(function(a){a.addEventListener('click',function(){var f=new FormData();f.append(a.dataset.mark,a.dataset.id);
+f.append('csrfmiddlewaretoken','{{ csrf_token }}');fetch('{% url "clinic_reminders" %}',{method:'POST',body:f,credentials:'same-origin',headers:{'X-Requested-With':'fetch'}}).then(function(){var r=a.closest('.rm');if(r)r.classList.add('sent')}).catch(function(){})})})</script>
+{% endblock %}

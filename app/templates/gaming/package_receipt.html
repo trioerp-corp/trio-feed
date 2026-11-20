@@ -1,0 +1,13 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>إيصال باقة</title>
+<style>body{font-family:Tahoma,Arial,sans-serif;margin:0;background:#fff;color:#000}.r{width:72mm;margin:0 auto;padding:4mm 0;font-size:12px}
+.c{text-align:center}.logo{width:22mm;height:22mm;margin:0 auto}table{width:100%;border-collapse:collapse}td{padding:2px 0}td.n{text-align:left;direction:ltr;white-space:nowrap}
+hr{border:0;border-top:1px dashed #000;margin:6px 0}.big{font-size:16px;font-weight:700}.no{text-align:center;margin-top:10px}@media print{.no{display:none}}</style></head>
+<body onload="setTimeout(()=>window.print(),200)"><div class="r">
+<div class="c">{% if s.logo_svg %}<div class="logo">{{ s.logo_svg|safe }}</div>{% endif %}<b style="font-size:15px">{{ s.name }}</b>{% if s.phone %}<br><span dir="ltr">{{ s.phone }}</span>{% endif %}</div><hr>
+<div class="c big">إيصال باقة ساعات</div>
+<table><tr><td>التاريخ</td><td class="n">{{ mv.at|date:"d/m/Y H:i" }}</td></tr><tr><td>العميل</td><td>{{ mv.customer.name }}</td></tr><tr><td>الموبايل</td><td class="n">{{ mv.customer.phone }}</td></tr></table><hr>
+<table><tr><td>{{ mv.package.name }}<br><small>{{ mv.minutes }} دقيقة — {{ mv.package.kind_name }}</small></td><td class="n">{{ mv.amount|floatformat:2 }}</td></tr>
+<tr class="big"><td>المدفوع</td><td class="n">{{ mv.amount|floatformat:2 }}</td></tr>{% if mv.order.paid_card %}<tr><td>بطاقة / محفظة</td><td class="n">{{ mv.order.paid_card|floatformat:2 }}</td></tr>{% endif %}</table><hr>
+<div class="c">رصيدك الآن: <b>{{ left }} دقيقة</b><br><small>يُخصم من الرصيد عند قفل حساب اللعب بذكر رقم الموبايل</small></div><hr>
+<div class="c">شكرًا لزيارتكم<br><small>Trio · 01008030459</small></div>
+<div class="no"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div></div></body></html>

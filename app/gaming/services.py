@@ -237,7 +237,7 @@ def add_item(ses, item, qty, user, price=None):
 
 
 @transaction.atomic
-def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_credit=0, approver=None, customer_new=None):
+def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_credit=0, approver=None, customer_new=None, prepaid=None):
     """Stop the clock and turn the bill into a normal sales invoice (cash drawer, stock of drinks / ingredients, VAT).
     A discount above the owner's cap needs the owner (`approver` = his name, checked by the view). Play time is sold as hours:
     quantity = billed minutes / 60, so the sales show 1.25 + 1.75 hours, not «2 hours» for two sessions."""
@@ -250,6 +250,14 @@ def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_cre
     ses.segments.filter(end__isnull=True).update(end=now)
     ses.discount = q2(Decimal(str(discount or 0)))
     b = bill(ses, now)
+    use, pre_value = 0, Decimal(0)
+    if prepaid and ses.station_id:  # the customer's package balance covers part (or all) of the time
+        from . import bookings as BK
+
+        use, pre_value = BK.prepaid_part(prepaid, ses.station.kind, b["billed"], b["time_amount"])
+        if use:
+            b["full_time"], b["time_amount"] = b["time_amount"], b["time_amount"] - pre_value
+            b["total"] -= pre_value
     if b["total"] < 0:
         raise ValidationError("الخصم أكبر من الحساب")
     if ses.discount < 0:
@@ -259,13 +267,20 @@ def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_cre
         raise ValidationError(f"الخصم أكبر من {HallSettings.get().max_discount_pct.normalize():f}% من الحساب ({discount_cap(gross)} ج) "
                               "— يحتاج إلى موافقة صاحب المحل")
     ses.discount_by = (approver or "")[:100] if ses.discount else ""
+    if use:
+        from . import bookings as BK
+
+        BK.deduct(prepaid, ses.station.kind, use, ses, user)
+        ses.hall_customer, ses.prepaid_minutes, ses.prepaid_value = prepaid, use, pre_value
     if not b["time_amount"] and not b["items"]:
-        ses.state, ses.closed_at, ses.closed_by = "void", now, _name(user)
+        ses.state, ses.closed_at, ses.closed_by = ("closed" if use else "void"), now, _name(user)
+        if use:  # all of it from the package: no invoice (the money came in when the package was sold)
+            ses.minutes, ses.billed_minutes, ses.time_amount, ses.items_amount, ses.total = b["minutes"], b["billed"], 0, 0, 0
         ses.save()
         return ses
     lines = []
     if b["time_amount"]:
-        hours = (Decimal(b["billed"]) / 60).quantize(Decimal("0.001")) if b["billed"] else Decimal(1)
+        hours = (Decimal(b["billed"] - use) / 60).quantize(Decimal("0.001")) if b["billed"] > use else Decimal(1)
         lines.append(dict(item_code=play_item().code, qty=str(hours), price=str(q2(b["time_amount"] / hours)), discount="0",
                           amount=b["time_amount"]))
     for i in b["items"]:
@@ -309,20 +324,26 @@ def cancel_session(ses, user, owner=False):
 def stations_state(now=None):
     now = now or timezone.now()
     live = {}
-    for ses in PlaySession.objects.filter(state="open").prefetch_related("segments__station", "items__item"):
+    for ses in PlaySession.objects.filter(state="open").select_related("hall_customer").prefetch_related("segments__station", "items__item"):
         seg = ses.segments.filter(end__isnull=True).last()
         b = bill(ses, now)
-        info = dict(id=ses.pk, no=ses.daily_no or ses.pk, customer=ses.customer, opened_at=ses.opened_at.isoformat(), discount=str(ses.discount), mode=seg.mode if seg else "",
+        info = dict(id=ses.pk, no=ses.daily_no or ses.pk, customer=ses.customer, phone=ses.hall_customer.phone if ses.hall_customer_id else "", opened_at=ses.opened_at.isoformat(), discount=str(ses.discount), mode=seg.mode if seg else "",
                     rate=str(seg.rate) if seg else "0", minutes=b["minutes"], billed=b["billed"], time_amount=str(b["time_amount"]),
                     items_amount=str(b["items_amount"]), total=str(b["total"]), planned=ses.planned_minutes,
                     items=[dict(id=i["id"], code=i["code"], name=i["name"], qty=str(i["qty"]), price=str(i["price"]), total=str(i["total"]))
                            for i in b["items"]], segments=[dict(station=g["station"], mode=g["mode"], rate=str(g["rate"]), minutes=g["minutes"], multi=g["multi"])
                                                            for g in b["segments"]])
         live[seg.station_id if seg else f"t{ses.pk}"] = info
+    from . import bookings as BK
+
+    nxt = {}
+    for r in BK.upcoming(now):
+        if r.station_id and r.station_id not in nxt:
+            nxt[r.station_id] = dict(id=r.pk, at=BK.t12(r.start), customer=r.customer, start=r.start.isoformat(), minutes=r.minutes)
     out = []
     for st in Station.objects.filter(active=True):
         out.append(dict(id=st.pk, name=st.name, kind=st.kind, kind_name=st.get_kind_display(), rate=str(st.rate),
-                        rate_multi=str(st.rate_multi) if st.rate_multi else None, session=live.pop(st.pk, None)))
+                        rate_multi=str(st.rate_multi) if st.rate_multi else None, session=live.pop(st.pk, None), booking=nxt.get(st.pk)))
     takeaway = [v for k, v in live.items() if isinstance(k, str)]
     return out, takeaway
 
@@ -404,7 +425,13 @@ def hall_report(d1, d2):
     for x in voids:
         w = workers.setdefault(x.closed_by or "—", dict(name=x.closed_by or "—", n=0, total=Z, discount=Z, disc_n=0, voids=0))
         w["voids"] += 1
-    return dict(devices=rows, workers=sorted(workers.values(), key=lambda w: -w["total"]), voids=voids,
+    from .models import MinuteMove
+
+    sold = MinuteMove.objects.filter(minutes__gt=0, at__gte=start, at__lt=stop)
+    used = MinuteMove.objects.filter(minutes__lt=0, at__gte=start, at__lt=stop)
+    packages = dict(n=sold.count(), total=sum((m.amount for m in sold), Z), hours=round(sum(m.minutes for m in sold) / 60, 1),
+                    used_hours=round(-sum(m.minutes for m in used) / 60, 1))
+    return dict(devices=rows, workers=sorted(workers.values(), key=lambda w: -w["total"]), voids=voids, packages=packages,
                 discounts=[x for x in closed if x.discount], open_hours=round(open_min / 60, 1),
                 total=sum((x.total for x in closed), Z), time=sum((x.time_amount for x in closed), Z),
                 items=sum((x.items_amount for x in closed), Z), discount=sum((x.discount for x in closed), Z),

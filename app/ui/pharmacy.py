@@ -37,12 +37,18 @@ def page(request):
                 from inventory.reorder import parse as reorder_of
 
                 boxes = reorder_of(request.POST.get("reorder"))
-                made = 0
+                made, refused = 0, []
                 for r in D.get(ids):
-                    _, new = D.add(r, box_price=_dec(request.POST.get(f"p_{r['id']}")), strips=request.POST.get(f"n_{r['id']}") or None,
-                                   reorder_boxes=boxes)
-                    made += new
-                messages.success(request, f"تمت الإضافة {made} دواء إلى الأصناف ✔ — يمكن للكاشير بيعها بالعلبة والشريط")
+                    try:
+                        _, new = D.add(r, box_price=_dec(request.POST.get(f"p_{r['id']}")), strips=request.POST.get(f"n_{r['id']}") or None,
+                                       reorder_boxes=boxes)
+                        made += new
+                    except ValidationError as e:  # e.g. no price: the others are still added, this one is asked for
+                        refused += e.messages
+                if made:
+                    messages.success(request, f"تمت الإضافة {made} دواء إلى الأصناف ✔ — يمكن للكاشير بيعها بالعلبة والشريط")
+                for m in refused:
+                    messages.error(request, m)
             elif a == "strip":
                 it = Item.objects.get(pk=request.POST["item"])
                 n = int(request.POST.get("n") or 0)

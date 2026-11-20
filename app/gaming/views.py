@@ -42,7 +42,7 @@ def screen(request):
 
 
 def _catalog():
-    items = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code=G.PLAY_CODE).exclude(code="0").exclude(
+    items = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code=G.PLAY_CODE).exclude(code="0").exclude(play_package__isnull=False).exclude(
         category__name__startswith="مستلزمات تشغيل").exclude(category__name__startswith="خامات").select_related("category").order_by("category__name", "name")
     return [dict(code=i.code, name=i.name, price=str(i.sale_price), cat=i.category.name, barcode=i.barcode) for i in items]
 
@@ -64,6 +64,12 @@ def state(request):
                today=dict(count=done.count(), time=str(agg["t"] or 0), items=str(agg["i"] or 0), total=str(agg["n"] or 0)),
                recent=[dict(id=x.pk, station=str(x.station or "تيك أواي"), customer=x.customer, total=str(x.total), closed=x.closed_at.isoformat(),
                             minutes=x.billed_minutes) for x in done.select_related("station").order_by("-closed_at")[:12]])
+    from . import bookings as BK
+    from .models import Package
+
+    out["bookings"] = [BK.as_json(r) for r in BK.upcoming()]
+    out["packages"] = [dict(id=p.pk, name=p.name, minutes=p.minutes, price=str(p.price), kind=p.kind_name)
+                       for p in Package.objects.filter(active=True)]
     if request.GET.get("catalog"):
         from ledger.models import Partner
 
@@ -89,8 +95,13 @@ def action(request, name):
             st = get_object_or_404(Station, pk=d.get("station"), active=True)
             if not G.open_shift():
                 raise ValidationError("افتح الوردية الأول")
-            ses = G.open_session(st, u, mode=d.get("mode", "single"), customer=d.get("customer", ""),
-                                 planned_minutes=int(d.get("planned") or 0) or None)
+            from . import bookings as BK
+
+            planned = int(d.get("planned") or 0) or None
+            warn = "" if d.get("force") else BK.walkin_warning(st, planned)
+            if warn:  # a booking would be hit: the worker confirms (or picks another device)
+                return JsonResponse({"warn": warn})
+            ses = G.open_session(st, u, mode=d.get("mode", "single"), customer=d.get("customer", ""), planned_minutes=planned)
         elif name == "takeaway":
             if not G.open_shift():
                 raise ValidationError("افتح الوردية الأول")
@@ -113,8 +124,16 @@ def action(request, name):
                     return JsonResponse({"error": "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية الموافقة"}, status=403)
                 approver = _name(o)
             new = d.get("customer_new") if isinstance(d.get("customer_new"), dict) else None
+            pre = None
+            if d.get("use_balance"):
+                from . import bookings as BK
+
+                pre = BK.find_customer(d.get("phone")) or ses.hall_customer
+                if not pre:
+                    raise ValidationError("لا يوجد عميل باقة بهذا الرقم")
             ses = G.close_session(ses, u, paid_card=d.get("card") or 0, discount=d.get("discount") or 0,
-                                  customer_id=d.get("customer_id"), paid_credit=d.get("credit") or 0, approver=approver, customer_new=new)
+                                  customer_id=d.get("customer_id"), paid_credit=d.get("credit") or 0, approver=approver, customer_new=new,
+                                  prepaid=pre)
             if ses.discount_by and ses.discount_by != _name(u):
                 from core import audit
 
@@ -125,6 +144,27 @@ def action(request, name):
 
                 out["low"] = low(ses.items.values_list("item_id", flat=True))
             return JsonResponse(out)
+        elif name == "package":  # sell a package of hours at the hall
+            from . import bookings as BK
+            from .models import Package
+
+            pkg = get_object_or_404(Package, pk=d.get("package"), active=True)
+            mv = BK.sell_package(pkg, d.get("name"), d.get("phone"), u, paid_card=pkg.price if d.get("pay") == "card" else 0)
+            return JsonResponse({"ok": True, "receipt": f"/ui/play/receipt/pkg/{mv.pk}/", "balance": BK.usable(mv.customer, pkg.kind),
+                                 "name": mv.customer.name})
+        elif name == "book_start":
+            from . import bookings as BK
+            from .models import Reservation
+
+            res = get_object_or_404(Reservation, pk=d.get("booking"))
+            if not G.open_shift():
+                raise ValidationError("افتح الوردية أولًا")
+            ses = BK.start_booking(res, get_object_or_404(Station, pk=d.get("station"), active=True), u, mode=d.get("mode", "single"))
+        elif name == "book_state":
+            from . import bookings as BK
+            from .models import Reservation
+
+            BK.set_state(get_object_or_404(Reservation, pk=d.get("booking")), d.get("state"))
         elif name == "extend":
             G.extend(ses, int(d.get("minutes") or 30))
         elif name == "cancel":
@@ -189,7 +229,7 @@ def devices(request):
 
     from pos.voids import is_owner
 
-    from .models import HallSettings
+    from .models import HallSettings, Package
 
     if not is_owner(request.user):
         return HttpResponseForbidden("هذه الصفحة لصاحب المحل")
@@ -240,6 +280,17 @@ def devices(request):
                 rate, multi = dec(P.get("rate"), True), dec(P.get("rate_multi"))
                 n = Station.objects.filter(kind=kind, active=True).update(rate=rate, rate_multi=multi)
                 messages.success(request, f"تغيّر سعر {n} جهاز — يسري على الجلسات الجديدة ✔")
+            elif op in ("pkg_add", "pkg_save"):
+                from . import bookings as BK
+                from .models import Package
+
+                pkg = get_object_or_404(Package, pk=P.get("pk")) if op == "pkg_save" else None
+                hours = dec(P.get("hours"), True)
+                pkg = BK.save_package(P.get("name"), int(hours * 60), dec(P.get("price"), True) or 0, P.get("kind", ""), pkg=pkg)
+                if op == "pkg_save":
+                    pkg.active = P.get("active") == "1"
+                    pkg.save(update_fields=["active"])
+                messages.success(request, f"حُفظت الباقة «{pkg.name}» ✔")
             elif op == "rules":
                 s.gaming_round_minutes, s.gaming_min_minutes, s.gaming_grace_minutes = G.check_rules(P.get("g_round"), P.get("g_min"), P.get("g_grace"))
                 s.save(update_fields=["gaming_round_minutes", "gaming_min_minutes", "gaming_grace_minutes"])
@@ -258,11 +309,108 @@ def devices(request):
         kinds.setdefault(st.kind, []).append(st)
     return render(request, "gaming/devices.html", dict(
         stations=Station.objects.all(), KINDS=Station.KINDS, hs=hs, s=s, g_round_choices=G.ROUND_CHOICES, g_min_choices=G.MIN_CHOICES,
-        rule=G.rule_text(s), by_kind=[(k, dict(Station.KINDS).get(k, k), v) for k, v in kinds.items()]))
+        rule=G.rule_text(s), by_kind=[(k, dict(Station.KINDS).get(k, k), v) for k, v in kinds.items()], packages=Package.objects.all()))
 
 
 @_guard
 def receipt(request, pk):
     ses = get_object_or_404(PlaySession.objects.select_related("station", "order"), pk=pk)
     b = G.bill(ses, ses.closed_at)
-    return render(request, "gaming/receipt.html", dict(ses=ses, b=b, s=CompanySettings.get(), hide_nav=True, rule=G.rule_text()))
+    left = None
+    if ses.hall_customer_id and ses.station_id:
+        from . import bookings as BK
+
+        left = BK.usable(ses.hall_customer, ses.station.kind)
+    return render(request, "gaming/receipt.html", dict(ses=ses, b=b, s=CompanySettings.get(), hide_nav=True, rule=G.rule_text(), left=left))
+
+
+@_guard
+def balance(request):
+    """The pay window asks: this mobile number's package balance, and what it covers of this session now."""
+    from . import bookings as BK
+
+    c = BK.find_customer(request.GET.get("phone"))
+    ses = PlaySession.objects.filter(pk=request.GET.get("session") or 0, state="open").select_related("station").first()
+    if not c:
+        return JsonResponse({"found": False})
+    kind = ses.station.kind if ses and ses.station_id else ""
+    out = dict(found=True, name=c.name, phone=c.phone, balance=BK.usable(c, kind) if kind else sum(max(0, m) for m in BK.balance(c).values()))
+    if ses and ses.station_id:
+        b = G.bill(ses)
+        use, value = BK.prepaid_part(c, kind, b["billed"], b["time_amount"])
+        out.update(use=use, value=str(value))
+    return JsonResponse(out)
+
+
+@_guard
+def package_receipt(request, pk):
+    from . import bookings as BK
+    from .models import MinuteMove
+
+    mv = get_object_or_404(MinuteMove.objects.select_related("customer", "package", "order"), pk=pk, minutes__gt=0)
+    return render(request, "gaming/package_receipt.html", dict(mv=mv, s=CompanySettings.get(), hide_nav=True,
+                                                               left=BK.usable(mv.customer, mv.kind)))
+
+
+def _when(day, t):
+    import datetime as dt
+
+    try:
+        tt = dt.time.fromisoformat(str(t or "")[:5])
+    except ValueError:
+        raise ValidationError("اكتب ساعة الحجز")
+    return timezone.make_aware(dt.datetime.combine(day, tt), timezone.get_current_timezone())
+
+
+@_guard
+def bookings(request):
+    """«📅 حجوزات الأجهزة»: today's / tomorrow's bookings, a new booking (a device or any device of a kind), no-show / cancel."""
+    import datetime as dt
+
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    from pos.clinic.services import parse_date
+
+    from . import bookings as BK
+    from .models import Reservation
+
+    today = timezone.localdate()
+    day = parse_date(request.GET.get("d"), today) if request.GET.get("d") else today
+    if request.method == "POST":
+        P = request.POST
+        try:
+            if P.get("op") in ("cancelled", "noshow"):
+                r = BK.set_state(get_object_or_404(Reservation, pk=P.get("pk")), P.get("op"))
+                messages.success(request, ("أُلغي حجز " if r.state == "cancelled" else "سُجّل عدم حضور ") + r.customer)
+            else:
+                day = parse_date(P.get("date"), today)
+                w = P.get("where") or ""
+                st = Station.objects.filter(pk=w[1:] or 0, active=True).first() if w.startswith("s") else None
+                r = BK.reserve(P.get("customer"), _when(day, P.get("time")), P.get("minutes") or 60, station=st,
+                               kind=w[1:] if w.startswith("k") else None, phone=P.get("phone", ""), note=P.get("note", ""), user=request.user)
+                messages.success(request, f"تم حجز {r.where} لـ {r.customer} {day:%d/%m} الساعة {BK.t12(r.start)} ✔")
+        except (ValidationError, ValueError) as e:
+            for m in getattr(e, "messages", [str(e)]):
+                messages.error(request, m)
+        return redirect(f"{request.path}?d={day.isoformat()}")
+    have = {s.kind for s in Station.objects.filter(active=True)}
+    kinds = [k for k, _ in Station.KINDS if k in have]
+    rows = list(BK.day_bookings(day))
+    for r in rows:
+        r.at = BK.t12(r.start)
+    return render(request, "gaming/bookings.html", dict(
+        day=day, today=today, tomorrow=today + dt.timedelta(days=1), rows=rows, stations=Station.objects.filter(active=True),
+        kinds=[(k, dict(Station.KINDS)[k]) for k in kinds], now=timezone.now()))
+
+
+@_guard
+def customers(request):
+    """«🎟 أرصدة الباقات»: every regular with his prepaid minutes, and the moves of one of them."""
+    from . import bookings as BK
+    from .models import HallCustomer
+
+    q = (request.GET.get("q") or "").strip()
+    one = HallCustomer.objects.filter(pk=request.GET.get("c") or 0).first()
+    return render(request, "gaming/customers.html", dict(
+        q=q, rows=BK.customers(q), one=one, moves=one.moves.select_related("package", "session__station")[:200] if one else []))

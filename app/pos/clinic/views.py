@@ -155,8 +155,14 @@ def home(request, reception=False):
         try:
             if a == "walkin":
                 appt = C.walk_in(_patient_from(request), doctor=_doctor(request.POST.get("doctor")),
-                                 service=_service(request.POST.get("service")), user=request.user, **_pay_from(request))
-                messages.success(request, f"أُضيف {appt.patient.name} إلى الدور — رقم {appt.queue_no}")
+                                 service=_service(request.POST.get("service")), user=request.user,
+                                 followup=False if request.POST.get("no_followup") == "1" else None, **_pay_from(request))
+                messages.success(request, f"أُضيف {appt.patient.name} إلى الدور — رقم {appt.queue_no}"
+                                 + (f" ({appt.visit.followup_note})" if appt.visit_id and appt.visit.followup_note else ""))
+                from . import followup as FU
+
+                for w in FU.schedule_warnings(appt.doctor, appt.date, exclude=appt.pk):
+                    messages.warning(request, "⚠ " + w)
                 _insurance_warn(request, appt)
                 r = _paid_redirect(appt)
                 if r:
@@ -182,7 +188,9 @@ def home(request, reception=False):
     appts = list(Appointment.objects.filter(date=day).select_related("patient", "doctor", "service__item", "visit", "patient__insurance"))
     lanes = {k: [a for a in appts if a.state == k] for k in ("booked", "waiting", "inside", "done")}
     owner = V.is_owner(request.user) and not reception
-    return render(request, "clinic/home.html", _ctx(lanes=lanes, sum=C.today_summary(day) if owner else None, owner=owner,
+    from . import followup as FU
+
+    return render(request, "clinic/home.html", _ctx(docs_today=FU.doctors_today(day),lanes=lanes, sum=C.today_summary(day) if owner else None, owner=owner,
                                                     cash_ok=_cash_ok(request.user), drawer=C.open_shift(),
                                                     others=[a for a in appts if a.state in ("cancelled", "noshow")],
                                                     upcoming=Appointment.objects.filter(date__gt=day, state="booked").count(),
@@ -303,8 +311,16 @@ def appointments(request):
             free = C.first_free(doc, day, request.GET.get("time"), mins) if clash else ""
         except ValidationError:
             clash, free = [], ""
+        from . import followup as FU
+
+        try:
+            warn = FU.schedule_warnings(doc, day, C._as_time(request.GET.get("time")))
+        except ValidationError:
+            warn = []
+        fu = FU.followup_for(Patient.objects.filter(pk=request.GET.get("patient") or 0).first(), doc, svc or C._default_service(doc), day)
         return JsonResponse(dict(clash=[dict(name=a.patient.name, time=a.time.strftime("%H:%M")) for a in clash], free=free,
-                                 doctor=str(doc or "")))
+                                 doctor=str(doc or ""), warn=warn,
+                                 followup=dict(note=fu["note"], price=str(fu["price"])) if fu else None))
     if request.method == "POST" and request.POST.get("appt"):  # cancel a booking from the list (a paid one is refunded)
         try:
             appt = get_object_or_404(Appointment, pk=request.POST["appt"])
@@ -319,8 +335,9 @@ def appointments(request):
             t = request.POST.get("time") or None
             appt = C.book(_patient_from(request), day, doctor=_doctor(request.POST.get("doctor")), service=_service(request.POST.get("service")),
                           time=t, note=request.POST.get("note", ""), user=request.user, allow_overlap=request.POST.get("allow_overlap") == "1",
-                          **_pay_from(request))
-            messages.success(request, f"تم حجز {appt.patient.name} يوم {day:%d/%m} — رقم {appt.queue_no}")
+                          followup=False if request.POST.get("no_followup") == "1" else None, **_pay_from(request))
+            messages.success(request, f"تم حجز {appt.patient.name} يوم {day:%d/%m} — رقم {appt.queue_no}"
+                             + (" — إعادة" if appt.followup_of_id else ""))
             _insurance_warn(request, appt)
             r = _paid_redirect(appt)
             if r:
@@ -535,8 +552,13 @@ def receipt(request, pk):
     pays = list(v.payments.filter(cancelled=False).select_related("order"))
     pay = next((p for p in pays if str(p.pk) == request.GET.get("p")), pays[-1] if pays else None)
     appt = Appointment.objects.filter(visit=v).first()
+    if not pay and v.followup_of_id and v.state == "paid":  # a free «إعادة»: no invoice, still a receipt with the queue number
+        from types import SimpleNamespace
+
+        pay = SimpleNamespace(pk=f"إعادة-{v.pk}", kind="visit", total=Decimal(0), discount=Decimal(0), order=None, insurance_id=None)
     return render(request, "clinic/receipt.html", dict(v=v, s=CompanySettings.get(), hide_nav=True, pay=pay, appt=appt,
-                                                       lines=pay.lines.select_related("item") if pay else [], auto=request.GET.get("auto") == "1"))
+                                                       lines=pay.lines.select_related("item") if hasattr(pay, "lines") else v.lines.filter(payment__isnull=True).select_related("item"),
+                                                       auto=request.GET.get("auto") == "1"))
 
 
 @guard
@@ -566,7 +588,14 @@ def setup(request):
                 if not (0 <= doc.share_pct <= 100):
                     raise ValidationError("النسبة من 0 إلى 100")
                 doc.active = request.POST.get("active", "1") == "1"
+                mx = request.POST.get("max_per_day", "").strip()
+                doc.max_per_day = int(mx) if mx.isdigit() and int(mx) > 0 else None
                 doc.save()
+                if "sched" in request.POST:
+                    from . import followup as FU
+
+                    FU.save_shifts(doc, [(wd, request.POST.get(f"s{wd}_from"), request.POST.get(f"s{wd}_to"))
+                                         for wd in range(7) if request.POST.get(f"s{wd}_on")])
                 if doc.partner_id:
                     doc.partner.name = f"د. {doc.name}"
                     doc.partner.save(update_fields=["name"])
@@ -583,7 +612,23 @@ def setup(request):
                 svc = C.save_service(request.POST.get("name"), _dec(request.POST.get("price"), Decimal(0)), doctor=_doctor(request.POST.get("doctor")),
                                      share_pct=request.POST.get("share_pct", "").strip() or None, minutes=request.POST.get("minutes") or 15,
                                      consumables=cons, service=svc)
+                fd, fp = request.POST.get("followup_days", "").strip(), request.POST.get("followup_price", "").strip()
+                svc.followup_days = int(fd) if fd.isdigit() else None
+                svc.followup_price = _dec(fp) if fp else None
+                svc.save(update_fields=["followup_days", "followup_price"])
                 messages.success(request, f"تم حفظ «{svc.item.name}»")
+            elif a == "followup":
+                from .models import ClinicSettings
+
+                cs = ClinicSettings.get()
+                fd = request.POST.get("followup_days", "0").strip() or "0"
+                if not fd.isdigit() or int(fd) > 365:
+                    raise ValidationError("مدة الإعادة من 0 إلى 365 يومًا")
+                cs.followup_days, cs.followup_price = int(fd), _dec(request.POST.get("followup_price"), Decimal(0))
+                if cs.followup_price < 0:
+                    raise ValidationError("سعر الإعادة بالسالب")
+                cs.save()
+                messages.success(request, "حُفظ إعداد الإعادة ✔")
             elif a == "service_off":
                 svc = _service(request.POST.get("pk"))
                 if svc:
@@ -595,7 +640,14 @@ def setup(request):
         return redirect("clinic_setup")
     edit_doc = Doctor.objects.filter(pk=request.GET.get("doc") or 0).first()
     edit_svc = _service(request.GET.get("svc"))
+    from . import followup as FU
+    from .models import ClinicSettings, DoctorShift
+
+    have = {s.weekday: s for s in edit_doc.shifts.all()} if edit_doc else {}
+    sched = [dict(wd=wd, name=name, on=wd in have, a=have[wd].start.strftime("%H:%M") if wd in have else "17:00",
+                  b=have[wd].end.strftime("%H:%M") if wd in have else "22:00") for wd, name in DoctorShift.DAYS]
     return render(request, "clinic/setup.html", _ctx(
+        cs=ClinicSettings.get(), sched=sched, sched_text={d.pk: FU.schedule_text(d) for d in Doctor.objects.prefetch_related("shifts")},
         all_doctors=Doctor.objects.all(), edit_doc=edit_doc, edit_svc=edit_svc,
         edit_cons=list(edit_svc.item.recipe.lines.select_related("ingredient")) if edit_svc and hasattr(edit_svc.item, "recipe") else [],
         stock_items=Item.objects.filter(active=True, item_type="stock").exclude(code="0").order_by("name")))
@@ -711,3 +763,31 @@ def insurance_detail(request, pk):
     return render(request, "clinic/insurance_detail.html", _ctx(
         ins=ins, st=st, d1=d1, d2=d2, boxes=CashBox.objects.filter(active=True).order_by("order", "pk"), owner=V.is_owner(request.user),
         printing=bool(request.GET.get("print"))))
+
+
+# ---------------------------------------------------------------- reminders and the TV queue
+@guard
+def reminders(request):
+    """«📨 التذكيرات»: tomorrow's bookings and the follow-ups due, each with a ready WhatsApp message; mark as sent."""
+    from . import followup as FU
+
+    if request.method == "POST":
+        now = timezone.now()
+        if request.POST.get("appt"):
+            Appointment.objects.filter(pk=request.POST["appt"]).update(reminded_at=None if request.POST.get("undo") else now)
+        elif request.POST.get("visit"):
+            Visit.objects.filter(pk=request.POST["visit"]).update(followup_reminded_at=None if request.POST.get("undo") else now)
+        if request.headers.get("x-requested-with") == "fetch":
+            return JsonResponse({"ok": True})
+        return redirect("clinic_reminders")
+    return render(request, "clinic/reminders.html", _ctx(r=FU.reminders()))
+
+
+@guard
+def queue_tv(request):
+    """The waiting-room TV: the current number of every doctor and the next ones (refreshes itself, chime on a new number)."""
+    from . import followup as FU
+
+    if request.GET.get("data"):
+        return JsonResponse(dict(rows=FU.queue_state(), now=timezone.localtime().strftime("%H:%M")))
+    return render(request, "clinic/queue_tv.html", dict(s=CompanySettings.get(), hide_nav=True, rows=FU.queue_state()))

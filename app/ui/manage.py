@@ -93,6 +93,8 @@ def _check_item(obj):
         raise ValidationError("اكتب حد الطلب (0 = من غير تنبيه)")
     if obj.reorder_level is not None and obj.reorder_level < 0:
         raise ValidationError("لا يمكن أن يكون حد الطلب سالبًا")
+    if obj.sale_price is not None and obj.sale_price < 0:
+        raise ValidationError("سعر البيع لا يكون سالبًا")
     if obj.barcode:
         from inventory.models import Item
 

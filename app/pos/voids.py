@@ -228,6 +228,12 @@ def void_stock_move(move: StockMove, reason, user=None):
 
     for v in Voucher.objects.filter(legacy_number=f"PUR-{move.pk}", state="posted"):
         T.cancel_voucher(v, reason, user=user)
+    from ledger.models import JournalEntry
+
+    for e in JournalEntry.objects.filter(source=f"inventory.purchase-vat:{move.pk}", state="posted"):  # the invoice's input VAT
+        L.reverse(e, date=timezone.localdate(), reason=reason, user=user)
+    for cm in CashMove.objects.filter(uid=f"PUR-{move.pk}-OWNER", cancelled=False):  # paid by the owner from his pocket
+        void_cash_move(cm, reason, user=user)
     return move
 
 

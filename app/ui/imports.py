@@ -146,14 +146,105 @@ def items_rows():
         return c.quantize(Decimal("0.01")) if c is not None else None
 
     xf = _act_fields()
-    return [[i.code, i.name, i.category.name, i.unit, i.barcode, cost(i), i.sale_price, i.reorder_level] + ([None, None] + [(i.extra or {}).get(f["k"], "") for f in xf] if xf else [])
-            for i in Item.objects.filter(active=True, item_type="stock").exclude(code="0").select_related("category").order_by("category__name", "name")]
+    return [[i.code, i.variant_of.name if i.variant_of_id else i.name, i.category.name, i.unit, i.barcode, cost(i), i.sale_price, i.reorder_level]
+            + ([None, None] + [(i.extra or {}).get(f["k"], "") for f in xf] if xf else [])
+            for i in Item.objects.filter(active=True, item_type="stock").exclude(code="0").select_related("category", "variant_of").order_by("category__name", "name")]
+
+
+def _variant_groups(rows):
+    """Rows that carry a size / colour and share a name (or belong to a product with sizes already) → [[rows of one product]];
+    the other rows go on as single items."""
+    from collections import Counter
+
+    from inventory import variants as V
+
+    if not any(f["k"] in ("size", "color") for f in _act_fields()):
+        return rows, []
+
+    def key_of(r):
+        code = text(r.get("code"))
+        it = Item.objects.filter(code=code).select_related("variant_of").first() if code else None
+        if it and it.variant_of_id and V.is_parent(it.variant_of):
+            return norm(it.variant_of.name)
+        return norm(text(r.get("name")))
+
+    sized = [r for r in rows if text(r.get("x_size")) or text(r.get("x_color"))]
+    keys = {id(r): key_of(r) for r in sized}
+    n = Counter(keys.values())
+    parents = {norm(p.name) for p in V.products()}
+    groups, rest = {}, []
+    for r in rows:
+        k = keys.get(id(r))
+        if k and (n[k] > 1 or k in parents):
+            groups.setdefault(k, []).append(r)
+        else:
+            rest.append(r)
+    return rest, list(groups.values())
+
+
+class _Rollback(Exception):
+    pass
+
+
+def _run_variant_group(rows, commit, opts):
+    """One product with sizes × colours from its rows (inventory.variants.save with merge: only these cells change)."""
+    from inventory import variants as V
+
+    first = rows[0]["rown"]
+    try:
+        cells, seen, cost, reorder = {}, {}, None, None
+        for r in rows:
+            s, c = text(r.get("x_size"))[:30], text(r.get("x_color"))[:30]
+            if (s, c) in seen:
+                raise ValueError(f"المقاس واللون «{V.label(s, c)}» مكرران (سطر {seen[(s, c)]} وسطر {r['rown']})")
+            seen[(s, c)] = r["rown"]
+            rc = num(r.get("cost"), "سعر الشراء")
+            cost = cost if cost is not None else rc
+            rr = text(r.get("reorder"))
+            reorder = reorder if reorder else rr
+            cells[(s, c)] = {"p": text(r.get("price")), "b": text(r.get("barcode")), "q": text(r.get("qty"))}
+        code = next((text(r.get("code")) for r in rows if text(r.get("code"))), "")
+        known = Item.objects.filter(code=code, variant_of__isnull=False).select_related("variant_of").first() if code else None
+        parent = known.variant_of if known and V.is_parent(known.variant_of) else next(
+            (p for p in V.products() if norm(p.name) == norm(text(first_row(rows).get("name")))), None)
+        if not reorder and parent is None:
+            raise ValueError("اكتب «حد الطلب» للصنف (أقل كمية تريد إعادة الشراء عندها) — 0 إن لم ترد تنبيهًا")
+        if not reorder:
+            v0 = V.variants(parent)[:1]
+            reorder = str(v0[0].reorder_level or 0) if v0 else "0"
+        name = parent.name if parent and known else text(first_row(rows).get("name"))
+        extra = {k[2:]: text(v)[:120] for k, v in first_row(rows).items() if k.startswith("x_") and k not in ("x_size", "x_color") and text(v)}
+        try:
+            with transaction.atomic():
+                cat = category(text(first_row(rows).get("category")) or "أخرى", True)
+                wh = Warehouse.objects.filter(name=opts.get("warehouse")).first() or Warehouse.objects.filter(active=True).first()
+                it, m = V.save(name, cat, None if parent else (cells[next(iter(cells))]["p"] or None), cost, cells=cells, reorder=reorder,
+                               item=parent, unit=text(first_row(rows).get("unit")) or (parent.unit if parent else "قطعة"), merge=True,
+                               day=opts.get("date"), warehouse=wh, extra=extra)
+                if not commit:
+                    raise _Rollback()
+        except _Rollback:
+            pass
+        except ValidationError as e:
+            raise ValueError(e.messages[0])
+        return [], m, len(rows) - m
+    except ValueError as e:
+        return [(first, f"«{text(rows[0].get('name'))}»: {e}")], 0, 0
+
+
+def first_row(rows):
+    return rows[0]
 
 
 def run_items(rows, commit, opts):
     from inventory import names as NM
 
     errs, made, upd = [], 0, 0
+    rows, vgroups = _variant_groups(rows)  # 1.25: rows of one name with size / colour columns = one product with variants
+    for g in vgroups:
+        e, m, u = _run_variant_group(g, commit, opts)
+        errs += e
+        made, upd = made + m, upd + u
     codes_in_file, names_in_file, idx = {}, {}, NM.index()
     for r in rows:
         try:
@@ -177,7 +268,7 @@ def run_items(rows, commit, opts):
                 other = Item.objects.filter(barcode=bc).exclude(code=code or "\0").first()
                 if other and (not code or other.code != code) and norm(other.name) != norm(name):
                     raise ValueError(f"الباركود {bc} متسجل على «{other.name}»")
-            it = Item.objects.filter(code=code).first() if code else find_item("", name)
+            it = Item.objects.filter(code=code).first() if code else ((Item.objects.filter(barcode=bc).first() if bc else None) or find_item("", name))
             key = NM.norm(name)
             if key in names_in_file:
                 raise ValueError(f"الاسم «{name}» مكرر في الملف (سطر {names_in_file[key]}) — لكل صنف اسم واحد")

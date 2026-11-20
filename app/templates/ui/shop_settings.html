@@ -17,6 +17,17 @@
 {% if is_owner %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="cashier_edit"><h2>الإلغاء والتعديل</h2>
 <p class="muted" style="margin:0 0 8px">إلغاء فاتورة أو صنف داخلها أو تعديل الكميات والأسعار. يمكن لصاحب المحل ذلك دائمًا. {% if s.cashier_can_edit %}<b>يمكن للكاشير حاليًا أيضًا</b> (من الكاشير ومن صفحة الفاتورة).{% else %}الكاشير حاليًا يرسل طلبًا ويوافق صاحب المحل.{% endif %}</p>
 {% if s.cashier_can_edit %}<button class="light" name="on" value="0">اقفلها عن الكاشير</button>{% else %}<button name="on" value="1">اسمح للكاشير بالإلغاء والتعديل</button>{% endif %}</form>{% endif %}
+{% if is_owner %}<form method="post" class="card" id="till">{% csrf_token %}<input type="hidden" name="action" value="till"><h2>الكاشير: الخصم والميزان</h2>
+<label class="field">أقصى خصم يدوي يمنحه الكاشير دون موافقتك (%)<input name="disc_max" inputmode="decimal" value="{{ till.disc_max }}" dir="ltr"></label>
+<p class="muted" style="margin:0 0 8px;font-size:13px">صفر = لا يخصم الكاشير إلا بموافقتك (تكتب اسم المستخدم وكلمة السر على شاشة الكاشير). صاحب المحل والمدير يخصمان دائمًا. كل خصم يظهر على الفاتورة وفي تقرير الوردية وصفحة المبيعات.</p>
+{% if s.business == 'market' or s.business == 'retail' %}<label class="field">ملصق الميزان<select name="scale_preset">{% if not scale_now %}<option value="" selected>إعداد خاص: يبدأ بـ {{ s.scale_prefix }} — كود {{ s.scale_item_digits }} أرقام</option>{% endif %}{% for k, label in scale_presets %}<option value="{{ k }}"{% if k == scale_now %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>{% endif %}
+<button>حفظ</button></form>{% endif %}
+{% if is_owner %}<form method="post" class="card" id="plus">{% csrf_token %}<input type="hidden" name="action" value="plus"><h2>مزايا إضافية للكاشير</h2>
+<p class="muted" style="margin:0 0 8px;font-size:13px">كلها اختيارية — فعّل ما يناسب محلك فقط.</p>
+<label class="field check"><input type="checkbox" name="on" value="pharm"{% if plus.pharm.on %} checked{% endif %}> 💊 رصيد الصنف على كارت الكاشير وبدائله بالمادة الفعالة (للصيدليات)</label>
+<label class="field check"><input type="checkbox" name="on" value="sp"{% if plus.sp.on %} checked{% endif %}> 🧑‍💼 «البائع» على كل فاتورة وعمولته</label>
+<label class="field check"><input type="checkbox" name="on" value="loy"{% if plus.loy.on %} checked{% endif %}> ⭐ نقاط الولاء للعملاء برقم الموبايل</label>
+<div class="actions"><button>حفظ</button><a class="btn light" href="{% url 'plus_commission' %}">نسب العمولة والتقرير</a><a class="btn light" href="{% url 'plus_loyalty' %}">إعداد النقاط</a><a class="btn light" href="{% url 'plus_season' %}">🏷 التخفيض الموسمي</a></div></form>{% endif %}
 <form method="post" class="card" id="receipt" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="receipt"><h2>بيانات الإيصال</h2>
 {% if s.logo_svg %}<div style="width:72px;height:72px;margin-bottom:6px">{{ s.logo_svg|safe }}</div>{% endif %}
 <label class="field">لوجو المحل (يظهر على الإيصال)<input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label>

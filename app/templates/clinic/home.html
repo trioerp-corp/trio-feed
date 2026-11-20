@@ -6,7 +6,7 @@
 .drw{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:8px 12px}.drw form{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.drw input{width:120px}
 @media (max-width:600px){.page-head .actions .btn{padding:6px 10px;font-size:13px}}</style>
 <div class="page-head"><div><h1>{% if reception %}🛎 الاستقبال{% else %}🩺 العيادة — اليوم{% endif %}</h1><p class="muted" style="margin:0">{{ company.name }} — {{ today|date:"l j F Y" }}</p></div>
-<div class="actions"><a class="btn" href="{% url 'clinic_appointments' %}">+ حجز</a><a class="btn light" href="{% url 'clinic_patients' %}">ملفات المرضى</a>
+<div class="actions"><a class="btn" href="{% url 'clinic_appointments' %}">+ حجز</a><a class="btn light" href="{% url 'clinic_reminders' %}">📨 التذكيرات</a><a class="btn light" href="{% url 'clinic_queue_tv' %}" target="_blank">📺 شاشة الانتظار</a><a class="btn light" href="{% url 'clinic_patients' %}">ملفات المرضى</a>
 {% if cash_ok %}{% if 'money' in mods %}<a class="btn light" href="{% url 'shop_money' %}">مصروفات (إيجار، مرتبات، كهرباء)</a>{% endif %}<a class="btn light" href="{% url 'shop_close' %}">تقفيل اليوم</a>{% endif %}</div></div>
 <div class="card drw" data-live="drawer">{% if drawer %}<span>💵 درج الاستقبال مفتوح باسم <b>{{ drawer.cashier }}</b> منذ {{ drawer.opened_at|date:"H:i" }}{% if drawer.opened_at|date:"Y-m-d" != today|date:"Y-m-d" %} ({{ drawer.opened_at|date:"d/m" }}){% endif %}</span>
 <details><summary class="btn light" style="display:inline-block">🔒 قفّل درجي</summary><form method="post" style="margin-top:8px" onsubmit="return confirm('تأكيد تقفيل الدرج بالمبلغ المكتوب؟')">{% csrf_token %}<input type="hidden" name="action" value="drawer_close">
@@ -14,6 +14,8 @@
 {% else %}<span class="muted">💵 الدرج مغلق — يُفتح تلقائيًا باسمك مع أول مبلغ تستلمه.</span>
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="drawer_open"><label class="muted" style="font-size:13px">فكة أول الدرج <input name="float" value="0" inputmode="decimal" dir="ltr"></label><button class="light">افتح الدرج</button></form>{% endif %}</div>
 {% include "ui/_ready.html" %}
+{% if docs_today %}<div class="card" style="margin-bottom:14px;padding:8px 12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b>👨‍⚕️ الأطباء اليوم:</b>
+{% for x in docs_today %}<span class="badge {% if x.max and x.n >= x.max %}red{% endif %}">{{ x.d }}{% if x.hours %} · {{ x.hours }}{% endif %} · {{ x.n }}{% if x.max %} من {{ x.max }}{% endif %} حجز</span>{% endfor %}</div>{% endif %}
 
 {% if sum %}<section class="grid" style="margin-bottom:18px">
 <div class="card kpi hero"><span class="k">إيراد اليوم</span><span class="v">{{ sum.revenue|money:0 }}</span><span class="k">{{ sum.visits }} زيارة متحاسبة</span></div>
@@ -21,12 +23,21 @@
 <div class="card kpi gold"><span class="k">في العيادة الآن</span><span class="v">{{ sum.waiting|add:sum.inside }}</span><span class="k">{{ sum.booked }} لم يصلوا بعد · {{ upcoming }} حجز الأيام الجاية</span></div></section>{% endif %}
 
 <details class="card" style="margin-bottom:18px" {% if not lanes.waiting and not lanes.inside %}open{% endif %}><summary><b>+ مريض وصل بدون حجز</b></summary>
-<form method="post" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="action" value="walkin">
+<form method="post" style="margin-top:10px" id="walkF">{% csrf_token %}<input type="hidden" name="action" value="walkin">
 <div class="form-grid">{% include "clinic/_pick.html" %}
 <label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}">{{ d }}{% if d.specialty %} ({{ d.specialty }}){% endif %}</option>{% endfor %}</select></label>
 <label class="field">الخدمة<select name="service"><option value="">—</option>{% for s in services %}<option value="{{ s.pk }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label></div>
+<div id="wfBox" style="display:none;margin:8px 0 0;padding:8px 10px;border-radius:10px;background:var(--brand-2,#E6F4F1)"><b id="wfTxt"></b><label style="display:flex;gap:6px;align-items:center;font-size:13px;margin-top:4px"><input type="checkbox" name="no_followup" value="1"> احسبه كشفًا كاملًا (ليس إعادة)</label></div>
+<p class="muted" id="wfWarn" style="display:none;color:var(--bad);font-weight:700;margin:8px 0 0"></p>
 {% include "clinic/_paynow.html" %}
 <p style="margin:10px 0 0"><button>أضفه إلى الدور</button></p></form></details>
+<script>(function(){var f=document.getElementById('walkF');if(!f)return;var b=document.getElementById('wfBox'),t=document.getElementById('wfTxt'),w=document.getElementById('wfWarn'),last='';
+function q(n){return f.querySelector('[name='+n+']')}
+function check(){var p=q('patient').value,d=q('doctor').value,s=q('service').value;if(!d&&!s){b.style.display=w.style.display='none';return}
+fetch('{% url "clinic_appointments" %}?check=1&d={{ today|date:"Y-m-d" }}&doctor='+d+'&service='+s+'&patient='+p,{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
+if(j.followup){t.textContent='⟲ '+j.followup.note+' — بسعر '+(+j.followup.price?j.followup.price+' ج':'مجانًا');b.style.display='block'}else b.style.display='none';
+if(j.warn&&j.warn.length){w.textContent='⚠ '+j.warn.join(' · ');w.style.display='block'}else w.style.display='none'}).catch(function(){})}
+['doctor','service'].forEach(function(n){q(n).addEventListener('change',check)});setInterval(function(){var k=q('patient').value;if(k!==last){last=k;check()}},700)})();</script>
 
 <form action="{% url 'find' %}" method="get" style="display:flex;gap:8px;margin-bottom:14px" role="search"><input name="q" type="search" placeholder="🔎 ابحث عن مريض: اسم، هاتف، رقم ملف…" style="flex:1;font-size:16px;padding:10px 14px" aria-label="ابحث عن مريض"><input type="hidden" name="go" value="1"><button>بحث</button></form>
 <div data-live="board">{% if unpaid %}<section class="card" style="margin-bottom:16px;border-inline-start:5px solid var(--gold)"><h2 style="margin-top:0">💵 حسابات في انتظار الدفع ({{ unpaid|length }})</h2>

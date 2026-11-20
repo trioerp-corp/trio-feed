@@ -117,7 +117,52 @@ def api_cashier(request):
         TH.fail(name, f"dev{dev.pk}")
         return JsonResponse({"ok": False, "error": "اسم الكاشير أو كلمة السر غير صحيحة"}, status=403)
     TH.clear(name)
-    return JsonResponse({"ok": True, "name": u.first_name or u.username, "role": P.till_role(u)})
+    from .voids import is_owner
+
+    out = {"ok": True, "name": u.first_name or u.username, "role": P.till_role(u)}
+    if is_owner(u):  # the owner / manager on the till may always discount: his shift carries his signed approval
+        out["boss"] = P.disc_token(dev, u)
+    return JsonResponse(out)
+
+
+@csrf_exempt
+def api_disc_ok(request):
+    """1.25: a discount above the cashier's % — the owner / manager types his name + password on the till (online)."""
+    dev, err = _device(request)
+    if err:
+        return err
+    if request.method != "POST":
+        return JsonResponse({"error": "POST فقط"}, status=405)
+    from django.contrib.auth import authenticate
+
+    from core import throttle as TH
+
+    from .voids import is_owner
+
+    b = _tables_json(request)
+    try:
+        amount = Decimal(str(b.get("amount") or "0")).quantize(Decimal("0.01"))
+    except (InvalidOperation, ValueError):
+        amount = Decimal(-1)
+    if not amount.is_finite() or amount <= 0:
+        return JsonResponse({"error": "مبلغ الخصم غير صحيح"}, status=400)
+    name = str(b.get("owner") or "")[:150]
+    if TH.blocked(name, f"dev{dev.pk}"):
+        return JsonResponse({"error": TH.MSG}, status=403)
+    u = authenticate(username=name, password=str(b.get("password") or ""))
+    if not (u and u.is_active and is_owner(u)):
+        TH.fail(name, f"dev{dev.pk}")
+        return JsonResponse({"error": "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية اعتماد الخصم"}, status=403)
+    TH.clear(name)
+    return JsonResponse({"ok": True, "token": P.disc_token(dev, u, amount), "by": u.first_name or u.username})
+
+
+def api_order_find(request):
+    """1.25 «استبدال / مرتجع بفاتورة»: the invoice the customer brings back, with what is left to give back of each line."""
+    dev, err = _device(request)
+    if err:
+        return err
+    return JsonResponse({"orders": P.find_orders(request.GET.get("q", ""))})
 
 
 @csrf_exempt
@@ -287,3 +332,16 @@ def api_tables(request, tid=None, tab=None, op=None):
     except ValidationError as e:
         return JsonResponse({"error": "؛ ".join(e.messages)}, status=400)
     return JsonResponse({"error": "طلب غير معروف"}, status=400)
+
+
+def api_loyalty(request):
+    """1.26 loyalty points of a customer by his phone (the till asks before redeeming; earning works offline)."""
+    dev, err = _device(request)
+    if err:
+        return err
+    from . import plus
+
+    try:
+        return JsonResponse(plus.lookup(request.GET.get("phone", "")))
+    except ValidationError as e:
+        return JsonResponse({"error": "؛ ".join(e.messages)}, status=400)
