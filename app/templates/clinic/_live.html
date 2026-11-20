@@ -1,0 +1,12 @@
+{# live refresh of the parts marked data-live="…" (instead of reloading the page): paused while anything is typed / picked / focused #}
+<script>(function(){var every={{ live_every|default:30 }}*1000;
+function dirty(){var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.type!=='hidden')return true;
+if(document.querySelector('.modal.on,dialog[open],[data-live] details[open]'))return true;
+var f=document.querySelectorAll('input:not([type=hidden]),textarea,select');for(var i=0;i<f.length;i++){var e=f[i];
+if(e.type==='checkbox'||e.type==='radio'){if(e.checked!==e.defaultChecked)return true}
+else if(e.tagName==='SELECT'){var di=0;for(var j=0;j<e.options.length;j++)if(e.options[j].defaultSelected)di=j;if(e.selectedIndex!==di&&e.selectedIndex!==-1)return true}
+else if(e.value!==e.defaultValue)return true}return false}
+function tick(){if(document.hidden||dirty())return;fetch(location.href,{credentials:'same-origin'}).then(function(r){if(!r.ok||r.redirected)throw 0;return r.text()}).then(function(t){
+if(dirty())return;var d=new DOMParser().parseFromString(t,'text/html');
+document.querySelectorAll('[data-live]').forEach(function(el){var n=d.querySelector('[data-live="'+el.dataset.live+'"]');if(n&&n.innerHTML!==el.innerHTML)el.innerHTML=n.innerHTML})}).catch(function(){})}
+setInterval(tick,every)})();</script>

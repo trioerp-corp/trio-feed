@@ -57,11 +57,20 @@ def logo_svg(data, filename):
             f'<image href="data:{mime};base64,{b64}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid meet"/></svg>')
 
 
+SHOP_NAME_MAX = 60  # the name on the receipt, the top bar and the reports
+
+
+def check_shop_name(name):
+    if len(name) > SHOP_NAME_MAX:
+        raise ValidationError(f"اسم المحل طويل ({len(name)} حرفًا) — الحد الأقصى {SHOP_NAME_MAX} حرفًا، اكتب الاسم المختصر الذي يظهر على الإيصال")
+
+
 def clean(data):
     """Validate the setup form (already parsed into a dict) and return a normalised config."""
-    name = (data.get("name") or "").strip()
+    name = " ".join((data.get("name") or "").split())
     if len(name) < 2:
         raise ValidationError("اكتب اسم مشروع العميل")
+    check_shop_name(name)
     from . import activities as A
 
     act = A.clean(data["activity"]) if isinstance(data.get("activity"), dict) else None
@@ -143,7 +152,18 @@ def clean(data):
                 force_change=bool(data.get("force_change")), license_code="".join((data.get("license_code") or "").split()),
                 reports=dict(whatsapp="report_whatsapp" in mods, telegram="report_telegram" in mods, email="report_email" in mods),
                 owner_whatsapp=wa_number(data.get("owner_whatsapp")), email_to=(data.get("email_to") or "").strip()[:300],
-                gaming=dict(zip(("round", "min", "grace"), _gaming_rules(data))))
+                gaming=dict(zip(("round", "min", "grace"), _gaming_rules(data))),
+                tables=_tables(data) if business == "cafe" else 0)
+
+
+def _tables(data):
+    try:
+        n = int(dec(data.get("tables") or 0))
+    except (ValidationError, ValueError, TypeError):
+        raise ValidationError("اكتب عدد الترابيزات بالأرقام (0 إن لم تكن لديك ترابيزات)")
+    if not 0 <= n <= 100:
+        raise ValidationError("عدد الترابيزات من 0 إلى 100")
+    return n
 
 
 def _gaming_rules(data):
@@ -158,8 +178,19 @@ def wa_number(v):
     return "2" + v if v.startswith("01") and len(v) == 11 else v
 
 
+def shop_store_name(business, act=None):
+    """The shop's only store in its own word: a market's «المحل», a hall's «البوفيه», a café's bar, a restaurant's store."""
+    if business in ("market", "retail"):
+        return "المحل"
+    if business == "gaming":
+        return "البوفيه"
+    if business == "cafe" and (act or {}).get("key") in ("cafe", "juice"):
+        return "البار / البوفيه"
+    return "المخزن"
+
+
 def warehouses(cfg):
-    whs = [{"code": "WH01", "name": "المحل" if cfg["business"] in ("market", "retail") else "البار / البوفيه", "role": "shop"}]
+    whs = [{"code": "WH01", "name": shop_store_name(cfg["business"], cfg.get("activity")), "role": "shop"}]
     if "stores" in cfg["modules"]:
         whs += [{"code": "WH02", "name": "المخزن الرئيسي", "role": "main"}, {"code": "WH03", "name": "المخزن التشغيلي", "role": "operating"}]
     return whs
@@ -199,6 +230,8 @@ def apply(data, logo=None, logo_name=""):
     s.gaming_round_minutes, s.gaming_min_minutes, s.gaming_grace_minutes = cfg["gaming"]["round"], cfg["gaming"]["min"], cfg["gaming"]["grace"]
     if first:  # a new copy starts without the mobile code; later saves keep whatever the owner turned on
         s.require_2fa = False
+        if cfg["business"] == "cafe":  # a café / restaurant prints the kitchen's ticket on the cashier's printer from day one
+            s.kitchen_ticket = "same"
     if logo:
         s.logo_svg = logo_svg(logo, logo_name)
     if cfg["license_code"]:
@@ -233,6 +266,8 @@ def apply(data, logo=None, logo_name=""):
 
         device()
         play_item()
+    if first and cfg.get("tables"):
+        save_tables(cfg["tables"])
     (Path(settings.BASE_DIR) / "data").mkdir(exist_ok=True)
     (Path(settings.BASE_DIR) / "data" / "shop_name.txt").write_text(cfg["name"], encoding="utf-8")
     return cfg, first
@@ -270,6 +305,15 @@ def save_users(cfg, new_branches=None):
         BR.apply_staff(obj, u["role"], u.get("caps"), branch, u.get("title") or "", u.get("email"), None)
         if u["password"] and (new or cfg["force_change"]):
             UserFlag.objects.update_or_create(user=obj, defaults={"must_change_password": cfg["force_change"]})
+
+
+def save_tables(n):
+    """«ترابيزة 1» … «ترابيزة n» (the owner renames them or adds areas on «الترابيزات»)."""
+    from pos.models import DiningTable
+
+    have = DiningTable.objects.count()
+    for i in range(have, n):
+        DiningTable.objects.create(name=f"ترابيزة {i + 1}", order=i + 1)
 
 
 def save_stations(groups):

@@ -1,0 +1,36 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الأجهزة والأسعار{% endblock %}
+{% block content %}
+<style>.dv td input,.dv td select{padding:6px;min-width:0}.dv td input.n{width:84px}.dv td input.nm{width:130px}@media (max-width:700px){.dv td input.nm{width:96px}}</style>
+<div class="page-head"><div><h1>🎮 الأجهزة والأسعار</h1><p class="muted" style="margin:0">⏱ {{ rule }} · أقصى خصم للعامل {{ hs.max_discount_pct|floatformat:-2 }}%</p></div>
+<div class="actions"><a class="btn" href="/ui/play/">🎮 شاشة الصالة</a><a class="btn light" href="{% url 'play_report' %}">📊 تقرير الصالة</a></div></div>
+<div class="split"><div class="main">
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">الأجهزة ({{ stations|length }})</h2>
+<div class="table-wrap"><table class="dv"><thead><tr><th>الاسم</th><th>النوع</th><th class="n">ساعة فردي</th><th class="n">ساعة مالتي</th><th>يعمل</th><th></th></tr></thead><tbody>
+{% for st in stations %}<tr{% if not st.active %} style="opacity:.55"{% endif %}>
+<td><input class="nm" form="sf{{ st.pk }}" name="name" value="{{ st.name }}" maxlength="40" aria-label="الاسم"></td>
+<td><select form="sf{{ st.pk }}" name="kind" aria-label="النوع">{% for k, t in KINDS %}<option value="{{ k }}" {% if k == st.kind %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></td>
+<td class="n"><input class="n" form="sf{{ st.pk }}" name="rate" value="{{ st.rate|unlocalize }}" inputmode="decimal" dir="ltr" aria-label="سعر الساعة فردي"></td>
+<td class="n"><input class="n" form="sf{{ st.pk }}" name="rate_multi" value="{{ st.rate_multi|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="لا يوجد" aria-label="سعر الساعة مالتي"></td>
+<td><select form="sf{{ st.pk }}" name="active" aria-label="يعمل"><option value="1" {% if st.active %}selected{% endif %}>نعم</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td>
+<td><form method="post" id="sf{{ st.pk }}">{% csrf_token %}<input type="hidden" name="op" value="save"><input type="hidden" name="pk" value="{{ st.pk }}"><button class="light">حفظ</button></form></td></tr>
+{% empty %}<tr><td colspan="6" class="muted">لا توجد أجهزة بعد — أضفها من «إضافة أجهزة».</td></tr>{% endfor %}</tbody></table></div>
+<p class="muted" style="font-size:13px;margin:8px 0 0">اترك «مالتي» فارغًا إذا كان للجهاز سعر واحد (مثل البلياردو) — فلا يظهر اختيار فردي / مالتي في الصالة. السعر الجديد يسري على الجلسات التي تبدأ بعد الحفظ.</p></section>
+{% if by_kind %}<section class="card"><h2 style="margin-top:0">سعر واحد لكل الأجهزة من نوع واحد</h2>
+{% for k, t, sts in by_kind %}<form method="post" class="form-grid" style="align-items:end;margin-bottom:8px">{% csrf_token %}<input type="hidden" name="op" value="same_price"><input type="hidden" name="kind" value="{{ k }}">
+<div class="field"><b>{{ t }}</b> <span class="muted">({{ sts|length }} جهاز)</span></div>
+<label class="field">ساعة فردي<input name="rate" value="{{ sts.0.rate|unlocalize }}" inputmode="decimal" dir="ltr" required></label>
+<label class="field">ساعة مالتي<input name="rate_multi" value="{{ sts.0.rate_multi|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="لا يوجد"></label>
+<div class="field"><button class="light">طبّق على الكل</button></div></form>{% endfor %}</section>{% endif %}
+</div><div class="side">
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">+ إضافة أجهزة</h2><form method="post">{% csrf_token %}<input type="hidden" name="op" value="add">
+<div class="form-grid"><label class="field">النوع<select name="kind">{% for k, t in KINDS %}<option value="{{ k }}">{{ t }}</option>{% endfor %}</select></label>
+<label class="field">العدد<input name="count" value="1" inputmode="numeric" dir="ltr" required></label></div>
+<div class="form-grid"><label class="field">سعر الساعة فردي<input name="rate" inputmode="decimal" dir="ltr" required placeholder="مثلًا 30"></label>
+<label class="field">سعر الساعة مالتي<input name="rate_multi" inputmode="decimal" dir="ltr" placeholder="اختياري — مثلًا 45"></label></div>
+<p class="muted" style="font-size:12px;margin:0 0 8px">تُسمّى تلقائيًا: PS5 1، PS5 2… ويمكن تغيير الاسم بعد الإضافة.</p><button>أضف</button></form></section>
+<section class="card"><h2 style="margin-top:0">طريقة حساب الوقت والخصم</h2><form method="post">{% csrf_token %}<input type="hidden" name="op" value="rules">
+{% include "gaming/_rules_fields.html" %}
+<label class="field">أقصى خصم يعطيه العامل وحده (% من الحساب)<input name="max_discount_pct" value="{{ hs.max_discount_pct|floatformat:-2|unlocalize }}" inputmode="decimal" dir="ltr">
+<small class="muted">خصم أكبر يحتاج إلى اسم صاحب المحل وكلمة سره على شاشة الصالة، ويظهر في تقرير الوردية والتقرير.</small></label>
+<button>حفظ</button></form></section></div></div>
+{% endblock %}

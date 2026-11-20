@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}تقرير الصالة{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>📊 تقرير الصالة</h1><p class="muted" style="margin:0">{% if d1 == d2 %}{{ d1|date:"l j F Y" }}{% else %}من {{ d1|date:"d/m/Y" }} إلى {{ d2|date:"d/m/Y" }}{% endif %} · الصالة عملت {{ r.open_hours }} ساعة</p></div>
+<div class="actions"><a class="btn light" href="?d1={{ today|date:'Y-m-d' }}&d2={{ today|date:'Y-m-d' }}">اليوم</a><a class="btn light" href="?d1={{ week|date:'Y-m-d' }}&d2={{ today|date:'Y-m-d' }}">آخر 7 أيام</a><a class="btn light" href="?d1={{ month|date:'Y-m-d' }}&d2={{ today|date:'Y-m-d' }}">هذا الشهر</a>
+<form style="display:inline-flex;gap:6px;flex-wrap:wrap"><input type="date" name="d1" value="{{ d1|date:'Y-m-d' }}" aria-label="من"><input type="date" name="d2" value="{{ d2|date:'Y-m-d' }}" aria-label="إلى"><button class="light">عرض</button></form></div></div>
+<section class="grid" style="margin-bottom:18px">
+<div class="card kpi hero"><span class="k">إيراد الصالة</span><span class="v">{{ r.total|money:0 }}</span><span class="k">{{ r.n }} فاتورة</span></div>
+<div class="card kpi"><span class="k">وقت اللعب</span><span class="v">{{ r.time|money:0 }}</span><span class="k">{{ r.hours }} ساعة لعب</span></div>
+<div class="card kpi"><span class="k">البوفيه</span><span class="v">{{ r.items|money:0 }}</span><span class="k">تيك أواي {{ r.takeaway.n }} طلب · {{ r.takeaway.total|money:0 }}</span></div>
+<div class="card kpi gold"><span class="k">الخصومات</span><span class="v">{{ r.discount|money:0 }}</span><span class="k">{{ r.discounts|length }} فاتورة · ملغاة {{ r.voids|length }}</span></div></section>
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">كل جهاز</h2><div class="table-wrap"><table><thead><tr><th>الجهاز</th><th class="n">جلسات</th><th class="n">ساعات لعب</th><th class="n">ساعات محسوبة</th><th class="n">إيراد الوقت</th><th class="n">البوفيه</th><th class="n">خصم</th><th class="n">الإشغال</th></tr></thead><tbody>
+{% for d in r.devices %}<tr><td>{{ d.st.name }} <span class="muted" style="font-size:12px">{{ d.st.get_kind_display }}</span></td><td class="n">{{ d.n }}</td><td class="n">{{ d.hours|floatformat:-2 }}</td><td class="n">{{ d.billed_hours|floatformat:-2 }}</td><td class="n">{{ d.time|money }}</td><td class="n">{{ d.items|money }}</td><td class="n">{{ d.discount|money }}</td>
+<td class="n"><span style="display:inline-block;width:60px;height:8px;background:var(--line-2);border-radius:4px;vertical-align:middle;overflow:hidden"><span style="display:block;height:100%;width:{{ d.util|unlocalize }}%;background:var(--brand)"></span></span> {{ d.util }}%</td></tr>
+{% empty %}<tr><td colspan="8" class="muted">لا توجد أجهزة</td></tr>{% endfor %}</tbody></table></div>
+<p class="muted" style="font-size:12px;margin:8px 0 0">الإشغال = دقائق اللعب على الجهاز ÷ وقت عمل الصالة (من أول جهاز اشتغل إلى آخر حساب في كل يوم).</p></section>
+<section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">كل عامل</h2><div class="table-wrap"><table><thead><tr><th>العامل</th><th class="n">فواتير</th><th class="n">الإجمالي</th><th class="n">خصومات</th><th class="n">جلسات ألغاها</th></tr></thead><tbody>
+{% for w in r.workers %}<tr><td>{{ w.name }}</td><td class="n">{{ w.n }}</td><td class="n">{{ w.total|money }}</td><td class="n">{{ w.discount|money }}{% if w.disc_n %} <span class="muted">({{ w.disc_n }})</span>{% endif %}</td><td class="n">{{ w.voids }}</td></tr>
+{% empty %}<tr><td colspan="5" class="muted">لا توجد فواتير في هذه المدة</td></tr>{% endfor %}</tbody></table></div></section>
+<div class="split"><div class="main"><section class="card"><h2 style="margin-top:0">الجلسات الملغاة ({{ r.voids|length }})</h2><div class="table-wrap"><table><thead><tr><th>الجهاز</th><th>بدأها</th><th>ألغاها</th><th>الوقت</th><th class="n">المدة</th></tr></thead><tbody>
+{% for x in r.voids %}<tr><td>{{ x.station|default:"تيك أواي" }}</td><td>{{ x.opened_by }}</td><td>{{ x.closed_by }}</td><td>{{ x.opened_at|date:"d/m H:i" }} ← {{ x.closed_at|date:"H:i" }}</td><td class="n">{{ x.minutes }} د</td></tr>
+{% empty %}<tr><td colspan="5" class="muted">لا يوجد</td></tr>{% endfor %}</tbody></table></div></section></div>
+<div class="side"><section class="card"><h2 style="margin-top:0">الخصومات ({{ r.discounts|length }})</h2><div class="table-wrap"><table><thead><tr><th>الفاتورة</th><th>العامل</th><th class="n">الخصم</th></tr></thead><tbody>
+{% for x in r.discounts %}<tr><td>{{ x.station|default:"تيك أواي" }} <span class="muted" style="font-size:12px">{{ x.closed_at|date:"d/m H:i" }}</span></td><td>{{ x.closed_by }}{% if x.discount_by and x.discount_by != x.closed_by %}<br><span class="muted" style="font-size:12px">وافق {{ x.discount_by }}</span>{% endif %}</td><td class="n">{{ x.discount|money }}</td></tr>
+{% empty %}<tr><td colspan="3" class="muted">لا توجد خصومات</td></tr>{% endfor %}</tbody></table></div></section></div></div>
+{% endblock %}

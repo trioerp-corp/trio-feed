@@ -57,6 +57,7 @@ def build(request, ctx):
     business = getattr(s, "business", "") or "market"
     clinic = "clinic" in mods
     w = words(s)
+    shelf = business in ("market", "retail")  # cartons, shelf labels and «buy one get one» belong to shops with shelves
     path = request.path
     groups = []
 
@@ -88,27 +89,34 @@ def build(request, ctx):
               link("الخدمات والأسعار", _url("clinic_setup") if owner else None, "🧾", ("/ui/clinic/setup",)),
               link("لوحة صاحب العيادة", _url("clinic_owner") if owner else None, "📊", ("/ui/clinic/owner",)))
     else:
+        hall = "gaming" in mods and business == "gaming"
         group(w["sell"], home,
-              link("🎮 الصالة", "/ui/play/" if "gaming" in mods else None, "", ("/ui/play",)),
-              link("لوحة البيع (الكاشير)", "/pos/", "🧾", new_tab=True))
+              link("🎮 الصالة", "/ui/play/" if "gaming" in mods else None, "", ("/ui/play/",), exact=True),
+              link("🎮 الأجهزة والأسعار", _url("play_devices") if hall and owner else None, "", ("/ui/play/devices",)),
+              link("تقرير الصالة", _url("play_report") if hall and (owner or cash) else None, "📊", ("/ui/play/report",)),
+              # a hall sells its buffet from the hall screen (its own drawer): no second drawer on the till
+              link("لوحة البيع (الكاشير)", "/pos/" if not hall else None, "🧾", new_tab=True),
+              link("الدليفري", _url("shop_delivery") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🛵", ("/ui/shop/delivery",)))
 
-    # ---- stock
-    if view_items:
+    # ---- stock (the clinic's reception / doctor: no purchases, stores or counts — those are the owner's and the store keeper's)
+    front_desk = clinic and not owner and not (u.has_perm("inventory.add_stockmove") or u.has_perm("inventory.change_item"))
+    if view_items and not front_desk:
         group(w["stock"],
               link(w["items"], _url("shop_items"), "📦", ("/ui/shop/items",)),
               link("💊 مكتبة الأدوية والشريط", _url("pharmacy") if ctx.get("is_pharmacy") else None, "", ("/ui/shop/pharmacy",)),
               link("المنيو", _url("shop_menu") if "recipes" in mods else None, "🍽", ("/ui/shop/menu",)),
-              link("الترابيزات وطلبات QR", _url("shop_tables") if "recipes" in mods and owner else None, "🪑", ("/ui/shop/tables",)),
+              link("الترابيزات وطلبات QR", _url("shop_tables") if "recipes" in mods and owner and business != "gaming" else None, "🪑", ("/ui/shop/tables",)),
+              link("الخدمة ومحطات المطبخ", _url("shop_kitchen") if "recipes" in mods and owner else None, "🧑‍🍳", ("/ui/shop/kitchen",)),
               link("المكونات والتكلفة", _url("shop_recipes") if "recipes" in mods else None, "🧪", ("/ui/shop/recipes",)),
               link(w["count"], _url("shop_count"), "📋", ("/ui/shop/count", "/ui/shop/damage")),
               link(w["purchases"], _url("shop_purchases") if "purchases" in mods else None, "🛒", ("/ui/shop/purchases",)),
               link(w["returns"], _url("shop_returns") if "returns" in mods else None, "↩", ("/ui/shop/returns",)),
               link("المخازن والتحويلات", _url("move_list") if "stores" in mods else None, "🏬", ("/ui/moves",)),
               link("التصنيع", _url("shop_production") if "production" in mods else None, "🏭", ("/ui/shop/production",)),
-              link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods else None, "📐", ("/ui/shop/units",)),
-              link("ملصقات الباركود", _url("shop_labels") if "labels" in mods else None, "🏷", ("/ui/shop/labels",)),
+              link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods and shelf else None, "📐", ("/ui/shop/units",)),
+              link("ملصقات الباركود", _url("shop_labels") if "labels" in mods and shelf else None, "🏷", ("/ui/shop/labels",)),
               link("الصلاحية", _url("shop_expiry") if "expiry" in mods else None, "⏳", ("/ui/shop/expiry",)),
-              link("العروض والخصومات", _url("shop_promos") if owner and "promos" in mods else None, "🎁", ("/ui/shop/promos",)))
+              link("العروض والخصومات", _url("shop_promos") if owner and "promos" in mods and shelf else None, "🎁", ("/ui/shop/promos",)))
 
     # ---- money
     if cash:

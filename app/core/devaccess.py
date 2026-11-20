@@ -259,7 +259,7 @@ def demo_start(request, ctx):
     data = dict(name=(P.get("shop") or "").strip(), phone=(P.get("phone") or "").strip(), address=(P.get("address") or "").strip(), business=business,
                 plan="basic", activity=act, modules=list(M.defaults("basic", business)), vat_rate="14", devices=n("devices", 1, 1, 10),
                 users=[dict(username=username, first_name=(P.get("owner") or "").strip() or "صاحب المحل", password=password, role="owner", active=True)],
-                stations=stations if business == "gaming" else [])
+                stations=stations if business == "gaming" else [], tables=n("tables", 0, 0, 100) if business == "cafe" else 0)
     if business == "gaming":  # the billing block chosen in the wizard; the minimum charge = one block, 5 minutes grace
         blk = P.get("g_round") if P.get("g_round") in ("15", "30", "60") else "15"
         data.update(g_round=blk, g_min=blk, g_grace="5")

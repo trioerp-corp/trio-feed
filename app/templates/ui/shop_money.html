@@ -3,7 +3,7 @@
 <div class="page-head"><div><h1>{{ W.money }}</h1><p class="muted" style="margin:0">مسحوبات، مصروفات تشغيل، أجور وسلف، وسداد موردين — من الخزينة أو من مال صاحب المحل الخاص</p></div>
 <div class="actions">{% if not branch_locked %}<a class="btn light" href="{% url 'shop_statement' %}?account=2304010101">كشف حساب صاحب المحل</a>{% endif %}</div></div>
 {% if not branch_locked %}<section class="grid" style="margin-bottom:16px">
-<div class="card kpi {% if owner >= 0 %}hero{% else %}gold{% endif %}"><span class="k">{% if shop_partners %}حساب الشركاء (جاري){% else %}رصيد صاحب المحل{% endif %}</span><span class="v">{{ owner|money:0 }}</span><span class="k">{% if owner >= 0 %}ليه عند المحل{% else %}مستحق عليه للمحل (سحب أكثر){% endif %}</span></div>
+<div class="card kpi {% if owner >= 0 %}hero{% else %}gold{% endif %}"><span class="k">{% if shop_partners %}حساب الشركاء (جاري){% else %}رصيد صاحب المحل{% endif %}</span><span class="v">{{ owner|money:0 }}</span><span class="k">{% if owner >= 0 %}مستحق له لدى المحل{% else %}مستحق عليه للمحل (سحب أكثر){% endif %}</span></div>
 <div class="card kpi"><span class="k">إجمالي المسحوبات</span><span class="v">{{ drawings|money:0 }}</span></div>
 <div class="card kpi"><span class="k">ما دفعه من ماله الخاص</span><span class="v">{{ paid_by_owner|money:0 }}</span><span class="k">موردين ومصروفات وأجور</span></div></section>{% endif %}
 <form method="post" class="card" style="margin-bottom:16px">{% csrf_token %}<h2>حركة جديدة</h2><div class="form-grid">

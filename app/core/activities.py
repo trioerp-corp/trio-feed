@@ -12,6 +12,8 @@ clean() before it is used, so a reply can never add something the program does n
 """
 import re
 
+from django.core.exceptions import ValidationError
+
 from . import modules as M
 
 F = lambda k, n, s=True: dict(k=k, n=n, s=s)  # noqa: E731
@@ -129,8 +131,14 @@ LIBRARY = [
     dict(key="cafe", name="كافيه", base="cafe", words=["كافيه", "كافية", "قهوة", "كوفي", "كوفي شوب", "مقهى"],
          categories=["مشروبات ساخنة", "مشروبات باردة وعصائر", "مشروبات معلبة ومياه", "أكل وسناكس", "شيشة", "خامات المطبخ والبار", "أخرى"],
          units=["كوباية", "قطعة", "كيلو", "لتر"], fields=[], suggest=["recipes"]),
-    dict(key="restaurant", name="مطعم", base="cafe", words=["مطعم", "مطاعم", "كشري", "فول وطعمية", "شاورما", "بيتزا", "مشويات", "أكل", "فاست فود", "سندوتشات"],
+    dict(key="restaurant", name="مطعم", base="cafe", words=["مطعم", "مطاعم", "شاورما", "أكل", "فاست فود", "سندوتشات", "برجر"],
          categories=["وجبات", "سندوتشات", "مشويات", "سلطات ومقبلات", "مشروبات", "خامات المطبخ", "أخرى"], units=["وجبة", "قطعة", "كيلو"], fields=[], suggest=["recipes", "production"]),
+    dict(key="grill", name="مطعم مشويات", base="cafe", words=["مشويات", "مشاوي", "كباب", "كفتة", "حاتي", "شواية"],
+         categories=["مشويات", "وجبات", "سلطات ومقبلات", "مشروبات", "خامات المطبخ", "أخرى"], units=["وجبة", "كيلو", "قطعة"], fields=[], suggest=["recipes", "production"]),
+    dict(key="pizza", name="بيتزا وفطائر", base="cafe", words=["بيتزا", "بيتزيريا", "فطائر", "فطاطري", "فطير", "pizza"],
+         categories=["بيتزا", "فطائر", "مقبلات", "مشروبات", "خامات المطبخ", "أخرى"], units=["قطعة", "وجبة"], fields=[], suggest=["recipes", "production"]),
+    dict(key="koshary", name="كشري وفول وطعمية", base="cafe", words=["كشري", "كشرى", "فول وطعمية", "فول", "طعمية", "فلافل"],
+         categories=["كشري", "فول وطعمية", "حلويات", "مشروبات", "خامات المطبخ", "أخرى"], units=["طبق", "قطعة", "وجبة"], fields=[], suggest=["recipes"]),
     dict(key="juice", name="عصائر", base="cafe", words=["عصير", "عصائر", "كوكتيل", "آيس كريم", "ايس كريم"],
          categories=["عصائر فريش", "كوكتيلات", "آيس كريم", "خامات", "أخرى"], units=["كوباية", "قطعة", "كيلو"], fields=[], suggest=["recipes"]),
     dict(key="gaming", name="بلايستيشن وبلياردو", base="gaming", words=["بلايستيشن", "بلاي ستيشن", "بلياردو", "بلي", "سايبر", "جيمنج", "بينج بونج", "playstation", "ps5", "ps4"],
@@ -163,7 +171,7 @@ SAMPLES = {
     "fish": ("basic", [("بلطي كيلو", 85, {"origin": "مصر"}), ("بوري كيلو", 160, {}), ("جمبري وسط كيلو", 450, {}), ("فيليه كيلو", 220, {}), ("سبيط كيلو", 380, {}), ("كابوريا كيلو", 250, {})]),
     "spices": ("basic", [("كمون 100 جرام", 30, {}), ("فلفل أسود 100 جرام", 45, {}), ("كركم 100 جرام", 25, {}), ("ينسون 100 جرام", 30, {}), ("عدس أصفر كيلو", 70, {}), ("بخور عود", 60, {})]),
     "roastery": ("basic", [("لب سوري كيلو", 180, {}), ("سوداني كيلو", 120, {}), ("كاجو كيلو", 900, {"origin": "الهند"}), ("بن محوج 250 جرام", 140, {}), ("لوز كيلو", 700, {}), ("شيكولاتة كيلو", 450, {})]),
-    "bakery": ("standard", [("تورتة شيكولاتة", 350, {}), ("جاتوه قطعة", 35, {}), ("بسبوسة كيلو", 160, {}), ("كرواسون", 25, {}), ("كحك كيلو", 260, {}), ("عيش فينو 5 قطع", 15, {})]),
+    "bakery": ("standard", [("تورتة شيكولاتة", 250, {}, {"sizes": [("صغيرة", 250), ("كبيرة", 450)]}), ("جاتوه قطعة", 35, {}), ("بسبوسة كيلو", 160, {}), ("كرواسون", 25, {}), ("كحك كيلو", 260, {}), ("عيش فينو 5 قطع", 15, {})]),
     "dairy": ("basic", [("لبن جاموسي لتر", 50, {}), ("جبنة بيضا كيلو", 140, {}), ("جبنة رومي كيلو", 380, {}), ("زبادي", 10, {}), ("زبدة فلاحي كيلو", 380, {}), ("قشطة", 40, {})]),
     "pharmacy": ("standard", [("بانادول اكسترا", 45, {"generic": "باراسيتامول", "company": "GSK"}), ("أوجمنتين 1 جم", 120, {"generic": "أموكسيسيلين", "company": "GSK"}),
                               ("كونجستال", 30, {"generic": "باراسيتامول + كلورفينيرامين"}), ("فيتامين سي فوار", 65, {}), ("شاش طبي", 15, {}), ("بامبرز مقاس 4", 320, {})]),
@@ -209,10 +217,20 @@ SAMPLES = {
     "agri": ("standard", [("تقاوي طماطم", 450, {"brand": "هازيرا"}), ("سماد يوريا شكارة", 1150, {}), ("مبيد حشري لتر", 650, {"active": "لامبادا سيهالوثرين"}), ("خرطوم ري", 900, {}),
                          ("شتلة ليمون", 120, {}), ("بذور برسيم كيلو", 140, {})]),
     "feed": ("standard", [("علف تسمين شكارة", 950, {}), ("علف دواجن شكارة", 1050, {}), ("أكل قطط 1 كيلو", 220, {"brand": "رويال كانين"}), ("فيتامينات بيطري", 180, {}), ("رمل قطط", 150, {}), ("طوق", 90, {})]),
-    "cafe": ("basic", [("قهوة تركي", 35, {}), ("شاي", 15, {}), ("نسكافيه", 35, {}), ("عصير مانجو", 45, {}), ("شيشة", 50, {}), ("مياه صغيرة", 10, {})]),
-    "restaurant": ("standard", [("وجبة فراخ مشوية", 220, {}), ("ساندوتش شاورما", 85, {}), ("بيتزا وسط", 180, {}), ("كشري كبير", 50, {}), ("سلطة", 25, {}), ("بيبسي", 20, {})]),
+    "cafe": ("basic", [("قهوة تركي", 35, {}, {"sizes": [("سنجل", 35), ("دوبل", 50)]}), ("شاي", 15, {}), ("نسكافيه", 35, {}), ("عصير مانجو", 45, {}), ("شيشة", 50, {}),
+                       ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12})]),
+    "restaurant": ("standard", [("وجبة فراخ مشوية", 120, {}, {"sizes": [("ربع", 120), ("نصف", 220)]}), ("ساندوتش شاورما", 85, {}), ("أرز بالخلطة", 40, {}), ("سلطة خضراء", 25, {}),
+                                ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12}), ("مياه صغيرة", 10, {}, {"stock": True, "unit": "زجاجة", "reorder": 12})]),
+    "grill": ("standard", [("كباب", 230, {}, {"sizes": [("ربع كيلو", 230), ("نصف كيلو", 450)]}), ("كفتة", 180, {}, {"sizes": [("ربع كيلو", 180), ("نصف كيلو", 350)]}),
+                           ("فراخ مشوية", 120, {}, {"sizes": [("ربع", 120), ("نصف", 220), ("فرخة كاملة", 420)]}), ("سلطة طحينة", 20, {}), ("سلطة خضراء", 20, {}),
+                           ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12})]),
+    "pizza": ("standard", [("بيتزا مارجريتا", 120, {}, {"sizes": [("صغير", 120), ("وسط", 160), ("كبير", 210)]}),
+                           ("بيتزا سوبر سوبريم", 150, {}, {"sizes": [("صغير", 150), ("وسط", 200), ("كبير", 260)]}), ("فطيرة مشكل جبن", 90, {}), ("فطير مشلتت", 120, {}),
+                           ("بطاطس محمرة", 35, {}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12})]),
+    "koshary": ("basic", [("كشري", 30, {}, {"sizes": [("صغير", 30), ("وسط", 40), ("كبير", 55)]}), ("ساندوتش فول", 10, {}), ("ساندوتش طعمية", 10, {}),
+                          ("طبق طعمية", 20, {}), ("أرز باللبن", 25, {}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12})]),
     "juice": ("basic", [("عصير قصب", 15, {}), ("مانجو", 40, {}), ("فراولة", 35, {}), ("كوكتيل", 50, {}), ("آيس كريم بولة", 20, {}), ("سموزي", 55, {})]),
-    "gaming": ("basic", [("شاي", 15, {}), ("قهوة تركي", 30, {}), ("نسكافيه", 35, {}), ("إندومي", 35, {}), ("بيبسي", 20, {}), ("مياه صغيرة", 10, {})]),
+    "gaming": ("basic", [("شاي", 15, {}), ("قهوة تركي", 30, {}), ("نسكافيه", 35, {}), ("إندومي", 35, {}), ("بيبسي كانز", 20, {}, {"stock": True, "unit": "علبة", "reorder": 12}), ("مياه صغيرة", 10, {}, {"stock": True, "unit": "زجاجة", "reorder": 12})]),
     # clinics: consumables / medicines kept in stock (services and their prices are set on «الخدمات والأسعار»)
     "clinic": ("basic", [("جوانتي طبي (زوج)", 5, {}), ("سرنجة 5 سم", 4, {}), ("قطن طبي", 25, {}), ("كحول 70%", 40, {}), ("بلاستر", 15, {}), ("خافض حرارة شراب", 35, {})]),
     "dental": ("standard", [("جوانتي طبي (زوج)", 5, {}), ("أمبول بنج", 35, {}), ("حشو كومبوزيت", 450, {}), ("سرنجة أسنان", 6, {}), ("قطن رول", 30, {}), ("فرشة أسنان", 40, {})]),
@@ -229,14 +247,14 @@ CATIDX = dict(supermarket=[0, 0, 0, 1, 2, 6], grocery=[0, 0, 0, 5, 6, 2], vegeta
               hardware=[0, 1, 3, 2, 0, 0], building=[0, 1, 2, 3, 3, 4], ceramic=[0, 2, 1, 4, 4, 3], mobiles=[0, 2, 3, 1, 1, 5], computers=[0, 4, 4, 2, 3, 5],
               appliances=[0, 1, 2, 3, 4, 5], clothes=[0, 0, 1, 2, 0, 0], shoes=[0, 1, 2, 4, 0, 4], toys=[2, 1, 3, 3, 0, 0], stationery=[0, 1, 2, 3, 4, 4],
               gifts=[1, 2, 0, 3, 2, 3], housewares=[0, 2, 1, 0, 2, 3], cleaning=[0, 1, 3, 2, 4, 4], furniture=[0, 1, 2, 3, 4, 4], agri=[0, 1, 2, 3, 4, 0],
-              feed=[0, 0, 3, 1, 2, 2], cafe=[0, 0, 0, 1, 4, 2], restaurant=[2, 1, 0, 0, 3, 4], juice=[0, 0, 0, 1, 2, 0], gaming=[0, 0, 0, 3, 2, 2],
+              feed=[0, 0, 3, 1, 2, 2], cafe=[0, 0, 0, 1, 4, 2], restaurant=[0, 1, 0, 3, 4, 4], grill=[0, 0, 0, 2, 2, 3], pizza=[0, 0, 1, 1, 2, 3], koshary=[0, 1, 1, 1, 2, 3], juice=[0, 0, 0, 1, 2, 0], gaming=[0, 0, 0, 3, 2, 2],
               clinic=[1, 1, 1, 1, 1, 2], dental=[1, 1, 1, 1, 1, 3], derma=[1, 2, 2, 1, 1, 2], pediatrics=[2, 1, 1, 2, 1, 1], eyes=[2, 2, 1, 1, 1, 3],
               physio=[1, 3, 1, 3, 3, 2])
 for _p in LIBRARY:
     _plan, _items = SAMPLES.get(_p["key"], ("standard", []))
     _ix = CATIDX.get(_p["key"], [])
-    _p["plan"], _p["samples"] = _plan, [[n, pr, ex, _p["categories"][_ix[i]] if i < len(_ix) and _ix[i] < len(_p["categories"]) else ""]
-                                        for i, (n, pr, ex) in enumerate(_items)]
+    _p["plan"], _p["samples"] = _plan, [[r[0], r[1], r[2], _p["categories"][_ix[i]] if i < len(_ix) and _ix[i] < len(_p["categories"]) else ""]
+                                        + ([dict(r[3])] if len(r) > 3 else []) for i, r in enumerate(_items)]
 
 BY_KEY = {p["key"]: p for p in LIBRARY}
 BASE_DEFAULT = {"market": "supermarket", "retail": "clothes", "cafe": "cafe", "gaming": "gaming", "clinic": "clinic"}
@@ -271,6 +289,34 @@ def _s(x, n=40):
     return re.sub(r"\s+", " ", re.sub(r"[<>\"`{}]", "", str(x or ""))).strip()[:n]
 
 
+def _opt(o):
+    """A sample's options, made safe: stock (a can / bottle kept in stock), unit, reorder, sizes [(name, price)…]."""
+    if not isinstance(o, dict):
+        return {}
+    out = {}
+    if o.get("stock"):
+        out["stock"] = True
+        if _s(o.get("unit"), 15):
+            out["unit"] = _s(o.get("unit"), 15)
+        try:
+            r = float(o.get("reorder"))
+            if 0 <= r < 100000:
+                out["reorder"] = r
+        except (TypeError, ValueError):
+            pass
+    sizes = []
+    for z in (o.get("sizes") or [])[:6] if not out.get("stock") else []:
+        try:
+            n, pr = _s(z[0], 30), float(z[1])
+        except (TypeError, ValueError, IndexError):
+            continue
+        if n and 0 < pr < 1_000_000 and n not in {a for a, _ in sizes}:
+            sizes.append([n, pr])
+    if len(sizes) >= 2:
+        out["sizes"] = sizes
+    return out
+
+
 def clean(p, text=""):
     """Only what the program knows: a profile from the library or from the AI, made safe."""
     if not isinstance(p, dict):
@@ -301,7 +347,11 @@ def clean(p, text=""):
         ex = {k: _s(v, 60) for k, v in (x[2] if len(x) > 2 and isinstance(x[2], dict) else {}).items() if k in seen and _s(v, 60)}
         cat = _s(x[3], 40) if len(x) > 3 and isinstance(x[3], str) else ""
         if nm and 0 <= pr < 10_000_000:
-            samples.append([nm, pr, ex, cat if cat in cats else ""])
+            row = [nm, pr, ex, cat if cat in cats else ""]
+            opt = _opt(x[4] if len(x) > 4 else None)
+            if opt:
+                row.append(opt)
+            samples.append(row)
     plan = p.get("plan") if p.get("plan") in M.PLANS else "standard"
     return dict(samples=samples, plan=plan, key=_s(p.get("key"), 30) or "custom", name=_s(p.get("name"), 60) or _s(text, 60) or M.BUSINESS[base][0], base=base,
                 categories=cats, units=units, fields=fields, item=_s(p.get("item"), 20) or "صنف", items=_s(p.get("items"), 25) or "الأصناف",
@@ -370,45 +420,70 @@ def lookup(request, text):
 def view(p):
     """For the preview card."""
     return dict(p, base_name=M.BUSINESS[p["base"]][0], suggest_names=[M.MODULES[m][0] for m in p["suggest"]],
-                hall=p["base"] == "gaming", recipes=p["base"] in ("cafe", "gaming"), clinic=p["base"] == "clinic")
+                hall=p["base"] == "gaming", recipes=p["base"] in ("cafe", "gaming"), clinic=p["base"] == "clinic",
+                tables=p["base"] == "cafe")
 
 
 from inventory.reorder import DEFAULT as DEFAULT_REORDER  # noqa: E402
 
 
+CANNED = ("كانز", "علبة", "مياه", "بيبسي", "كوكاكولا", "كولا", "سبرايت", "فانتا", "مياة", "ريدبول", "معلب")
+
+
+def _menu_kind(p, name, cat, opt):
+    """Café / restaurant / hall buffet: dishes and prepared drinks are menu items (made to order, no stock, no reorder
+    level); canned drinks and bottled water are stock items. From the library (opt) or guessed from the name / category."""
+    if p.get("base") not in ("cafe", "gaming"):
+        return "stock"
+    if opt.get("stock"):
+        return "stock"
+    if opt.get("sizes"):
+        return "menu"
+    n = norm(name + " " + (cat or ""))
+    return "stock" if any(norm(w).strip() in n for w in CANNED) else "menu"
+
+
 def add_samples(p):
-    """Example items of the activity (the trial), each in the closest of its categories."""
+    """Example items of the activity (the trial), each in the closest of its categories. A café / restaurant gets its
+    dishes as menu products (sizes on ONE product) and its canned drinks as stock items in «علبة»."""
+    from inventory import menu as MN
     from inventory.models import Item, ItemCategory
+
+    from inventory.names import clash as name_taken
 
     cats = list(ItemCategory.objects.exclude(name__startswith="مستلزمات تشغيل"))
     if not cats:
         return 0
     other = next((c for c in cats if c.name == "أخرى"), cats[0])
     made = 0
-    last = Item.objects.filter(code__regex=r"^\d+$").exclude(code="0").order_by("-id").first()
-    code = int(last.code) + 1 if last else 1001
     for row in p.get("samples") or []:
         name, price, extra = row[0], row[1], row[2] if len(row) > 2 else {}
-        if Item.objects.filter(name=name).exists():
+        opt = row[4] if len(row) > 4 and isinstance(row[4], dict) else {}
+        if Item.objects.filter(name=name).exists() or name_taken(name):
             continue
-        given = next((c for c in cats if len(row) > 3 and row[3] and c.name == row[3]), None)
-        if given:
-            while Item.objects.filter(code=str(code)).exists():
-                code += 1
-            Item.objects.create(code=str(code), name=name[:150], category=given, unit=(p.get("units") or ["قطعة"])[0], sale_price=price, extra=extra or {},
-                                reorder_level=DEFAULT_REORDER)
-            code += 1
-            made += 1
-            continue
-        words = {w for w in norm(name).split() if len(w) > 2}
-        cat = max(cats, key=lambda c: (len(words & {w for w in norm(c.name).split() if len(w) > 2}), c is not other)) if words else other
-        if not words & {w for w in norm(cat.name).split() if len(w) > 2}:
-            cat = next((c for c in cats if c.name == p["categories"][0]), other) if p.get("categories") else other
-        while Item.objects.filter(code=str(code)).exists():
-            code += 1
-        Item.objects.create(code=str(code), name=name[:150], category=cat, unit=(p.get("units") or ["قطعة"])[0], sale_price=price, extra=extra or {},
-                            reorder_level=DEFAULT_REORDER)
-        code += 1
+        cat = next((c for c in cats if len(row) > 3 and row[3] and c.name == row[3]), None)
+        if not cat:
+            words = {w for w in norm(name).split() if len(w) > 2}
+            cat = max(cats, key=lambda c: (len(words & {w for w in norm(c.name).split() if len(w) > 2}), c is not other)) if words else other
+            if not words & {w for w in norm(cat.name).split() if len(w) > 2}:
+                cat = next((c for c in cats if c.name == p["categories"][0]), other) if p.get("categories") else other
+        kind = _menu_kind(p, name, cat.name, opt)
+        if kind == "menu":
+            sizes = [(n, str(pr)) for n, pr in opt.get("sizes") or []]
+            try:
+                it = MN.save_product(name[:120], cat, price=None if sizes else (price or None), sizes=sizes)
+            except ValidationError:  # an AI sample without a usable price: skipped, never a broken setup
+                continue
+            if extra:
+                it.extra = dict(it.extra or {}, **extra)
+                it.save(update_fields=["extra"])
+        else:
+            unit = opt.get("unit") or (p.get("units") or ["قطعة"])[0]
+            if p.get("base") in ("cafe", "gaming") and not opt.get("unit"):
+                unit = "علبة"
+            reorder = opt.get("reorder", DEFAULT_REORDER)
+            Item.objects.create(code=MN._code(), name=name[:150], category=cat, unit=unit, sale_price=price, extra=extra or {},
+                                reorder_level=reorder)
         made += 1
     if p.get("base") == "clinic":  # a clinic also starts with its first services, priced as an example
         from pos.clinic import services as CL

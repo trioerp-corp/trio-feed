@@ -9,6 +9,8 @@ urlpatterns = [
     path("api/catalog/", views.api_catalog),
     path("api/sync/", views.api_sync),
     path("api/kitchen/", views.api_kitchen),
+    path("api/delivery/", views.api_delivery),
+    path("api/return/ok/", views.api_return_ok),
     path("api/tables/", views.api_tables),
     path("api/tables/claim/", views.api_tables, {"op": "claim"}),
     path("api/tables/<int:tid>/", views.api_tables),

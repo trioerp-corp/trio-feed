@@ -11,6 +11,7 @@ from decimal import Decimal, InvalidOperation
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+from . import names
 from .models import Item, ItemCategory
 
 MAX_SIZES = 6
@@ -73,17 +74,13 @@ def clean_sizes(rows):
 def save_product(name, cat, price=None, sizes=(), desc="", item=None):
     """Adds or edits a menu product. With sizes: the product keeps no price and each size is an item of its own
     (sizes no longer listed are stopped, never deleted, because they have sales)."""
-    name = (name or "").strip()[:120]
+    name = names.clean(name, 120)
     if not name:
         raise ValidationError("اكتب اسم المنتج")
     sizes = clean_sizes(sizes)
     if len(sizes) == 1:
         raise ValidationError("المنتج ذو الحجم الواحد يُكتب له سعر واحد بدون أحجام")
-    dup = Item.objects.filter(name=name, active=True, variant_of__isnull=True)
-    if item:
-        dup = dup.exclude(pk=item.pk)
-    if dup.exists():
-        raise ValidationError(f"يوجد منتج باسم «{name}» بالفعل")
+    names.check(name, exclude=item.pk if item else None)
     if item is None:
         item = Item(code=_code(), unit="واحدة", item_type="recipe")
     elif item.variant_of_id or item.is_addon:
@@ -110,14 +107,13 @@ def save_product(name, cat, price=None, sizes=(), desc="", item=None):
 
 @transaction.atomic
 def save_addon(name, price, cats=(), item=None):
-    name = (name or "").strip()[:100]
+    name = names.clean(name, 100)
     if not name:
         raise ValidationError("اكتب اسم الإضافة")
-    dup = Item.objects.filter(name=name, active=True, is_addon=True)
-    if item:
-        dup = dup.exclude(pk=item.pk)
-    if dup.exists():
-        raise ValidationError(f"توجد إضافة باسم «{name}» بالفعل")
+    idx = names.index(exclude=item.pk if item else None)
+    other = names.clash(name, idx=idx)
+    if other:
+        raise ValidationError(f"توجد إضافة أو صنف باسم «{other}» بالفعل — اكتب اسمًا يميّزه")
     if item is None:
         base = ItemCategory.objects.filter(name="إضافات").first() or category(new_name="إضافات")
         item = Item(code=_code(), unit="واحدة", item_type="recipe", is_addon=True, category=base)

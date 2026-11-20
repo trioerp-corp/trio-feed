@@ -15,6 +15,7 @@ class Doctor(models.Model):
     partner = models.OneToOneField("ledger.Partner", null=True, blank=True, on_delete=models.PROTECT, related_name="doctor")
     user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="clinic_doctor",
                                 verbose_name="حساب الدخول", help_text="المستخدم الذي يفتح «شاشة الطبيب» الخاصة به")
+    hours = models.CharField("مواعيد العيادة", max_length=200, blank=True, help_text="تُطبع على الروشتة، مثلًا: السبت إلى الخميس 5 – 10 مساءً")
     order = models.PositiveSmallIntegerField("الترتيب", default=0)
     active = models.BooleanField("شغال", default=True)
 
@@ -118,6 +119,7 @@ class Visit(models.Model):
     prescription = models.TextField("الروشتة / العلاج", blank=True)
     notes = models.TextField("ملاحظات الطبيب", blank=True)
     next_visit = models.DateField("ميعاد المتابعة", null=True, blank=True)
+    weight = models.DecimalField("الوزن (كجم)", max_digits=5, decimal_places=1, null=True, blank=True)
     state = models.CharField("الحالة", max_length=10, choices=STATES, default="open")
     discount = models.DecimalField("خصم", max_digits=12, decimal_places=2, default=0)
     total = models.DecimalField("الإجمالي", max_digits=12, decimal_places=2, default=0)

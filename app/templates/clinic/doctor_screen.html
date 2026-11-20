@@ -1,29 +1,28 @@
-{% extends "base.html" %}{% load gg %}{% block title %}شاشة الطبيب{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}شاشة الطبيب{% endblock %}
 {% block content %}
-<meta http-equiv="refresh" content="45">
 <style>.dz{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px}@media (max-width:900px){.dz{grid-template-columns:1fr}}
 .now{border:2px solid var(--brand);border-radius:18px;padding:18px}.now h2{font-size:24px;margin:0}.big{font-size:18px;padding:14px 22px}
 .ql{list-style:none;margin:0;padding:0}.ql li{display:flex;justify-content:space-between;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line-2);font-size:16px}.ql .n{font-weight:800;color:var(--brand)}
 .warn{background:var(--bad-2);color:var(--bad);border-radius:10px;padding:8px 12px;margin:10px 0;font-weight:700}</style>
 {% if not doc %}<div class="card"><h1>🩺 شاشة الطبيب</h1><p>حسابك غير مربوط بطبيب بعد — يربطه صاحب العيادة من «البيانات الأساسية ← الأطباء ← حساب الدخول».</p></div>
-{% else %}
+{% else %}<div data-live="doc">
 <div class="page-head"><div><h1>🩺 {{ doc }}{% if doc.specialty %} <span class="muted" style="font-size:16px">{{ doc.specialty }}</span>{% endif %}</h1>
 <p class="muted" style="margin:0">اليوم: كشفت {{ seen }} · ينتظر {{ waiting|length }}{% if share %} · نسبتك {{ share|money:0 }} ج{% endif %}</p></div>
 <div class="actions">{% if all_docs %}<form method="get"><select name="d" onchange="this.form.submit()" aria-label="الطبيب">{% for d in all_docs %}<option value="{{ d.pk }}" {% if d.pk == doc.pk %}selected{% endif %}>{{ d }}</option>{% endfor %}</select></form>{% endif %}
-<form method="post">{% csrf_token %}<input type="hidden" name="action" value="next"><button class="big" {% if not waiting %}disabled{% endif %}>{% if inside %}انتهى — التالي ←{% else %}دخّل أول واحد ←{% endif %}</button></form></div></div>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="next"><button class="big" {% if not waiting and not inside %}disabled{% endif %}>{% if inside and waiting %}انتهى — التالي ←{% elif inside %}✔ انتهى الكشف{% else %}أدخِل المريض التالي ←{% endif %}</button></form></div></div>
 <div class="dz"><div>
 {% if inside %}{% with p=inside.patient %}<section class="now card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start">
-<div><span class="muted">بالداخل الآن — دور {{ inside.queue_no }}</span><h2>{{ p.name }}</h2><p class="muted" style="margin:4px 0 0">ملف {{ p.number }}{% if p.age %} · {{ p.age }} سنة{% endif %}{% if p.gender %} · {{ p.get_gender_display }}{% endif %}{% if p.insurance %} · 🛡 {{ p.insurance.name }}{% endif %}</p></div>
+<div><span class="muted">بالداخل الآن — دور {{ inside.queue_no }}</span><h2>{{ p.name }}</h2><p class="muted" style="margin:4px 0 0">ملف {{ p.number|unlocalize }}{% if p.age %} · {{ p.age }} سنة{% endif %}{% if p.gender %} · {{ p.get_gender_display }}{% endif %}{% if p.insurance %} · 🛡 {{ p.insurance.name }}{% endif %}</p></div>
 <a class="btn big" href="{% url 'clinic_visit' inside.visit_id %}">افتح الكشف ←</a></div>
 {% if p.medical_notes %}<div class="warn">⚠ {{ p.medical_notes|linebreaksbr }}</div>{% endif %}
 {% if inside.service %}<p style="margin:8px 0 0">الخدمة: <b>{{ inside.service.item.name }}</b></p>{% endif %}
 {% if history %}<h3 style="margin:14px 0 6px">آخر الزيارات</h3>{% for v in history %}<div style="padding:6px 0;border-bottom:1px solid var(--line-2)"><b>{{ v.opened_at|date:"d/m/Y" }}</b> — {{ v.doctor|default:"" }}{% if v.diagnosis %}<br><span>{{ v.diagnosis|truncatechars:140 }}</span>{% endif %}{% if v.prescription %}<br><span class="muted">💊 {{ v.prescription|truncatechars:140 }}</span>{% endif %}</div>{% endfor %}{% endif %}
 {% if files %}<h3 style="margin:14px 0 6px">📄 التحاليل والأشعة</h3><div style="display:flex;gap:8px;flex-wrap:wrap">{% for f in files %}<a href="{% url 'clinic_file' f.pk %}" target="_blank" rel="noopener" class="btn light">{{ f.get_kind_display }}{% if f.title %}: {{ f.title|truncatechars:24 }}{% endif %} · {{ f.taken_on|default:f.created_at|date:"d/m" }}</a>{% endfor %}</div>{% endif %}
 <p style="margin:12px 0 0"><a href="{% url 'clinic_patient' p.pk %}">ملف المريض كامل ←</a></p></section>{% endwith %}
-{% else %}<section class="card now" style="text-align:center"><h2>لا أحد بالداخل</h2><p class="muted">{% if waiting %}اضغط «أدخل الأول».{% else %}لا أحد ينتظر الآن — تُحدَّث الشاشة تلقائيًا.{% endif %}</p></section>{% endif %}
+{% else %}<section class="card now" style="text-align:center"><h2>لا أحد بالداخل</h2><p class="muted">{% if waiting %}اضغط «أدخِل المريض التالي».{% else %}لا أحد ينتظر الآن — تُحدَّث الشاشة تلقائيًا.{% endif %}</p></section>{% endif %}
 </div><div>
 <section class="card"><h2 style="margin-top:0">🪑 ينتظر ({{ waiting|length }})</h2><ul class="ql">{% for a in waiting %}<li><span><span class="n">{{ a.queue_no }}</span> {{ a.patient.name }}{% if a.patient.insurance %} 🛡{% endif %}</span><span class="muted">{{ a.service.item.name|default:"" }}</span></li>{% empty %}<li class="muted">لا يوجد</li>{% endfor %}</ul></section>
 {% if booked %}<section class="card" style="margin-top:14px"><h2 style="margin-top:0">⏳ محجوز ولم يصل بعد ({{ booked|length }})</h2><ul class="ql">{% for a in booked %}<li><span>{{ a.patient.name }}</span><span class="muted">{{ a.time|time:"H:i"|default:"" }}</span></li>{% endfor %}</ul></section>{% endif %}
 {% if done %}<section class="card" style="margin-top:14px"><h2 style="margin-top:0">✅ انتهى ({{ done|length }})</h2><ul class="ql">{% for a in done %}<li><a href="{% url 'clinic_visit' a.visit_id %}">{{ a.patient.name }}</a></li>{% endfor %}</ul></section>{% endif %}
-</div></div>{% endif %}
+</div></div></div>{% include "clinic/_live.html" with live_every=20 %}{% endif %}
 {% endblock %}

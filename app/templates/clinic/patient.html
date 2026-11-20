@@ -1,6 +1,6 @@
-{% extends "base.html" %}{% load gg %}{% block title %}{{ p.name }}{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}{{ p.name }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>{{ p.name }} <span class="muted" style="font-size:16px">ملف {{ p.number }}</span></h1>
+<div class="page-head"><div><h1>{{ p.name }} <span class="muted" style="font-size:16px">ملف {{ p.number|unlocalize }}</span></h1>
 <p class="muted" style="margin:0">{% if p.phone %}<span dir="ltr">{{ p.phone }}</span> · {% endif %}{% if p.age %}{{ p.age }} سنة · {% endif %}{{ p.get_gender_display }}{% if balance %} · <b style="color:#A13A2A">عليه {{ balance|money }}</b>{% endif %}{% if p.insurance %} · 🛡 {{ p.insurance.name }} ({{ p.insurance_no }}){% if p.insurance_expiry and p.insurance_expiry < today %} <b class="bad">البطاقة منتهية</b>{% endif %}{% endif %}</p></div>
 <div class="actions"><a class="btn light" href="{% url 'clinic_appointments' %}?p={{ p.pk }}">حجز ميعاد</a></div></div>
 {% if p.medical_notes %}<p class="card" style="border-color:#A13A2A;margin-bottom:14px"><b>⚠ </b>{{ p.medical_notes|linebreaksbr }}</p>{% endif %}

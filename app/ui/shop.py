@@ -81,7 +81,7 @@ def _range(request, default_days=0):
 
 
 def _sales(orders):
-    t = dict(n=0, gross=Z, returns=Z, vat=Z, cash=Z, card=Z, credit=Z)
+    t = dict(n=0, gross=Z, returns=Z, vat=Z, cash=Z, card=Z, credit=Z, rider=Z, disc=Z)
     for o in orders:
         if o.cancelled:
             continue
@@ -95,6 +95,9 @@ def _sales(orders):
         t["cash"] += sign * o.paid_cash
         t["card"] += sign * o.paid_card
         t["credit"] += sign * o.paid_credit
+        t["rider"] += sign * (o.paid_rider or Z)  # 1.24 delivery: money still with / handed in by the rider
+        if not o.is_return:  # 1.25 manual discounts (lines + invoice), kept on the receipt's raw data
+            t["disc"] += Decimal(str(((o.raw or {}).get("disc") or {}).get("total") or 0)) if isinstance((o.raw or {}).get("disc"), dict) else Z
     t["net"] = t["gross"] - t["returns"]
     t["net_ex_vat"] = t["net"] - t["vat"]
     return t
@@ -194,8 +197,13 @@ def items(request):
                 reorder, name = None, name or ""
                 messages.error(request, e.messages[0])
                 return redirect(request.get_full_path())
+            from inventory import names as NM
+
+            name = NM.clean(name)
             if not name:
                 messages.error(request, "اكتب اسم الصنف")
+            elif NM.clash(name):
+                messages.error(request, f"يوجد صنف باسم «{NM.clash(name)}» بالفعل — عدّل الصنف الموجود أو اكتب اسمًا يميّزه")
             else:
                 last = Item.objects.filter(code__regex=r"^\d+$").order_by("-id").first()
                 code = request.POST.get("code", "").strip() or str((int(last.code) + 1) if last else 1001)
@@ -228,7 +236,11 @@ def items(request):
     q = request.GET.get("q", "").strip()
     qs = Item.objects.select_related("category").order_by("category__name", "name")
     if q:
-        qs = qs.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q) | Q(extra__icontains=q))
+        from inventory.names import norm as nz  # «اوجمنتين» finds «أوجمنتين», «panadol» finds «PANADOL»
+
+        k = nz(q)
+        ids = [pk for pk, n, a, x in Item.objects.values_list("pk", "name", "aliases", "extra") if k and k in nz(f"{n} {a} {' '.join(map(str, (x or {}).values()))}")]
+        qs = qs.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q) | Q(extra__icontains=q) | Q(pk__in=ids))
     if request.GET.get("cat"):
         qs = qs.filter(category_id=request.GET["cat"])
     if request.GET.get("noreorder"):
@@ -288,8 +300,10 @@ def reports(request):
     if b:
         shifts = shifts.filter(device__branch=b)
     low = [i for i in Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name") if i.qty_on_hand <= i.reorder_level]
+    from pos.delivery import cfg as _dcfg
+
     return render(request, "ui/shop_reports.html", dict(
-        d1=d1, d2=d2, t=t, cogs=cogs, gross_profit=gross_profit, margin=(gross_profit / t["net_ex_vat"] * 100) if t["net_ex_vat"] else Z,
+        dlv=bool(t["rider"]) or _dcfg()["on"], d1=d1, d2=d2, t=t, cogs=cogs, gross_profit=gross_profit, margin=(gross_profit / t["net_ex_vat"] * 100) if t["net_ex_vat"] else Z,
         days=days, top=top, expenses=expenses, exp_total=exp_total, net_profit=gross_profit - exp_total, shifts=shifts, low=low,
         stock_value=_branch_stock_value(b) if b else (Item.objects.aggregate(s=Sum("stock_value"))["s"] or Z), company=CompanySettings.get(),
         branches=Branch.objects.all() if not b else [], g=request.GET, branch=b))
@@ -347,7 +361,8 @@ def purchase_new(request):
         for k, item_id in enumerate(P.getlist("item")):
             g = lambda n: (P.getlist(n)[k] if k < len(P.getlist(n)) else "")  # noqa: E731
             if item_id or g("qty"):
-                old.append(dict(item=item_id, qty=g("qty"), factor=g("factor") or "1", cost=g("cost"), produced=g("produced"), expiry=g("expiry")))
+                old.append(dict(item=item_id, text=g("item_text").strip()[:150], qty=g("qty"), factor=g("factor") or "1", cost=g("cost"),
+                                produced=g("produced"), expiry=g("expiry")))
     ctx = dict(whs=whs, boxes=boxes, suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"),
                items=Item.objects.filter(active=True).order_by("name"), today=timezone.localdate().isoformat(), p=P, old_lines=old,
                units_on="units" in enabled())
@@ -360,11 +375,15 @@ def purchase_new(request):
                 if not sup:
                     raise ValidationError("اختر المورد أو اكتب اسم مورد جديد")
                 date = dt.date.fromisoformat(P["date"])
-                rows = []
-                for ln in old:
+                rows, new_items = [], []
+                for ln in (dict(x) for x in old):  # copies: a refused save rolls the new item back, the form keeps its text
+                    if not ln["item"] and ln["qty"] and ln["text"]:  # a material bought for the first time: added right here
+                        it = _purchase_new_item(ln["text"])
+                        ln["item"] = str(it.pk)
+                        new_items.append(it.name)
                     if not ln["item"] or not ln["qty"]:
                         if ln["qty"] and not ln["item"]:
-                            raise ValidationError("يوجد سطر صنفه غير معرّف — اختر الصنف من القائمة")
+                            raise ValidationError("يوجد سطر بلا اسم صنف — اكتب اسم الصنف أو اختره من القائمة")
                         continue
                     f = num(ln["factor"]) or Decimal(1)
                     qty, cost = num(ln["qty"]), num(ln["cost"])
@@ -375,7 +394,7 @@ def purchase_new(request):
                     rows.append(dict(item=Item.objects.get(pk=ln["item"]), qty=qty * f, unit_cost=cost / f,
                                      produced=dt.date.fromisoformat(ln["produced"]) if ln["produced"] else None,
                                      expiry=dt.date.fromisoformat(ln["expiry"]) if ln["expiry"] else None))
-                pay = P.get("pay", "credit")
+                pay = P.get("pay", "credit") if P.get("pay") in ("credit", "cash", "split", "owner") else "credit"
                 box = boxes.filter(pk=P.get("cashbox") or 0).first() if pay in ("cash", "split") else None
                 if pay in ("cash", "split") and not box:
                     raise CashBox.DoesNotExist
@@ -383,11 +402,32 @@ def purchase_new(request):
 
                 mv, total, msg = PUR.record(warehouse=whs.get(pk=P["warehouse"]), supplier=sup, date=date, lines=rows, invoice=P.get("invoice", ""),
                                             pay=pay, paid=num(P.get("paid")) or Z, box=box, user=request.user)
+            if new_items:
+                msg += f" — وأُضيف صنف جديد: {'، '.join(new_items)} (اضبط وحدته وحد الطلب من الأصناف)"
             messages.success(request, msg)
             return redirect("shop_purchases")
         except (ValidationError, ValueError, KeyError, CashBox.DoesNotExist) as e:
             _errs(request, e)
     return render(request, "ui/shop_purchase_form.html", ctx)
+
+
+def _purchase_new_item(text):
+    """A name typed on a purchase line that is not in the list: a new stock item (the materials category of a café /
+    restaurant, «أخرى» elsewhere), without a reorder alert until the owner sets one."""
+    from inventory import menu as MN
+    from inventory import names as NM
+
+    name = NM.clean(text.split(" | ")[0])
+    if len(name) < 2:
+        raise ValidationError("اكتب اسم الصنف الجديد كاملًا")
+    got = NM.clash(name)
+    if got:
+        return Item.objects.filter(name=got, active=True, variant_of__isnull=True).first()
+    cat = (ItemCategory.objects.filter(name__startswith="خامات").order_by("pk").first() if CompanySettings.get().business in ("cafe", "gaming") else None) \
+        or ItemCategory.objects.filter(name="أخرى").first() or ItemCategory.objects.exclude(name__startswith="مستلزمات").order_by("pk").first()
+    if not cat:
+        raise ValidationError("لا يوجد تصنيف للأصناف — أضف تصنيفًا أولًا")
+    return Item.objects.create(code=MN._code(), name=name, category=cat, unit="قطعة", reorder_level=Z)
 
 
 # ------------------------------------------------------------------ customers & suppliers with balances
@@ -569,7 +609,7 @@ def money(request):
         shop_partners=ShopPartner.objects.filter(active=True).select_related("partner"),
         employees=Partner.objects.filter(kind="employee", active=True).order_by("name"), suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"),
         expenses=M.expense_accounts(), today=timezone.localdate().isoformat(),
-        kinds=[k for k in CashMove.KINDS if not (_locked(request) and k[0] in ("drawing", "deposit"))],
+        kinds=[k for k in CashMove.KINDS if k[0] != "delivery" and not (_locked(request) and k[0] in ("drawing", "deposit"))],
         drawings=sum((m.amount for m in CashMove.objects.filter(kind="drawing")), Z),
         paid_by_owner=sum((m.amount - m.deduct_advance - m.deduct_penalty for m in CashMove.objects.filter(from_owner=True)), Z)))
 
@@ -712,6 +752,19 @@ def shop_settings(request):
             s.cashier_can_edit = request.POST.get("on") == "1"
             s.save(update_fields=["cashier_can_edit"])
             messages.success(request, "أصبح بإمكان الكاشير إلغاء الفواتير وتعديلها" if s.cashier_can_edit else "أصبح الإلغاء والتعديل لصاحب المحل فقط — يرسل الكاشير طلبًا")
+        elif a == "till" and V.is_owner(request.user):  # 1.25: the cashier's discount limit + the scale label
+            from pos.services import set_till_cfg
+
+            try:
+                set_till_cfg(request.POST.get("disc_max", "0"))
+                s = CompanySettings.get()
+                pre = request.POST.get("scale_preset", "")
+                if pre in SCALE_PRESETS:
+                    s.scale_prefix, s.scale_item_digits, s.scale_mode = SCALE_PRESETS[pre][1:]
+                    s.save(update_fields=["scale_prefix", "scale_item_digits", "scale_mode"])
+                messages.success(request, "تم حفظ إعدادات الكاشير ✔ — تُطبّق على شاشة الكاشير خلال دقائق أو عند إعادة فتحها")
+            except ValidationError as e:
+                messages.error(request, "؛ ".join(e.messages))
         elif a == "backup":
             from core.management.commands.backup_now import run_backup
 
@@ -836,7 +889,27 @@ def shop_settings(request):
                                                           users=U.objects.filter(is_superuser=False).order_by("username"),
                                                           s=CompanySettings.get(), br=Branch.objects.first(), bkey=_bkey(request),
                                                           printers=__import__("pos.kitchen", fromlist=["x"]).printers(),
+                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), scale_presets=[
+                                                              (k, v[0]) for k, v in SCALE_PRESETS.items()], scale_now=_scale_now(),
                                                           **_user_roles()))
+
+
+# 1.25 scale label presets: (label, prefix, item digits, mode) — 13 digits with the check digit
+SCALE_PRESETS = {
+    "w2": ("يبدأ بـ 2 — كود الصنف 5 أرقام — الوزن بالجرام (الافتراضي)", "2", 5, "weight"),
+    "w21": ("يبدأ بـ 21 — كود الصنف 5 أرقام — الوزن بالجرام (CAS / DIGI)", "21", 5, "weight"),
+    "w20": ("يبدأ بـ 20 — كود الصنف 5 أرقام — الوزن بالجرام", "20", 5, "weight"),
+    "p2": ("يبدأ بـ 2 — كود الصنف 5 أرقام — السعر بالقرش", "2", 5, "price"),
+    "p22": ("يبدأ بـ 22 — كود الصنف 5 أرقام — السعر بالقرش", "22", 5, "price"),
+}
+
+
+def _scale_now():
+    s = CompanySettings.get()
+    for k, v in SCALE_PRESETS.items():
+        if (v[1], v[2], v[3]) == (s.scale_prefix, s.scale_item_digits, s.scale_mode):
+            return k
+    return ""
 
 
 def _user_roles():
@@ -847,7 +920,8 @@ def _user_roles():
 
     s = CompanySettings.get()
     roles = [(k, v) for k, v in BR.templates_for(s.business).items() if k not in ("owner", "custom", "branch_manager")]
-    roles.sort(key=lambda kv: kv[0] != "cashier")
+    first = "reception" if s.business == "clinic" else "cashier"  # a clinic hires a receptionist first, not a cashier
+    roles.sort(key=lambda kv: kv[0] != first)
     docs = list(apps.get_model("clinic", "Doctor").objects.filter(active=True, user__isnull=True)) if s.business == "clinic" else []
     return dict(roles=roles, clinic_doctors=docs)
 
@@ -1100,9 +1174,12 @@ def recipes(request):
         try:
             with transaction.atomic():
                 if request.POST.get("op") == "ingredient":
-                    name = request.POST.get("name", "").strip()
+                    from inventory import names as NM
+
+                    name = NM.clean(request.POST.get("name"))
                     if not name:
                         raise ValidationError("اكتب اسم الخامة")
+                    NM.check(name)
                     stock = Account.objects.get(code="1202010101")
                     cat, _ = ItemCategory.objects.get_or_create(name="خامات المطبخ والبار", defaults=dict(
                         stock_account=stock, farm_account=Account.objects.get(code="3101010101"), admin_account=Account.objects.get(code="3101010101"),
@@ -1120,7 +1197,7 @@ def recipes(request):
                     r = Recipe.objects.select_related("item").get(pk=request.POST["recipe"])
                     r.item.active = False
                     r.item.save(update_fields=["active"])
-                    messages.success(request, f"«{r.item.name}» رُفع من المنيو — يمكنك إعادته من الأصناف")
+                    messages.success(request, f"أُزيل «{r.item.name}» من المنيو — يمكنك إعادته من الأصناف")
                 elif request.POST.get("op") == "price":
                     r = Recipe.objects.select_related("item").get(pk=request.POST["recipe"])
                     r.item.sale_price = num(request.POST.get("price"))
@@ -1175,7 +1252,21 @@ def recipes(request):
         except (ValidationError, ObjectDoesNotExist, ValueError) as e:
             _errs(request, e)
         return redirect(request.get_full_path())
-    rows = [dict(r=r, c=R.costing(r, vat, s.pos_prices_include_vat)) for r in Recipe.objects.filter(item__active=True).select_related("item__category").order_by("item__category__name", "item__name")]
+    from inventory import menu as MN
+
+    recs = {r.item_id: r for r in Recipe.objects.filter(item__active=True).select_related("item__category")}
+    rows, shown = [], set()
+    prods, _addons = MN.products()
+    for pr in prods:  # every product of the menu (each size apart), with its ingredients or «+ المكونات»
+        for it in pr["sizes"] or [pr["item"]]:
+            if it.item_type == "stock":  # a can of soda is bought and sold as it is
+                continue
+            r = recs.get(it.pk)
+            shown.add(it.pk)
+            rows.append(dict(item=it, label=f"{pr['item'].name} — {it.size_name}" if it.variant_of_id else it.name, cat=pr["item"].category.name,
+                             r=r, c=R.costing(r, vat, s.pos_prices_include_vat) if r else None))
+    for r in sorted((r for k, r in recs.items() if k not in shown), key=lambda r: (r.item.category.name, r.item.name)):
+        rows.append(dict(item=r.item, label=r.item.name, cat=r.item.category.name, r=r, c=R.costing(r, vat, s.pos_prices_include_vat)))
     edit = Recipe.objects.filter(pk=request.GET.get("edit") or 0).first()
     for_item = None
     if not edit and request.GET.get("item"):

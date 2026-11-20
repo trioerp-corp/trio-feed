@@ -1,11 +1,11 @@
-{% extends "base.html" %}{% load gg %}{% block title %}تقرير {{ b.name }}{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}تقرير {{ b.name }}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🏬 {{ b.name }} — {{ title }}</h1><p class="muted" style="margin:0">{{ b.address }}{% if b.phone %} · {{ b.phone }}{% endif %}</p></div>
 <div class="actions"><div class="seg"><a href="?p=day" class="{% if kind == 'day' %}on{% endif %}">اليوم</a><a href="?p=month" class="{% if kind == 'month' %}on{% endif %}">الشهر</a><a href="?p=year" class="{% if kind == 'year' %}on{% endif %}">السنة</a></div>
 <form method="get" class="actions"><input type="hidden" name="p" value="{{ kind }}"><input type="date" name="date" value="{{ day|date:'Y-m-d' }}" aria-label="التاريخ"><button class="light">عرض</button></form>
 <button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
 <section class="grid" style="margin-bottom:16px">
-<div class="card kpi hero"><span class="k">صافي المبيعات</span><span class="v">{{ r.t.net|money:0 }}</span><span class="k">{{ r.t.n }} فاتورة{% if r.t.returns %} — مرتجع {{ r.t.returns|money:0 }}{% endif %}</span></div>
+<div class="card kpi hero"><span class="k">صافي المبيعات</span><span class="v">{{ r.t.net|money:0 }}</span><span class="k">{{ r.t.n|count:"فاتورة" }}{% if r.t.returns %} — مرتجع {{ r.t.returns|money:0 }}{% endif %}</span></div>
 <div class="card kpi"><span class="k">نقدي / بطاقة / آجل</span><span class="v">{{ r.t.cash|money:0 }}</span><span class="k">بطاقة {{ r.t.card|money:0 }} — آجل {{ r.t.credit|money:0 }}</span></div>
 <div class="card kpi"><span class="k">مجمل الربح</span><span class="v">{{ r.gross|money:0 }}</span><span class="k">هامش {{ r.margin|floatformat:1 }}%</span></div>
 <div class="card kpi {% if r.net >= 0 %}{% else %}gold{% endif %}"><span class="k">صافي الربح</span><span class="v">{{ r.net|money:0 }}</span><span class="k">بعد مصروفات {{ r.exp_total|money:0 }}</span></div>

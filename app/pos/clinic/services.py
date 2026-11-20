@@ -67,6 +67,44 @@ def device():
     return Device.objects.create(branch=br, code="CL", name="الاستقبال")
 
 
+# ---------------------------------------------------------------- the reception drawer (a shift on device «CL»)
+def open_shift():
+    from pos.models import Shift
+
+    return Shift.objects.filter(device=device(), closed_at__isnull=True).order_by("-opened_at").first()
+
+
+@transaction.atomic
+def start_shift(user, opening_float=0):
+    """The reception's drawer: opened by her first collection of the day (or by hand with the change in it), in her name."""
+    from pos.services import ingest_shift
+
+    sh = open_shift()
+    if sh:
+        return sh
+    d, now = device(), timezone.now()
+    return ingest_shift(d, dict(uid=f"{d.branch.code}-{d.code}-SH{now:%Y%m%d%H%M%S%f}", cashier=_name(user) or "الاستقبال", verified=True,
+                                opened_at=now.isoformat(), opening_float=str(L.q2(Decimal(str(opening_float or 0))))))
+
+
+@transaction.atomic
+def end_shift(user, counted):
+    """«قفّل درجي»: she counts the drawer without seeing what is expected; the difference is booked and the owner sees it at the
+    day close."""
+    from pos.services import ingest_shift
+
+    sh = open_shift()
+    if not sh:
+        raise ValidationError("لا يوجد درج مفتوح")
+    try:
+        counted = L.q2(Decimal(str(counted).replace("٫", ".").replace(",", ".").strip()))
+    except Exception:  # noqa: BLE001 — empty or not a number
+        counted = Decimal("-1")
+    if counted < 0:
+        raise ValidationError("اكتب المبلغ الموجود في الدرج بعد عدّه")
+    return ingest_shift(sh.device, dict(uid=sh.uid, closed_at=timezone.now().isoformat(), counted_cash=str(counted)))
+
+
 def doctor_partner(doc: Doctor):
     if doc.partner_id:
         return doc.partner
@@ -133,16 +171,70 @@ def add_patient(name, phone="", **extra):
     return Patient.objects.create(number=next_number(), name=name[:120], phone=(phone or "").strip()[:40], **extra)
 
 
+def _mins(t):
+    return t.hour * 60 + t.minute
+
+
+def _as_time(t):
+    if not t or isinstance(t, dt.time):
+        return t or None
+    try:
+        return dt.time.fromisoformat(str(t)[:5])
+    except ValueError:
+        raise ValidationError("الساعة غير صحيحة")
+
+
+def overlaps(doctor, date, time, minutes=15, exclude=None):
+    """The doctor's bookings that day whose slot (its time + its service's minutes) meets [time, time + minutes)."""
+    time = _as_time(time)
+    if not doctor or not time:
+        return []
+    a0, a1 = _mins(time), _mins(time) + int(minutes or 15)
+    out = []
+    for a in Appointment.objects.filter(doctor=doctor, date=date, time__isnull=False).exclude(state__in=["cancelled", "noshow"]).select_related(
+            "patient", "service"):
+        if exclude and a.pk == exclude:
+            continue
+        b0 = _mins(a.time)
+        b1 = b0 + (a.service.minutes if a.service_id and a.service.minutes else 15)
+        if a0 < b1 and b0 < a1:
+            out.append(a)
+    return out
+
+
+def first_free(doctor, date, time, minutes=15):
+    """The first time from `time` on (5-minute steps) the doctor has no booking — «HH:MM», or "" when the day is full."""
+    t = _mins(_as_time(time))
+    while t + int(minutes or 15) <= 24 * 60:
+        cand = dt.time(t // 60, t % 60)
+        if not overlaps(doctor, date, cand, minutes):
+            return cand.strftime("%H:%M")
+        t += 5
+    return ""
+
+
 def _queue(date, doctor):
     return (Appointment.objects.filter(date=date, doctor=doctor).aggregate(m=Max("queue_no"))["m"] or 0) + 1
 
 
 @transaction.atomic
-def book(patient, date, *, doctor=None, service=None, time=None, note="", user=None, pay=None, paid_card=0, paid_credit=0, discount=0):
-    """A booking. With `pay` («cash» / «card» / «credit» / «split») the visit is opened now and its service paid: the booking receipt."""
+def book(patient, date, *, doctor=None, service=None, time=None, note="", user=None, pay=None, paid_card=0, paid_credit=0, discount=0,
+         allow_overlap=False):
+    """A booking. With `pay` («cash» / «card» / «credit» / «split») the visit is opened now and its service paid: the booking receipt.
+    Two bookings of the same doctor at the same time are refused unless the reception confirms it (allow_overlap)."""
     if Appointment.objects.filter(patient=patient, date=date, state__in=["booked", "waiting", "inside"]).exists():
         raise ValidationError(f"{patient.name} محجوز في هذا اليوم بالفعل")
     doctor = doctor or (service.doctor if service else None)
+    time = _as_time(time)
+    if time and doctor and not allow_overlap:
+        mins = service.minutes if service else 15
+        clash = overlaps(doctor, date, time, mins)
+        if clash:
+            a = clash[0]
+            free = first_free(doctor, date, time, mins)
+            raise ValidationError(f"{doctor} لديه حجز {a.patient.name} الساعة {a.time:%H:%M} — "
+                                  + (f"أول موعد متاح {free}" if free else "لا يوجد موعد متاح بعدها في هذا اليوم")
+                                  + " (أو أكّد الحجز في الوقت نفسه)")
     appt = Appointment.objects.create(patient=patient, date=date, doctor=doctor, service=service, time=time, note=(note or "")[:200],
                                       queue_no=_queue(date, doctor), created_by=_name(user))
     if pay:
@@ -326,7 +418,9 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     d = device()
     now = timezone.now()
     seq = v.payments.count() + 1
+    sh = open_shift() or start_shift(user)  # the money goes into the reception's drawer (her shift), closed by «قفّل درجي»
     order, _ = ingest_order(d, dict(uid=f"{d.branch.code}-{d.code}-V{v.pk}-{seq}", created_at=now.isoformat(), lines=data_lines,
+                                    shift_uid=sh.uid, shift_seq=sh.orders.count() + 1,
                                     paid_cash=str(total - paid_card - paid_credit), paid_card=str(paid_card), paid_credit=str(paid_credit),
                                     customer_id=customer.pk if customer else None, cashier=_name(user)))
     share = share_of(v, lines, disc)
@@ -522,5 +616,9 @@ def collect(partner, amount, box, user=None, note=""):
     """Money in from a patient / insurance company to a cash box or wallet."""
     from pos import money
 
-    return money.post("collect", amount, timezone.localdate(), cash_account=box.account, partner=partner, note=note,
+    d = device()
+    sh = None
+    if box.account_id == d.branch.cashbox.account_id:  # cash into the reception drawer: on her shift
+        sh = open_shift() or start_shift(user)
+    return money.post("collect", amount, timezone.localdate(), cash_account=box.account, partner=partner, note=note, shift=sh,
                       uid=f"CL-COL-{partner.pk}-{timezone.now():%Y%m%d%H%M%S%f}", by=_name(user), user=user if user and user != "system" else None)

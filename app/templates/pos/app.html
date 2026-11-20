@@ -5,23 +5,25 @@
 <title>لوحة البيع</title>
 <link rel="stylesheet" href="{% static 'ui/app.css' %}">
 <link rel="stylesheet" href="{% static 'ui/acc.css' %}">
-<style>body{overflow-wrap:anywhere}
+<style>body{overflow-wrap:break-word}
+.gg-top{flex-wrap:wrap;row-gap:6px}.gg-top .status,.gg-top .btn{white-space:nowrap}.pr{white-space:nowrap;unicode-bidi:isolate}
 .pos{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;padding:16px;min-height:calc(100vh - 64px)}
 @media(max-width:900px){.pos{grid-template-columns:1fr;padding:10px}.cart{order:-1}.gg-top{gap:6px}.gg-top .btn{min-height:36px;padding:6px 10px;font-size:13px}.status{font-size:12px}.pos .items{grid-template-columns:repeat(2,1fr)}}
-.pos .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;align-content:start}
+.pos .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(156px,1fr));gap:10px;align-content:start}
 .pos .it{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:right;cursor:pointer;min-height:84px;font:inherit;color:var(--ink)}
-.pos .it b{display:block;font-size:15px}.pos .it span{color:var(--muted);font-size:13px}
+.pos .it b{display:block;font-size:15px;word-break:normal;hyphens:none}.pos .it span{color:var(--muted);font-size:13px}
+.pos .it{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px}#isRetL{display:flex;gap:6px;align-items:center}#isRetL input{min-height:0;width:18px;height:18px}
 .pos .it.open{background:var(--gold-2);border-color:#EADBB8}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:38px;padding:6px 12px;font-weight:600}
 .tabs button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
 .cart{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .cart .row{display:flex;justify-content:space-between;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
 .qtyb{width:34px;height:34px;min-height:34px;padding:0;border-radius:10px;border:1px solid var(--line);background:var(--bg);font:inherit;cursor:pointer;color:var(--ink)}
-.qty{cursor:pointer;text-decoration:underline dotted}
+.qty{cursor:pointer;display:inline-block;min-width:34px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:2px 6px;background:var(--bg)}
 .total{font-size:30px;font-weight:700;color:var(--brand)}
 .status{font-size:13px;padding:4px 10px;border-radius:99px}
 .st-on{background:var(--brand-2);color:var(--brand)}.st-off{background:#f8e1dd;color:#7a2418}
-.pay{display:flex;gap:6px}.pay button{flex:1;background:var(--card);color:var(--ink);border:1px solid var(--line)}.pay button.on{background:var(--brand);color:#fff}
+.pay{display:flex;gap:6px}.pay button{flex:1;white-space:nowrap;padding-inline:6px;background:var(--card);color:var(--ink);border:1px solid var(--line)}.pay button.on{background:var(--brand);color:#fff}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
 .modal .card{width:min(420px,92vw);display:flex;flex-direction:column;gap:10px}
 .logo svg{width:40px;height:40px}
@@ -33,16 +35,23 @@
 .rc .ad td{font-size:11px;padding-top:0}.rc .nt{font-size:11px;font-style:italic}.rc .tot{display:flex;justify-content:space-between;font-size:20px;font-weight:800;border-top:2px solid #000;border-bottom:2px solid #000;padding:4px 0;margin:6px 0}
 .rc .row2{display:flex;justify-content:space-between;font-size:12px}.rc .thx{text-align:center;font-weight:700;margin-top:6px}.rc .pw{text-align:center;font-size:9px;margin-top:4px}
 .rc.k{font-size:15px}.rc.k .no{font-size:30px}.rc.k td{font-size:16px;font-weight:700;padding:3px 0}.rc.k .ad td{font-size:14px;font-weight:600}.rc.k .nt{font-size:14px;font-style:normal;font-weight:700;border:1px solid #000;padding:2px 4px;margin:2px 0}
-.rc .brk{page-break-before:always;break-before:page}
+.rc .brk,#receipt .brk{page-break-before:always;break-before:page}
+.cart .row.ex{color:var(--muted);font-size:14px}.dlvb{border:2px solid #1565C0;border-radius:12px;padding:8px 10px;background:#E8F0FB;font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.dlvb .sub{display:block;color:var(--muted);font-size:12.5px}.dl{border-bottom:1px solid var(--line);padding:8px 0;display:flex;justify-content:space-between;gap:8px;align-items:center}.dl .sub{display:block;color:var(--muted);font-size:12.5px}.dl button{white-space:nowrap;flex:none}
+.sug{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow:auto}.sug button{text-align:right;background:var(--card);color:var(--ink);border:1px solid var(--line);min-height:40px;padding:4px 10px}
+.sp{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}.sp span{flex:1}.sp input{width:80px}.sp select{width:auto}
+.tabs2{display:flex;gap:6px}.tabs2 button{flex:1;background:var(--card);color:var(--ink);border:1px solid var(--line)}.tabs2 button.on{background:var(--brand);color:#fff}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{flex:1 1 40%;min-height:60px;font-size:17px;background:var(--card);color:var(--ink);border:2px solid var(--line)}.chips button small{display:block;color:var(--muted);font-size:13px}
 .adl{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}.adl label{display:flex;gap:8px;align-items:center;font-size:15px}.adl input{width:22px;height:22px;min-height:0}
 .cart .sub{color:var(--muted);font-size:12.5px;display:block}.cart .lnk{background:none;border:0;color:var(--brand);font:inherit;font-size:13px;cursor:pointer;padding:0 4px;min-height:0;text-decoration:underline}
-.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.tcard{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:right;cursor:pointer;min-height:96px;font:inherit;color:var(--ink)}
-.tcard b{display:block;font-size:18px}.tcard span{display:block;color:var(--muted);font-size:13px}.tcard.busy{border-color:#E0A526;background:#FFF7E3}.tcard.busy .am{color:#8A5A00;font-weight:800;font-size:16px}.tcard.wait{border-color:#C62828;background:#FDECEA}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(164px,1fr));gap:10px}.tcard{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:right;cursor:pointer;min-height:96px;font:inherit;color:var(--ink)}
+.tcard b{display:block;font-size:18px;word-break:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tcard span{display:block;color:var(--muted);font-size:13px}.tcard.busy{border-color:#E0A526;background:#FFF7E3}.tcard.busy .am{color:#8A5A00;font-weight:800;font-size:16px}.tcard.wait{border-color:#C62828;background:#FDECEA}
 .tbar{display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--brand-2);border-radius:12px;padding:8px 12px}.tbar b{font-size:18px}
 .sent{border-bottom:1px dashed var(--line);padding:4px 0;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:6px}.sent .sub{font-size:12px}
 .wb{border:2px solid #C62828;border-radius:12px;padding:8px;background:#FDECEA}.tact{display:flex;gap:6px;flex-wrap:wrap}.tact button{flex:1;min-height:40px}
 .pos.tmode{grid-template-columns:1fr}.pos.tmode .cart{display:none}
+@media(max-width:640px){.pos.intab:not(.paying) .cart{order:0}}
+.rep{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:15px}.rep b{text-align:left;white-space:nowrap}.rep .hl{font-weight:800;border-top:1px solid var(--line);padding-top:4px}
 #toast{position:fixed;bottom:16px;left:16px;background:#0B1F3A;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:60;font-weight:700}
 @media print{body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{display:block;position:absolute;top:0;right:0;width:72mm}#receipt .rc svg{width:auto;height:auto}}
 </style>
@@ -52,6 +61,7 @@
 <span id="net" class="status st-off">أوفلاين</span><span id="queue" class="status st-on">0 فاتورة في الانتظار</span><span id="who" class="status st-on" style="display:none"></span>
 <button class="btn" id="tablesBtn" type="button" style="display:none">🍽 الترابيزات</button>
 <button class="btn light" id="shiftBtn" type="button">فتح وردية</button>
+<button class="btn light" id="dlvBtn" type="button" style="display:none">🛵 طلبات الدليفري</button>
 <button class="btn light" id="moneyBtn" type="button">💸 صرف من الدرج</button>
 <button class="btn light" id="reprintBtn" type="button">🖨 إعادة طباعة</button>
 <button class="btn light" id="reqBtn" type="button">↩ طلب إلغاء/تعديل</button>
@@ -65,28 +75,31 @@
 <main class="pos" id="main" style="display:none">
 <section>
 <div id="tview" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">🍽 الترابيزات</h2>
-<button type="button" class="light" id="takeaway">🛍 طلب تيك أواي / بدون ترابيزة</button></div><div class="tgrid" id="tgrid"></div></div>
+<span style="display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="light" id="takeaway">🛍 طلب تيك أواي / بدون ترابيزة</button><button type="button" class="light" id="dlvNew" style="display:none">🛵 طلب دليفري</button></span></div><div class="tgrid" id="tgrid"></div></div>
 <div id="iview">
 <label style="display:block;margin-bottom:10px"><span class="muted">باركود أو اسم الصنف</span>
 <input id="scan" autofocus style="width:100%;font-size:18px;padding:10px" placeholder="امسح الباركود أو اكتب…"></label>
 <div class="tabs" id="tabs"></div>
 <div class="items" id="items"></div></div></section>
 <aside class="cart"><div id="tabBox" style="display:none"></div><div style="display:flex;justify-content:space-between;align-items:center"><b id="cartT">الفاتورة</b>
-<label class="muted"><input type="checkbox" id="isRet"> مرتجع</label></div>
+<label class="muted" id="isRetL"><input type="checkbox" id="isRet"> مرتجع</label></div>
+<div id="dlvBox" style="display:none"></div>
 <div id="lines"></div>
-<div id="oNoteBox" style="display:none" class="msg"></div><button type="button" class="light" id="oNote">📝 ملاحظة على الطلب</button>
+<div id="oNoteBox" style="display:none" class="msg"></div><span style="display:flex;gap:6px"><button type="button" class="light" id="oNote" style="flex:1">📝 ملاحظة على الطلب</button><button type="button" class="light" id="dlvSet" style="flex:1;display:none">🛵 دليفري</button></span>
+<label id="oNoteL" style="display:none">ملاحظة على الطلب كله (تظهر في المطبخ وعلى الفاتورة)<input id="oNoteIn" maxlength="200" style="width:100%" placeholder="مثال: بدون ملح، التسليم بعد ربع ساعة"></label>
 <div style="display:flex;justify-content:space-between;align-items:baseline"><span>الإجمالي</span><span class="total" id="tot">0.00</span></div>
-<div class="pay" id="payKinds"><button type="button" data-k="cash" class="on">نقدي</button><button type="button" data-k="card">بطاقة / محفظة</button><button type="button" data-k="credit">آجل</button></div>
+<div class="pay" id="payKinds"><button type="button" data-k="cash" class="on">نقدي</button><button type="button" data-k="card">بطاقة / محفظة</button><button type="button" data-k="credit">آجل</button><button type="button" data-k="rider" id="pkRider" style="display:none">🛵 مع الطيار</button></div>
 <label id="cashL">المبلغ المدفوع نقدي (للباقي)<input id="cash" inputmode="decimal" style="width:100%"></label>
 <label id="custL" style="display:none">العميل<span style="display:flex;gap:6px"><select id="cust" style="flex:1"></select><button type="button" id="custNew" class="light" title="عميل جديد">+ جديد</button></span></label>
 <button class="btn" id="sendK" type="button" style="height:52px;font-size:18px;display:none;background:#B45F06">🍳 إرسال للمطبخ</button>
+<button class="btn light" id="splitBtn" type="button" style="display:none">✂ تقسيم الحساب</button>
 <button class="btn" id="pay" type="button" style="height:52px;font-size:18px">تحصيل وطباعة</button>
 <button class="btn light" id="clear" type="button">إلغاء الفاتورة</button></aside></main>
 
 <div class="modal" id="shiftModal"><div class="card"><h2>فتح وردية</h2>
 <label>الكاشير<select id="mUser" style="width:100%"></select></label>
 <label>كلمة السر<input id="mPass" type="password" style="width:100%"></label>
-<label>النقدية الموجودة في الدرج الآن<input id="mFloat" inputmode="decimal" value="0" style="width:100%"></label>
+<label id="mFloatL">النقدية الموجودة في الدرج الآن<input id="mFloat" inputmode="decimal" value="0" style="width:100%"></label>
 <div id="mErr" class="msg error" style="display:none"></div>
 <div class="actions"><button class="btn" id="mOk" type="button">فتح</button><button class="btn light" id="mCancel" type="button">إلغاء</button></div></div></div>
 <div class="modal" id="moneyModal"><div class="card"><h2>صرف / إيداع من الدرج</h2>
@@ -102,7 +115,7 @@
 <div class="actions"><button class="btn" id="xOk" type="button">تسجيل وطباعة إيصال</button><button class="btn light" id="xCancel" type="button">إلغاء</button></div></div></div>
 <div class="modal" id="lowModal"><div class="card" style="border-top:6px solid #B45F06"><h2>⚠ أصناف وصلت لحد الطلب</h2>
 <p class="muted" style="margin:0 0 8px">وصل الرصيد إلى الحد المحدد للصنف — أبلغ المسؤول عن الشراء.</p><div id="lowList" style="max-height:50vh;overflow:auto"></div>
-<div class="actions" style="margin-top:12px"><button type="button" id="lowOk">تمام</button></div></div></div>
+<div class="actions" style="margin-top:12px"><button type="button" id="lowOk">حسنًا</button></div></div></div>
 <div class="modal" id="rpModal"><div class="card"><h2>إعادة طباعة فاتورة</h2>
 <label>الفاتورة<select id="rpSel" style="width:100%"></select></label>
 <div class="actions"><button class="btn" id="rpOk" type="button">طباعة</button><button class="btn light" id="rpCancel" type="button">إلغاء</button></div></div></div>
@@ -119,6 +132,37 @@
 <div class="actions"><button class="btn" id="adOk" type="button">تم</button><button class="btn light" id="adCancel" type="button">إلغاء</button></div></div></div>
 <div class="modal" id="mvModal"><div class="card"><h2>نقل الحساب إلى ترابيزة أخرى</h2><p class="muted" style="margin:0">إن كانت الترابيزة مشغولة يُدمج الحسابان.</p>
 <select id="mvSel" style="width:100%"></select><div class="actions"><button class="btn" id="mvOk" type="button">نقل</button><button class="btn light" id="mvCancel" type="button">إلغاء</button></div></div></div>
+<div class="modal" id="closeModal"><div class="card"><h2>قفل الوردية</h2>
+<p class="muted" style="margin:0">عُدّ النقدية الموجودة في الدرج كلها، ثم اكتب المبلغ.</p>
+<label>النقدية الموجودة في الدرج<input id="cCount" inputmode="decimal" autocomplete="off" style="width:100%;font-size:20px"></label>
+<div id="cErr" class="msg error" style="display:none"></div>
+<div class="actions"><button class="btn" id="cOk" type="button">قفل الوردية وطباعة التقرير</button><button class="btn light" id="cCancel" type="button">إلغاء</button></div></div></div>
+<div class="modal" id="repModal"><div class="card"><h2>تقرير الوردية</h2><div id="repBody"></div>
+<div class="actions"><button class="btn" id="repPrint" type="button">🖨 طباعة</button><button class="btn light" id="repOk" type="button">إغلاق</button></div></div></div>
+<div class="modal" id="retModal"><div class="card" style="border-top:6px solid #C62828"><h2>مرتجع</h2><p class="muted" style="margin:0" id="retAmt"></p>
+<label>سبب المرتجع<input id="retWhy" maxlength="200" style="width:100%" placeholder="مثال: الصنف تالف"></label>
+<div id="retOwner"><p class="muted" style="margin:0">المرتجع يحتاج موافقة صاحب المحل أو المدير: يكتب اسم المستخدم وكلمة السر هنا.</p>
+<label>اسم المستخدم<input id="retU" autocomplete="off" style="width:100%"></label><label>كلمة السر<input id="retP" type="password" autocomplete="off" style="width:100%"></label></div>
+<div id="retErr" class="msg error" style="display:none"></div>
+<div class="actions"><button class="btn" id="retOk" type="button">اعتماد المرتجع</button><button class="btn light" id="retCancel" type="button">إلغاء</button></div></div></div>
+<div class="modal" id="dlvModal"><div class="card"><h2>🛵 طلب دليفري</h2>
+<label>موبايل العميل<input id="dPhone" inputmode="tel" autocomplete="off" maxlength="20" style="width:100%;font-size:18px" placeholder="01xxxxxxxxx"></label>
+<div class="sug" id="dSug"></div>
+<label>اسم العميل<input id="dName" maxlength="120" style="width:100%"></label>
+<label>العنوان<textarea id="dAddr" maxlength="300" rows="2" style="width:100%" placeholder="الشارع، رقم العمارة، الدور، علامة مميزة"></textarea></label>
+<div style="display:flex;gap:8px"><label style="flex:1">رسم التوصيل<input id="dFee" inputmode="decimal" style="width:100%"></label><label style="flex:1">الطيار<select id="dRider" style="width:100%"></select></label></div>
+<div id="dErr" class="msg error" style="display:none"></div>
+<div class="actions"><button class="btn" id="dOk" type="button">تم</button><button class="btn light" id="dOff" type="button">ليس دليفري</button><button class="btn light" id="dCancel" type="button">رجوع</button></div></div></div>
+<div class="modal" id="dlModal"><div class="card" style="width:min(560px,94vw)"><h2>🛵 طلبات الدليفري مع الطيارين</h2>
+<p class="muted" style="margin:0">حين يسلّم الطيار المبلغ اضغط «تم التحصيل» — يدخل المبلغ في نقدية هذه الوردية.</p>
+<div id="dlList" style="max-height:55vh;overflow:auto"></div>
+<div class="actions"><button class="btn light" id="dlClose" type="button">إغلاق</button></div></div></div>
+<div class="modal" id="spModal"><div class="card" style="width:min(520px,94vw)"><h2>✂ تقسيم الحساب</h2>
+<div class="tabs2"><button type="button" id="spEqB" class="on">بالتساوي</button><button type="button" id="spLnB">باختيار الأصناف</button></div>
+<div id="spEq"><label>عدد الأجزاء<input id="spN" inputmode="numeric" value="2" style="width:100%"></label><div id="spRows"></div></div>
+<div id="spLn" style="display:none"><p class="muted" style="margin:0">اكتب كمية كل صنف في هذا الجزء، ثم حاسبه؛ يبقى الباقي على الترابيزة حتى يُدفع.</p><div id="spLines" style="max-height:45vh;overflow:auto"></div></div>
+<div id="spErr" class="msg error" style="display:none"></div>
+<div class="actions"><button class="btn" id="spOk" type="button">تحصيل وطباعة الأجزاء</button><button class="btn light" id="spCancel" type="button">إلغاء</button></div></div></div>
 <div id="toast"></div>
 <div id="receipt"></div>
 <footer style="text-align:center;color:var(--muted);font-size:12px;padding:8px">powered by <b>Trio</b> · <span dir="ltr">01008030459</span> · <span dir="ltr">01121460640</span></footer>
@@ -128,8 +172,20 @@ let tok=LS.get('pos_token',''),cat=LS.get('pos_catalog',null),queue=LS.get('pos_
 let shift=LS.get('pos_shift',null),tab='all',payKind='cash',moves=LS.get('pos_moves',[]),reqs=LS.get('pos_reqs',[]),recent=LS.get('pos_recent',[]);
 function remember(uid,label,receipt){recent.unshift({uid,label,receipt});recent=recent.slice(0,40);LS.set('pos_recent',recent)}
 const $=id=>document.getElementById(id), fmt=n=>(+n).toFixed(2);
+// numbers typed on the till: Arabic / Persian digits, «٫» or «,» as the decimal point; empty or text = NaN (never a silent 0)
+const num=v=>{v=String(v??'').trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٫,]/g,'.').replace(/[\s٬]/g,'');return /^\d+(\.\d*)?$|^\.\d+$/.test(v)?parseFloat(v):NaN};
+const qn=n=>String(Math.round((+n||0)*1000)/1000);  // a quantity as people write it: 1, 1.5, 0.25
 function save(){LS.set('pos_moves',moves);LS.set('pos_reqs',reqs);LS.set('pos_queue',queue);LS.set('pos_shifts',shifts);LS.set('pos_seq',seq);LS.set('pos_shift',shift);{const nb=Object.keys(refused).length;$('queue').textContent=(queue.length+moves.length+reqs.length)+' في الانتظار'+(nb?' — ⚠ '+nb+' مرفوض':'');$('queue').style.color=nb?'#C62828':'';$('queue').title=nb?Object.entries(refused).map(([k,v])=>k+': '+v).join('\n')+'\nأبلغ المدير — هذه الفواتير محفوظة على الجهاز حتى تُحل المشكلة':''}
-$('shiftBtn').textContent=shift?'قفل الوردية':'فتح وردية';$('who').style.display=shift?'':'none';if(shift)$('who').textContent='الكاشير: '+shift.cashier_name+(shift.verified?'':' (من غير تأكيد)')}
+const w=isWaiter();$('shiftBtn').textContent=shift?(w?'تسجيل الخروج':'قفل الوردية'):'فتح وردية';$('who').style.display=shift?'':'none';if(shift)$('who').textContent=(w?'الويتر: ':'الكاشير: ')+shift.cashier_name+(shift.verified?'':' (دون تأكيد)');payUI()}
+function isWaiter(){return !!(shift&&shift.role==='waiter')}
+// what the person on the till may do: a waiter never takes money, returns or cash moves; a table is paid in its own step
+function payUI(){const w=isWaiter(),hide=w||(curT&&!tPay);$('moneyBtn').style.display=w?'none':'';$('reqBtn').style.display=w?'none':'';$('takeaway').style.display=w?'none':'';
+$('isRetL').style.display=(hide||curT)?'none':'';$('payKinds').style.display=hide?'none':'';$('cashL').style.display=(hide||payKind!=='cash')?'none':'';
+$('custL').style.display=(!hide&&payKind==='credit')?'':'none';$('pay').style.display=w?'none':'';
+if(!dlv&&payKind==='rider'){payKind='cash';document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k==='cash'))}
+const don=!!(cat&&cat.delivery&&cat.delivery.on);$('pkRider').style.display=dlv?'':'none';$('dlvSet').style.display=don&&!w&&!curT&&!dlv?'':'none';
+$('dlvBtn').style.display=don&&!w?'':'none';$('dlvNew').style.display=don&&!w?'':'none';$('splitBtn').style.display=tPay&&!tPick&&!w?'':'none'}
+function setPay(k){payKind=k;document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));payUI()}
 async function api(path,opt={}){const r=await fetch('/pos/api/'+path,{...opt,headers:{'Content-Type':'application/json','X-Device-Token':tok}});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||r.status);e.status=r.status;throw e}return j}
 async function loadCatalog(){try{cat=await api('catalog/');LS.set('pos_catalog',cat);if((cat.next_seq||0)>seq){seq=cat.next_seq;LS.set('pos_seq',seq)}setNet(true);if(LS.get('pos_locked')){LS.set('pos_locked',null);$('main').style.display='grid';$('setup').style.display='none';$('setupMsg').style.display='none'}}catch(e){
 if(e.status===401){tok='';LS.set('pos_token','');cat=null;LS.set('pos_catalog',null);$('main').style.display='none';$('setupMsg').textContent='المفتاح المحفوظ على هذا الجهاز غير مسجّل في البرنامج — الصق مفتاح الجهاز من جديد.';$('setupMsg').style.display='block';$('setup').style.display='block';return}
@@ -147,7 +203,8 @@ for(const pr of (f===1?promoFor(c.code):[])){const v=+pr.value,mn=+pr.min_qty,fr
 if(pr.kind==='percent'&&q>=mn)d=q*p*v/100;else if(pr.kind==='amount'&&q>=mn)d=q*v;else if(pr.kind==='bxgy'&&mn+fr>0)d=Math.floor(q/(mn+fr))*fr*p;else if(pr.kind==='qty_price'&&q>=mn&&v<p)d=q*(p-v);
 if(d>disc){disc=d;label=pr.name}}disc=Math.round(disc*100)/100;return {q,p,disc,label,total:Math.round((q*p-disc)*100)/100}}
 function addsTotal(c){return Math.round((c.adds||[]).reduce((s,a)=>s+(+a.p),0)*c.qty*100)/100}
-function cartTotal(){return Math.round(cart.reduce((s,c)=>s+lineCalc(c).total+addsTotal(c),0)*100)/100}
+function cartGoods(){return Math.round(cart.reduce((s,c)=>s+lineCalc(c).total+addsTotal(c),0)*100)/100}
+function cartTotal(){return Math.round((cartGoods()+extras().reduce((s,x)=>s+x.price,0))*100)/100}
 function render(){if(!tok){$('setup').style.display='block';return}if(LS.get('pos_locked')){lockPos();return}$('main').style.display='grid';if(!cat)return;
 $('br').textContent=cat.branch.name+' — '+cat.device;$('co').textContent=cat.company;if(cat.logo&&!$('logo').innerHTML)$('logo').innerHTML=cat.logo;
 tInit();tabs();const q=$('scan').value.trim();
@@ -156,19 +213,23 @@ if(tab==='nocode')list=list.filter(i=>!i.barcode&&!(i.units||[]).some(u=>u.barco
 if(q){const ql=q.toLowerCase();list=list.filter(i=>i.name.includes(q)||i.barcode===q||i.code===q||(i.x||'').toLowerCase().includes(ql))}
 $('items').innerHTML='';
 const open=document.createElement('button');open.className='it open';open.type='button';open.innerHTML='<b>+ صنف بدون كود</b><span>اكتب السعر</span>';open.onclick=openItem;$('items').appendChild(open);
-for(const i of list.slice(0,80)){const b=document.createElement('button');b.className='it';b.type='button';b.innerHTML='<b></b><span></span>';b.querySelector('b').textContent=(i.unit==='شريط'?'شريط ':'')+i.name;b.querySelector('span').textContent=(i.sizes?('من '+fmt(i.sale_price)+' ج • '+i.sizes.length+' أحجام'):(fmt(i.sale_price)+' ج'))+(i.xs?' • '+i.xs:'')+(i.barcode||(i.units||[]).some(u=>u.barcode)||cat.kitchen!==undefined&&['cafe','gaming'].includes(cat.biz)?'':' • بدون كود')+(promoFor(i.code).length?' • 🏷 عرض':'');b.onclick=()=>i.sizes?pickSize(i):add(i);$('items').appendChild(b);
-for(const u of i.units||[]){if(!u.price)continue;const ub=document.createElement('button');ub.className='it';ub.type='button';ub.innerHTML='<b></b><span></span>';ub.querySelector('b').textContent=u.name+' '+i.name;ub.querySelector('span').textContent=fmt(u.price)+' ج • فيها '+(+u.factor);ub.onclick=()=>add(i,u);$('items').appendChild(ub)}}
+for(const i of list.slice(0,80)){const b=document.createElement('button');b.className='it';b.type='button';b.innerHTML='<b></b><span></span>';b.querySelector('b').textContent=(i.unit==='شريط'?'شريط ':'')+i.name;const sp=b.querySelector('span'),pr=document.createElement('span');pr.className='pr';pr.textContent=(i.sizes?'من ':'')+fmt(i.sale_price)+' ج';sp.appendChild(pr);
+sp.appendChild(document.createTextNode((i.sizes?' • '+i.sizes.length+' أحجام':'')+(i.xs?' • '+i.xs:'')+(i.barcode||(i.units||[]).some(u=>u.barcode)||cat.kitchen!==undefined&&['cafe','gaming'].includes(cat.biz)?'':' • بدون كود')+(promoFor(i.code).length?' • 🏷 عرض':'')));b.onclick=()=>i.sizes?pickSize(i):add(i);$('items').appendChild(b);
+for(const u of i.units||[]){if(!u.price)continue;const ub=document.createElement('button');ub.className='it';ub.type='button';ub.innerHTML='<b></b><span></span>';ub.querySelector('b').textContent=u.name+' '+i.name;const up=document.createElement('span');up.className='pr';up.textContent=fmt(u.price)+' ج';ub.querySelector('span').append(up,' • فيها '+qn(u.factor));ub.onclick=()=>add(i,u);$('items').appendChild(ub)}}
 $('lines').innerHTML='';let t=0;cart.forEach((c,ix)=>{const lc=lineCalc(c);t+=lc.total+addsTotal(c);const r=document.createElement('div');r.className='row';
-r.innerHTML='<span></span><span><button class="qtyb" type="button">−</button> <b class="qty" title="اضغط لكتابة الكمية / الوزن"></b> <button class="qtyb" type="button">+</button></span>';
-r.children[0].textContent=c.name+' × '+fmt(c.price)+(lc.disc?(' — 🏷 '+lc.label+' −'+fmt(lc.disc)):'');
+r.innerHTML=c.ro?'<span></span><span class="pr"></span>':'<span></span><span class="pr"><button class="qtyb" type="button">−</button> <b class="qty" title="اضغط لكتابة الكمية / الوزن"></b> <button class="qtyb" type="button">+</button></span>';
+if(c.ro)r.children[1].textContent=fmt(lc.total+addsTotal(c));
+r.children[0].textContent=c.ro?qn(c.qty)+' × '+c.name+' ('+fmt(c.price)+')':c.name+' × '+fmt(c.price)+(lc.disc?(' — 🏷 '+lc.label+' −'+fmt(lc.disc)):'');
 for(const a of c.adds||[]){const x=document.createElement('span');x.className='sub';x.textContent='+ '+a.name+' '+fmt(a.p);r.children[0].appendChild(x)}
 if(c.note){const x=document.createElement('span');x.className='sub';x.textContent='📝 '+c.note;r.children[0].appendChild(x)}
-if(c.code!=='0'&&(addonsFor(c).length||cat.kitchen!=='off')){const ab=document.createElement('button');ab.type='button';ab.className='lnk';ab.textContent=addonsFor(c).length?'＋ إضافات / ملاحظة':'📝 ملاحظة';ab.onclick=()=>editLine(c);r.children[0].appendChild(ab)}const qb=r.querySelector('b');qb.textContent=c.qty;
-qb.onclick=()=>{const v=parseFloat((prompt('الكمية أو الوزن (كجم)',c.qty)||'').replace(',','.'));if(v>0){c.qty=Math.round(v*1000)/1000;render()}};
+if(c.ro){$('lines').appendChild(r);return}
+if(c.code!=='0'&&(addonsFor(c).length||cat.kitchen!=='off')){const ab=document.createElement('button');ab.type='button';ab.className='lnk';ab.textContent=addonsFor(c).length?'＋ إضافات / ملاحظة':'📝 ملاحظة';ab.onclick=()=>editLine(c);r.children[0].appendChild(ab)}const qb=r.querySelector('b');qb.textContent=qn(c.qty);
+qb.onclick=()=>{const v=num(prompt('الكمية أو الوزن (كجم)',qn(c.qty)));if(v>0){c.qty=Math.round(v*1000)/1000;render()}};
 const bs=r.querySelectorAll('.qtyb');bs[0].onclick=()=>{c.qty--;if(c.qty<=0)cart.splice(ix,1);render()};bs[1].onclick=()=>{c.qty++;render()};$('lines').appendChild(r)});
-t=Math.round(t*100)/100;$('tot').textContent=fmt(t);$('cash').placeholder=fmt(t);
+for(const x of extras()){const r=document.createElement('div');r.className='row ex';r.innerHTML='<span></span><span class="pr"></span>';r.children[0].textContent=x.name;r.children[1].textContent=fmt(x.price);$('lines').appendChild(r)}
+t=cart.length?cartTotal():0;$('tot').textContent=fmt(t);dlvUI();$('cash').placeholder=fmt(t);
 const sel=$('cust');if(sel.options.length!==(cat.customers||[]).length+1){sel.innerHTML='<option value="">— اختر العميل —</option>';for(const c of cat.customers||[]){const o=document.createElement('option');o.value=c.id;o.textContent=c.name+(c.limit!=null?(' (عليه '+fmt(c.balance)+' من حد '+fmt(c.limit)+')'):'');sel.appendChild(o)}}}
-function add(i,u,sz){const code=sz?sz.code:i.code,key=code+'|'+(u?u.name:'');const c=cart.find(x=>x.key===key&&x.code!=='0'&&!(x.adds||[]).length&&!x.note);
+function add(i,u,sz){if(tPay){toast('ارجع إلى الحساب لإضافة أصناف');return}const code=sz?sz.code:i.code,key=code+'|'+(u?u.name:'');const c=cart.find(x=>x.key===key&&x.code!=='0'&&!(x.adds||[]).length&&!x.note);
 c?c.qty++:cart.push({key,code,cat:i.cat,vr:sz?sz.v:i.vat_rate,name:sz?(i.name+' — '+sz.n):(u?(u.name+' '+i.name):((i.unit==='شريط'?'شريط ':'')+i.name)),price:sz?+sz.p:(u?+u.price:+i.sale_price),factor:u?+u.factor:1,u:u?u.name:'',qty:1,adds:[],note:''});
 $('scan').value='';render();$('scan').focus()}
 // 1.22 restaurants: one product with its sizes, add-ons with their prices, a note per line and per order
@@ -183,10 +244,12 @@ if(!l.children.length)l.innerHTML='<p class="muted">لا توجد إضافات �
 $('adCancel').onclick=()=>{$('adModal').style.display='none';adLine=null};
 $('adOk').onclick=()=>{if(adLine){const on=[...$('adList').querySelectorAll('input:checked')].map(x=>x.value);adLine.adds=(cat.addons||[]).filter(a=>on.includes(a.code)).map(a=>({code:a.code,name:a.name,p:a.p,v:a.v}));
 adLine.note=$('adNote').value.trim().slice(0,120);adLine.key=adLine.key.split('#')[0]+'#'+Date.now()}$('adModal').style.display='none';adLine=null;render()};
-let orderNote='';function showNote(){$('oNoteBox').style.display=orderNote?'':'none';$('oNoteBox').textContent='📝 '+orderNote;$('oNote').textContent=orderNote?'📝 تعديل الملاحظة':'📝 ملاحظة على الطلب'}
-$('oNote').onclick=()=>{const v=prompt('ملاحظة على الطلب كله (تظهر في المطبخ وعلى الفاتورة)',orderNote);if(v===null)return;orderNote=v.trim().slice(0,200);showNote()};
-function openItem(){const p=parseFloat((prompt('سعر الصنف')||'').replace(',','.'));if(!(p>0))return;const n=prompt('اسم الصنف (اختياري)','صنف بدون كود')||'صنف بدون كود';cart.push({key:'0|'+Date.now(),code:'0',name:n,price:p,qty:1,factor:1});render()}
-function scanCode(v){if(!v)return;let i=cat.items.find(x=>x.barcode&&x.barcode===v);if(i&&i.code!=='0')return add(i);
+let orderNote='';function showNote(open){$('oNoteL').style.display=open?'':'none';$('oNoteIn').value=orderNote;$('oNoteBox').style.display=orderNote&&!open?'':'none';$('oNoteBox').textContent='📝 '+orderNote;
+$('oNote').textContent=open?'✔ حفظ الملاحظة':(orderNote?'📝 تعديل الملاحظة':'📝 ملاحظة على الطلب')}
+$('oNote').onclick=()=>{const open=$('oNoteL').style.display==='none';showNote(open);if(open)$('oNoteIn').focus()};
+$('oNoteIn').oninput=()=>{orderNote=$('oNoteIn').value.trim().slice(0,200)};$('oNoteIn').onkeydown=e=>{if(e.key==='Enter')showNote(false)};
+function openItem(){if(tPay)return;const p=num(prompt('سعر الصنف'));if(!(p>0))return;const n=prompt('اسم الصنف (اختياري)','صنف بدون كود')||'صنف بدون كود';cart.push({key:'0|'+Date.now(),code:'0',name:n,price:p,qty:1,factor:1});render()}
+function scanCode(v){if(!v||tPay)return;let i=cat.items.find(x=>x.barcode&&x.barcode===v);if(i&&i.code!=='0')return add(i);
 for(const it of cat.items)for(const u of it.units||[])if(u.barcode&&u.barcode===v)return add(it,u);
 const sc=cat.scale||{};if(sc.prefix&&v.length===13&&v.startsWith(sc.prefix)){const n=sc.prefix.length,code=v.substr(n,sc.digits),val=+v.substr(n+sc.digits,12-n-sc.digits);
 const it=cat.items.find(x=>x.code.replace(/^0+/,'')===code.replace(/^0+/,''));if(it){const q=sc.mode==='price'?(val/100)/(+it.sale_price||1):val/1000;
@@ -194,60 +257,102 @@ cart.push({key:'S|'+Date.now(),code:it.code,name:it.name+' (ميزان)',price:+
 i=cat.items.find(x=>x.code===v);if(i&&i.code!=='0')add(i)}
 $('scan').addEventListener('keydown',e=>{if(e.key==='Enter'&&cat)scanCode(e.target.value.trim())});
 $('scan').addEventListener('input',render);
-$('clear').onclick=()=>{cart=[];orderNote='';showNote();render()};
-document.querySelectorAll('#payKinds button').forEach(b=>b.onclick=()=>{payKind=b.dataset.k;document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x===b));
-$('cashL').style.display=payKind==='cash'?'':'none';$('custL').style.display=payKind==='credit'?'':'none'});
+$('clear').onclick=()=>{if(tPay){tPay=null;tPick=null;cart=[];orderNote=curTab&&curTab.note||'';showNote();setPay('cash');showView();render();return}cart=[];orderNote='';retApp=null;dlv=null;$('isRet').checked=false;showNote();render()};
+$('isRet').onchange=()=>{retApp=null;render()};
+document.querySelectorAll('#payKinds button').forEach(b=>b.onclick=()=>setPay(b.dataset.k));
 $('pay').onclick=()=>{if(curT)return tablePay();payNow()};
-function payNow(done){if(!cart.length)return false;if(!shift){afterShift=()=>$('pay').click();$('shiftBtn').click();return false}const total=cartTotal();
-let cash=0,card=0,credit=0,given=0,cust=null;
-if(payKind==='cash'){given=$('cash').value===''?total:(parseFloat($('cash').value)||0);if(given<total){alert('المدفوع أقل من الإجمالي');return false}cash=total}
+let retApp=null;  // the owner's approval of the return being paid {token, reason, amount}
+function payNow(done,sp){if(!cart.length)return false;if(dlv&&$('isRet').checked){alert('المرتجع لا يكون طلب دليفري — ألغِ الدليفري أولًا');return false}if(!shift){afterShift=()=>$('pay').click();$('shiftBtn').click();return false}
+if(isWaiter()){alert('التحصيل من الكاشير — الويتر يرسل الطلبات إلى المطبخ ويطبع الحساب فقط');return false}const total=cartTotal();
+if($('isRet').checked&&!(retApp&&retApp.amount===total)){retOpen(total,done);return false}
+let cash=0,card=0,credit=0,given=0,cust=null,rider=0;
+if(sp){cash=sp.cash;card=sp.card;given=sp.cash}
+else if(payKind==='cash'){given=$('cash').value.trim()===''?total:num($('cash').value);if(!(given>=0)){alert('اكتب المبلغ المدفوع بالأرقام');return false}if(!$('isRet').checked&&given<total){alert('المدفوع أقل من الإجمالي');return false}if($('isRet').checked)given=total;cash=total}
 else if(payKind==='card'){card=total}
+else if(payKind==='rider'){if(!dlv){alert('«مع الطيار» لطلبات الدليفري فقط');return false}rider=total}
 else{cust=$('cust').value;if(!cust){alert('اختر العميل للبيع الآجل');return false}const cu=(cat.customers||[]).find(x=>String(x.id)===cust);
 if(cu&&cu.limit!=null&&!$('isRet').checked&&(+cu.balance)+total>(+cu.limit)){alert('هذا البيع سيتجاوز حد مديونية '+cu.name+': عليه '+fmt(cu.balance)+' والحد '+fmt(cu.limit)+' — حصّل منه أولًا أو تواصل مع صاحب المحل');return false}
 credit=total;if(cu)cu.balance=(+cu.balance)+(($('isRet').checked)?-total:total)}
 seq++;shift.n=(shift.n||0)+1;const o={uid:cat.branch.code+'-'+cat.device+'-'+String(seq).padStart(7,'0'),shift_uid:shift.uid,shift_seq:shift.n,created_at:new Date().toISOString(),is_return:$('isRet').checked,
-paid_cash:fmt(cash),paid_card:fmt(card),paid_credit:fmt(credit),...(curT?{table:curT.name}:{}),customer_id:(cust&&String(cust).startsWith('new:'))?null:cust,customer_new:(cust&&String(cust).startsWith('new:'))?(()=>{const c=(cat.customers||[]).find(x=>String(x.id)===cust)||{};return {name:c.name,phone:c.phone||''}})():null,note:orderNote,lines:(()=>{const out=[];for(const c of cart){const lc=lineCalc(c),ix=out.length;
-out.push({item_code:c.code,qty:lc.q,price:Math.round(lc.p*10000)/10000,discount:lc.disc,name:c.name,shown_qty:c.qty,shown_price:c.price,promo:lc.label,vr:c.vr,...(c.note?{note:c.note}:{})});
-for(const a of c.adds||[])out.push({item_code:a.code,qty:c.qty,price:+a.p,discount:0,name:a.name,shown_qty:c.qty,shown_price:+a.p,vr:a.v,of:ix})}return out})()};
-remember(o.uid,'فاتورة رقم '+o.shift_seq+' — '+fmt(total)+' ج — '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),{o,total,given,cashier:shift.cashier_name});queue.push(o);shift.cash=(shift.cash||0)+(o.is_return?-1:1)*cash;save();printReceipt(o,total,given,false,shift.cashier_name,!o.table);cart=[];orderNote='';showNote();$('cash').value='';$('isRet').checked=false;render();lowCheck(o);sync();if(done)done(o);return true}
+paid_cash:fmt(cash),paid_card:fmt(card),paid_credit:fmt(credit),paid_rider:fmt(rider),...(curT?{table:curT.name}:{}),...(dlv?{delivery:{...dlv}}:{}),...(sp?{split:sp.parts}:{}),customer_id:(cust&&String(cust).startsWith('new:'))?null:cust,customer_new:(cust&&String(cust).startsWith('new:'))?(()=>{const c=(cat.customers||[]).find(x=>String(x.id)===cust)||{};return {name:c.name,phone:c.phone||''}})():null,note:orderNote,lines:(()=>{const out=[];for(const c of cart){const lc=lineCalc(c),ix=out.length;
+out.push({item_code:c.code,qty:lc.q,price:Math.round(lc.p*10000)/10000,discount:lc.disc,name:c.name,shown_qty:c.qty,shown_price:c.price,promo:lc.label,vr:c.vr,...(c.cat?{cat:c.cat}:{}),...(c.note?{note:c.note}:{})});
+for(const a of c.adds||[])out.push({item_code:a.code,qty:c.qty,price:+a.p,discount:0,name:a.name,shown_qty:c.qty,shown_price:+a.p,vr:a.v,of:ix})}
+for(const x of extras())out.push({item_code:x.code,qty:1,price:x.price,discount:0,name:x.name,shown_qty:1,shown_price:x.price,vr:x.vr,x:1});return out})()};
+if(tOn()&&!curT&&!dlv)o.away=true;  // «تيك أواي» on the kitchen ticket
+if(o.is_return){o.ret_ok=retApp.token;o.ret_reason=retApp.reason}
+const sg=o.is_return?-1:1,st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0});st.cash+=sg*cash;st.card+=sg*card;st.credit+=sg*credit;if(o.is_return)st.ret+=total;if(rider)st.rider=(st.rider||0)+rider;
+remember(o.uid,'فاتورة رقم '+o.shift_seq+' — '+fmt(total)+' ج — '+new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),{o,total,given,cashier:shift.cashier_name});queue.push(o);shift.cash=(shift.cash||0)+(o.is_return?-1:1)*cash;save();printReceipt(o,total,given,false,shift.cashier_name,!o.table);dlv=null;cart=[];orderNote='';showNote();$('cash').value='';$('isRet').checked=false;retApp=null;$('cust').value='';setPay('cash');render();lowCheck(o);sync();if(done)done(o);return true}
+let retDone=null;function retOpen(total,done){retDone=done;$('retAmt').textContent='إجمالي المرتجع '+fmt(total)+' ج.م';$('retWhy').value='';$('retU').value='';$('retP').value='';
+$('retOwner').style.display=cat.can_edit?'none':'';$('retErr').style.display='none';$('retModal').dataset.total=total;$('retModal').style.display='flex';$('retWhy').focus()}
+$('retCancel').onclick=()=>{$('retModal').style.display='none';retDone=null};
+$('retOk').onclick=async()=>{const total=+$('retModal').dataset.total,reason=$('retWhy').value.trim(),err=m=>{$('retErr').textContent=m;$('retErr').style.display='block'};
+if(!reason)return err('اكتب سبب المرتجع');let token='';
+if(!cat.can_edit){if(!$('retU').value.trim()||!$('retP').value)return err('يكتب صاحب المحل أو المدير اسم المستخدم وكلمة السر');
+try{token=(await api('return/ok/',{method:'POST',body:JSON.stringify({owner:$('retU').value.trim(),password:$('retP').value,reason,amount:fmt(total)})})).token}
+catch(e){return err(e.status?e.message:'المرتجع يحتاج اتصالًا بجهاز البرنامج لاعتماده — تأكد من الاتصال وحاول مرة أخرى')}}
+retApp={token,reason,amount:total};$('retModal').style.display='none';const d=retDone;retDone=null;payNow(d)};
 const H=t=>String(t??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch]);
-function rcItems(o,kitchen){let h='<table><thead><tr>'+(kitchen?'<th style="width:14%">الكمية</th><th>الصنف</th>':'<th>الصنف</th><th class="n">الكمية</th><th class="n">الإجمالي</th>')+'</tr></thead><tbody>';
-o.lines.forEach((l,ix)=>{if(l.of!=null)return;const sq=l.shown_qty??l.qty,sp=l.shown_price??l.price;
-h+=kitchen?('<tr><td>'+H(sq)+' ×</td><td>'+H(l.name)+'</td></tr>'):('<tr><td>'+H(l.name)+(sq!=1?'<br><span class="sub">'+H(sq)+' × '+fmt(sp)+'</span>':'')+'</td><td class="n">'+H(sq)+'</td><td class="n">'+fmt(sq*sp)+'</td></tr>');
+function rcItems(o,kitchen,keep){let h='<table><thead><tr>'+(kitchen?'<th style="width:14%">الكمية</th><th>الصنف</th>':'<th>الصنف</th><th class="n">الكمية</th><th class="n">الإجمالي</th>')+'</tr></thead><tbody>';
+o.lines.forEach((l,ix)=>{if(l.of!=null||(kitchen&&(l.x||(keep&&!keep.has(ix)))))return;const sq=l.shown_qty??l.qty,sp=l.shown_price??l.price;
+h+=kitchen?('<tr><td>'+H(qn(sq))+' ×</td><td>'+H(l.name)+'</td></tr>'):('<tr><td>'+H(l.name)+(sq!=1?'<br><span class="sub">'+H(qn(sq))+' × '+fmt(sp)+'</span>':'')+'</td><td class="n">'+(l.x?'':H(qn(sq)))+'</td><td class="n">'+fmt(sq*sp)+'</td></tr>');
 if(!kitchen&&+l.discount)h+='<tr class="ad"><td colspan="2">🏷 '+H(l.promo||'خصم')+'</td><td class="n">−'+fmt(l.discount)+'</td></tr>';
-for(const a of o.lines.filter(x=>x.of===ix))h+=kitchen?('<tr class="ad"><td></td><td>+ '+H(a.name)+'</td></tr>'):('<tr class="ad"><td>&nbsp;&nbsp;+ '+H(a.name)+'</td><td class="n">'+H(a.qty)+'</td><td class="n">'+fmt(a.qty*a.price)+'</td></tr>');
+for(const a of o.lines.filter(x=>x.of===ix))h+=kitchen?('<tr class="ad"><td></td><td>+ '+H(a.name)+'</td></tr>'):('<tr class="ad"><td>&nbsp;&nbsp;+ '+H(a.name)+'</td><td class="n">'+H(qn(a.qty))+'</td><td class="n">'+fmt(a.qty*a.price)+'</td></tr>');
 if(l.note)h+='<tr><td colspan="3"><div class="nt">📝 '+H(l.note)+'</div></td></tr>'});return h+'</tbody></table>'}
-function rcKitchen(o,cashier){const d=new Date(o.created_at);return '<div class="rc k"><div class="c"><b>🍳 طلب للمطبخ</b></div><div class="no">رقم '+H(o.shift_seq||'')+'</div>'+
-'<div class="info"><b>الوقت</b><span>'+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>الكاشير</b><span>'+H(cashier||'')+'</span></div><hr class="b">'+rcItems(o,true)+
+function rcKitchen(o,cashier){const main=[];o.lines.forEach((l,ix)=>{if(l.of==null&&!l.x)main.push(ix)});return kRoute(main,ix=>o.lines[ix].cat).map(p=>rcKitchen1(o,cashier,p.st,new Set(p.items))).join('<div class="brk"></div>')}
+function rcKitchen1(o,cashier,st,keep){const d=new Date(o.created_at);return '<div class="rc k"><div class="c"><b>🍳 طلب للمطبخ'+(st?' — '+H(st):'')+'</b></div><div class="no">رقم '+H(o.shift_seq||'')+'</div>'+(o.away?'<div class="no">🛍 تيك أواي</div>':'')+
+(o.delivery?'<div class="no">🛵 دليفري</div>'+(o.delivery.address?'<div class="nt">📍 '+H(o.delivery.address)+'</div>':''):'')+
+'<div class="info"><b>الوقت</b><span>'+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>الكاشير</b><span>'+H(cashier||'')+'</span></div><hr class="b">'+rcItems(o,true,keep)+
 (o.note?'<hr><div class="nt">📝 '+H(o.note)+'</div>':'')+'<hr></div>'}
 function printReceipt(o,total,given,copy,cashier,fresh){const r=$('receipt'),d=new Date(o.created_at);
 const c=(cat.customers||[]).find(x=>String(x.id)===String(o.customer_id));let vat=0;
 for(const l of o.lines){const rt=+(l.vr||0),lt=(l.shown_qty??l.qty)*(l.shown_price??l.price)-(+l.discount||0);if(rt>0&&cat.prices_include_vat)vat+=lt*rt/(100+rt)}
 let h='<div class="rc"><div class="c">'+(cat.logo?'<div class="logo">'+cat.logo+'</div>':'')+'<div class="nm">'+H(cat.company)+'</div>'+
 '<div class="sub">'+H([cat.address,cat.phone].filter(Boolean).join(' · ')||cat.branch.name)+'</div>'+(cat.tax_id?'<div class="sub">رقم التسجيل الضريبي: '+H(cat.tax_id)+'</div>':'')+'</div><hr class="b">'+
-'<div class="c"><b>'+(o.prebill?'الحساب — لم يُدفع بعد':o.is_return?'فاتورة مرتجع':(cat.tax_id?'فاتورة ضريبية مبسطة':'فاتورة بيع'))+(copy?' — نسخة مكررة':'')+'</b></div><div class="no">رقم '+H(o.shift_seq||'')+'</div>'+
-'<div class="info">'+(o.table?'<b>الترابيزة</b><span>'+H(o.table)+'</span>':'')+'<b>التاريخ</b><span>'+d.toLocaleDateString('ar-EG')+' — '+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>الكاشير</b><span>'+H(cashier||'')+'</span><b>المرجع</b><span dir="ltr" style="text-align:right">'+H(o.uid)+'</span>'+(c?'<b>العميل</b><span>'+H(c.name)+'</span>':'')+'</div><hr>'+
+'<div class="c"><b>'+(o.prebill?'الحساب — لم يُدفع بعد':o.is_return?'فاتورة مرتجع':(cat.tax_id?'فاتورة ضريبية مبسطة':'فاتورة بيع'))+(copy?' — نسخة مكررة':'')+'</b></div><div class="no">'+(o.prebill?H(o.table)+' — الحساب':'رقم '+H(o.shift_seq||''))+'</div>'+
+'<div class="info">'+(o.away?'<b>الطلب</b><span>تيك أواي</span>':'')+(o.is_return&&o.ret_reason?'<b>سبب المرتجع</b><span>'+H(o.ret_reason)+'</span>':'')+(o.table?'<b>الترابيزة</b><span>'+H(o.table)+'</span>':'')+(o.delivery?'<b>الطلب</b><span>🛵 دليفري</span>'+(o.delivery.name?'<b>العميل</b><span>'+H(o.delivery.name)+'</span>':'')+(o.delivery.phone?'<b>الموبايل</b><span dir="ltr" style="text-align:right">'+H(o.delivery.phone)+'</span>':'')+(o.delivery.address?'<b>العنوان</b><span>'+H(o.delivery.address)+'</span>':'')+(o.delivery.rider?'<b>الطيار</b><span>'+H(o.delivery.rider)+'</span>':''):'')+'<b>التاريخ</b><span>'+d.toLocaleDateString('ar-EG')+' — '+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>الكاشير</b><span>'+H(cashier||'')+'</span><b>المرجع</b><span dir="ltr" style="text-align:right">'+H(o.uid)+'</span>'+(c?'<b>العميل</b><span>'+H(c.name)+'</span>':'')+'</div><hr>'+
 rcItems(o,false)+(o.note?'<hr><div class="nt">📝 '+H(o.note)+'</div>':'')+
 '<div class="tot"><span>'+(o.is_return?'إجمالي المرتجع':'الإجمالي')+'</span><span>'+fmt(total)+' ج.م</span></div>'+
 (vat>0.004&&cat.tax_id?'<div class="row2"><span>منها ضريبة القيمة المضافة</span><span>'+fmt(vat)+'</span></div>':'')+
-(o.prebill?'':'<div class="row2"><span>'+(+o.paid_credit?'آجل على الحساب':(+o.paid_card?'مدفوع بالبطاقة / المحفظة':'المدفوع نقدًا'))+'</span><span>'+(+o.paid_credit||+o.paid_card?fmt(total):fmt(given))+'</span></div>'+
-(!(+o.paid_credit)&&!(+o.paid_card)&&given>total?'<div class="row2"><span>الباقي</span><span>'+fmt(given-total)+'</span></div>':''))+
+(o.prebill?'':o.split?o.split.map((p,i)=>'<div class="row2"><span>الجزء '+(i+1)+' — '+(p.k==='card'?'بالبطاقة / المحفظة':'نقدًا')+'</span><span>'+fmt(p.a)+'</span></div>').join(''):'<div class="row2"><span>'+(+o.paid_rider?'مع الطيار — يُدفع عند الاستلام':+o.paid_credit?'آجل على الحساب':(+o.paid_card?'مدفوع بالبطاقة / المحفظة':'المدفوع نقدًا'))+'</span><span>'+(+o.paid_credit||+o.paid_card||+o.paid_rider?fmt(total):fmt(given))+'</span></div>'+
+(!(+o.paid_credit)&&!(+o.paid_card)&&!(+o.paid_rider)&&given>total?'<div class="row2"><span>الباقي</span><span>'+fmt(given-total)+'</span></div>':''))+
 '<hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div><div class="pw">Powered by Trio · 01008030459</div></div>';
 // the kitchen ticket: with a new order only (not a copy, not a return) — on this printer, or the kitchen printer
 const kit=fresh&&!o.is_return&&cat.kitchen&&cat.kitchen!=='off';
+if(o.split&&!copy)o.split.forEach((p,i)=>{h+='<div class="brk"></div><div class="rc"><div class="c"><div class="nm">'+H(cat.company)+'</div></div><hr class="b"><div class="c"><b>إيصال جزء من الحساب</b></div><div class="no">الجزء '+(i+1)+' من '+o.split.length+'</div><div class="info">'+(o.table?'<b>الترابيزة</b><span>'+H(o.table)+'</span>':'')+'<b>الفاتورة</b><span>رقم '+H(o.shift_seq||'')+'</span><b>إجمالي الحساب</b><span>'+fmt(total)+'</span></div><hr><div class="tot"><span>المطلوب من هذا الجزء</span><span>'+fmt(p.a)+' ج.م</span></div><div class="row2"><span>'+(p.k==='card'?'مدفوع بالبطاقة / المحفظة':'مدفوع نقدًا')+'</span><span>'+fmt(p.a)+'</span></div><hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div></div>'});
 if(kit&&cat.kitchen==='same')h+='<div class="brk"></div>'+rcKitchen(o,cashier);
 r.innerHTML=h;window.print();
 if(kit&&cat.kitchen==='printer')api('kitchen/',{method:'POST',body:JSON.stringify({o,cashier})}).catch(e=>{if(confirm('تعذّرت الطباعة على طابعة المطبخ ('+e.message+'). هل أطبع ورقة المطبخ هنا؟')){r.innerHTML=rcKitchen(o,cashier);window.print()}})}
 $('shiftBtn').onclick=()=>{if(!cat){alert('لم تُحمَّل الأصناف بعد — تأكد من تشغيل الخادم');return}
-if(!shift){const s=$('mUser');s.innerHTML='';for(const u of cat.cashiers||[]){const o=document.createElement('option');o.value=u.username;o.textContent=u.name;s.appendChild(o)}$('mPass').value='';$('mErr').style.display='none';$('shiftModal').style.display='flex';$('mPass').focus();return}
-const counted=prompt('عُدّ الدرج واكتب المبلغ (المتوقع '+fmt(+shift.opening_float+(shift.cash||0))+')');if(counted===null)return;
-shifts.push({uid:shift.uid,cashier:shift.cashier,verified:shift.verified,opened_at:shift.opened_at,opening_float:shift.opening_float,closed_at:new Date().toISOString(),counted_cash:fmt(parseFloat(counted)||0)});shift=null;save();sync()};
+if(!shift){const s=$('mUser');s.innerHTML='';for(const u of cat.cashiers||[]){const o=document.createElement('option');o.value=u.username;o.textContent=u.name+(u.w?' (ويتر)':'');s.appendChild(o)}$('mPass').value='';$('mFloat').value='0';$('mErr').style.display='none';mRole();$('shiftModal').style.display='flex';$('mPass').focus();return}
+if(isWaiter()){if(confirm('تسجيل خروج '+shift.cashier_name+'؟')){shift=null;leaveTable();save()}return}
+// blind count: the expected amount is shown only after the drawer is counted (the report)
+$('cCount').value='';$('cErr').style.display='none';$('closeModal').style.display='flex';$('cCount').focus()};
+$('cCancel').onclick=()=>{$('closeModal').style.display='none'};
+$('cCount').onkeydown=e=>{if(e.key==='Enter')$('cOk').click()};
+$('cOk').onclick=()=>{const v=num($('cCount').value);if(!(v>=0)){$('cErr').textContent=$('cCount').value.trim()?'اكتب المبلغ بالأرقام فقط (مثال: 450 أو ٤٥٠ أو 450,50)':'اكتب المبلغ الموجود في الدرج — صفر إن كان فارغًا';$('cErr').style.display='block';return}
+const closed=new Date().toISOString(),exp=Math.round((+shift.opening_float+(shift.cash||0))*100)/100;
+shifts.push({uid:shift.uid,cashier:shift.cashier,verified:shift.verified,opened_at:shift.opened_at,opening_float:shift.opening_float,closed_at:closed,counted_cash:fmt(v)});
+const dop=dOpen(),rep={cashier:shift.cashier_name,opened:shift.opened_at,closed,float:+shift.opening_float,st:shift.st||null,exp,counted:v,n:shift.n||0,dopen:{n:dop.length,t:Math.round(dop.reduce((a,x)=>a+(+x.due),0)*100)/100}};LS.set('pos_last_rep',rep);
+shift=null;save();sync();$('closeModal').style.display='none';showReport(rep,true)};
+function repRows(r){const st=r.st,d=Math.round((r.counted-r.exp)*100)/100,rows=[['الكاشير',H(r.cashier)],['من',new Date(r.opened).toLocaleString('ar-EG')],['إلى',new Date(r.closed).toLocaleString('ar-EG')],['عدد الفواتير',r.n],['رصيد الفتح',fmt(r.float)]];
+if(st)rows.push(['مبيعات نقدية (بعد المرتجع)',fmt(st.cash)],['بطاقة / محفظة',fmt(st.card)],['آجل',fmt(st.credit)],['المرتجعات',fmt(st.ret)],['مصروفات ومسحوبات من الدرج',fmt(st.out)],['إيداعات في الدرج',fmt(st.in)]);
+if(st&&(st.rider||st.dlvin))rows.push(['دليفري خرج مع الطيار',fmt(st.rider||0)],['تحصيل دليفري من الطيارين (نقدي)',fmt(st.dlvin||0)]);
+if(r.dopen&&r.dopen.n)rows.push(['⚠ دليفري لم يُحصَّل ('+r.dopen.n+' طلب)',fmt(r.dopen.t),1]);
+rows.push(['النقدية المتوقعة في الدرج',fmt(r.exp),1],['النقدية المعدودة',fmt(r.counted),1],[d<0?'العجز':(d>0?'الزيادة':'الفرق'),fmt(Math.abs(d)),1]);return rows}
+function showReport(r,print){$('repBody').innerHTML='<div class="rep">'+repRows(r).map(x=>'<span'+(x[2]?' class="hl"':'')+'>'+x[0]+'</span><b'+(x[2]?' class="hl"':'')+'>'+x[1]+'</b>').join('')+'</div>';$('repModal').style.display='flex';if(print)printRep(r)}
+function printRep(r){$('receipt').innerHTML='<div class="rc"><div class="c"><div class="nm">'+H(cat.company)+'</div><div class="sub">'+H(cat.branch.name+' — '+cat.device)+'</div></div><hr class="b"><div class="no">تقرير الوردية</div>'+
+repRows(r).map(x=>'<div class="row2"'+(x[2]?' style="font-weight:800;font-size:14px"':'')+'><span>'+x[0]+'</span><span>'+x[1]+'</span></div>').join('')+'<hr><br>توقيع الكاشير: ............<br><br>توقيع المستلم: ............<div class="pw">Powered by Trio</div></div>';window.print()}
+$('repPrint').onclick=()=>{const r=LS.get('pos_last_rep');if(r)printRep(r)};$('repOk').onclick=()=>{$('repModal').style.display='none'};
+function mRole(){const u=(cat.cashiers||[]).find(x=>x.username===$('mUser').value);$('mFloatL').style.display=u&&u.w?'none':''}
+$('mUser').onchange=mRole;
 $('mCancel').onclick=()=>{$('shiftModal').style.display='none';afterShift=null};
-$('mOk').onclick=async()=>{const user=$('mUser').value,pass=$('mPass').value;if(!user)return;let verified=false,name=(cat.cashiers.find(u=>u.username===user)||{}).name||user;
-try{const r=await api('cashier/',{method:'POST',body:JSON.stringify({username:user,password:pass})});verified=true;name=r.name}
+$('mOk').onclick=async()=>{const user=$('mUser').value,pass=$('mPass').value;if(!user)return;const cu=cat.cashiers.find(u=>u.username===user)||{};let verified=false,name=cu.name||user,role=cu.w?'waiter':'cashier';
+const fl=role==='waiter'?0:num($('mFloat').value);if(!(fl>=0)){$('mErr').textContent='اكتب النقدية الموجودة في الدرج بالأرقام (صفر إن كان فارغًا)';$('mErr').style.display='block';return}
+try{const r=await api('cashier/',{method:'POST',body:JSON.stringify({username:user,password:pass})});verified=true;name=r.name;role=r.role||role}
 catch(e){if(e.status===403){$('mErr').textContent='كلمة السر غير صحيحة';$('mErr').style.display='block';return}
 if(!confirm('الخادم غير متاح — هل تفتح الوردية دون تأكيد كلمة السر؟ (ستظهر للمدير)'))return}
-const fl=parseFloat($('mFloat').value)||0;shift={uid:cat.branch.code+'-'+cat.device+'-S'+Date.now(),cashier:user,cashier_name:name,verified,opened_at:new Date().toISOString(),opening_float:fmt(fl),cash:0};
+shift={uid:cat.branch.code+'-'+cat.device+'-S'+Date.now(),cashier:user,cashier_name:name,verified,opened_at:new Date().toISOString(),opening_float:fmt(role==='waiter'?0:fl),cash:0,st:{cash:0,card:0,credit:0,ret:0,out:0,in:0},...(role==='waiter'?{role}:{})};
+if(role==='waiter'){$('shiftModal').style.display='none';save();if(tOn()){tView=true;showView();loadTables()}if(afterShift){afterShift=null}return}  // a waiter: no drawer, no shift on the server
 shifts.push({uid:shift.uid,cashier:name,verified,opened_at:shift.opened_at,opening_float:shift.opening_float});$('shiftModal').style.display='none';save();sync();if(afterShift){const f=afterShift;afterShift=null;f()}};
 // «حد الطلب»: right after a sale from the local stock count (works offline), and again from the server after sync
 // (it also knows the ingredients of menu items and the other tills). Once per item per day.
@@ -258,45 +363,46 @@ function lowShow(list){if(!list||!list.length)return;const day=new Date().toISOS
 const fresh=list.filter(x=>warned[x.code]!==day);if(!fresh.length)return;for(const x of fresh)warned[x.code]=day;LS.set('pos_low_warned',warned);
 const box=$('lowList');for(const x of fresh){if([...box.children].some(d=>d.dataset.code===x.code))continue;const d=document.createElement('div');d.dataset.code=x.code;
 d.style.cssText='padding:8px 0;border-bottom:1px solid #eee';d.innerHTML='<b></b><br><span class="muted"></span>';d.querySelector('b').textContent=x.name;
-d.querySelector('span').textContent='الباقي '+(+x.q)+' '+(x.unit||'')+' — حد الطلب '+(+x.r);box.appendChild(d)}$('lowModal').style.display='flex'}
+d.querySelector('span').textContent='الباقي '+qn(x.q)+' '+(x.unit||'')+' — حد الطلب '+qn(x.r);box.appendChild(d)}$('lowModal').style.display='flex'}
 $('lowOk').onclick=()=>{$('lowModal').style.display='none';$('lowList').innerHTML='';$('scan').focus()};
 let afterShift=null;
 // ---------------------------------------------------------------- 1.23 tables: every waiter sees the same bill (kept by the program)
-let curT=null,curTab=null,tState=[],tView=false;
+let curT=null,curTab=null,tState=[],tView=false,tPay=null;  // tPay: the table bill in its payment step
 function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',5000)}
 function tOn(){return cat&&cat.tables&&cat.tables.on}
-function showView(){const tv=tOn()&&tView&&!curT;$('main').classList.toggle('tmode',tv);$('tview').style.display=tv?'':'none';$('iview').style.display=tv?'none':'';$('tablesBtn').style.display=tOn()?'':'none';
-$('sendK').style.display=curT?'':'none';$('pay').textContent=curT?'🧾 الحساب والتحصيل':'تحصيل وطباعة';$('cartT').textContent=curT?'أصناف جديدة':'الفاتورة';drawTab()}
+function showView(){const tv=tOn()&&tView&&!curT;$('main').classList.toggle('tmode',tv);$('main').classList.toggle('intab',!!curT);$('main').classList.toggle('paying',!!tPay);$('tview').style.display=tv?'':'none';$('iview').style.display=(tv||tPay)?'none':'';$('tablesBtn').style.display=tOn()?'':'none';
+$('sendK').style.display=curT&&!tPay?'':'none';$('pay').textContent=curT&&!tPay?'🧾 الحساب والتحصيل':'تحصيل وطباعة';$('cartT').textContent=tPay?(tPick?'جزء من حساب ':'تحصيل حساب ')+curT.name:(curT?'أصناف جديدة':'الفاتورة');
+$('clear').textContent=tPay?'⬅ رجوع إلى الحساب':'إلغاء الفاتورة';$('oNote').style.display=tPay?'none':'';payUI();drawTab()}
 async function loadTables(){if(!tOn())return;try{const r=await api('tables/');tState=r.tables;cat.tables=r.cfg;drawGrid()}catch(e){}}
 function drawGrid(){const g=$('tgrid');g.innerHTML='';for(const t of tState){const b=document.createElement('button');b.type='button';b.className='tcard'+(t.tab?' busy':'')+(t.wait?' wait':'');
 b.innerHTML='<b></b><span></span><span class="am"></span>';b.querySelector('b').textContent=t.name;b.querySelector('span').textContent=t.tab?('⏱ '+t.mins+' دقيقة'+(t.by?' · '+t.by:'')):((t.area||'')+' متاحة');
 b.querySelector('.am').textContent=t.tab?(fmt(t.total)+' ج'+(t.wait?' · 📱 طلب زبون ينتظر':'')):'';b.onclick=()=>openTable(t);g.appendChild(b)}
 if(!tState.length)g.innerHTML='<p class="muted">لا توجد ترابيزات — يضيفها صاحب المحل من «الترابيزات».</p>'}
 async function openTable(t){try{const r=await api('tables/'+t.id+'/');curT=r.table;curTab=r.tab;cart=[];orderNote='';showNote();showView();render()}catch(e){alert('تعذّر الاتصال بالبرنامج — الترابيزات تحتاج اتصالًا بجهاز البرنامج')}}
-function leaveTable(){curT=null;curTab=null;cart=[];orderNote='';showNote();tView=true;showView();render();loadTables()}
+function leaveTable(){tPay=null;curT=null;curTab=null;cart=[];orderNote='';showNote();tView=true;showView();render();loadTables()}
 function tabLines(){return curTab?curTab.lines:[]}
 function drawTab(){const box=$('tabBox');if(!curT){box.style.display='none';return}box.style.display='';
 let h='<div class="tbar"><b>🍽 '+H(curT.name)+'</b><span>'+(curTab?('حتى الآن '+fmt(curTab.total)+' ج'):'ترابيزة جديدة')+'</span><button type="button" class="light" id="tBack">⬅ الترابيزات</button></div>';
-for(const b of (curTab?curTab.batches:[]).filter(b=>b.hold&&!b.dropped)){h+='<div class="wb"><b>📱 طلب من الزبون ينتظر موافقتك</b>'+curTab.lines.filter(l=>l.batch===b.n).map(l=>'<div>'+H(+l.qty)+' × '+H(l.name)+'</div>').join('')+(b.note?'<div class="sub">📝 '+H(b.note)+'</div>':'')+
+for(const b of (curTab?curTab.batches:[]).filter(b=>b.hold&&!b.dropped)){h+='<div class="wb"><b>📱 طلب من الزبون ينتظر موافقتك</b>'+curTab.lines.filter(l=>l.batch===b.n).map(l=>'<div>'+H(qn(l.qty))+' × '+H(l.name)+'</div>').join('')+(b.note?'<div class="sub">📝 '+H(b.note)+'</div>':'')+
 '<div class="tact"><button type="button" data-ok="'+b.n+'">✔ قبول وإرسال للمطبخ</button><button type="button" class="light" data-no="'+b.n+'">✕ رفض</button></div></div>'}
-if(curTab&&curTab.lines.length){h+='<div style="max-height:30vh;overflow:auto">';for(const l of curTab.lines){const hold=(curTab.batches.find(b=>b.n===l.batch)||{}).hold;if(hold)continue;
-h+='<div class="sent"><span>'+H(+l.qty)+' × '+H(l.name)+(l.src==='qr'?' 📱':'')+(l.adds||[]).map(a=>'<span class="sub"> + '+H(a.name)+'</span>').join('')+(l.note?'<span class="sub"> 📝 '+H(l.note)+'</span>':'')+'</span><span>'+fmt((+l.qty)*((+l.price)+(l.adds||[]).reduce((s,a)=>s+(+a.p),0)))+' <button type="button" class="lnk" data-rm="'+l.id+'" title="إلغاء">✕</button></span></div>'}h+='</div>'}
-h+='<div class="tact" style="margin-top:6px">'+(curTab?'<button type="button" class="light" id="tPre">🖨 طباعة الحساب</button><button type="button" class="light" id="tMove">↔ نقل / دمج</button>':'')+'</div>';box.innerHTML=h;
-$('tBack').onclick=()=>{if(cart.length&&!confirm('فيه أصناف لم تُرسل للمطبخ — هل تتركها؟'))return;leaveTable()};
+if(curTab&&curTab.lines.length&&!tPay){h+='<div style="max-height:30vh;overflow:auto">';for(const l of curTab.lines){const hold=(curTab.batches.find(b=>b.n===l.batch)||{}).hold;if(hold)continue;
+h+='<div class="sent"><span>'+H(qn(l.qty))+' × '+H(l.name)+(l.src==='qr'?' 📱':'')+(l.adds||[]).map(a=>'<span class="sub"> + '+H(a.name)+'</span>').join('')+(l.note?'<span class="sub"> 📝 '+H(l.note)+'</span>':'')+'</span><span>'+fmt((+l.qty)*((+l.price)+(l.adds||[]).reduce((s,a)=>s+(+a.p),0)))+(tPay?'':' <button type="button" class="lnk" data-rm="'+l.id+'" title="إلغاء">✕</button>')+'</span></div>'}h+='</div>'}
+h+='<div class="tact" style="margin-top:6px">'+(curTab&&!tPay?'<button type="button" class="light" id="tPre">🖨 طباعة الحساب</button><button type="button" class="light" id="tMove">↔ نقل / دمج</button>':'')+'</div>';box.innerHTML=h;
+$('tBack').onclick=()=>{if(cart.length&&!tPay&&!confirm('توجد أصناف لم تُرسل إلى المطبخ — هل تتركها؟'))return;leaveTable()};
 if($('tPre'))$('tPre').onclick=preBill;if($('tMove'))$('tMove').onclick=moveOpen;
 box.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>rmLine(+b.dataset.rm));
 box.querySelectorAll('[data-ok]').forEach(b=>b.onclick=()=>tabOp('confirm',{n:+b.dataset.ok}).then(()=>{const bt=curTab.batches.find(x=>x.n===+b.dataset.ok);if(cat.kitchen==='same')printKitchen(curT.name,curTab.lines.filter(l=>l.batch===bt.n),bt.note,'طلب الزبون')}));
 box.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>{if(confirm('رفض طلب الزبون؟'))tabOp('drop',{n:+b.dataset.no})})}
 async function tabOp(op,body){try{const r=await api('tab/'+curTab.id+'/'+op+'/',{method:'POST',body:JSON.stringify({...body,by:shift?shift.cashier_name:''})});curTab=r.tab&&r.tab.lines.length?r.tab:null;if(r.tab&&r.tab.table!==curT.id)curT={id:r.tab.table,name:r.tab.name};drawTab();return r}catch(e){alert(e.message);throw e}}
-async function rmLine(id){const l=curTab.lines.find(x=>x.id===id);if(!l)return;let q=+l.qty;if(q>1){const v=parseFloat(prompt('كم تلغي من «'+l.name+'»؟',q)||'');if(!(v>0))return;q=Math.min(v,q)}else if(!confirm('إلغاء «'+l.name+'» من الحساب؟'))return;
+async function rmLine(id){const l=curTab.lines.find(x=>x.id===id);if(!l)return;let q=+l.qty;if(q>1){const v=num(prompt('كم تلغي من «'+l.name+'»؟',qn(q)));if(!(v>0))return;q=Math.min(v,q)}else if(!confirm('إلغاء «'+l.name+'» من الحساب؟'))return;
 const body={line:id,qty:q};if(!cat.can_edit){const u=prompt('إلغاء صنف أُرسل للمطبخ يحتاج موافقة صاحب المحل أو المدير.\nاسم المستخدم:');if(!u)return;const p=prompt('كلمة السر:');if(p===null)return;body.owner=u;body.password=p}
 await tabOp('remove',body).catch(()=>{})}
 function moveOpen(){const sel=$('mvSel');sel.innerHTML='';for(const t of tState.filter(x=>x.id!==curT.id)){const o=document.createElement('option');o.value=t.id;o.textContent=t.name+(t.tab?' (مشغولة — دمج)':'');sel.appendChild(o)}$('mvModal').style.display='flex'}
 $('mvCancel').onclick=()=>{$('mvModal').style.display='none'};$('mvOk').onclick=async()=>{$('mvModal').style.display='none';await tabOp('move',{to:+$('mvSel').value}).catch(()=>{});loadTables()};
-function rcKitchenT(table,lines,note,who){const d=new Date();let h='<div class="rc k"><div class="c"><b>🍳 طلب للمطبخ</b></div><div class="no">'+H(table)+'</div><div class="info"><b>الوقت</b><span>'+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>من</b><span>'+H(who||'')+'</span></div><hr class="b"><table><tbody>';
-for(const l of lines){h+='<tr><td style="width:14%">'+H(+l.qty)+' ×</td><td>'+H(l.name)+'</td></tr>';for(const a of l.adds||[])h+='<tr class="ad"><td></td><td>+ '+H(a.name)+'</td></tr>';if(l.note)h+='<tr><td colspan="2"><div class="nt">📝 '+H(l.note)+'</div></td></tr>'}
+function rcKitchenT(table,lines,note,who,st){const d=new Date();let h='<div class="rc k"><div class="c"><b>🍳 طلب للمطبخ'+(st?' — '+H(st):'')+'</b></div><div class="no">'+H(table)+'</div><div class="info"><b>الوقت</b><span>'+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span><b>من</b><span>'+H(who||'')+'</span></div><hr class="b"><table><tbody>';
+for(const l of lines){h+='<tr><td style="width:14%">'+H(qn(l.qty))+' ×</td><td>'+H(l.name)+'</td></tr>';for(const a of l.adds||[])h+='<tr class="ad"><td></td><td>+ '+H(a.name)+'</td></tr>';if(l.note)h+='<tr><td colspan="2"><div class="nt">📝 '+H(l.note)+'</div></td></tr>'}
 return h+'</tbody></table>'+(note?'<hr><div class="nt">📝 '+H(note)+'</div>':'')+'<hr></div>'}
-function printKitchen(table,lines,note,who){$('receipt').innerHTML=rcKitchenT(table,lines,note,who);window.print()}
+function printKitchen(table,lines,note,who){$('receipt').innerHTML=kRoute(lines,l=>l.cat).map(p=>rcKitchenT(table,p.items,note,who,p.st)).join('<div class="brk"></div>');window.print()}
 async function sendKitchen(){if(!cart.length)return true;const lines=cart.map(c=>({code:c.code,qty:c.qty,price:c.price,name:c.name,unit:c.u||'',adds:(c.adds||[]).map(a=>a.code),note:c.note||''}));
 try{const r=await api('tables/'+curT.id+'/add/',{method:'POST',body:JSON.stringify({lines,note:orderNote,by:shift?shift.cashier_name:''})});curTab=r.tab;
 const b=r.tab.batches.find(x=>x.n===r.batch);if(cat.kitchen==='same')printKitchen(curT.name,r.tab.lines.filter(l=>l.batch===r.batch),orderNote,shift?shift.cashier_name:'');
@@ -306,15 +412,20 @@ $('sendK').onclick=()=>{if(!cart.length){alert('أضف أصنافًا أولًا
 function preBill(){if(!curTab)return;const o={created_at:new Date().toISOString(),lines:[],note:curTab.note||'',table:curT.name,uid:'—',shift_seq:'',paid_cash:'0',paid_card:'0',paid_credit:'0'};let total=0;
 for(const l of curTab.lines){if((curTab.batches.find(b=>b.n===l.batch)||{}).hold)continue;const ix=o.lines.length;o.lines.push({name:l.name,qty:+l.qty,price:+l.price,discount:0,note:l.note,vr:l.vr});total+=(+l.qty)*(+l.price);
 for(const a of l.adds||[]){o.lines.push({name:a.name,qty:+l.qty,price:+a.p,discount:0,of:ix,vr:a.v});total+=(+l.qty)*(+a.p)}}
+const sv=svcFor(Math.round(total*100)/100,true);if(sv){o.lines.push({name:sv.name,qty:1,price:sv.price,discount:0,vr:sv.vr,x:1});total+=sv.price}
 o.prebill=true;printReceipt(o,Math.round(total*100)/100,0,false,shift?shift.cashier_name:'',false)}
-async function tablePay(){if(cart.length&&!(await sendKitchen()))return;if(!curTab||!curTab.lines.length){alert('لا يوجد حساب على هذه الترابيزة');return}
-if(curTab.batches.some(b=>b.hold&&!b.dropped)){alert('فيه طلب من الزبون ينتظر القبول أو الرفض أولًا');return}
-const tab=curTab;cart=tab.lines.map(l=>({key:'T'+l.id,code:l.code,cat:l.cat,vr:l.vr,name:l.name,price:+l.price,factor:+(l.factor||1),qty:+l.qty,adds:(l.adds||[]).map(a=>({code:a.code,name:a.name,p:a.p,v:a.v})),note:l.note||''}));
-orderNote=[tab.note].filter(Boolean).join(' — ');const ok=payNow(o=>{closeTab(tab.id,o.uid);toast('تم الحساب ✔ — '+curT.name+' أصبحت متاحة');leaveTable()});if(!ok){cart=[];orderNote='';showNote();render()}}
+// paying a table: first a payment step (its total, cash / card / credit, paid and change), then «تحصيل وطباعة»
+async function tablePay(){if(tPay&&tPick){const tab=tPay,picks=tPick;payNow(o=>partTab(tab,o.uid,picks));return}
+if(tPay){const tab=tPay,name=curT.name;payNow(o=>{closeTab(tab.id,o.uid);toast('تم الحساب ✔ — '+name+' أصبحت متاحة');leaveTable()});return}
+if(isWaiter())return;if(cart.length&&!(await sendKitchen()))return;if(!curTab||!curTab.lines.length){alert('لا يوجد حساب على هذه الترابيزة');return}
+if(curTab.batches.some(b=>b.hold&&!b.dropped)){alert('يوجد طلب من الزبون ينتظر القبول أو الرفض أولًا');return}
+if(!shift){afterShift=()=>tablePay();$('shiftBtn').click();return}
+const tab=curTab;tPay=tab;cart=tab.lines.filter(l=>!(tab.batches.find(b=>b.n===l.batch)||{}).hold).map(l=>({key:'T'+l.id,code:l.code,cat:l.cat,vr:l.vr,name:l.name,price:+l.price,factor:+(l.factor||1),qty:+l.qty,adds:(l.adds||[]).map(a=>({code:a.code,name:a.name,p:a.p,v:a.v})),note:l.note||'',ro:true}));
+orderNote=[tab.note].filter(Boolean).join(' — ');showNote();$('cash').value='';$('isRet').checked=false;setPay('cash');showView();render();$('cash').focus()}
 let tCloses=LS.get('pos_tab_close',[]);
 async function closeTab(id,uid){tCloses.push({id,uid,by:shift?shift.cashier_name:''});LS.set('pos_tab_close',tCloses);await flushCloses()}
-async function flushCloses(){for(const c of [...tCloses]){try{await api('tab/'+c.id+'/close/',{method:'POST',body:JSON.stringify({uid:c.uid,by:c.by})});tCloses=tCloses.filter(x=>x!==c)}catch(e){if(e.status===400||e.status===404)tCloses=tCloses.filter(x=>x!==c);else break}}LS.set('pos_tab_close',tCloses)}
-$('tablesBtn').onclick=()=>{if(curT){if(cart.length&&!confirm('فيه أصناف لم تُرسل للمطبخ — هل تتركها؟'))return;leaveTable();return}tView=true;showView();loadTables()};
+async function flushCloses(){for(const c of [...tCloses]){try{await api('tab/'+c.id+'/'+(c.lines?'part':'close')+'/',{method:'POST',body:JSON.stringify({uid:c.uid,by:c.by,lines:c.lines})});tCloses=tCloses.filter(x=>x!==c)}catch(e){if(e.status===400||e.status===404)tCloses=tCloses.filter(x=>x!==c);else break}}LS.set('pos_tab_close',tCloses)}
+$('tablesBtn').onclick=()=>{if(curT){if(cart.length&&!tPay&&!confirm('توجد أصناف لم تُرسل إلى المطبخ — هل تتركها؟'))return;leaveTable();return}tView=true;showView();loadTables()};
 $('takeaway').onclick=()=>{tView=false;showView();render()};
 // customer orders from the QR: the first till to see them prints the kitchen ticket (kitchen ticket on «same printer»)
 async function tablePoll(){if(!tOn())return;flushCloses();if(tView&&!curT)loadTables();else if(curT&&!cart.length){try{const r=await api('tables/'+curT.id+'/');if(JSON.stringify(r.tab)!==JSON.stringify(curTab)){curTab=r.tab;drawTab()}}catch(e){}}
@@ -327,21 +438,21 @@ const c={id:'new:'+Date.now(),name:n,phone:ph,balance:'0',limit:null};(cat.custo
 let syncing=false,again=false;async function sync(){if(syncing){again=true;return}if(!tok||(!queue.length&&!shifts.length&&!moves.length&&!reqs.length))return;syncing=true;try{const res=await api('sync/',{method:'POST',body:JSON.stringify({orders:queue,shifts,cash_moves:moves,requests:reqs})});
 const okr=new Set(res.requests||[]);reqs=reqs.filter(r=>!okr.has(r.uid));const ok=new Set(res.accepted);
 const okm=new Set(res.cash_moves||[]);moves=moves.filter(m=>!okm.has(m.uid));
-queue=queue.filter(o=>!ok.has(o.uid));lowShow(res.low);shifts=shifts.filter(s=>!(s.closed_at?res.closed_shifts.includes(s.uid):true));refused=res.errors||{};if(Object.keys(refused).length)console.warn('POS errors',refused);setNet(true)}catch(e){setNet(false)}syncing=false;save();if(again){again=false;setTimeout(sync,200)}}
+queue=queue.filter(o=>!ok.has(o.uid));lowShow(res.low);shifts=shifts.filter(s=>!(s.closed_at?res.closed_shifts.includes(s.uid):true));refused=res.errors||{};if(Object.keys(refused).length)console.warn('POS errors',refused);setNet(true);dPoll()}catch(e){setNet(false)}syncing=false;save();if(again){again=false;setTimeout(sync,200)}}
 function fill(sel,list){sel.innerHTML='';for(const x of list||[]){const o=document.createElement('option');o.value=x.id;o.textContent=x.name;sel.appendChild(o)}}
 function xShow(){const k=$('xKind').value;$('xAccL').style.display=k==='expense'?'':'none';$('xEmpL').style.display=(k==='wage'||k==='advance')?'':'none';
 $('xSupL').style.display=k==='supplier'?'':'none';$('xDed').style.display=k==='wage'?'flex':'none';$('xAmtHint').textContent=k==='wage'?' (الإجمالي قبل الخصم)':''}
 $('xKind').onchange=xShow;
-$('moneyBtn').onclick=()=>{if(!cat)return;if(!shift){afterShift=()=>$('moneyBtn').click();$('shiftBtn').click();return}fill($('xAcc'),cat.expenses);fill($('xEmp'),cat.employees);fill($('xSup'),cat.suppliers);
+$('moneyBtn').onclick=()=>{if(!cat||isWaiter())return;if(!shift){afterShift=()=>$('moneyBtn').click();$('shiftBtn').click();return}fill($('xAcc'),cat.expenses);fill($('xEmp'),cat.employees);fill($('xSup'),cat.suppliers);
 ['xAmt','xAdv','xPen','xNote'].forEach(i=>$(i).value='');$('xErr').style.display='none';xShow();$('moneyModal').style.display='flex'};
 $('xCancel').onclick=()=>{$('moneyModal').style.display='none'};
-$('xOk').onclick=()=>{const k=$('xKind').value,amt=parseFloat(($('xAmt').value||'').replace(',','.'))||0,adv=parseFloat($('xAdv').value)||0,pen=parseFloat($('xPen').value)||0;
+$('xOk').onclick=()=>{const k=$('xKind').value,amt=num($('xAmt').value)||0,adv=num($('xAdv').value)||0,pen=num($('xPen').value)||0;
 const err=m=>{$('xErr').textContent=m;$('xErr').style.display='block'};
 if(amt<=0)return err('اكتب المبلغ');if((k==='wage'||k==='advance')&&!$('xEmp').value)return err('لا يوجد موظفون مسجّلون — يضيفهم المدير من «العملاء والموردين ← الموظفين»');
 if(k==='supplier'&&!$('xSup').value)return err('اختر المورد');if(k==='wage'&&adv+pen>amt)return err('الخصومات أكبر من الأجر');
 seq++;const m={uid:cat.branch.code+'-'+cat.device+'-M'+String(seq).padStart(7,'0'),shift_uid:shift.uid,created_at:new Date().toISOString(),kind:k,amount:fmt(amt),
 account_id:k==='expense'?$('xAcc').value:null,partner_id:(k==='wage'||k==='advance')?$('xEmp').value:(k==='supplier'?$('xSup').value:null),deduct_advance:fmt(adv),deduct_penalty:fmt(pen),note:$('xNote').value};
-const out=k==='deposit'?-amt:(k==='wage'?amt-adv-pen:amt);moves.push(m);remember(m.uid,$('xKind').selectedOptions[0].textContent+' — '+fmt(amt)+' ج');shift.cash=(shift.cash||0)-out;save();
+const out=k==='deposit'?-amt:(k==='wage'?amt-adv-pen:amt);moves.push(m);remember(m.uid,$('xKind').selectedOptions[0].textContent+' — '+fmt(amt)+' ج');shift.cash=(shift.cash||0)-out;{const st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0});if(k==='deposit')st.in+=amt;else st.out+=out}save();
 const sel={expense:'xAcc',wage:'xEmp',advance:'xEmp',supplier:'xSup'}[k];const who=sel?$(sel).selectedOptions[0].textContent:'';
 const r=$('receipt');r.innerHTML='';const d=document.createElement('div');d.style.textAlign='center';d.innerHTML='<b></b><br><span></span><hr><div style="text-align:right"></div><hr><br>توقيع المستلم: ............';
 d.querySelector('b').textContent=cat.company;d.querySelector('span').textContent=$('xKind').selectedOptions[0].textContent+' — '+new Date().toLocaleString('ar-EG');
@@ -351,17 +462,92 @@ $('reprintBtn').onclick=()=>{const list=recent.filter(r=>r.receipt);if(!list.len
 const sel=$('rpSel');sel.innerHTML='';list.forEach((r,ix)=>{const o=document.createElement('option');o.value=r.uid;o.textContent=r.label;sel.appendChild(o)});$('rpModal').style.display='flex'};
 $('rpCancel').onclick=()=>{$('rpModal').style.display='none'};
 $('rpOk').onclick=()=>{const r=recent.find(x=>x.uid===$('rpSel').value);$('rpModal').style.display='none';if(r&&r.receipt)printReceipt(r.receipt.o,r.receipt.total,r.receipt.given,true,r.receipt.cashier)};
-$('reqBtn').onclick=()=>{if(!cat)return;const sel=$('rTarget');sel.innerHTML='';if(!recent.length){alert('لم تُسجّل فواتير أو حركات على هذا الجهاز بعد');return}
+$('reqBtn').onclick=()=>{if(!cat||isWaiter())return;const sel=$('rTarget');sel.innerHTML='';if(!recent.length){alert('لم تُسجّل فواتير أو حركات على هذا الجهاز بعد');return}
 for(const r of recent){const o=document.createElement('option');o.value=r.uid;o.textContent=r.label;sel.appendChild(o)}$('rReason').value='';$('rErr').style.display='none';$('reqModal').style.display='flex'};
 $('rCancel').onclick=()=>{$('reqModal').style.display='none'};
 $('rOk').onclick=()=>{const reason=$('rReason').value.trim();if(!reason){$('rErr').textContent='اكتب السبب';$('rErr').style.display='block';return}
 seq++;reqs.push({uid:cat.branch.code+'-'+cat.device+'-R'+String(seq).padStart(7,'0'),kind:$('rKind').value,target:$('rTarget').value,reason,cashier:shift?shift.cashier_name:''});
 save();$('reqModal').style.display='none';sync();alert('أُرسل الطلب إلى صاحب المحل')};
-$('resetTok').onclick=()=>{if((queue.length||moves.length)&&!confirm('فيه '+queue.length+' فاتورة لم تُرسل بعد — هل أنت متأكد؟'))return;$('main').style.display='none';$('setupMsg').style.display='none';$('tok').value='';$('setup').style.display='block'};
+$('resetTok').onclick=()=>{if((queue.length||moves.length)&&!confirm('توجد '+queue.length+' فاتورة لم تُرسل بعد — هل أنت متأكد؟'))return;$('main').style.display='none';$('setupMsg').style.display='none';$('tok').value='';$('setup').style.display='block'};
 $('saveTok').onclick=()=>{tok=$('tok').value.trim();if(!tok)return;LS.set('pos_token',tok);$('setup').style.display='none';$('setupMsg').style.display='none';loadCatalog()};
+// ---------------------------------------------------------------- 1.24 delivery, service charge, split bill, kitchen stations
+let dlv=null,tPick=null,dDone=LS.get('pos_dlv_done',[]),dSrv=LS.get('pos_dlv_srv',[]);
+// kitchen stations: each prints only its categories (a category not given to a station → the first one); 0 or 1 station = one ticket
+function kRoute(list,catOf){const S=(cat&&cat.stations)||[];if(S.length<2)return list.length?[{st:'',items:list}]:[];const g=S.map(s=>({st:s.name,items:[]}));
+for(const x of list){let k=S.findIndex(s=>(s.cats||[]).includes(catOf(x)||''));g[k<0?0:k].items.push(x)}return g.filter(x=>x.items.length)}
+// service charge on a table bill (and dine-in when the owner chose it), delivery fee: lines the till adds by itself
+function svcFor(goods){const v=cat&&cat.svc;if(!v||!v.on||!(goods>0))return null;return {code:v.code,name:v.name,price:Math.round(goods*(+v.pct))/100,vr:cat.default_vat}}
+function extras(){if(!cat||!cart.length||$('isRet').checked)return [];const out=[];
+if(!dlv&&((curT&&tPay)||(cat.svc&&cat.svc.dine&&!tOn()&&!curT))){const s=svcFor(cartGoods());if(s)out.push(s)}
+if(dlv&&+dlv.fee>0&&cat.delivery&&cat.delivery.code)out.push({code:cat.delivery.code,name:'خدمة توصيل',price:Math.round(+dlv.fee*100)/100,vr:cat.default_vat});return out}
+const digits=v=>String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[^\d+]/g,'');
+function dlvUI(){const b=$('dlvBox');if(curT)dlv=null;if(!dlv){b.style.display='none';dBadge();return}b.style.display='';b.className='dlvb';
+b.innerHTML='<span><b>🛵 دليفري</b><span class="sub"></span><span class="sub"></span></span><button type="button" class="lnk">تعديل</button>';
+const ss=b.querySelectorAll('.sub');ss[0].textContent=[dlv.name,dlv.phone].filter(Boolean).join(' · ');ss[1].textContent=[dlv.address,dlv.rider?'الطيار: '+dlv.rider:''].filter(Boolean).join(' — ');
+b.querySelector('button').onclick=dlvOpen;dBadge()}
+function dlvOpen(){if(!cat||!cat.delivery||!cat.delivery.on||curT)return;const d=dlv||{phone:'',name:'',address:'',fee:cat.delivery.fee,rider:''};
+$('dPhone').value=d.phone;$('dName').value=d.name;$('dAddr').value=d.address;$('dFee').value=fmt(+d.fee||0);
+const sel=$('dRider'),rs=cat.delivery.riders||[];sel.innerHTML='<option value="">'+(rs.length?'— اختر الطيار —':'— بدون —')+'</option>';
+for(const r of rs){const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o)}sel.value=d.rider||'';
+$('dOff').style.display=dlv?'':'none';$('dErr').style.display='none';$('dSug').innerHTML='';$('dlvModal').style.display='flex';$('dPhone').focus()}
+function dSug(){const q=digits($('dPhone').value),box=$('dSug');box.innerHTML='';if(q.length<3)return;const hit=(cat.dbook||[]).filter(c=>c.p.includes(q)).slice(0,6);
+if(hit.length===1&&hit[0].p===q){$('dName').value=$('dName').value||hit[0].n;$('dAddr').value=$('dAddr').value||hit[0].a;return}
+for(const c of hit){const b=document.createElement('button');b.type='button';b.textContent=c.p+' — '+(c.n||'')+(c.a?' — '+c.a:'');b.onclick=()=>{$('dPhone').value=c.p;$('dName').value=c.n;$('dAddr').value=c.a;box.innerHTML='';$('dAddr').focus()};box.appendChild(b)}}
+$('dPhone').addEventListener('input',dSug);
+$('dOk').onclick=()=>{const phone=digits($('dPhone').value),name=$('dName').value.trim(),address=$('dAddr').value.trim(),fee=$('dFee').value.trim()===''?0:num($('dFee').value),rider=$('dRider').value;
+const err=m=>{$('dErr').textContent=m;$('dErr').style.display='block'};
+if(!phone&&!name)return err('اكتب موبايل العميل أو اسمه');if(!address)return err('اكتب العنوان');if(!(fee>=0)||fee>5000)return err('اكتب رسم التوصيل بالأرقام (صفر إن كان مجانيًا)');
+if((cat.delivery.riders||[]).length&&!rider)return err('اختر الطيار');
+dlv={phone,name,address,fee:fmt(fee),rider};
+if(phone){const b=cat.dbook=cat.dbook||[],ex=b.find(c=>c.p===phone);if(ex){ex.n=name||ex.n;ex.a=address||ex.a}else b.unshift({p:phone,n:name,a:address});LS.set('pos_catalog',cat)}
+$('dlvModal').style.display='none';setPay('rider');if(tView){tView=false;showView()}render();$('scan').focus()};
+$('dOff').onclick=()=>{dlv=null;$('dlvModal').style.display='none';setPay('cash');render()};
+$('dCancel').onclick=()=>{$('dlvModal').style.display='none'};
+$('dlvSet').onclick=dlvOpen;$('dlvNew').onclick=()=>{if(curT)return;tView=false;showView();render();dlvOpen()};
+// open delivery orders: the program's list (every till of the branch) + this till's sales not sent yet, minus what was collected here
+function dOpen(){const done=new Set(dDone.map(x=>x.uid)),seen=new Set(),out=[];for(const x of dSrv)if(!done.has(x.uid)){seen.add(x.uid);out.push(x)}
+for(const o of queue)if(+o.paid_rider>0&&o.delivery&&!seen.has(o.uid)&&!done.has(o.uid))out.push({uid:o.uid,seq:o.shift_seq,name:o.delivery.name,phone:o.delivery.phone,address:o.delivery.address,rider:o.delivery.rider,due:o.paid_rider,at:o.created_at});return out}
+function dBadge(){const n=cat&&cat.delivery&&cat.delivery.on?dOpen().length:0;$('dlvBtn').textContent='🛵 طلبات الدليفري'+(n?' ('+n+')':'')}
+async function dPoll(){if(!cat||!cat.delivery||!cat.delivery.on||!tok)return;try{dSrv=(await api('delivery/')).orders||[];LS.set('pos_dlv_srv',dSrv)}catch(e){}dBadge()}
+function dList(){const box=$('dlList'),L=dOpen();box.innerHTML=L.length?'':'<p class="muted">لا توجد طلبات مع الطيارين الآن.</p>';
+for(const x of L){const d=document.createElement('div');d.className='dl';const m=Math.max(0,Math.round((Date.now()-new Date(x.at))/60000));
+d.innerHTML='<span><b></b><span class="sub"></span><span class="sub"></span></span><button type="button">✔ تم التحصيل</button>';d.querySelector('b').textContent=(x.rider||'بدون طيار')+' — '+fmt(x.due)+' ج';
+const ss=d.querySelectorAll('.sub');ss[0].textContent='فاتورة رقم '+(x.seq||x.uid)+' · '+[x.name,x.phone].filter(Boolean).join(' · ')+' · منذ '+m+' دقيقة';ss[1].textContent=x.address||'';
+d.querySelector('button').onclick=()=>dCollect(x);box.appendChild(d)}}
+$('dlvBtn').onclick=()=>{if(isWaiter())return;dList();$('dlModal').style.display='flex';dPoll().then(dList)};$('dlClose').onclick=()=>{$('dlModal').style.display='none'};
+function dCollect(x){if(isWaiter())return;if(!shift){$('dlModal').style.display='none';afterShift=()=>$('dlvBtn').click();$('shiftBtn').click();return}
+if(!confirm('استلام '+fmt(x.due)+' ج من الطيار '+(x.rider||'')+' عن الفاتورة رقم '+(x.seq||x.uid)+'؟'))return;
+seq++;const amt=+x.due,m={uid:cat.branch.code+'-'+cat.device+'-M'+String(seq).padStart(7,'0'),shift_uid:shift.uid,created_at:new Date().toISOString(),kind:'delivery',amount:fmt(amt),order_uid:x.uid,note:x.rider||''};
+moves.push(m);remember(m.uid,'تحصيل دليفري '+(x.rider||'')+' — '+fmt(amt)+' ج');shift.cash=(shift.cash||0)+amt;{const st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0});st.dlvin=(st.dlvin||0)+amt}
+dDone.push({uid:x.uid,t:Date.now()});dDone=dDone.filter(d=>Date.now()-d.t<3*864e5);LS.set('pos_dlv_done',dDone);save();sync();dList();dBadge();toast('تم التحصيل ✔ — '+fmt(amt)+' ج دخلت الدرج')}
+setInterval(dPoll,30000);
+// «تقسيم الحساب»: equally (one sale, each part paid and printed on its own) or by lines (each part its own sale; the rest stays on the table)
+let spM='eq';
+function spMode(m){spM=m;$('spEq').style.display=m==='eq'?'':'none';$('spLn').style.display=m==='ln'?'':'none';$('spEqB').classList.toggle('on',m==='eq');$('spLnB').classList.toggle('on',m==='ln');$('spOk').textContent=m==='eq'?'تحصيل وطباعة الأجزاء':'حاسب هذا الجزء'}
+$('spEqB').onclick=()=>spMode('eq');$('spLnB').onclick=()=>spMode('ln');
+function spParts(){const n=num($('spN').value);if(!(n>=2&&n<=20&&n===Math.floor(n)))return null;const total=cartTotal(),base=Math.floor(total/n*100)/100,out=[];for(let i=0;i<n;i++)out.push(i<n-1?base:Math.round((total-base*(n-1))*100)/100);return out}
+function spRows(){const box=$('spRows'),ps=spParts(),kinds=[...box.querySelectorAll('select')].map(s=>s.value);box.innerHTML='';if(!ps){box.innerHTML='<p class="muted">اكتب عدد الأجزاء من 2 إلى 20.</p>';return}
+ps.forEach((a,i)=>{const d=document.createElement('div');d.className='sp';d.innerHTML='<span></span><select><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option></select>';d.querySelector('span').textContent='الجزء '+(i+1)+': '+fmt(a)+' ج';if(kinds[i])d.querySelector('select').value=kinds[i];box.appendChild(d)})}
+$('spN').addEventListener('input',spRows);
+function splitOpen(){if(!tPay||tPick)return;$('spErr').style.display='none';spMode('eq');$('spN').value='2';$('spRows').innerHTML='';spRows();const box=$('spLines');box.innerHTML='';
+for(const c of cart){const d=document.createElement('div');d.className='sp';d.innerHTML='<span></span><input inputmode="decimal" placeholder="0"><button type="button" class="light">الكل</button>';
+d.querySelector('span').textContent=qn(c.qty)+' × '+c.name;const inp=d.querySelector('input');inp.dataset.k=c.key;d.querySelector('button').onclick=()=>{inp.value=qn(c.qty)};box.appendChild(d)}$('spModal').style.display='flex'}
+$('splitBtn').onclick=splitOpen;$('spCancel').onclick=()=>{$('spModal').style.display='none'};
+$('spOk').onclick=()=>{const err=m=>{$('spErr').textContent=m;$('spErr').style.display='block'};
+if(spM==='eq'){const ps=spParts();if(!ps)return err('اكتب عدد الأجزاء من 2 إلى 20');const ks=[...$('spRows').querySelectorAll('select')].map(s=>s.value);
+const parts=ps.map((a,i)=>({a:fmt(a),k:ks[i]||'cash'}));let cash=0,card=0;for(const p of parts){if(p.k==='card')card+=+p.a;else cash+=+p.a}
+$('spModal').style.display='none';const tab=tPay,name=curT.name;payNow(o=>{closeTab(tab.id,o.uid);toast('تم الحساب ✔ — '+name+' أصبحت متاحة');leaveTable()},{cash:Math.round(cash*100)/100,card:Math.round(card*100)/100,parts});return}
+const picks=[],keep=[];for(const inp of $('spLines').querySelectorAll('input')){const c=cart.find(x=>x.key===inp.dataset.k);if(!c||inp.value.trim()==='')continue;const v=num(inp.value);
+if(!(v>=0)||v>c.qty)return err('كمية «'+c.name+'» غير صحيحة (من 0 إلى '+qn(c.qty)+')');if(v>0){picks.push({id:+c.key.slice(1),qty:v});keep.push({...c,qty:v})}}
+if(!picks.length)return err('اكتب كمية صنف واحد على الأقل');$('spModal').style.display='none';tPick=picks;cart=keep;setPay('cash');$('cash').value='';showView();render();toast('حصّل هذا الجزء ثم اضغط «تحصيل وطباعة»')};
+async function partTab(tab,uid,picks){tCloses.push({id:tab.id,uid,by:shift?shift.cashier_name:'',lines:picks});LS.set('pos_tab_close',tCloses);tPick=null;tPay=null;
+await flushCloses();if(tCloses.some(c=>c.uid===uid))alert('لم يصل الجزء المدفوع إلى البرنامج بعد — لا تحاسب على نفس الأصناف مرة أخرى؛ يُخصم من الحساب تلقائيًا عند عودة الاتصال');
+try{const r=await api('tables/'+curT.id+'/');curTab=r.tab}catch(e){}
+if(!curTab||!curTab.lines.length){toast('تم الحساب ✔ — '+curT.name+' أصبحت متاحة');leaveTable();return}
+cart=[];showView();render();toast('تم تحصيل الجزء ✔ — الباقي على '+curT.name+': '+fmt(curTab.total)+' ج')}
 window.addEventListener('online',()=>{sync();loadCatalog()});setInterval(sync,15000);setInterval(loadCatalog,300000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/pos/sw.js',{scope:'/pos/'}).catch(()=>{});
-save();render();if(LS.get('pos_locked'))lockPos();if(tok)loadCatalog();
+save();render();if(LS.get('pos_locked'))lockPos();if(tok)loadCatalog().then(dPoll);
 </script>
 </body>
 </html>

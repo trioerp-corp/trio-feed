@@ -1,9 +1,12 @@
-{% extends "base.html" %}{% load l10n %}{% block title %}المنيو{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load l10n %}{% block title %}المنيو{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🍽 المنيو</h1><p class="muted" style="margin:0">أضف المنتج باسمه وسعره، أو بأحجامه وسعر كل حجم، مع وصف يظهر للعميل في منيو QR. المكونات والمخزون وحساب التكلفة اختيارية.</p></div>
 <div class="actions"><a class="btn light" href="{% url 'import_upload' 'menu' %}">📊 رفع المنيو من إكسل</a><a class="btn light" href="{% url 'shop_recipes' %}">🧪 المكونات والتكلفة (اختياري)</a><a class="btn light" href="{% url 'menu_qr' %}">📱 منيو QR</a></div></div>
 
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start;margin-bottom:16px">
+<style>.menu-forms{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));align-items:start;margin-bottom:16px}
+.menu-forms>form{min-width:0}.menu-forms input,.menu-forms select,.menu-forms textarea{max-width:100%;box-sizing:border-box}
+@media (max-width:760px){.menu-forms{grid-template-columns:1fr}.menu-forms .form-grid{grid-template-columns:1fr!important}.menu-forms .form-grid .field{grid-column:1/-1}}</style>
+<div class="menu-forms">
 <form method="post" class="card" id="product" novalidate>{% csrf_token %}<input type="hidden" name="op" value="product">{% if edit %}<input type="hidden" name="item" value="{{ edit.pk }}">{% endif %}
 <h2 style="margin:0 0 10px">{% if edit %}تعديل «{{ edit.name }}»{% else %}+ منتج جديد{% endif %}</h2>
 <div class="form-grid" style="grid-template-columns:1fr 1fr">
@@ -34,7 +37,7 @@
 <td style="white-space:nowrap"><a class="btn light" href="?edit={{ a.pk }}#addon">✏</a></td></tr>{% endfor %}</tbody></table></div>{% endif %}
 </form></div>
 
-<h2>المنيو الحالي <span class="badge">{{ n }} منتج</span></h2>
+<h2>المنيو الحالي <span class="badge">{{ n|count:"منتج" }}</span></h2>
 {% for g, rows in groups.items %}<h3 style="margin:16px 0 6px">{{ g }}</h3>
 <div class="table-wrap"><table><thead><tr><th>المنتج</th><th>السعر / الأحجام</th><th>المكونات للعميل</th><th>المخزون والتكلفة</th><th></th></tr></thead><tbody>
 {% for r in rows %}<tr><td><b>{{ r.item.name }}</b></td>
@@ -43,7 +46,7 @@
 <td>{% if r.item.item_type == 'stock' %}<span class="badge gray">صنف مخزني</span>{% elif r.sizes %}{% for v in r.sizes %}<a class="badge {% if not v.recipe_id_ %}gray{% endif %}" style="margin:2px" href="{% url 'shop_recipes' %}?{% if v.recipe_id_ %}edit={{ v.recipe_id_ }}{% else %}item={{ v.pk }}{% endif %}#form">{{ v.size_name }}: {% if v.recipe_id_ %}✔ مكونات{% else %}+ مكونات{% endif %}</a>{% endfor %}
 {% elif r.recipe %}<a class="badge" href="{% url 'shop_recipes' %}?edit={{ r.recipe }}#form">✔ له مكونات</a>{% else %}<a class="badge gray" href="{% url 'shop_recipes' %}?item={{ r.item.pk }}#form">+ مكونات (اختياري)</a>{% endif %}</td>
 <td style="white-space:nowrap"><a class="btn light" href="?edit={{ r.item.pk }}#product">✏ تعديل</a>
-<form method="post" style="display:inline" onsubmit="return confirm('رفع «{{ r.item.name|escapejs }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="stop"><input type="hidden" name="item" value="{{ r.item.pk }}"><button class="light">رفع من المنيو</button></form></td></tr>{% endfor %}
+<form method="post" style="display:inline" onsubmit="return confirm('إزالة «{{ r.item.name|escapejs }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="stop"><input type="hidden" name="item" value="{{ r.item.pk }}"><button class="light">إزالة من المنيو</button></form></td></tr>{% endfor %}
 </tbody></table></div>{% empty %}<p class="muted">لا توجد منتجات بعد — أضف أول منتج من الأعلى.</p>{% endfor %}
 <script>(function(){const c=document.getElementById('hasSizes');function t(){document.getElementById('sizesBox').style.display=c.checked?'':'none';document.getElementById('onePrice').style.display=c.checked?'none':''}c.onchange=t;t()})()</script>
 {% endblock %}

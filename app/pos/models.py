@@ -79,6 +79,7 @@ class Order(models.Model):
     paid_cash = models.DecimalField("نقدي", max_digits=14, decimal_places=2, default=0)
     paid_card = models.DecimalField("فيزا/محفظة", max_digits=14, decimal_places=2, default=0)
     paid_credit = models.DecimalField("آجل", max_digits=14, decimal_places=2, default=0)
+    paid_rider = models.DecimalField("مع الطيار (دليفري)", max_digits=14, decimal_places=2, default=0)
     customer = models.ForeignKey("ledger.Partner", null=True, blank=True, on_delete=models.PROTECT, related_name="+", verbose_name="العميل (آجل)")
     is_return = models.BooleanField("مرتجع", default=False)
     flags = models.CharField("تنبيهات للمراجعة", max_length=300, blank=True)
@@ -111,7 +112,8 @@ class CashMove(models.Model):
 
     KINDS = [("drawing", "مسحوبات صاحب المحل"), ("deposit", "إيداع من صاحب المحل"), ("expense", "مصروف تشغيل"),
              ("wage", "أجر / مرتب موظف"), ("advance", "سلفة موظف"), ("supplier", "سداد مورد"),
-             ("doctor", "صرف مستحقات طبيب"), ("collect", "تحصيل من عميل آجل / مريض / شركة تأمين")]
+             ("doctor", "صرف مستحقات طبيب"), ("collect", "تحصيل من عميل آجل / مريض / شركة تأمين"),
+             ("delivery", "تحصيل دليفري من الطيار")]
     uid = models.CharField(max_length=60, unique=True)
     kind = models.CharField("النوع", max_length=10, choices=KINDS)
     date = models.DateField("التاريخ")
@@ -266,3 +268,41 @@ class TableTab(models.Model):
 
     def __str__(self):
         return f"{self.table} — {self.opened_at:%d/%m %H:%M}"
+
+
+class DeliveryCustomer(models.Model):
+    """The delivery address book (1.24): the cashier types the phone, the name and address come back."""
+    phone = models.CharField("الموبايل", max_length=30, unique=True)
+    name = models.CharField("الاسم", max_length=120, blank=True)
+    address = models.CharField("العنوان", max_length=300, blank=True)
+    orders = models.PositiveIntegerField("عدد الطلبات", default=0)
+    last_at = models.DateTimeField("آخر طلب", null=True, blank=True)
+
+    class Meta:
+        verbose_name = "عميل دليفري"
+        verbose_name_plural = "دفتر عناوين الدليفري"
+        ordering = ["-last_at"]
+
+    def __str__(self):
+        return f"{self.name} {self.phone}".strip()
+
+
+class DeliveryOrder(models.Model):
+    """A sale sent with a rider (1.24): rung like any sale, its money is «مع الطيار» until he hands it in at a till."""
+    STATES = [("out", "مع الطيار"), ("paid", "تم التحصيل"), ("void", "ملغي")]
+    order = models.OneToOneField(Order, on_delete=models.PROTECT, related_name="delivery", verbose_name="الفاتورة")
+    phone = models.CharField("الموبايل", max_length=30, blank=True)
+    name = models.CharField("العميل", max_length=120, blank=True)
+    address = models.CharField("العنوان", max_length=300, blank=True)
+    rider = models.CharField("الطيار", max_length=80, blank=True)
+    fee = models.DecimalField("رسم التوصيل", max_digits=10, decimal_places=2, default=0)
+    due = models.DecimalField("المطلوب من الطيار", max_digits=14, decimal_places=2, default=0)
+    state = models.CharField("الحالة", max_length=5, choices=STATES, default="out")
+    created_at = models.DateTimeField("وقت الطلب")
+    collected_at = models.DateTimeField("وقت التحصيل", null=True, blank=True)
+    collect_move = models.ForeignKey(CashMove, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    class Meta:
+        verbose_name = "طلب دليفري"
+        verbose_name_plural = "طلبات الدليفري"
+        ordering = ["-created_at"]

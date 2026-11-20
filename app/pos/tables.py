@@ -260,6 +260,45 @@ def close(tab, order_uid, by):
 
 
 @transaction.atomic
+def pay_part(tab, order_uid, picks, by):
+    """«تقسيم الحساب» by lines (1.24): one part of the bill was paid as its own sale `order_uid`; its lines (or part of a line's
+    quantity) leave the bill. The table closes when nothing is left. The same part sent twice changes nothing."""
+    tab = TableTab.objects.select_for_update().get(pk=tab.pk)
+    uid = str(order_uid)[:60]
+    if any(x.get("part") == uid for x in tab.log):
+        return tab
+    if tab.state != "open":
+        raise ValidationError("الحساب مغلق بالفعل")
+    take = {}
+    for p in picks or []:
+        try:
+            lid, q = int(p.get("id")), _d(p.get("qty"), "الكمية")
+        except (TypeError, ValueError, AttributeError):
+            raise ValidationError("سطر غير صحيح")
+        take[lid] = take.get(lid, Decimal(0)) + q
+    if not take:
+        raise ValidationError("اختر أصناف هذا الجزء")
+    names = []
+    for lid, q in take.items():
+        ln = next((x for x in tab.lines if x["id"] == lid), None)
+        have = Decimal(ln["qty"]) if ln else Decimal(0)
+        if not ln or q <= 0 or q > have:
+            raise ValidationError("أصناف الجزء لا تطابق حساب الترابيزة — حدّث الشاشة")
+        names.append(f"{q.normalize():f} × {ln['name']}")
+        if q == have:
+            tab.lines = [x for x in tab.lines if x["id"] != lid]
+        else:
+            ln["qty"] = str(have - q)
+    tab.log = tab.log + [dict(at=timezone.now().isoformat(), by=str(by)[:60], part=uid, what=f"دفع جزء من الحساب بالفاتورة {uid}: " + "، ".join(names)[:300])]
+    fields = ["lines", "log"]
+    if not tab.lines:
+        tab.state, tab.closed_at, tab.closed_by, tab.order_uid = "paid", timezone.now(), str(by)[:100], uid
+        fields += ["state", "closed_at", "closed_by", "order_uid"]
+    tab.save(update_fields=fields)
+    return tab
+
+
+@transaction.atomic
 def void(tab, by, reason=""):
     tab = TableTab.objects.select_for_update().get(pk=tab.pk)
     if tab.state != "open":
@@ -286,10 +325,10 @@ def claim_prints():
     return out
 
 
-def kitchen_rows(table_name, lines, note="", who=""):
+def kitchen_rows(table_name, lines, note="", who="", station=None):
     """The kitchen printer's rows (pos.kitchen.print_lines format) for a batch of a table."""
     t = timezone.localtime()
-    out = [("طلب للمطبخ", 12, True, "c"), (str(table_name)[:30], 26, True, "c"), (f"{t:%H:%M} — {who}".strip(" —"), 10, False, "c"), ("-", 0, False, "c")]
+    out = [(f"طلب للمطبخ — {station}" if station else "طلب للمطبخ", 12, True, "c"), (str(table_name)[:30], 26, True, "c"), (f"{t:%H:%M} — {who}".strip(" —"), 10, False, "c"), ("-", 0, False, "c")]
     for ln in lines:
         q = Decimal(ln["qty"])
         out.append((f"{q.normalize():f} × {ln['name'][:60]}", 14, True, "r"))
@@ -303,9 +342,17 @@ def kitchen_rows(table_name, lines, note="", who=""):
     return out
 
 
+def print_batch(table_name, lines, note="", who=""):
+    """A batch on the kitchen printer(s): each kitchen station prints only its lines (1.24; one station = one ticket)."""
+    from . import kitchen
+    from .restaurant import printer_of, route
+
+    s = CompanySettings.get()
+    for st, ls in route(lines, lambda ln: ln.get("cat", "")):
+        kitchen.print_lines(printer_of(st, s), kitchen_rows(table_name, ls, note, who, st["name"] if st else None))
+
+
 def print_on_kitchen(tab, n):
     """Customer order with «طابعة المطبخ»: the computer the program runs on prints it right away."""
-    from . import kitchen
-
     b = next((b for b in tab.batches if b["n"] == n), {})
-    kitchen.print_lines(CompanySettings.get().kitchen_printer, kitchen_rows(tab.table.name, batch_lines(tab, n), b.get("note", ""), "طلب الزبون من QR"))
+    print_batch(tab.table.name, batch_lines(tab, n), b.get("note", ""), "طلب الزبون من QR")

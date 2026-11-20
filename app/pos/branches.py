@@ -37,6 +37,7 @@ TEMPLATES = {
     "accountant": ("محاسب", ["money", "reports", "partners", "purchases", "close"]),
     "reception": ("استقبال (العيادة)", ["sell"]),  # books, takes the money, attaches results — clinic group «استقبال»
     "doctor": ("دكتور (العيادة)", []),  # his own «شاشة الدكتور»: his queue, the visit, the patient's file — clinic group «دكتور»
+    "waiter": ("ويتر / كابتن", []),  # tables only: opens tables, adds items, kitchen, pre-bill — never takes money (group «ويتر»)
     "custom": ("مسمى خاص (اختار الصلاحيات)", []),
 }
 CAP_PERMS = {
@@ -57,11 +58,17 @@ CAP_PERMS = {
 }
 OWNER_GROUP, CASHIER_GROUP = "مدير المحل", "كاشير"
 CLINIC_ONLY = ("reception", "doctor")
+TABLES_ONLY = ("waiter",)
+WAITER_GROUP = "ويتر"
 
 
 def templates_for(business):
-    """The role templates offered for this business (the clinic's reception / doctor only in a clinic)."""
-    return {k: v for k, v in TEMPLATES.items() if business == "clinic" or k not in CLINIC_ONLY}
+    """The role templates offered for this business (the clinic's reception / doctor only in a clinic, the waiter only where
+    there are tables)."""
+    from .tables import TABLE_BIZ
+
+    return {k: v for k, v in TEMPLATES.items()
+            if (business == "clinic" or k not in CLINIC_ONLY) and (business in TABLE_BIZ or k not in TABLES_ONLY)}
 
 
 def staff_of(user):
@@ -146,7 +153,7 @@ def apply_staff(user, role, caps=None, branch=None, title="", email="", phone=""
         user.groups.add(cash_g)
     else:
         user.groups.remove(cash_g)
-    for r, gname in (("reception", "استقبال"), ("doctor", "دكتور")):  # the clinic pages check these groups
+    for r, gname in (("reception", "استقبال"), ("doctor", "دكتور"), ("waiter", WAITER_GROUP)):  # the clinic pages check these groups
         g, _ = Group.objects.get_or_create(name=gname)
         (user.groups.add if role == r else user.groups.remove)(g)
     return st

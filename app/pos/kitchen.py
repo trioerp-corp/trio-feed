@@ -8,8 +8,9 @@ from ctypes import wintypes
 IS_WIN = sys.platform == "win32"
 
 
-def lines(o, cashier=""):
-    """The ticket as [(text, size_pt, bold, align)] — align: "c" centre, "r" right; ("-", …) = a rule."""
+def lines(o, cashier="", station=None, keep=None):
+    """The ticket as [(text, size_pt, bold, align)] — align: "c" centre, "r" right; ("-", …) = a rule.
+    station: the kitchen station's name on top (1.24); keep: indexes of the main lines this station prints (None = all)."""
     import datetime as dt
 
     from django.utils.dateparse import parse_datetime
@@ -19,11 +20,17 @@ def lines(o, cashier=""):
 
     if timezone.is_aware(t):
         t = timezone.localtime(t)
-    out = [("طلب للمطبخ", 12, True, "c"), (f"رقم {o.get('shift_seq') or ''}", 26, True, "c"),
+    dl = o.get("delivery") if isinstance(o.get("delivery"), dict) else None
+    where = str(o["table"])[:40] if o.get("table") else ("دليفري" if dl else ("تيك أواي" if o.get("away") else ""))  # «away»: the till has tables on
+    out = [(f"طلب للمطبخ — {station}" if station else "طلب للمطبخ", 12, True, "c"), (f"رقم {o.get('shift_seq') or ''}", 26, True, "c"),
+           *([(where, 18, True, "c")] if where else []),
+           *([(f"العنوان: {str(dl.get('address') or '')[:120]}", 12, True, "r")] if dl and dl.get("address") else []),
            (f"{t:%H:%M} — {cashier or ''}".strip(" —"), 10, False, "c"), ("-", 0, False, "c")]
+    from .restaurant import is_extra
+
     ls = o.get("lines") or []
     for ix, ln in enumerate(ls):
-        if ln.get("of") is not None:
+        if ln.get("of") is not None or is_extra(ln.get("item_code")) or (keep is not None and ix not in keep):
             continue
         q = ln.get("shown_qty", ln.get("qty"))
         q = int(float(q)) if float(q or 0) == int(float(q or 0)) else q
@@ -123,11 +130,24 @@ def print_lines(printer, rows, title="Trio kitchen"):
         g.DeleteDC(hdc)
 
 
+def order_parts(o):
+    """[(station or None, set of main-line indexes)] — each kitchen station gets only its lines (1.24)."""
+    from .restaurant import is_extra, item_cats, route
+
+    ls = o.get("lines") or []
+    main = [ix for ix, ln in enumerate(ls) if ln.get("of") is None and not is_extra(ln.get("item_code"))]
+    cats = item_cats({str(ls[ix].get("item_code")) for ix in main if not ls[ix].get("cat")})
+    return [(st, set(ixs)) for st, ixs in route(main, lambda ix: ls[ix].get("cat") or cats.get(str(ls[ix].get("item_code")), ""))]
+
+
 def print_order(o, cashier=""):
     from core.models import CompanySettings
 
+    from .restaurant import printer_of
+
     s = CompanySettings.get()
-    print_lines(s.kitchen_printer, lines(o, cashier))
+    for st, keep in order_parts(o) or [(None, None)]:
+        print_lines(printer_of(st, s), lines(o, cashier, st["name"] if st else None, keep))
 
 
 def test_page():

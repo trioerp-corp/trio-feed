@@ -1,6 +1,6 @@
 {% extends "base.html" %}{% block title %}فاتورة مشتريات{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>فاتورة مشتريات</h1><p class="muted" style="margin:0">تدخل البضاعة المخزن بسعر الشراء — والدفع: نقدًا، أو آجلًا على المورد، أو جزء نقدًا والباقي آجل.</p></div></div>
+<div class="page-head"><div><h1>فاتورة مشتريات</h1><p class="muted" style="margin:0">تدخل البضاعة المخزن بسعر الشراء — والدفع: نقدًا، أو آجلًا على المورد، أو جزء نقدًا والباقي آجل، أو من صاحب المحل من جيبه.</p></div></div>
 <form method="post" id="pf">{% csrf_token %}
 <div class="card form-grid" style="margin-bottom:16px">
 <label class="field">المورد<select name="supplier"><option value="">— اختر —</option>{% for s in suppliers %}<option value="{{ s.pk }}" {% if p.supplier == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>{% endfor %}</select></label>
@@ -14,18 +14,20 @@
 <datalist id="itemlist">{% for i in items %}<option value="{{ i.name }} | {{ i.code }}"></option>{% endfor %}</datalist>
 <div class="scroll"><table class="lines-table"><thead><tr><th style="min-width:240px">الصنف</th><th>الكمية</th>{% if 'units' in mods %}<th>في الوحدة<br><small class="muted">1 أو 12 للكرتونة</small></th>{% endif %}<th>سعر الشراء للوحدة</th><th>تاريخ الإنتاج</th><th>تاريخ الانتهاء</th><th class="n">الإجمالي</th><th></th></tr></thead><tbody id="rows"></tbody>
 <tfoot><tr><td colspan="{% if 'units' in mods %}6{% else %}5{% endif %}"><button type="button" class="light" id="addRow">+ صنف</button></td><td class="n"><b id="grand">0.00</b></td><td></td></tr></tfoot></table></div>
-<p class="muted" style="font-size:13px;margin:8px 0 0">تاريخا الإنتاج والانتهاء اختياريان — إن كُتب تاريخ الانتهاء نبّهك البرنامج قبله لتبيع هذا الصنف أولًا.</p></div>
+<p class="muted" style="font-size:13px;margin:8px 0 0">صنف تشتريه لأول مرة؟ اكتب اسمه في السطر ويُضاف إلى الأصناف عند الحفظ. تاريخا الإنتاج والانتهاء اختياريان — إن كُتب تاريخ الانتهاء نبّهك البرنامج قبله لتبيع هذا الصنف أولًا.</p></div>
 
 <div class="card" style="margin-bottom:16px"><h2>الدفع</h2>
 <div class="seg paysel" role="radiogroup" aria-label="طريقة الدفع">
-<label><input type="radio" name="pay" value="credit" {% if p.pay != 'cash' and p.pay != 'split' %}checked{% endif %}> آجل على المورد</label>
+<label><input type="radio" name="pay" value="credit" {% if p.pay != 'cash' and p.pay != 'split' and p.pay != 'owner' %}checked{% endif %}> آجل على المورد</label>
 <label><input type="radio" name="pay" value="cash" {% if p.pay == 'cash' %}checked{% endif %}> نقدًا بالكامل</label>
-<label><input type="radio" name="pay" value="split" {% if p.pay == 'split' %}checked{% endif %}> جزء نقدًا والباقي آجل</label></div>
+<label><input type="radio" name="pay" value="split" {% if p.pay == 'split' %}checked{% endif %}> جزء نقدًا والباقي آجل</label>
+<label><input type="radio" name="pay" value="owner" {% if p.pay == 'owner' %}checked{% endif %}> من صاحب المحل (من جيبه)</label></div>
+<p class="muted" data-pay="owner" style="font-size:13px;margin:8px 0 0">دفعت الفاتورة من مالك الخاص: لا يُخصم شيء من الدرج، ويُسجَّل المبلغ لك في «رصيد صاحب المحل» لتسترده من الخزينة لاحقًا.</p>
 <div class="form-grid" style="margin-top:12px">
 <label class="field" data-pay="cash split">من خزينة<select name="cashbox">{% for b in boxes %}<option value="{{ b.pk }}" {% if p.cashbox == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select></label>
 <label class="field" data-pay="split">المدفوع نقدًا الآن<input name="paid" inputmode="decimal" value="{{ p.paid }}" placeholder="0.00"></label>
 </div>
-<div class="paysum"><div><span>إجمالي الفاتورة</span><b id="sTotal">0.00</b></div><div><span>مدفوع نقدًا</span><b id="sPaid">0.00</b></div><div class="gold"><span>الباقي آجل على المورد</span><b id="sRest">0.00</b></div></div>
+<div class="paysum"><div><span>إجمالي الفاتورة</span><b id="sTotal">0.00</b></div><div><span id="sPaidL">مدفوع نقدًا</span><b id="sPaid">0.00</b></div><div class="gold"><span>الباقي آجل على المورد</span><b id="sRest">0.00</b></div></div>
 </div>
 <div class="actions"><button>حفظ الفاتورة</button><a class="btn light" href="{% url 'shop_purchases' %}">رجوع</a></div></form>
 {{ old_lines|json_script:"oldlines" }}
@@ -35,18 +37,18 @@ const names=Object.fromEntries(Object.entries(items).map(([k,v])=>[v,k]));
 const UNITS={{ units_on|yesno:"true,false" }};
 function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function row(o){o=o||{};const tr=document.createElement('tr');
-tr.innerHTML='<td><input list="itemlist" placeholder="اكتب اسم الصنف أو الكود" style="width:100%" value="'+esc(names[o.item]||'')+'"><input type="hidden" name="item" value="'+esc(o.item||'')+'">'+(UNITS?'':'<input type="hidden" name="factor" value="1">')+'</td>'
+tr.innerHTML='<td><input list="itemlist" name="item_text" placeholder="اكتب اسم الصنف أو الكود" style="width:100%" value="'+esc(names[o.item]||o.text||'')+'"><small class="muted newit" style="display:none">صنف جديد — سيُضاف عند الحفظ</small><input type="hidden" name="item" value="'+esc(o.item||'')+'">'+(UNITS?'':'<input type="hidden" name="factor" value="1">')+'</td>'
 +'<td><input name="qty" inputmode="decimal" value="'+esc(o.qty||'')+'"></td>'+(UNITS?'<td><input name="factor" inputmode="decimal" value="'+esc(o.factor||1)+'" style="width:70px"></td>':'')
 +'<td><input name="cost" inputmode="decimal" value="'+esc(o.cost||'')+'"></td><td><input type="date" name="produced" value="'+esc(o.produced||'')+'"></td><td><input type="date" name="expiry" value="'+esc(o.expiry||'')+'"></td><td class="n tot">0.00</td>'
 +'<td><button type="button" class="light del" title="احذف السطر" aria-label="احذف السطر">✕</button></td>';
-const [t,h]=tr.querySelectorAll('td:first-child input');t.onchange=()=>{h.value=items[t.value]||'';t.style.borderColor=h.value?'':'#B42318'};
+const [t,h]=tr.querySelectorAll('td:first-child input'),nw=tr.querySelector('.newit');t.onchange=()=>{h.value=items[t.value]||'';const isNew=!h.value&&t.value.trim().length>1;t.style.borderColor=isNew?'#B7791F':'';nw.style.display=isNew?'':'none'};if(o.text&&!o.item)t.onchange();
 tr.querySelectorAll('input[name=qty],input[name=cost]').forEach(i=>i.oninput=calc);tr.querySelector('.del').onclick=()=>{tr.remove();calc()};
 document.getElementById('rows').appendChild(tr)}
 const n2=v=>+String(v||'').replace(',','.')||0;
 function calc(){let g=0;document.querySelectorAll('#rows tr').forEach(tr=>{const q=n2(tr.querySelector('[name=qty]').value),c=n2(tr.querySelector('[name=cost]').value);tr.querySelector('.tot').textContent=(q*c).toFixed(2);g+=q*c});
 document.getElementById('grand').textContent=g.toFixed(2);const pay=(document.querySelector('input[name=pay]:checked')||{}).value;
-let paid=pay==='cash'?g:pay==='split'?Math.min(g,n2(document.querySelector('[name=paid]').value)):0;
-sTotal.textContent=g.toFixed(2);sPaid.textContent=paid.toFixed(2);sRest.textContent=(g-paid).toFixed(2)}
+let paid=pay==='cash'||pay==='owner'?g:pay==='split'?Math.min(g,n2(document.querySelector('[name=paid]').value)):0;
+sPaidL.textContent=pay==='owner'?'دفعها صاحب المحل':'مدفوع نقدًا';sTotal.textContent=g.toFixed(2);sPaid.textContent=paid.toFixed(2);sRest.textContent=(g-paid).toFixed(2)}
 function payShow(){const pay=(document.querySelector('input[name=pay]:checked')||{}).value;
 document.querySelectorAll('[data-pay]').forEach(l=>{const on=l.dataset.pay.split(' ').includes(pay);l.style.display=on?'':'none';l.querySelectorAll('input,select').forEach(i=>i.disabled=!on)});
 document.querySelectorAll('.paysel label').forEach(l=>l.classList.toggle('on',l.querySelector('input').checked));calc()}

@@ -12,7 +12,7 @@ class Station(models.Model):
     kind = models.CharField("النوع", max_length=10, choices=KINDS, default="ps5")
     rate = models.DecimalField("سعر الساعة (فردي)", max_digits=10, decimal_places=2)
     rate_multi = models.DecimalField("سعر الساعة (مالتي / زوجي)", max_digits=10, decimal_places=2, null=True, blank=True,
-                                     help_text="متاح = نفس السعر")
+                                     help_text="اتركه فارغًا إذا كان السعر واحدًا")
     order = models.PositiveSmallIntegerField("الترتيب", default=0)
     active = models.BooleanField("شغال", default=True)
 
@@ -31,7 +31,7 @@ class Station(models.Model):
 class PlaySession(models.Model):
     STATES = [("open", "شغال"), ("closed", "حُوسب"), ("void", "ملغي")]
     station = models.ForeignKey(Station, null=True, blank=True, on_delete=models.PROTECT, related_name="sessions", verbose_name="الجهاز",
-                                help_text="متاح = طلب تيك أواي / بوفيه بدون جهاز")
+                                help_text="فارغ = طلب تيك أواي / بوفيه بدون جهاز")
     customer = models.CharField("اسم العميل", max_length=80, blank=True)
     opened_at = models.DateTimeField("بدأ")
     closed_at = models.DateTimeField("أُغلق", null=True, blank=True)
@@ -47,6 +47,8 @@ class PlaySession(models.Model):
     total = models.DecimalField("الإجمالي", max_digits=12, decimal_places=2, default=0)
     order = models.OneToOneField("pos.Order", null=True, blank=True, on_delete=models.PROTECT, related_name="play_session")
     note = models.CharField("ملاحظة", max_length=200, blank=True)
+    daily_no = models.PositiveSmallIntegerField("رقم الطلب اليوم", null=True, blank=True)
+    discount_by = models.CharField("وافق على الخصم", max_length=100, blank=True)
 
     class Meta:
         verbose_name = "جلسة لعب"
@@ -81,3 +83,18 @@ class PlayItem(models.Model):
 
     class Meta:
         ordering = ["added_at", "id"]
+
+
+class HallSettings(models.Model):
+    """The owner's rules for the hall worker (one row)."""
+
+    max_discount_pct = models.DecimalField("أقصى خصم للعامل بدون صاحب المحل (%)", max_digits=5, decimal_places=2, default=Decimal("10"),
+                                           help_text="خصم أكبر من هذه النسبة من الحساب يحتاج إلى اسم صاحب المحل وكلمة سره")
+
+    class Meta:
+        verbose_name = "إعدادات الصالة"
+        verbose_name_plural = "إعدادات الصالة"
+
+    @classmethod
+    def get(cls):
+        return cls.objects.order_by("pk").first() or cls.objects.create()

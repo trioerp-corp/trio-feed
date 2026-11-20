@@ -127,7 +127,7 @@ def snapshot(now=None):
     low = [i for i in Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name") if i.qty_on_hand <= i.reorder_level]
     exp = expiring(14)
     recent = [dict(n=(o.shift_seq or o.pk), t=timezone.localtime(o.created_at_device).strftime("%H:%M"), v=_f(o.total),
-                   pay="آجل" if o.paid_credit else ("بطاقة" if o.paid_card and not o.paid_cash else "نقدي"), r=o.is_return, x=o.cancelled,
+                   pay="آجل" if o.paid_credit else "مع الطيار" if o.paid_rider else ("بطاقة" if o.paid_card and not o.paid_cash else "نقدي"), r=o.is_return, x=o.cancelled,
                    d=o.device.name if o.device_id else "")
               for o in sorted(orders, key=lambda o: o.created_at_device, reverse=True)[:12]]
     shifts = [dict(c=sh.cashier, at=timezone.localtime(sh.opened_at).strftime("%H:%M"), d=sh.device.name)
@@ -157,9 +157,42 @@ def snapshot(now=None):
         data["play"] = [dict(n=p.station.name if p.station_id else "تيك أواي", at=timezone.localtime(p.opened_at).strftime("%H:%M"),
                              m=int((now - p.opened_at).total_seconds() // 60))
                         for p in PlaySession.objects.filter(state="open").select_related("station")[:20]]
+        from django.db.models import Sum as _S
+
+        closed = PlaySession.objects.filter(state="closed", closed_at__date=today)
+        disc = closed.filter(discount__gt=0)
+        data["hall"] = dict(disc=_f(disc.aggregate(s=_S("discount"))["s"]), disc_n=disc.count(),
+                            void=PlaySession.objects.filter(state="void", closed_at__date=today).count())
+    if s.business == "clinic":
+        try:
+            data["clinic"] = _clinic(today)
+        except Exception:  # noqa: BLE001 — the phone summary never fails because of one part
+            pass
     if s.owner_whatsapp:
         data["wa"] = "".join(ch for ch in s.owner_whatsapp if ch.isdigit())
     return data
+
+
+def _clinic(today):
+    """The clinic on the owner's phone: today's visits and queue, no-shows, each doctor's share, what the insurers owe."""
+    from django.db.models import Sum
+
+    from pos.clinic import services as C
+    from pos.clinic.models import Appointment, Doctor, InsuranceCompany, Visit
+
+    t = C.today_summary(today)
+    appts = Appointment.objects.filter(date=today)
+    docs = []
+    for d in Doctor.objects.filter(active=True):
+        paid = Visit.objects.filter(doctor=d, state="paid", opened_at__date=today)
+        n = paid.count()
+        if n or appts.filter(doctor=d, state__in=["waiting", "inside"]).exists():
+            docs.append(dict(n=str(d), v=n, s=_f(paid.aggregate(s=Sum("doctor_share"))["s"]),
+                             w=appts.filter(doctor=d, state="waiting").count()))
+    ins = [(i.name, C._balance(i.partner)) for i in InsuranceCompany.objects.filter(partner__isnull=False).select_related("partner")]
+    return dict(visits=t["visits"], revenue=_f(t["revenue"]), shares=_f(t["shares"]), waiting=t["waiting"], inside=t["inside"],
+                booked=t["booked"], noshow=appts.filter(state="noshow").count(), docs=docs[:12],
+                ins=_f(sum((b for _, b in ins), Decimal(0))), ins_list=[dict(n=n, v=_f(b)) for n, b in ins if b][:10])
 
 
 # ---------------------------------------------------------------- sending it

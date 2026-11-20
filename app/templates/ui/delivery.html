@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% block title %}الدليفري{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🛵 الدليفري</h1><p class="muted" style="margin:0">يُسجَّل طلب الدليفري في شاشة الكاشير كأي فاتورة، ويبقى مبلغه «مع الطيار» حتى يسلّمه في الدرج فيضغط الكاشير «تم التحصيل».</p></div>
+<div class="actions"><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
+
+<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));align-items:start;margin-bottom:16px">
+{% if owner %}<form method="post" class="card">{% csrf_token %}
+<h2 style="margin:0 0 10px">⚙️ الإعدادات</h2>
+<label class="field check"><input type="checkbox" name="on" value="1"{% if raw.on %} checked{% endif %}> طلبات الدليفري تعمل في شاشة الكاشير</label>
+<label class="field">رسم التوصيل الافتراضي (ج.م)<input name="fee" inputmode="decimal" value="{{ raw.fee|default:'0' }}"></label>
+<p class="muted" style="margin:0 0 8px">يظهر في الطلب ويمكن للكاشير تعديله؛ الطلب الذي يقل رسمه عن ذلك يظهر للمراجعة.</p>
+<label class="field">الطيارون (اسم في كل سطر)<textarea name="riders" rows="4" placeholder="محمد&#10;كريم">{{ riders_text }}</textarea></label>
+{% if employees %}<p class="muted" style="margin:0 0 8px">لم تُكتب أسماء: تظهر أسماء الموظفين ({{ employees|join:"، " }}).</p>{% endif %}
+<button>حفظ</button></form>{% endif %}
+
+<div class="card"><h2 style="margin:0 0 10px">📌 الآن</h2>
+<p style="margin:0 0 6px">طلبات مع الطيارين لم تُحصَّل: <b>{{ open_n }}</b></p>
+<p class="muted" style="margin:0">تظهر أيضًا في شاشة الكاشير «🛵 طلبات الدليفري» وفي تقرير قفل الوردية.</p></div></div>
+
+<div class="card" style="margin-bottom:16px">
+<form method="get" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px"><h2 style="margin:0 0 0 auto">📊 الدليفري حسب الطيار</h2>
+<label class="field" style="margin:0">من<input type="date" name="from" value="{{ start|date:'Y-m-d' }}"></label>
+<label class="field" style="margin:0">إلى<input type="date" name="to" value="{{ end|date:'Y-m-d' }}"></label><button class="light">عرض</button></form>
+{% if rows %}<div class="table-wrap"><table><thead><tr><th>الطيار</th><th class="n">الطلبات</th><th class="n">الإجمالي</th><th class="n">رسوم التوصيل</th><th class="n">تم التحصيل</th><th class="n">لم يُحصَّل</th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.rider }}</b></td><td class="n">{{ r.n }}</td><td class="n">{{ r.total|floatformat:2 }}</td><td class="n">{{ r.fees|floatformat:2 }}</td><td class="n">{{ r.got|floatformat:2 }}</td><td class="n">{% if r.out %}<b style="color:#C62828">{{ r.out|floatformat:2 }}</b>{% else %}0.00{% endif %}</td></tr>{% endfor %}
+<tr style="font-weight:800"><td>الإجمالي</td><td class="n">{{ tot.n }}</td><td class="n">{{ tot.total|floatformat:2 }}</td><td class="n">{{ tot.fees|floatformat:2 }}</td><td class="n">{{ tot.got|floatformat:2 }}</td><td class="n">{{ tot.out|floatformat:2 }}</td></tr></tbody></table></div>
+{% else %}<p class="muted">لا توجد طلبات دليفري في هذه الفترة.</p>{% endif %}</div>
+
+{% if orders %}<div class="card"><h2 style="margin:0 0 10px">🧾 الطلبات</h2><div class="table-wrap"><table><thead><tr><th>الوقت</th><th>الفاتورة</th><th>العميل</th><th>العنوان</th><th>الطيار</th><th class="n">الإجمالي</th><th>الحالة</th></tr></thead><tbody>
+{% for d in orders %}<tr><td>{{ d.created_at|date:"d/m H:i" }}</td><td dir="ltr" style="text-align:right">{{ d.order.uid }}</td><td>{{ d.name|default:"—" }}{% if d.phone %}<br><small dir="ltr">{{ d.phone }}</small>{% endif %}</td><td>{{ d.address|default:"—" }}</td><td>{{ d.rider|default:"—" }}</td><td class="n">{{ d.order.total|floatformat:2 }}</td>
+<td>{% if d.state == "out" %}<span class="pill warn">مع الطيار</span>{% else %}<span class="pill">تم التحصيل{% if d.collected_at %} {{ d.collected_at|time:"H:i" }}{% endif %}</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+{% endblock %}

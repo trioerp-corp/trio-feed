@@ -1,15 +1,15 @@
-{% extends "base.html" %}{% load gg l10n %}{% block title %}تقفيل اليوم{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load gg l10n %}{% block title %}تقفيل اليوم{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>تقفيل يوم {{ day|date:"l d/m/Y" }}</h1><p class="muted" style="margin:0">يُقفل الكاشير كل وردية (مرتين في اليوم)، ثم يراجع مدير النظام ويُقفل اليوم نهائيًا.</p></div>
 <form method="get" class="actions">{% if company.report_whatsapp %}<a class="btn light" href="{{ wa }}" target="_blank" rel="noopener">📲 الملخص على واتساب</a>{% endif %}<input type="date" name="date" value="{{ day|date:'Y-m-d' }}"><button class="light">عرض</button></form></div>
 {% if closed %}<div class="msg">هذا اليوم مُقفل نهائيًا ✓</div>{% endif %}
-{% if unverified %}<div class="msg error">{{ unverified|length }} وردية فُتحت دون تأكيد كلمة سر الكاشير (كان الخادم غير متاح) — راجعها.</div>{% endif %}
-<section class="grid" style="margin-bottom:16px"><div class="card kpi hero"><span class="k">صافي مبيعات اليوم</span><span class="v">{{ t.net|money:0 }}</span><span class="k">{{ t.n }} فاتورة</span></div>
+{% if unverified %}<div class="msg error">{{ unverified|length|count:"وردية" }} فُتحت دون تأكيد كلمة سر الكاشير (كان الخادم غير متاح) — راجعها.</div>{% endif %}
+<section class="grid" style="margin-bottom:16px"><div class="card kpi hero"><span class="k">صافي مبيعات اليوم</span><span class="v">{{ t.net|money:0 }}</span><span class="k">{{ t.n|count:"فاتورة" }}</span></div>
 <div class="card kpi"><span class="k">نقدي</span><span class="v">{{ t.cash|money:0 }}</span></div><div class="card kpi"><span class="k">بطاقات / محافظ</span><span class="v">{{ t.card|money:0 }}</span></div>
 <div class="card kpi"><span class="k">آجل</span><span class="v">{{ t.credit|money:0 }}</span></div></section>
-<h2>الورديات</h2><div class="table-wrap" style="margin-bottom:16px"><table><thead><tr><th>الجهاز</th><th>الكاشير</th><th>الفتح</th><th>القفل</th><th class="n">رصيد الفتح</th><th class="n">المتوقع</th><th class="n">الفعلي</th><th class="n">الفرق</th></tr></thead><tbody>
-{% for s in shifts %}<tr><td>{{ s.device.name }}</td><td>{{ s.cashier }}{% if not s.verified %} <span class="badge red">بدون تأكيد</span>{% endif %}</td><td>{{ s.opened_at|date:"H:i" }}</td><td>{% if s.closed_at %}{{ s.closed_at|date:"H:i" }}{% else %}<span class="badge gold">مفتوحة</span>{% endif %}</td>
-<td class="n">{{ s.opening_float|money }}</td><td class="n">{{ s.expected_cash|default_if_none:""|money }}</td><td class="n">{{ s.counted_cash|default_if_none:""|money }}</td><td class="n">{% if s.closed_at %}{{ s.counted_cash|sub:s.expected_cash|money }}{% endif %}</td></tr>
+<h2>الورديات</h2><div class="table-wrap" style="margin-bottom:16px"><table class="stack"><thead><tr><th>الجهاز</th><th>الكاشير</th><th>الفتح</th><th>القفل</th><th class="n">رصيد الفتح</th><th class="n">المتوقع</th><th class="n">الفعلي</th><th class="n">الفرق</th></tr></thead><tbody>
+{% for s in shifts %}<tr><td data-label="الجهاز">{{ s.device.name }}</td><td data-label="الكاشير">{{ s.cashier }}{% if not s.verified %} <span class="badge red">بدون تأكيد</span>{% endif %}</td><td data-label="الفتح">{{ s.opened_at|date:"H:i" }}</td><td data-label="القفل">{% if s.closed_at %}{{ s.closed_at|date:"H:i" }}{% else %}<span class="badge gold">مفتوحة</span>{% endif %}</td>
+<td class="n" data-label="رصيد الفتح">{{ s.opening_float|money }}</td><td class="n" data-label="المتوقع">{{ s.expected_cash|default_if_none:""|money }}</td><td class="n" data-label="الفعلي">{{ s.counted_cash|default_if_none:""|money }}</td><td class="n" data-label="الفرق"><b>{% if s.closed_at %}{{ s.counted_cash|sub:s.expected_cash|money }}{% else %}—{% endif %}</b></td></tr>
 {% empty %}<tr><td colspan="8" class="muted">لا توجد ورديات في هذا اليوم</td></tr>{% endfor %}</tbody></table></div>
 <div class="split"><div class="main"><h2>أرصدة النقدية والمحافظ آخر اليوم</h2><div class="table-wrap"><table><tbody>{% for b, bal in wallets %}<tr><td>{{ b.name }}</td><td class="n"><b>{{ bal|money }}</b></td></tr>{% endfor %}</tbody></table></div></div>
 <div class="side">{% if not closed %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="date" value="{{ day|date:'Y-m-d' }}"><h2>التقفيل النهائي</h2>

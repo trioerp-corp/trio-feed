@@ -151,8 +151,10 @@ def items_rows():
 
 
 def run_items(rows, commit, opts):
+    from inventory import names as NM
+
     errs, made, upd = [], 0, 0
-    codes_in_file = {}
+    codes_in_file, names_in_file, idx = {}, {}, NM.index()
     for r in rows:
         try:
             name = text(r.get("name"))
@@ -176,6 +178,13 @@ def run_items(rows, commit, opts):
                 if other and (not code or other.code != code) and norm(other.name) != norm(name):
                     raise ValueError(f"الباركود {bc} متسجل على «{other.name}»")
             it = Item.objects.filter(code=code).first() if code else find_item("", name)
+            key = NM.norm(name)
+            if key in names_in_file:
+                raise ValueError(f"الاسم «{name}» مكرر في الملف (سطر {names_in_file[key]}) — لكل صنف اسم واحد")
+            names_in_file[key] = r["rown"]
+            twin = idx.get(key)
+            if twin and (not it or twin[0] != it.pk):
+                raise ValueError(f"يوجد صنف آخر باسم «{twin[1]}» — اكتب كوده في عمود الكود لتعديله، أو اكتب اسمًا يميّزه")
             if reorder is None and (not it or (it.item_type == "stock" and it.reorder_level is None)):
                 raise ValueError("اكتب «حد الطلب» للصنف (أقل كمية تريد إعادة الشراء عندها) — 0 إن لم ترد تنبيهًا")
             if reorder is not None and reorder < 0:
@@ -342,7 +351,7 @@ def run_recipes(rows, commit, opts):
         from inventory.recipes import costing
 
         for dish, g in recipes.items():
-            it = Item.objects.filter(name=dish).first()
+            it = Item.objects.filter(name=dish, active=True).first() or find_item("", dish)
             if not it:
                 it = Item.objects.create(code=str(next_code(3001)), name=dish[:150], category=category(g["cat"] or "مشروبات ساخنة", True), unit="واحدة",
                                          item_type="recipe")

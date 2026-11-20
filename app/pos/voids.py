@@ -140,6 +140,9 @@ def void_order(order: Order, reason, user=None):
     order.cancelled = True
     order.flags = (f"ملغية: {reason}؛ " + order.flags)[:300]
     order.save(update_fields=["cancelled", "flags"])
+    from .delivery import on_order_void
+
+    on_order_void(order)
     return order
 
 
@@ -175,14 +178,19 @@ def edit_order(order: Order, lines, reason, user=None, pay="", customer_id=None)
             rate = it.vat_rate if it.vat_rate is not None else s.default_vat_rate
             t += (t * rate / 100).quantize(Decimal("0.01"))
         total += t.quantize(Decimal("0.01"))
-    pay = pay or ("credit" if order.paid_credit else "card" if order.paid_card and not order.paid_cash else "cash")
-    data = dict(order.raw or {}, uid=f"{order.uid}-E{n}", lines=lines, paid_cash="0", paid_card="0", paid_credit="0",
+    pay = pay or ("credit" if order.paid_credit else "rider" if order.paid_rider else "card" if order.paid_card and not order.paid_cash else "cash")
+    data = dict(order.raw or {}, uid=f"{order.uid}-E{n}", lines=lines, paid_cash="0", paid_card="0", paid_credit="0", paid_rider="0",
                 created_at=order.created_at_device.isoformat(), shift_uid=order.shift.uid if order.shift_id else None,
                 is_return=order.is_return, shift_seq=order.shift_seq)
     data["paid_" + pay] = str(total)
     if pay == "credit":
         data["customer_id"] = customer_id or order.customer_id
     new, _ = ingest_order(order.device, data)
+    from .models import DeliveryOrder
+
+    old_d = DeliveryOrder.objects.filter(order=order, collect_move__isnull=False).first()
+    if old_d:  # the rider already handed the old bill's money in: the corrected bill counts as collected by the same paper
+        DeliveryOrder.objects.filter(order=new).update(state="paid", collected_at=old_d.collected_at, collect_move=old_d.collect_move)
     new.flags = (f"تعديل للفاتورة {order.uid}: {reason}؛ " + new.flags)[:300]
     new.save(update_fields=["flags"])
     audit.log("edit", new, summary=f"تعديل {order.uid} ← {new.uid}: {reason}")
@@ -202,6 +210,9 @@ def void_cash_move(mv: CashMove, reason, user=None):
     mv.cancelled = True
     mv.note = (f"ملغية: {reason} — " + mv.note)[:200]
     mv.save(update_fields=["cancelled", "note"])
+    from .delivery import on_move_void
+
+    on_move_void(mv)
     audit.log("cancel", mv, summary=f"إلغاء {mv.get_kind_display()} {mv.amount}: {reason}")
     return mv
 

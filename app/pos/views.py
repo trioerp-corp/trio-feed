@@ -1,5 +1,6 @@
 import json
 import logging
+from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -116,7 +117,46 @@ def api_cashier(request):
         TH.fail(name, f"dev{dev.pk}")
         return JsonResponse({"ok": False, "error": "اسم الكاشير أو كلمة السر غير صحيحة"}, status=403)
     TH.clear(name)
-    return JsonResponse({"ok": True, "name": u.first_name or u.username})
+    return JsonResponse({"ok": True, "name": u.first_name or u.username, "role": P.till_role(u)})
+
+
+@csrf_exempt
+def api_return_ok(request):
+    """A return at the till: the owner / manager types his name + password on the till (online), the till gets a signed
+    approval for this amount and puts it on the return; the sync refuses a return without it (pos.services.check_return)."""
+    dev, err = _device(request)
+    if err:
+        return err
+    if request.method != "POST":
+        return JsonResponse({"error": "POST فقط"}, status=405)
+    from django.contrib.auth import authenticate
+
+    from core import throttle as TH
+
+    from .voids import is_owner
+
+    b = _tables_json(request)
+    reason = str(b.get("reason") or "").strip()[:200]
+    try:
+        amount = Decimal(str(b.get("amount") or "0")).quantize(Decimal("0.01"))
+    except (InvalidOperation, ValueError):
+        amount = Decimal(-1)
+    if not reason:
+        return JsonResponse({"error": "اكتب سبب المرتجع"}, status=400)
+    if amount <= 0:
+        return JsonResponse({"error": "مبلغ المرتجع غير صحيح"}, status=400)
+    s = CompanySettings.get()
+    if s.cashier_can_edit:
+        return JsonResponse({"ok": True, "token": "", "by": ""})
+    name = str(b.get("owner") or "")[:150]
+    if TH.blocked(name, f"dev{dev.pk}"):
+        return JsonResponse({"error": TH.MSG}, status=403)
+    u = authenticate(username=name, password=str(b.get("password") or ""))
+    if not (u and u.is_active and is_owner(u)):
+        TH.fail(name, f"dev{dev.pk}")
+        return JsonResponse({"error": "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية اعتماد المرتجع"}, status=403)
+    TH.clear(name)
+    return JsonResponse({"ok": True, "token": P.return_token(dev, u, reason, amount), "by": u.first_name or u.username})
 
 
 @csrf_exempt
@@ -146,6 +186,18 @@ def api_kitchen(request):
         logging.getLogger(__name__).warning("kitchen printer: %s", e)
         return JsonResponse({"error": "تعذرت الطباعة على طابعة المطبخ"}, status=503)
     return JsonResponse({"ok": True})
+
+
+def api_delivery(request):
+    """1.24: the delivery orders still with their riders (this branch) — the till's «طلبات الدليفري» panel."""
+    dev, err = _device(request)
+    if err:
+        return err
+    from . import delivery as D
+
+    if not D.cfg()["on"]:
+        return JsonResponse({"orders": []})
+    return JsonResponse({"orders": D.open_json(dev.branch)})
 
 
 # ---------------------------------------------------------------- tables (1.23): the till asks the program, every waiter sees the same bill
@@ -186,9 +238,7 @@ def api_tables(request, tid=None, tab=None, op=None):
                 out = {"tab": T.tab_json(t), "batch": n}
                 if s.kitchen_ticket == "printer":
                     try:
-                        from . import kitchen
-
-                        kitchen.print_lines(s.kitchen_printer, T.kitchen_rows(table.name, T.batch_lines(t, n), b.get("note", ""), who))
+                        T.print_batch(table.name, T.batch_lines(t, n), b.get("note", ""), who)
                     except (RuntimeError, OSError) as e:
                         out["print_error"] = str(e)
                 return JsonResponse(out)
@@ -201,6 +251,12 @@ def api_tables(request, tid=None, tab=None, op=None):
                 return JsonResponse({"error": "رقم الفاتورة غير صحيح"}, status=400)
             T.close(t, uid, who)
             return JsonResponse({"ok": True})
+        if op == "part":  # 1.24 split bill by lines: one part paid as its own sale
+            uid = str(b.get("uid") or "")
+            if not uid.startswith(f"{dev.branch.code}-{dev.code}-"):
+                return JsonResponse({"error": "رقم الفاتورة غير صحيح"}, status=400)
+            t = T.pay_part(t, uid, b.get("lines") or [], who)
+            return JsonResponse({"tab": T.tab_json(t), "closed": t.state == "paid"})
         if op == "move":
             to = DiningTable.objects.filter(pk=b.get("to") or 0).first()
             if not to:

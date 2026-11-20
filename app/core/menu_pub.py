@@ -60,7 +60,7 @@ def data(s=None):
 
         sized = set(Item.objects.filter(variant_of__category=c, variant_of__active=True, active=True, sale_price__gt=0).values_list("variant_of_id", flat=True))
         items = Item.objects.filter(Q(sale_price__gt=0) | Q(pk__in=sized), category=c, active=True, variant_of__isnull=True, is_addon=False).exclude(
-            code="0").order_by("name")
+            code__in=["0", "PLAY"]).order_by("name")  # «وقت لعب» is the hall's time charge, never on the menu
         rows = []
         for i in items[:150]:
             r = dict(n=i.name[:80], p=float(i.sale_price or 0), d=str((i.extra or {}).get("desc", ""))[:200], c=i.code)

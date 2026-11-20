@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}جرد وتسوية مخزنية{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}جرد وتسوية مخزنية{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>جرد وتسوية مخزنية</h1><p class="muted" style="margin:0">ارفع ملف الجرد (إكسل أو CSV أو PDF) — يقارنه النظام بالرصيد الدفتري وينشئ حركة تسوية بالزيادة والعجز.</p></div>
 <div class="actions"><a class="btn light" href="{% url 'move_list' %}">حركات المخازن</a></div></div>
@@ -17,7 +17,7 @@
 <div class="table-wrap"><table><thead><tr><th>الكود</th><th>الصنف</th><th>الوحدة</th><th class="n">الدفتري</th><th class="n">الفعلي</th><th class="n">الفرق</th><th class="n">التكلفة</th></tr></thead><tbody>
 {% for r in diffs %}<tr><td>{{ r.code }}</td><td>{{ r.name }}</td><td>{{ r.unit }}</td><td class="n">{{ r.book|floatformat:-3 }}</td><td class="n">{{ r.counted|floatformat:-3 }}</td><td class="n {% if r.diff < 0 %}bad{% else %}ok{% endif %}"><b>{{ r.diff|floatformat:-3 }}</b></td><td class="n">{{ r.cost|default_if_none:"" }}</td></tr>
 {% empty %}<tr><td colspan="7" class="muted">لا توجد فروق — الرصيد الفعلي مطابق للدفتري</td></tr>{% endfor %}</tbody></table></div>
-{% if diffs %}<form method="post" style="margin-top:12px">{% csrf_token %}<div class="actions"><button name="confirm" value="1">{% if opening %}ترحيل رصيد أول المدة{% else %}ترحيل التسوية{% endif %} ({{ diffs|length }} صنف)</button></div>
+{% if diffs %}<form method="post" style="margin-top:12px">{% csrf_token %}<div class="actions"><button name="confirm" value="1">{% if opening %}ترحيل رصيد أول المدة{% else %}ترحيل التسوية{% endif %} ({{ diffs|length|count:"صنف" }})</button></div>
 <p class="muted">تُقيَّم الزيادة بمتوسط التكلفة على «إيرادات أخرى»، والعجز بمتوسط التكلفة على «أعباء وخسائر». ويمكنك تغيير الحساب لاحقًا من الحركة نفسها قبل الترحيل إن أنشأتها يدويًا.</p></form>{% endif %}
 {% endif %}
 {% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block title %}الخدمة ومحطات المطبخ{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🧑‍🍳 الخدمة ومحطات المطبخ</h1><p class="muted" style="margin:0">نسبة الخدمة على حساب الترابيزة، وتقسيم ورقة المطبخ على المطبخ والبار وغيرهما.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'shop_tables' %}">🪑 الترابيزات</a><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
+
+<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));align-items:start">
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="svc">
+<h2 style="margin:0 0 10px">💁 نسبة الخدمة</h2>
+<label class="field">النسبة % (اتركها صفرًا لإيقافها)<input name="pct" inputmode="decimal" value="{{ raw.pct|default:'0' }}" placeholder="12"></label>
+<label class="field check"><input type="checkbox" name="dine" value="1"{% if raw.dine %} checked{% endif %}> تُضاف أيضًا على الطلبات بدون ترابيزة حين يكون نظام الترابيزات متوقفًا (الأكل في المكان)</label>
+<p class="muted" style="margin:0 0 8px">تُضاف تلقائيًا على حساب الترابيزة سطرًا مستقلًا «{% if svc.on %}{{ svc.name }}{% else %}خدمة 12%{% endif %}» على الفاتورة، وتُسجَّل إيرادَ خدمات. لا تُضاف على التيك أواي ولا الدليفري.</p>
+<button>حفظ</button></form>
+
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="st"><input type="hidden" name="n" value="{{ rows|length }}">
+<h2 style="margin:0 0 6px">🍳 محطات المطبخ</h2>
+<p class="muted" style="margin:0 0 10px">ورقة المطبخ الآن: <b>{{ kitchen }}</b>. مع محطتين أو أكثر تطبع كل محطة أصنافها فقط؛ القسم الذي لم يُحدَّد لمحطة يذهب إلى المحطة الأولى. بدون محطات تُطبع ورقة واحدة كما هي.</p>
+{% for r in rows %}<fieldset style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 10px">
+<div class="form-grid" style="grid-template-columns:1fr 1fr">
+<label class="field">اسم المحطة<input name="name{{ forloop.counter0 }}" value="{{ r.name }}" maxlength="40" placeholder="{% if forloop.first %}المطبخ{% else %}البار{% endif %}"></label>
+<label class="field">الطابعة<input name="printer{{ forloop.counter0 }}" value="{{ r.printer }}" list="prn" maxlength="120" placeholder="{{ main_printer|default:'طابعة المطبخ' }}"></label></div>
+{% if cats %}<div class="muted" style="font-size:13px;margin-bottom:4px">الأقسام</div><div style="display:flex;flex-wrap:wrap;gap:6px 14px">{% for c in cats %}<label style="font-size:14px;display:inline-flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" name="cats{{ forloop.parentloop.counter0 }}" value="{{ c }}"{% if c in r.cats %} checked{% endif %}> {{ c }}</label>{% endfor %}</div>{% endif %}
+</fieldset>{% endfor %}
+<datalist id="prn">{% for p in printers %}<option value="{{ p }}">{% endfor %}</datalist>
+<p class="muted" style="margin:0 0 8px">الطابعة الفارغة = طابعة المطبخ من الإعدادات. احذف اسم المحطة لإزالتها.</p>
+<button>حفظ المحطات</button></form></div>
+{% endblock %}

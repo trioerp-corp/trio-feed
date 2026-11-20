@@ -53,6 +53,10 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
 .empty{padding:30px;text-align:center;color:var(--muted)}
 .foot{text-align:center;color:var(--muted);font-size:12px;padding:10px}.foot a{color:var(--muted)}
 @media (max-width:860px){.wrap{flex-direction:column}.side{position:static;width:100%;max-height:none}}
+.st .qb{display:flex;gap:6px;margin-top:4px}.st .qb button{min-height:34px;padding:4px 10px;font-size:13px;flex:1}
+.timer.down{color:var(--busy)}.st.late .timer{color:var(--late)}.st.soon{border-color:var(--late)}
+@media (max-width:520px){.wrap{padding:10px;gap:10px}.grid{grid-template-columns:1fr 1fr;gap:8px}.st{min-height:118px;padding:9px;gap:3px}.st .nm{font-size:15px}.st .ic{font-size:17px}
+.timer{font-size:20px}.amt b{font-size:15px}.st .k{font-size:11px}.top{padding:8px 10px;gap:8px}.top .pill{font-size:12px;padding:4px 9px}.top>span[title]{display:none}}
 </style></head><body>
 <header class="top">
   <div class="brand">{% if s.logo_svg %}<span class="lg">{{ s.logo_svg|safe }}</span>{% endif %}<span>{{ s.name }}</span></div>
@@ -63,7 +67,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <button class="ghost" id="takeBtn" title="طلب بوفيه بدون جهاز">🥤 تيك أواي</button>
   <button class="ghost" id="shiftBtn">فتح وردية</button>
   <span style="color:var(--muted);font-size:13px" title="طريقة حساب الوقت">⏱ {{ rule }}</span>
-  {% if is_owner %}<a href="/ui/start/#stations" style="color:var(--muted);font-size:13px">⚙ الأجهزة والأسعار وحساب الوقت</a>{% endif %}
+  {% if is_owner %}<a href="{% url 'play_devices' %}" style="color:var(--muted);font-size:13px">⚙ الأجهزة والأسعار</a><a href="{% url 'play_report' %}" style="color:var(--muted);font-size:13px">📊 تقرير الصالة</a>{% endif %}
   <a href="/" style="color:var(--muted);font-size:13px">الرئيسية</a>
 </header>
 <div class="ta" id="takeaways"></div>
@@ -99,6 +103,9 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <div class="tot"><span>المطلوب</span><span id="mpTotal">0</span></div>
   <label class="f">مدفوع ببطاقة / محفظة<input id="mpCard" inputmode="decimal" value="0" dir="ltr"></label>
   <label class="f">آجل على عميل<select id="mpCust"><option value="">— لا يوجد —</option></select></label>
+  <div class="row" id="mpNew" style="display:none"><label class="f">اسم العميل الجديد<input id="mpNewName" maxlength="150"></label><label class="f">الموبايل<input id="mpNewPhone" inputmode="tel" dir="ltr" maxlength="40"></label></div>
+  <div id="mpOwner" style="display:none;border:1px dashed var(--late);border-radius:12px;padding:10px"><div class="muted" id="mpOwnerMsg" style="margin-bottom:6px"></div>
+  <div class="row"><label class="f">اسم مستخدم صاحب المحل<input id="mpOwnerU" autocomplete="off"></label><label class="f">كلمة السر<input id="mpOwnerP" type="password" autocomplete="new-password"></label></div></div>
   <label class="f" id="mpCreditL" style="display:none">مبلغ الآجل<input id="mpCredit" inputmode="decimal" value="0" dir="ltr"></label>
   <label class="f">دفع العميل نقدًا<input id="mpGiven" inputmode="decimal" dir="ltr" placeholder="لحساب الباقي"></label>
   <div class="muted" id="mpChange"></div>
@@ -120,6 +127,12 @@ const $=id=>document.getElementById(id);
 const fmt=n=>(Math.round(Number(n||0)*100)/100).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:2});
 const ICON={ps5:'🎮',ps4:'🎮',billiard:'🎱',pingpong:'🏓',vr:'🥽',pc:'🖥',other:'⭐'};
 let S=null, catalog=[], customers=[], sel=null, skew=0, cat='';
+// booked time: a beep 5 minutes before the end and at the end (once each per session)
+let AC=null;const rang={};document.addEventListener('click',()=>{if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}},{once:true});
+function beep(n){if(!AC)return;let t=AC.currentTime;for(let i=0;i<n;i++){const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=880;g.gain.value=.25;o.connect(g);g.connect(AC.destination);o.start(t+i*.35);o.stop(t+i*.35+.2)}}
+function left(s){return s.planned?s.planned*60-elapsed(s.opened_at):null}
+function watch(s,name){const l=left(s);if(l===null)return;if(l<=300&&l>0&&!rang[s.id+':5']){rang[s.id+':5']=1;beep(2);toast(`${name}: باقي 5 دقائق`)}
+  if(l<=0&&!rang[s.id+':0']){rang[s.id+':0']=1;beep(4);toast(`${name}: انتهى الوقت المحجوز`,true)}}
 function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast on'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3200)}
 // «حد الطلب»: after a bill is closed, the buffet items (and menu ingredients) that reached their limit — once per item per day
 function lowShow(list){if(!list||!list.length)return;const day=new Date().toISOString().slice(0,10);let w={};try{w=JSON.parse(localStorage.getItem('play_low')||'{}')}catch(e){}
@@ -141,6 +154,7 @@ async function load(first){
   render();
 }
 function elapsed(iso){return Math.max(0,(Date.now()-skew-new Date(iso).getTime())/1000)}
+function tleft(s){const l=left(s);return l>=0?hms(l):'+'+hms(-l)}
 function hms(sec){sec=Math.floor(sec);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
 function allSessions(){return [...S.stations.filter(x=>x.session).map(x=>({...x.session,_st:x})),...S.takeaway.map(t=>({...t,_st:null}))]}
 function render(){
@@ -149,25 +163,33 @@ function render(){
   const g=$('grid');g.innerHTML='';
   if(!S.stations.length) g.innerHTML='<div class="empty">لا توجد أجهزة مسجّلة — <a href="/ui/data/station/">أضف الأجهزة من هنا</a></div>';
   S.stations.forEach(st=>{
-    const b=document.createElement('button');b.type='button';const s=st.session;
-    const late=s&&s.planned&&elapsed(s.opened_at)/60>=s.planned;
-    b.className='st '+(s?(late?'busy late':'busy'):'free')+(sel&&s&&sel===s.id?' sel':'');
+    const b=document.createElement('div');b.setAttribute('role','button');b.tabIndex=0;const s=st.session;
+    const l=s?left(s):null,late=l!==null&&l<=0,soon=l!==null&&l>0&&l<=300;
+    b.className='st '+(s?(late?'busy late':'busy'):'free')+(soon?' soon':'')+(sel&&s&&sel===s.id?' sel':'');
+    const mode=s&&st.rate_multi?(s.mode==='multi'?'مالتي':'فردي'):'';
     b.innerHTML=`<div class="nm"><span>${escapeHtml(st.name)}</span><span class="ic">${ICON[st.kind]||'⭐'}</span></div>
       <div class="k">${escapeHtml(st.kind_name)} · ${fmt(st.rate)} ج/س${st.rate_multi?` · مالتي ${fmt(st.rate_multi)}`:''}</div>
-      ${s?`<div class="timer" data-t="${s.opened_at}">${hms(elapsed(s.opened_at))}</div>
-        <div class="stt">${s.mode==='multi'?'مالتي':'فردي'}${s.customer?' · '+escapeHtml(s.customer):''}${s.planned?` · محجوز ${s.planned} د`:''}${late?' · انتهى الوقت!':''}</div>
-        <div class="amt">الحساب <b>${fmt(s.total)}</b>${Number(s.items_amount)?` <span class="k">(طلبات ${fmt(s.items_amount)})</span>`:''}</div>`
+      ${s?(s.planned?`<div class="timer down" data-t="${s.opened_at}" data-p="${s.planned}">${tleft(s)}</div>`:`<div class="timer" data-t="${s.opened_at}">${hms(elapsed(s.opened_at))}</div>`)+`
+        <div class="stt">${[mode,s.customer?escapeHtml(s.customer):'',s.planned?`محجوز ${s.planned} د`:'',late?'انتهى الوقت!':''].filter(Boolean).join(' · ')}</div>
+        <div class="amt">الحساب <b>${fmt(s.total)}</b>${Number(s.items_amount)?` <span class="k">(طلبات ${fmt(s.items_amount)})</span>`:''}</div>
+        ${s.planned?`<div class="qb"><button type="button" class="ghost" data-x="ext">+30 د</button><button type="button" class="red" data-x="pay">قفّل</button></div>`:''}`
        :`<div class="stt" style="font-size:16px;font-weight:700;margin-top:auto">▶ متاح</div>`}`;
     b.onclick=()=>s?openSide(s.id):openStart(st);
+    b.onkeydown=e=>{if(e.key==='Enter'&&e.target===b)b.click()};
+    b.querySelectorAll('[data-x]').forEach(x=>x.onclick=async e=>{e.stopPropagation();
+      if(x.dataset.x==='ext'){try{await api('extend',{session:s.id,minutes:30});delete rang[s.id+':5'];delete rang[s.id+':0'];await load();toast(`${st.name}: +30 دقيقة ✔`)}catch(e){}}
+      else{sel=s.id;$('payBtn').click()}});
+    if(s)watch(s,st.name);
     g.appendChild(b);
   });
   const ta=$('takeaways');ta.innerHTML='';
-  S.takeaway.forEach(t=>{const b=document.createElement('button');b.className='ghost'+(sel===t.id?' sel':'');b.textContent=`🥤 تيك أواي ${t.customer||'#'+t.id} — ${fmt(t.total)}`;b.onclick=()=>openSide(t.id);ta.appendChild(b)});
+  S.takeaway.forEach(t=>{const b=document.createElement('button');b.className='ghost'+(sel===t.id?' sel':'');b.textContent=`🥤 تيك أواي #${t.no||t.id}${t.customer?' '+t.customer:''} — ${fmt(t.total)}`;b.onclick=()=>openSide(t.id);ta.appendChild(b)});
   if(sel){const s=allSessions().find(x=>x.id===sel); if(s) fillSide(s); else closeSide();}
 }
 function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
-  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=hms(elapsed(e.dataset.t)))},1000);
+  document.querySelectorAll('[data-t]').forEach(e=>{if(e.dataset.p){const s={opened_at:e.dataset.t,planned:+e.dataset.p};e.textContent=tleft(s)}else e.textContent=hms(elapsed(e.dataset.t))});
+  if(S)S.stations.forEach(st=>{if(st.session)watch(st.session,st.name)})},1000);
 setInterval(()=>load(false),15000);
 // start a device
 let starting=null,afterShift=null;
@@ -186,13 +208,15 @@ function openSide(id){sel=id;const s=allSessions().find(x=>x.id===id);if(!s)retu
 function closeSide(){sel=null;$('side').classList.remove('on');render()}
 $('sdClose').onclick=closeSide;
 function fillSide(s){
-  const st=s._st;$('sdName').textContent=st?st.name:'تيك أواي '+(s.customer||'#'+s.id);
+  const st=s._st;$('sdName').textContent=st?st.name:'تيك أواي #'+(s.no||s.id)+(s.customer?' '+s.customer:'');
   $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} ج`:'طلب بدون جهاز';
   const m=$('sdModes');m.innerHTML='';
   if(st&&st.rate_multi){['single','multi'].forEach(md=>{const b=document.createElement('button');b.className=s.mode===md?'':'ghost';b.textContent=md==='multi'?`مالتي ${fmt(st.rate_multi)}`:`فردي ${fmt(st.rate)}`;
     b.onclick=async()=>{if(s.mode===md)return;try{await api('switch',{session:s.id,mode:md});await load();toast('تغيّر السعر بدءًا من الآن')}catch(e){}};m.appendChild(b)})}
   const L=$('sdLines');L.innerHTML='';
-  if(s.segments&&s.segments.length>1) s.segments.forEach(g=>{const d=document.createElement('div');d.className='ln';d.innerHTML=`<div class="t">${escapeHtml(g.station)} — ${g.mode==='multi'?'مالتي':'فردي'}<small>${g.minutes} دقيقة × ${fmt(g.rate)}/س</small></div>`;L.appendChild(d)});
+  if(st)$('sdInfo').textContent+=s.planned?` · محجوز ${s.planned} د`:'';
+  const ex=document.createElement('button');ex.className='ghost';ex.textContent='+30 د';ex.onclick=async()=>{try{await api('extend',{session:s.id,minutes:30});delete rang[s.id+':5'];delete rang[s.id+':0'];await load();toast('+30 دقيقة ✔')}catch(e){}};if(st)m.appendChild(ex);
+  if(s.segments&&s.segments.length>1) s.segments.forEach(g=>{const d=document.createElement('div');d.className='ln';d.innerHTML=`<div class="t">${escapeHtml(g.station)}${g.multi?' — '+(g.mode==='multi'?'مالتي':'فردي'):''}<small>${g.minutes} دقيقة × ${fmt(g.rate)}/س</small></div>`;L.appendChild(d)});
   s.items.forEach(i=>{const d=document.createElement('div');d.className='ln';
     d.innerHTML=`<div class="t">${escapeHtml(i.name)}<small>${fmt(i.qty)} × ${fmt(i.price)} = ${fmt(i.total)}</small></div><button class="ghost" data-q="-1" aria-label="ناقص">−</button><button class="ghost" data-q="1" aria-label="زيادة">+</button>`;
     d.querySelectorAll('button').forEach(b=>b.onclick=async()=>{try{await api('add',{session:s.id,code:i.code,qty:b.dataset.q});await load()}catch(e){}});L.appendChild(d)});
@@ -223,22 +247,28 @@ $('payBtn').onclick=async()=>{await load();const s=allSessions().find(x=>x.id===
   L.innerHTML=(s._st?`<div class="ln"><div class="t">وقت اللعب<small>${s.billed} دقيقة محسوبة (لعب ${s.minutes})</small></div><b>${fmt(s.time_amount)}</b></div>`:'')+
     (Number(s.items_amount)?`<div class="ln"><div class="t">الطلبات<small>${s.items.length} صنف</small></div><b>${fmt(s.items_amount)}</b></div>`:'');
   $('mpDisc').value='0';$('mpCard').value='0';$('mpGiven').value='';$('mpCredit').value='0';
-  $('mpCust').innerHTML='<option value="">— لا يوجد —</option>'+customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  $('mpCust').innerHTML='<option value="">— لا يوجد —</option><option value="new">+ عميل جديد</option>'+customers.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  $('mpNewName').value=s.customer||'';$('mpNewPhone').value='';$('mpNew').style.display='none';$('mpOwnerU').value='';$('mpOwnerP').value='';
   $('mpCreditL').style.display='none';payCalc();show('mPay');};
+function gross(){return paying?Number(paying.total)+Number(paying.discount||0):0}
+function needOwner(){return !S.owner&&Number($('mpDisc').value||0)>Math.round(gross()*Number(S.max_disc||0))/100+0.001}
 function due(){return Math.max(0,(paying?Number(paying.total)+Number(paying.discount||0):0)-Number($('mpDisc').value||0))}
-function payCalc(){const d=due();$('mpTotal').textContent=fmt(d)+' ج';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
+function payCalc(){const o=needOwner();$('mpOwner').style.display=o?'':'none';if(o)$('mpOwnerMsg').textContent=`الخصم أكبر من ${fmt(S.max_disc)}% من الحساب — يكتب صاحب المحل اسمه وكلمة سره للموافقة`;const d=due();$('mpTotal').textContent=fmt(d)+' ج';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
   const g=Number($('mpGiven').value||0);$('mpChange').textContent=`نقدًا مطلوب ${fmt(cash)}`+(g?` · الباقي للعميل ${fmt(g-cash)}`:'');}
 ['mpDisc','mpCard','mpGiven','mpCredit'].forEach(id=>$(id).addEventListener('input',payCalc));
-$('mpCust').onchange=()=>{$('mpCreditL').style.display=$('mpCust').value?'':'none';if($('mpCust').value)$('mpCredit').value=fmt(due()).replace(/,/g,'');payCalc()};
+$('mpCust').onchange=()=>{const v=$('mpCust').value;$('mpCreditL').style.display=v?'':'none';$('mpNew').style.display=v==='new'?'flex':'none';if(v)$('mpCredit').value=fmt(due()).replace(/,/g,'');if(v==='new')setTimeout(()=>$('mpNewName').focus(),30);payCalc()};
 $('mpGo').onclick=async()=>{const btn=$('mpGo');btn.disabled=true;
-  try{const j=await api('close',{session:paying.id,discount:$('mpDisc').value,card:$('mpCard').value,customer_id:$('mpCust').value||null,credit:$('mpCust').value?$('mpCredit').value:0});
+  const cv=$('mpCust').value,body={session:paying.id,discount:$('mpDisc').value,card:$('mpCard').value,customer_id:cv&&cv!=='new'?cv:null,credit:cv?$('mpCredit').value:0};
+  if(cv==='new'){if(!$('mpNewName').value.trim()){toast('اكتب اسم العميل الجديد',true);btn.disabled=false;$('mpNewName').focus();return}body.customer_new={name:$('mpNewName').value.trim(),phone:$('mpNewPhone').value.trim()}}
+  if(needOwner()){body.owner=$('mpOwnerU').value.trim();body.password=$('mpOwnerP').value}
+  try{const j=await api('close',body);if(cv==='new')load(true);
     hide('mPay');sel=null;$('side').classList.remove('on');window.open(j.receipt,'_blank','width=420,height=640');await load();toast(`أُغلق — ${fmt(j.total)} ج ✔`);lowShow(j.low)}catch(e){}finally{btn.disabled=false}};
 // shift
 $('shiftBtn').onclick=()=>{const open=!!S.shift;$('msTitle').textContent=open?'قفل الوردية':'فتح وردية';
   $('msL').firstChild.textContent=open?'النقدية الموجودة في الدرج الآن (عُدّها)':'رصيد الدرج في البداية';$('msVal').value='0';
   const busy=S.stations.filter(x=>x.session).length;$('msInfo').textContent=open&&busy?`فيه ${busy} جهاز مشغول — ستستمر وتُحسب على الوردية التالية`:'';show('mShift')};
 $('msGo').onclick=async()=>{try{if(S.shift){const j=await api('shift_close',{counted:$('msVal').value});hide('mShift');
-  const d=Number(j.diff);toast(`أُغلقت — المتوقع ${fmt(j.expected)} · العجز/الزيادة ${fmt(d)}`,d<0)}else{await api('shift_open',{float:$('msVal').value});hide('mShift');toast('فُتحت الوردية ✔')}await load();if(afterShift&&S.shift){const f=afterShift;afterShift=null;f()}}catch(e){}};
+  const d=Number(j.diff);toast(`أُغلقت — المتوقع ${fmt(j.expected)} · ${d<0?'عجز':d>0?'زيادة':'مطابق'} ${fmt(Math.abs(d))} · خصومات ${fmt(j.discount)}`,d<0);if(j.report)window.open(j.report,'_blank','width=420,height=700')}else{await api('shift_open',{float:$('msVal').value});hide('mShift');toast('فُتحت الوردية ✔')}await load();if(afterShift&&S.shift){const f=afterShift;afterShift=null;f()}}catch(e){}};
 function show(id){$(id).classList.add('on');const f=$(id).querySelector('input,select,button');if(f)setTimeout(()=>f.focus(),30)}
 function hide(id){$(id).classList.remove('on')}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal').classList.remove('on'));

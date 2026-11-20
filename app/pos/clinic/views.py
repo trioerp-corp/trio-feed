@@ -76,7 +76,28 @@ def _patient_from(request):
         raise ValidationError("اختر المريض أو اكتب اسم مريض جديد")
     phone = request.POST.get("new_phone", "").strip()
     same = Patient.objects.filter(name=name, phone=phone).first() if phone else None
-    return same or C.add_patient(name, phone)
+    return same or C.add_patient(name, phone, **_insurance_from(request, "new_"))
+
+
+def _insurance_from(request, prefix=""):
+    """The insurance part of a new patient («مريض جديد»): company + insurance number (+ card expiry), so an insured patient is
+    booked and billed at once without opening his file first."""
+    ins = InsuranceCompany.objects.filter(pk=request.POST.get(prefix + "insurance") or 0, active=True).first()
+    if not ins:
+        return {}
+    no = request.POST.get(prefix + "insurance_no", "").strip()[:60]
+    if not no:
+        raise ValidationError("اكتب الرقم التأميني للمريض")
+    exp = request.POST.get(prefix + "insurance_expiry")
+    return dict(insurance=ins, insurance_no=no, insurance_expiry=C.parse_date(exp) if exp else None)
+
+
+def _insurance_warn(request, appt):
+    """At booking: the card of an insured patient expired (or expires before the booking day) → a warning to the reception."""
+    p = appt.patient
+    if p.insurance_id and p.insurance_expiry and p.insurance_expiry < appt.date:
+        messages.warning(request, f"⚠ بطاقة تأمين {p.name} ({p.insurance.name}) منتهية في {p.insurance_expiry:%d/%m/%Y} — "
+                                  "يُحاسب نقدًا أو تُحدَّث البطاقة من ملفه")
 
 
 def _pay_from(request):
@@ -98,8 +119,19 @@ def _paid_redirect(appt):
 
 
 def _ctx(**kw):
+    kw.setdefault("insurers", InsuranceCompany.objects.filter(active=True))
     return dict(doctors=Doctor.objects.filter(active=True), services=Service.objects.filter(item__active=True).select_related("item", "doctor"),
                 today=timezone.localdate(), **kw)
+
+
+def _cash_ok(u):
+    """The back-office money pages (expenses, the day close): the owner and whoever has the money permission — not the reception."""
+    return u.is_superuser or V.is_owner(u) or u.has_perm("treasury.view_voucher")
+
+
+def _stock_ok(u):
+    """Who is told that an item reached its reorder level: the owner and the store keeper, not the reception at checkout."""
+    return u.is_superuser or V.is_owner(u) or u.has_perm("inventory.add_stockmove")
 
 
 # ---------------------------------------------------------------- today
@@ -124,13 +156,20 @@ def home(request, reception=False):
             if a == "walkin":
                 appt = C.walk_in(_patient_from(request), doctor=_doctor(request.POST.get("doctor")),
                                  service=_service(request.POST.get("service")), user=request.user, **_pay_from(request))
-                messages.success(request, f"{appt.patient.name} دخل الدور — رقم {appt.queue_no}")
+                messages.success(request, f"أُضيف {appt.patient.name} إلى الدور — رقم {appt.queue_no}")
+                _insurance_warn(request, appt)
                 r = _paid_redirect(appt)
                 if r:
                     return r
             elif a == "arrive":
                 appt = C.arrive(get_object_or_404(Appointment, pk=request.POST["appt"]), request.user)
                 messages.success(request, f"{appt.patient.name} وصل — دوره {appt.queue_no}")
+            elif a == "drawer_open":
+                sh = C.start_shift(request.user, _dec(request.POST.get("float"), Decimal(0)))
+                messages.success(request, f"فُتح الدرج باسم {sh.cashier} ✔")
+            elif a == "drawer_close":
+                sh = C.end_shift(request.user, request.POST.get("counted"))
+                messages.success(request, f"أُغلق الدرج — المبلغ المعدود {sh.counted_cash:.2f} ج. يراجع صاحب العيادة الفرق عند تقفيل اليوم ✔")
             elif a in ("inside", "noshow", "cancelled", "waiting"):
                 appt = get_object_or_404(Appointment, pk=request.POST["appt"])
                 C.set_state(appt, a, request.user, request.POST.get("reason", ""))
@@ -144,6 +183,7 @@ def home(request, reception=False):
     lanes = {k: [a for a in appts if a.state == k] for k in ("booked", "waiting", "inside", "done")}
     owner = V.is_owner(request.user) and not reception
     return render(request, "clinic/home.html", _ctx(lanes=lanes, sum=C.today_summary(day) if owner else None, owner=owner,
+                                                    cash_ok=_cash_ok(request.user), drawer=C.open_shift(),
                                                     others=[a for a in appts if a.state in ("cancelled", "noshow")],
                                                     upcoming=Appointment.objects.filter(date__gt=day, state="booked").count(),
                                                     follow=Visit.objects.filter(next_visit=day).exclude(state="cancelled").select_related("patient")[:20],
@@ -179,6 +219,9 @@ def doctor_screen(request):
                     Appointment.objects.filter(pk=cur.pk).update(state="done")
                 nxt = mine.filter(state="waiting").order_by("queue_no", "id").first()
                 if not nxt:
+                    if cur:  # the last patient of the day: the doctor can always finish him
+                        messages.success(request, f"انتهى كشف {cur.patient.name} ✔ — لا أحد ينتظر الآن")
+                        return redirect(request.get_full_path())
                     raise ValidationError("لا أحد ينتظر الآن")
                 if not nxt.visit_id:
                     nxt = C.arrive(nxt, u)
@@ -251,6 +294,17 @@ def owner_board(request):
 @guard
 def appointments(request):
     day = C.parse_date(request.GET.get("d"))
+    if request.GET.get("check"):  # before «احجز»: does the doctor already have someone at that time? → the first free time
+        doc, svc = _doctor(request.GET.get("doctor")), _service(request.GET.get("service"))
+        doc = doc or (svc.doctor if svc else None)
+        try:
+            mins = svc.minutes if svc else 15
+            clash = C.overlaps(doc, day, request.GET.get("time"), mins)
+            free = C.first_free(doc, day, request.GET.get("time"), mins) if clash else ""
+        except ValidationError:
+            clash, free = [], ""
+        return JsonResponse(dict(clash=[dict(name=a.patient.name, time=a.time.strftime("%H:%M")) for a in clash], free=free,
+                                 doctor=str(doc or "")))
     if request.method == "POST" and request.POST.get("appt"):  # cancel a booking from the list (a paid one is refunded)
         try:
             appt = get_object_or_404(Appointment, pk=request.POST["appt"])
@@ -264,8 +318,10 @@ def appointments(request):
             day = C.parse_date(request.POST.get("date"), day)
             t = request.POST.get("time") or None
             appt = C.book(_patient_from(request), day, doctor=_doctor(request.POST.get("doctor")), service=_service(request.POST.get("service")),
-                          time=t, note=request.POST.get("note", ""), user=request.user, **_pay_from(request))
-            messages.success(request, f"تم الحجز {appt.patient.name} يوم {day:%d/%m} — رقم {appt.queue_no}")
+                          time=t, note=request.POST.get("note", ""), user=request.user, allow_overlap=request.POST.get("allow_overlap") == "1",
+                          **_pay_from(request))
+            messages.success(request, f"تم حجز {appt.patient.name} يوم {day:%d/%m} — رقم {appt.queue_no}")
+            _insurance_warn(request, appt)
             r = _paid_redirect(appt)
             if r:
                 return r
@@ -300,7 +356,8 @@ def patients(request):
         try:
             p = C.add_patient(request.POST.get("name"), request.POST.get("phone"), gender=request.POST.get("gender", ""),
                               birth_year=int(request.POST["birth_year"]) if request.POST.get("birth_year", "").isdigit() else None,
-                              address=request.POST.get("address", "")[:200], medical_notes=request.POST.get("medical_notes", ""))
+                              address=request.POST.get("address", "")[:200], medical_notes=request.POST.get("medical_notes", ""),
+                              **_insurance_from(request))
             messages.success(request, f"فُتح ملف {p.name} — رقم {p.number}")
             return redirect("clinic_patient", p.pk)
         except ValidationError as e:
@@ -373,14 +430,23 @@ def patient(request, pk):
 @guard
 def visit(request, pk):
     v = get_object_or_404(Visit.objects.select_related("patient", "doctor", "order"), pk=pk)
+    is_doc = _is_doctor(request.user)
+    can_price = V.can_edit(request.user)
     if request.method == "POST":
         a = request.POST.get("action")
         try:
+            if a == "pay" and is_doc:
+                raise ValidationError("المحاسبة في الاستقبال")
             if a in ("save", "pay", "add"):
                 for f in ("complaint", "diagnosis", "prescription", "notes"):
                     if f in request.POST:
                         setattr(v, f, request.POST[f])
                 v.next_visit = C.parse_date(request.POST["next_visit"]) if request.POST.get("next_visit") else None
+                if "weight" in request.POST:
+                    w = _dec(request.POST.get("weight"))
+                    if w is not None and not (0 < w < 400):
+                        raise ValidationError("الوزن غير صحيح")
+                    v.weight = w
                 if not v.live_payments and "doctor" in request.POST:
                     v.doctor = _doctor(request.POST.get("doctor"))
                 v.save()
@@ -390,8 +456,19 @@ def visit(request, pk):
                             ln.delete()
                             continue
                         if f"qty_{ln.pk}" in request.POST:
-                            ln.qty = _dec(request.POST[f"qty_{ln.pk}"], ln.qty)
-                            ln.price = _dec(request.POST.get(f"price_{ln.pk}"), ln.price)
+                            qty = _dec(request.POST[f"qty_{ln.pk}"], ln.qty)
+                            price = _dec(request.POST.get(f"price_{ln.pk}"), ln.price) if f"price_{ln.pk}" in request.POST else ln.price
+                            if not can_price:  # the price list is the owner's: the reception / doctor cannot lower a service
+                                if price != ln.price:
+                                    raise ValidationError(f"تغيير سعر «{ln.item.name}» لصاحب العيادة فقط")
+                                if ln.item.item_type == "service" and qty != qty.to_integral_value():
+                                    raise ValidationError(f"كمية «{ln.item.name}» عدد صحيح")
+                            elif price != ln.price:
+                                from core import audit
+
+                                audit.log("clinic.price", ln, summary=f"تغيير سعر «{ln.item.name}» في زيارة {v.patient.name} من {ln.price} إلى {price}",
+                                          before={"price": str(ln.price)}, after={"price": str(price)}, model="clinic.VisitLine")
+                            ln.qty, ln.price = qty, price
                             if ln.qty <= 0:
                                 ln.delete()
                                 continue
@@ -418,9 +495,10 @@ def visit(request, pk):
                             card, credit = (total if pay == "card" else 0), (total if pay == "credit" else 0)
                         C.checkout(v, request.user, paid_card=card or 0, paid_credit=credit or 0, discount=request.POST.get("discount") or 0)
                     messages.success(request, f"تمت محاسبة الزيارة ✔ — {v.patient.name}")
-                    from inventory.reorder import popup
+                    if _stock_ok(request.user):  # the reorder alert goes to the owner / store keeper, not over the reception's receipt
+                        from inventory.reorder import popup
 
-                    popup(request, v.lines.values_list("item_id", flat=True))
+                        popup(request, v.lines.values_list("item_id", flat=True))
                     if request.POST.get("print"):
                         return redirect(f"/ui/clinic/visits/{v.pk}/receipt/?auto=1")
                 else:
@@ -443,7 +521,8 @@ def visit(request, pk):
     ins_share = C.insurance_share(ins, v.unbilled) if ins else None
     return render(request, "clinic/visit.html", _ctx(
         insurance=ins, ins_share=ins_share, ins_rest=(v.unbilled - ins_share) if ins else None, files=v.patient.files.defer("data")[:12],
-        v=v, lines=v.lines.select_related("item", "payment"), items=items, can_edit=V.can_edit(request.user),
+        v=v, lines=v.lines.select_related("item", "payment"), items=items, can_edit=V.can_edit(request.user), is_doc=is_doc,
+        own_visit=bool(v.doctor_id and v.doctor.user_id == request.user.pk),
         payments=v.payments.select_related("order"), unbilled=v.unbilled,
         in_queue=Appointment.objects.filter(visit=v, state__in=["waiting", "inside"]).exists(),
         history=v.patient.visits.exclude(pk=v.pk).exclude(state="cancelled").select_related("doctor")[:10]))
@@ -481,6 +560,8 @@ def setup(request):
                     raise ValidationError("اكتب اسم الطبيب")
                 doc.specialty = request.POST.get("specialty", "")[:100]
                 doc.phone = request.POST.get("phone", "")[:40]
+                if "hours" in request.POST:
+                    doc.hours = request.POST.get("hours", "").strip()[:200]
                 doc.share_pct = _dec(request.POST.get("share_pct"), Decimal(0))
                 if not (0 <= doc.share_pct <= 100):
                     raise ValidationError("النسبة من 0 إلى 100")

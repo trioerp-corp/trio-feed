@@ -1,17 +1,18 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}زيارة {{ v.patient.name }}{% endblock %}
 {% block content %}
 <style>.vs>.side{flex:1 1 420px}.vs .lines-table input{padding:6px}</style>
-<div class="page-head"><div><h1>{{ v.patient.name }} <span class="muted" style="font-size:16px">ملف {{ v.patient.number }}{% if v.patient.age %} · {{ v.patient.age }} سنة{% endif %}</span></h1>
+<div class="page-head"><div><h1>{{ v.patient.name }} <span class="muted" style="font-size:16px">ملف {{ v.patient.number|unlocalize }}{% if v.patient.age %} · {{ v.patient.age }} سنة{% endif %}{% if v.patient.gender %} · {{ v.patient.get_gender_display }}{% endif %}</span></h1>
 <p class="muted" style="margin:0">{{ v.opened_at|date:"d/m/Y H:i" }} · <span class="badge {% if v.state == 'paid' %}{% elif v.state == 'open' %}gold{% else %}red{% endif %}">{{ v.get_state_display }}</span>{% if v.edits %} · عُدّلت {{ v.edits }} مرة{% endif %}{% if v.note %} · {{ v.note }}{% endif %}</p></div>
 <div class="actions"><a class="btn light" href="{% url 'clinic_patient' v.patient_id %}">ملف المريض</a><a class="btn light" href="{% url 'clinic_print' v.pk %}" target="_blank">🖨 الروشتة</a>{% if v.live_payments %}<a class="btn light" href="{% url 'clinic_receipt' v.pk %}" target="_blank">🧾 الإيصال</a>{% endif %}<a class="btn light" href="{% url 'clinic_home' %}">الدور</a></div></div>
 {% if v.patient.medical_notes %}<p class="card" style="border-color:#A13A2A;margin-bottom:14px"><b>⚠ </b>{{ v.patient.medical_notes|linebreaksbr }}</p>{% endif %}
 <form method="post" id="vf">{% csrf_token %}
 <div class="split vs"><div class="main">
 <section class="card" style="margin-bottom:16px"><h2>الكشف</h2>
-<label class="field">الطبيب<select name="doctor" {% if v.live_payments %}disabled title="دُفع الحساب — لتغيير الطبيب: «تعديل الحساب»"{% endif %}><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}" {% if d.pk == v.doctor_id %}selected{% endif %}>{{ d }}{% if d.share_pct %} ({{ d.share_pct|floatformat:-2 }}%){% endif %}</option>{% endfor %}</select></label>
+<label class="field">الطبيب<select name="doctor" {% if v.live_payments %}disabled title="دُفع الحساب — لتغيير الطبيب: «تعديل الحساب»"{% endif %}><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}" {% if d.pk == v.doctor_id %}selected{% endif %}>{{ d }}{% if d.share_pct and not is_doc %} ({{ d.share_pct|floatformat:-2 }}%){% endif %}</option>{% endfor %}</select></label>
 <label class="field">الشكوى<textarea name="complaint" rows="2">{{ v.complaint }}</textarea></label>
 <label class="field">التشخيص<textarea name="diagnosis" rows="2">{{ v.diagnosis }}</textarea></label>
 <label class="field">الروشتة / العلاج (سطر لكل دواء)<textarea name="prescription" rows="5" placeholder="مثلًا: Augmentin 1g — قرص كل 12 ساعة × 7 أيام">{{ v.prescription }}</textarea></label>
+<div class="form-grid"><label class="field">الوزن (كجم)<input name="weight" value="{{ v.weight|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="مثلًا 72.5"></label></div>
 <div class="form-grid"><label class="field">ملاحظات الطبيب (لا تُطبع)<textarea name="notes" rows="2">{{ v.notes }}</textarea></label>
 <label class="field">ميعاد المتابعة<input type="date" name="next_visit" value="{{ v.next_visit|date:'Y-m-d' }}"></label></div>
 <p style="margin:8px 0 0"><button name="action" value="save" class="light">حفظ الكشف</button></p></section>
@@ -21,7 +22,7 @@
 <div class="table-wrap"><table class="lines-table"><thead><tr><th>الخدمة / الصنف</th><th class="n">كمية</th><th class="n">سعر</th><th></th></tr></thead><tbody>
 {% for ln in lines %}<tr>{% if ln.payment_id %}<td>{{ ln.item.name }}</td><td class="n">{{ ln.qty|floatformat:-3 }}</td><td class="n">{{ ln.price|money }}</td><td><span class="badge">✔ دُفع</span></td>
 {% elif v.state != 'cancelled' %}<td>{{ ln.item.name }}</td><td class="n"><input name="qty_{{ ln.pk }}" value="{{ ln.qty|floatformat:-3|unlocalize }}" inputmode="decimal" dir="ltr" style="width:56px" class="c"></td>
-<td class="n"><input name="price_{{ ln.pk }}" value="{{ ln.price|unlocalize }}" inputmode="decimal" dir="ltr" style="width:76px" class="c"></td>
+<td class="n">{% if can_edit %}<input name="price_{{ ln.pk }}" value="{{ ln.price|unlocalize }}" inputmode="decimal" dir="ltr" style="width:76px" class="c">{% else %}<span class="pr" data-p="{{ ln.price|unlocalize }}">{{ ln.price|money }}</span>{% endif %}</td>
 <td><label title="إزالة" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" name="drop_{{ ln.pk }}" value="1" class="c">إزالة</label></td>
 {% else %}<td>{{ ln.item.name }}</td><td class="n">{{ ln.qty|floatformat:-3 }}</td><td class="n">{{ ln.price|money }}</td><td></td>{% endif %}</tr>
 {% empty %}<tr><td colspan="4" class="muted">أضف الكشف أو الخدمة</td></tr>{% endfor %}</tbody></table></div>
@@ -30,10 +31,11 @@
 <div style="display:flex;gap:6px;margin:8px 0"><input name="add_code" list="itl" placeholder="+ خدمة / دواء / صنف (الكود)" dir="ltr" style="flex:3"><input name="add_qty" value="1" inputmode="decimal" style="flex:1"><button name="action" value="add" class="light">أضف</button></div>
 {% endif %}
 {% if payments %}<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px">{% for p in payments %}
-<p style="margin:0 0 6px;font-size:13px{% if p.cancelled %};opacity:.5;text-decoration:line-through{% endif %}"><b>{{ p.get_kind_display }}</b> {{ p.total|money }} — {{ p.order.uid }}{% if p.order.paid_card %} · بطاقة {{ p.order.paid_card|money }}{% endif %}{% if p.order.paid_credit %} · آجل {{ p.order.paid_credit|money }}{% endif %}{% if p.share %} · نسبة الطبيب {{ p.share|money }}{% endif %}
+<p style="margin:0 0 6px;font-size:13px{% if p.cancelled %};opacity:.5;text-decoration:line-through{% endif %}"><b>{{ p.get_kind_display }}</b> {{ p.total|money }} — {{ p.order.uid }}{% if p.order.paid_card %} · بطاقة {{ p.order.paid_card|money }}{% endif %}{% if p.order.paid_credit %} · آجل {{ p.order.paid_credit|money }}{% endif %}{% if p.share and not is_doc or p.share and own_visit %} · نسبة الطبيب {{ p.share|money }}{% endif %}
 {% if not p.cancelled %}<a href="{% url 'clinic_receipt' v.pk %}?p={{ p.pk }}" target="_blank">🧾 إيصال</a>{% endif %}</p>{% endfor %}
 <p style="margin:4px 0 0"><b>المدفوع: {{ v.total|money }}</b></p></div>{% endif %}
-{% if v.state != 'cancelled' and unbilled %}
+{% if v.state != 'cancelled' and unbilled and is_doc %}<p style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px;font-size:16px"><b>المطلوب: {{ unbilled|money }}</b> — يُدفع في الاستقبال</p>
+{% elif v.state != 'cancelled' and unbilled %}
 <div style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px">
 <label class="field">خصم<input name="discount" id="disc" value="0" inputmode="decimal" dir="ltr" class="c"></label>
 <p style="font-size:18px;margin:6px 0"><b>{% if payments %}الباقي{% else %}الإجمالي{% endif %}: <span id="tot">{{ unbilled|money }}</span></b></p>
@@ -43,7 +45,7 @@
 <button name="action" value="pay" style="width:100%">حاسب ✔</button>
 <p class="muted" style="font-size:12px;margin:8px 0 0">تُخصم المستهلكات المسجّلة على كل خدمة من المخزن تلقائيًا، وتُسجَّل نسبة الطبيب له.</p></div>
 {% endif %}
-{% if in_queue and not unbilled and v.state != 'cancelled' %}<button name="action" value="finish" class="light" style="width:100%;margin-top:10px">✔ انتهى الكشف</button>{% endif %}
+{% if in_queue and v.state != 'cancelled' %}<button name="action" value="finish" class="light" style="width:100%;margin-top:10px">✔ انتهى الكشف</button>{% endif %}
 </section>
 {% if can_edit and v.state != 'cancelled' %}<section class="card" style="margin-top:14px"><h3 style="margin:0 0 8px">إلغاء / تعديل</h3>
 <label class="field">السبب<input name="reason" placeholder="مثلًا: سُجّلت الخدمة بالخطأ"></label>
@@ -54,7 +56,7 @@
 <script>
 function need(){var r=document.querySelector('[name=reason]');if(!r.value.trim()){r.focus();r.style.borderColor='#A13A2A';return false}return true}
 (function(){var f=document.getElementById('vf'),n=function(x){return parseFloat(String(x||'0').replace('٫','.').replace(',','.'))||0};
-function calc(){var t=0;f.querySelectorAll('.lines-table tbody tr').forEach(function(tr){var q=tr.querySelector('[name^=qty_]'),p=tr.querySelector('[name^=price_]'),d=tr.querySelector('[name^=drop_]');if(q&&p&&!(d&&d.checked))t+=n(q.value)*n(p.value)});
+function calc(){var t=0;f.querySelectorAll('.lines-table tbody tr').forEach(function(tr){var q=tr.querySelector('[name^=qty_]'),p=tr.querySelector('[name^=price_]'),sp=tr.querySelector('.pr'),d=tr.querySelector('[name^=drop_]');if(q&&(p||sp)&&!(d&&d.checked))t+=n(q.value)*n(p?p.value:sp.dataset.p)});
 var ds=document.getElementById('disc');if(ds)t-=n(ds.value);var T=document.getElementById('tot');if(T&&ds)T.textContent=t.toFixed(2)}
 f.addEventListener('input',calc);var pay=document.getElementById('pay');if(pay)pay.onchange=function(){document.getElementById('split').style.display=pay.value=='split'?'grid':'none'};})();
 </script>

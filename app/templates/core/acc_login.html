@@ -23,7 +23,7 @@
     <section class="wz on" data-step="0"><h3>1 · ما نشاطك؟</h3>
       {% with act_required=True act_value=demo.activity %}{% include "core/_activity.html" %}{% endwith %}</section>
     <section class="wz" data-step="1"><h3>2 · بيانات محلك</h3>
-      <label class="field">اسم المحل<input name="shop" maxlength="100" value="{{ demo.shop|default:'' }}" placeholder="مثلًا: الأمير لقطع الغيار"></label>
+      <label class="field">اسم المحل<input name="shop" maxlength="60" value="{{ demo.shop|default:'' }}" placeholder="مثلًا: الأمير لقطع الغيار"></label>
       <label class="field">هاتف المحل<input name="phone" dir="ltr" maxlength="40" value="{{ demo.phone|default:'' }}" placeholder="01xxxxxxxxx"></label>
       <label class="field">العنوان (اختياري — يظهر على الإيصال)<input name="address" maxlength="200" value="{{ demo.address|default:'' }}"></label></section>
     <section class="wz" data-step="2"><h3>3 · بعض الأسئلة</h3>
@@ -32,8 +32,9 @@
         <label class="field">كم جهاز بلايستيشن؟<input name="ps_count" value="3" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة (فردي)<input name="ps_rate" value="40" inputmode="decimal" dir="ltr"></label>
         <label class="field">كم طاولة بلياردو؟<input name="bl_count" value="1" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة<input name="bl_rate" value="50" inputmode="decimal" dir="ltr"></label>
         <label class="field" style="grid-column:1/-1">يُحسب الوقت بـ<select name="g_round"><option value="15">ربع ساعة (يُحاسب على أي ربع بدأ)</option><option value="30">نصف ساعة</option><option value="60">ساعة</option></select></label></div>
-      <div class="field">لديك أكثر من مخزن أو فرع؟<div class="yn"><label><input type="radio" name="multi" value="0" checked> لأ</label><label><input type="radio" name="multi" value="1"> أيوه</label></div></div>
-      <div class="field">هل نضيف لك أصنافًا نموذجية من نشاطك لتجرّب مباشرة؟<div class="yn"><label><input type="radio" name="samples" value="1" checked> أيوه</label><label><input type="radio" name="samples" value="0"> لا، سأضيف بنفسي</label></div></div></section>
+      <div id="qTables" style="display:none"><label class="field">كم ترابيزة لديك؟ <small class="muted">(0 إن كان البيع تيك أواي فقط — تُطبع لكل ترابيزة بطاقة QR)</small><input name="tables" value="{{ demo.tables|default:'0' }}" inputmode="numeric" dir="ltr" maxlength="3"></label></div>
+      <div class="field">هل لديك أكثر من مخزن أو فرع؟<div class="yn"><label><input type="radio" name="multi" value="0" checked> لا</label><label><input type="radio" name="multi" value="1"> نعم</label></div></div>
+      <div class="field">هل نضيف لك أصنافًا نموذجية من نشاطك لتجرّب مباشرة؟<div class="yn"><label><input type="radio" name="samples" value="1" checked> نعم</label><label><input type="radio" name="samples" value="0"> لا، سأضيف بنفسي</label></div></div></section>
     <section class="wz" data-step="3"><h3>4 · حسابك</h3>
       <label class="field">اسمك<input name="owner" maxlength="60" value="{{ demo.owner|default:'' }}"></label>
       <label class="field">اسم الدخول (إنجليزي)<input name="username" dir="ltr" maxlength="30" autocomplete="username" value="{{ demo.username|default:'' }}" placeholder="ahmed"></label>
@@ -48,7 +49,7 @@
   const PLAN={basic:'الأساسية',standard:'المتقدمة',pro:'الشاملة'};
   function show(n){i=n;st.forEach((s,k)=>s.classList.toggle('on',k===n));bars.forEach((b,k)=>b.classList.toggle('on',k<=n));
     const vis=(id,v)=>{document.getElementById(id).style.display=v?'':'none'};vis('wzBack',n>0);vis('wzNext',n<st.length-1);vis('wzGo',n===st.length-1);err();
-    const p=window.ACC_ACT;document.getElementById('qHall').style.display=(p&&p.hall)?'grid':'none';if(n===st.length-1)summary();const fi=st[n].querySelector('input,select');if(fi)fi.focus()}
+    const p=window.ACC_ACT;document.getElementById('qHall').style.display=(p&&p.hall)?'grid':'none';document.getElementById('qTables').style.display=(p&&p.tables)?'':'none';if(n===st.length-1)summary();const fi=st[n].querySelector('input,select');if(fi)fi.focus()}
   function ok(n){if(n===0&&(!$('activity').value.trim()||$('activity').value.trim().length<2))return 'اكتب نشاطك (مثلًا: صيدلية، محل قطع غيار…)';
     if(n===1&&$('shop').value.trim().length<2)return 'اكتب اسم المحل';
     if(n===3){if(!/^[A-Za-z0-9_.@+-]{2,30}$/.test($('username').value.trim()))return 'اسم الدخول بحروف إنجليزية وأرقام (بدون مسافات)';if($('password').value.length<8)return 'كلمة السر 8 أحرف أو أكثر'}return ''}
@@ -57,6 +58,7 @@
     h+='<div>📂 '+(p.categories||[]).length+' تصنيف: '+(p.categories||[]).slice(0,6).map(esc).join('، ')+'…</div>';
     if((p.fields||[]).length)h+='<div>🏷 بيانات لكل '+esc(p.item||'صنف')+': '+p.fields.map(x=>esc(x.n)).join('، ')+'</div>';
     h+='<div>🖥 '+$('devices').value+' جهاز كاشير</div>';
+    if(p.tables)h+='<div>🪑 '+(Math.max(0,Math.min(100,parseInt($('tables').value)||0))||'بدون')+' ترابيزة'+(+$('tables').value>0?' مع بطاقات QR':' (تيك أواي)')+'</div>';
     if(p.hall)h+='<div>🎮 '+(+$('ps_count').value||0)+' بلايستيشن ('+esc($('ps_rate').value)+' ج/ساعة) و'+(+$('bl_count').value||0)+' بلياردو</div>';
     if(f.querySelector('[name=samples]:checked').value==='1'&&(p.samples||[]).length)h+='<div>🧪 '+p.samples.length+' أصناف أمثلة: '+p.samples.slice(0,3).map(x=>esc(x[0])).join('، ')+'…</div>';
     h+='<div>👤 دخولك: <b dir="ltr">'+esc($('username').value)+'</b></div>';
@@ -81,7 +83,7 @@
     <button name="action" value="self">ابدأ التثبيت</button></form>
   <form method="post" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px">{% csrf_token %}
     <b>لم تطلب بعد؟ اطلب من هنا</b>
-    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">اسم المحل<input name="shop" required maxlength="100"></label><label class="field">موبايل / واتساب<input name="phone" required dir="ltr" maxlength="40"></label>
+    <div class="g2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><label class="field">اسم المحل<input name="shop" required maxlength="60"></label><label class="field">موبايل / واتساب<input name="phone" required dir="ltr" maxlength="40"></label>
     <label class="field">النشاط<select name="business"><option>سوبر ماركت</option><option>محل (ملابس / أدوات)</option><option>كافيه</option><option>بلايستيشن / بلياردو</option><option>عيادة / مركز طبي</option></select></label></div>
     <button class="light" name="action" value="self_request">أرسل الطلب</button>
     {% if wa %}<a class="btn" href="{{ wa }}" target="_blank" rel="noopener">أرسل الطلب عبر واتساب</a>{% endif %}</form>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block title %}إعدادات المحل{% endblock %}
+{% extends "base.html" %}{% load ar %}{% block title %}إعدادات المحل{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>إعدادات المحل</h1><p class="muted" style="margin:0">أجهزة الكاشير والكاشيرات وبيانات الإيصال</p></div></div>
 <div class="split"><div class="main">
@@ -12,14 +12,14 @@
 {% if u != user %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle_user"><input type="hidden" name="id" value="{{ u.pk }}"><button class="light">{% if u.is_active %}إيقاف{% else %}تشغيل{% endif %}</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
 <form method="post" class="actions">{% csrf_token %}<input type="hidden" name="action" value="cashier"><input name="username" placeholder="اسم الدخول (كاشير3)" dir="ltr"><input name="first_name" placeholder="الاسم">
 <select name="role" aria-label="الدور">{% for k, t in roles %}<option value="{{ k }}">{{ t.0 }}</option>{% endfor %}</select>{% if clinic_doctors %}<select name="doctor" aria-label="إن كان طبيبًا: من"><option value="">إن كان طبيبًا: من؟</option>{% for d in clinic_doctors %}<option value="{{ d.pk }}">{{ d }}</option>{% endfor %}</select>{% endif %}<button class="light">+ مستخدم</button>{% if branch_on and not branch_locked %}<a class="btn light" href="{% url 'branches' %}#staff">موظف بمسمى وصلاحيات…</a>{% endif %}</form>
-</div><div class="side">{% if is_owner %}<div class="card"><h2>نشاط المحل</h2><p style="margin:0 0 8px"><b>{{ act.name }}</b><br><span class="muted" style="font-size:13px">{{ act.categories|length }} تصنيف{% if act.fields %} · بيانات إضافية: {% for f in act.fields %}{{ f.n }}{% if not forloop.last %}، {% endif %}{% endfor %}{% endif %}</span></p>
+</div><div class="side">{% if is_owner %}<div class="card"><h2>نشاط المحل</h2><p style="margin:0 0 8px"><b>{{ act.name }}</b><br><span class="muted" style="font-size:13px">{{ act.categories|length|count:"تصنيف" }}{% if act.fields %} · بيانات إضافية: {% for f in act.fields %}{{ f.n }}{% if not forloop.last %}، {% endif %}{% endfor %}{% endif %}</span></p>
 <a class="btn light" href="{% url 'shop_activity' %}">غيّر / اضبط النشاط</a></div>{% endif %}
 {% if is_owner %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="cashier_edit"><h2>الإلغاء والتعديل</h2>
 <p class="muted" style="margin:0 0 8px">إلغاء فاتورة أو صنف داخلها أو تعديل الكميات والأسعار. يمكن لصاحب المحل ذلك دائمًا. {% if s.cashier_can_edit %}<b>يمكن للكاشير حاليًا أيضًا</b> (من الكاشير ومن صفحة الفاتورة).{% else %}الكاشير حاليًا يرسل طلبًا ويوافق صاحب المحل.{% endif %}</p>
 {% if s.cashier_can_edit %}<button class="light" name="on" value="0">اقفلها عن الكاشير</button>{% else %}<button name="on" value="1">اسمح للكاشير بالإلغاء والتعديل</button>{% endif %}</form>{% endif %}
-<form method="post" class="card" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="receipt"><h2>بيانات الإيصال</h2>
+<form method="post" class="card" id="receipt" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="receipt"><h2>بيانات الإيصال</h2>
 {% if s.logo_svg %}<div style="width:72px;height:72px;margin-bottom:6px">{{ s.logo_svg|safe }}</div>{% endif %}
-<label class="field">لوجو المحل (يظهر على الإيصال)<input type="file" name="logo" accept="image/png,image/jpeg,image/svg+xml"></label>
+<label class="field">لوجو المحل (يظهر على الإيصال)<input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label>
 {% if s.logo_svg %}<label class="field check"><input type="checkbox" name="no_logo" value="1"> إزالة اللوجو</label>{% endif %}
 <label class="field">التليفون<input name="phone" value="{{ s.phone }}"></label><label class="field">العنوان<input name="address" value="{{ s.address }}"></label>
 <label class="field">آخر سطر في الإيصال<input name="footer" value="{{ br.receipt_footer }}" placeholder="شكرًا لزيارتكم"></label><button>حفظ</button></form>

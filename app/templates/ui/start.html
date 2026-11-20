@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load l10n %}{% block title %}تجهيز المحل{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load l10n %}{% block title %}تجهيز المحل{% endblock %}
 {% block content %}
 <style>
 .st-prog{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}.st-prog a{font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none}
@@ -11,7 +11,7 @@
 </style>
 <div class="page-head"><div><h1>🧰 تجهيز المحل — مرة واحدة</h1>
 <p class="muted" style="margin:0">كل ما يحتاجه البرنامج ليعمل كل شيء دون أن يقول لك «افعل كذا أولًا». املأه الآن، أو تخطَّ أي جزء وارجع إليه لاحقًا.</p></div>
-<div class="actions"><a class="btn light" href="/">{% if left %}كمّل بعدين{% else %}✔ خلصت — للرئيسية{% endif %}</a></div></div>
+<div class="actions"><a class="btn light" href="/">{% if left %}أكمل لاحقًا{% else %}✔ انتهيت — إلى الرئيسية{% endif %}</a></div></div>
 
 <div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>📘 <b>دليل البرنامج لنشاطك</b> — خطوة بخطوة بالصور{% if auto_guide %} (يُنزَّل الآن على جهازك){% endif %}.</span><span class="actions"><a class="btn light" href="{% url 'guide' %}?pdf=download" id="guideDl">⬇ نزّل الدليل PDF</a><a class="btn light" href="{% url 'guide' %}">اقرأه هنا</a></span></div>
 {% if auto_guide %}<script>window.addEventListener('load',()=>setTimeout(()=>{const a=document.getElementById('guideDl');if(a)a.click()},600))</script>{% endif %}
@@ -19,18 +19,23 @@
 
 {% with st=status.shop %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="shop"><h2><span class="n">1</span> بيانات المحل</h2>
 <p class="muted why">تظهر على الإيصال وعلى الفاتورة.</p>
-<form method="post" class="form-grid">{% csrf_token %}<input type="hidden" name="op" value="shop">
-<label class="field">اسم المحل<input name="name" value="{{ s.name }}" required maxlength="200"></label>
+<form method="post" class="form-grid" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="op" value="shop">
+<label class="field">اسم المحل<input name="name" value="{{ s.name }}" required maxlength="60"><small class="muted">حتى 60 حرفًا — يظهر على الإيصال وفي أعلى الشاشة</small></label>
 <label class="field">التليفون<input name="phone" value="{{ s.phone }}" dir="ltr" maxlength="40"></label>
 <label class="field">العنوان<input name="address" value="{{ s.address }}" maxlength="250"></label>
 <label class="field">آخر سطر في الإيصال<input name="footer" value="{{ footer }}" maxlength="200" placeholder="شكرًا لزيارتكم"></label>
+<div class="field" id="logo" style="grid-column:1/-1">شعار المحل (اللوجو) — يظهر على الإيصال وفي أعلى الشاشة{% if s.business == 'cafe' %} وعلى بطاقات QR{% endif %}
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">{% if s.logo_svg %}<span style="width:64px;height:64px;display:inline-flex;border:1px solid var(--line,#ddd);border-radius:8px;padding:4px;background:#fff">{{ s.logo_svg|safe }}</span>{% endif %}
+<input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+{% if s.logo_svg %}<label class="check"><input type="checkbox" name="no_logo" value="1"> إزالة الشعار</label>{% endif %}</div>
+<small class="muted">صورة PNG أو JPG أو SVG حتى 2 ميجابايت — اختياري</small></div>
 <div><button>حفظ</button></div></form></section>{% endwith %}
 
 {% with st=status.tax %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="tax"><h2><span class="n">2</span> الملف الضريبي</h2>
 <p class="muted why">يحسب البرنامج منه إقرار القيمة المضافة الشهري والضريبة السنوية — إن لم تكن متأكدًا فاسأل محاسبك.</p>
 <form method="post" class="form-grid">{% csrf_token %}<input type="hidden" name="op" value="tax">
 <label class="field" style="grid-column:1/-1">النظام الضريبي<select name="tax_regime">{% for k, v in s.TAX_REGIMES %}<option value="{{ k }}" {% if s.tax_regime == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></label>
-<div class="field">مسجل في القيمة المضافة؟<div style="display:flex;gap:16px"><label><input type="radio" name="vat_registered" value="1" {% if s.vat_registered %}checked{% endif %}> أيوه</label><label><input type="radio" name="vat_registered" value="0" {% if not s.vat_registered %}checked{% endif %}> لأ</label></div></div>
+<div class="field">مسجل في القيمة المضافة؟<div style="display:flex;gap:16px"><label><input type="radio" name="vat_registered" value="1" {% if s.vat_registered %}checked{% endif %}> نعم</label><label><input type="radio" name="vat_registered" value="0" {% if not s.vat_registered %}checked{% endif %}> لا</label></div></div>
 <label class="field">نسبة القيمة المضافة %<input name="vat_rate" value="{% if s.vat_registered %}{{ s.default_vat_rate|unlocalize }}{% else %}14{% endif %}" inputmode="decimal" dir="ltr"></label>
 <div class="field">أسعار البيع<div style="display:flex;gap:16px;flex-wrap:wrap"><label><input type="radio" name="incl" value="1" {% if s.pos_prices_include_vat %}checked{% endif %}> شاملة الضريبة</label><label><input type="radio" name="incl" value="0" {% if not s.pos_prices_include_vat %}checked{% endif %}> من غير الضريبة</label></div></div>
 <label class="field">رقم التسجيل الضريبي<input name="tax_registration" value="{{ s.tax_registration }}" dir="ltr" maxlength="50"></label>
@@ -76,11 +81,29 @@
 <form method="post" class="st-row">{% csrf_token %}<input type="hidden" name="op" value="gaming_rules">{% include "gaming/_rules_fields.html" %}<button>حفظ</button></form></section>
 {% endif %}
 
-<section class="card st-sec {% if status.items.done and status.reorder.done %}ok{% endif %}" id="items"><h2><span class="n">✦</span> الأصناف</h2>
-<p class="muted why">لديك {{ items }} صنف.{% if no_limit %} <b class="bad">{{ no_limit }} صنف من غير حد طلب</b> — اكتبه ليعمل التنبيه.{% endif %}</p>
+{% if s.business == 'cafe' %}
+<section class="card st-sec {% if status.menu.done %}ok{% endif %}" id="menu"><h2><span class="n">✦</span> المنيو</h2>
+<p class="muted why">{% if menu_n %}في المنيو الآن {{ menu_n|count:"منتج" }}.{% else %}أضف كل منتج باسمه وسعره، أو بأحجامه (صغير / وسط / كبير) وسعر كل حجم — المكونات والتكلفة اختيارية.{% endif %}</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'shop_menu' %}">🍽 افتح المنيو</a><a class="btn light" href="{% url 'import_upload' 'menu' %}">⬆ ارفع المنيو من إكسل</a></div></section>
+<section class="card st-sec {% if status.tables.done %}ok{% endif %}" id="tables"><h2><span class="n">✦</span> الترابيزات وبطاقات QR</h2>
+<p class="muted why">{% if tables_n %}لديك {{ tables_n|count:"ترابيزة" }} — اطبع بطاقة QR لكل ترابيزة ليتصفح العميل المنيو من هاتفه.{% else %}أضف ترابيزات المحل ليفتح الويتر حسابًا لكل ترابيزة ويُطبع حساب واحد في النهاية.{% endif %}</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'shop_tables' %}">🪑 الترابيزات</a>{% if tables_n %}<a class="btn light" href="{% url 'shop_tables_qr' %}" target="_blank" rel="noopener">🖨 اطبع بطاقات QR</a>{% endif %}</div>
+{% if not status.tables.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="tables"><button class="skip">لا توجد ترابيزات (تيك أواي فقط) — تخطٍّ</button></form>{% endif %}</section>
+<section class="card st-sec {% if status.receipt.done %}ok{% endif %}" id="receipt"><h2><span class="n">✦</span> الشعار والإيصال</h2>
+<p class="muted why">{% if s.logo_svg %}شعار المحل يظهر على الإيصال وبطاقات QR ✔{% else %}ارفع شعار المحل ليظهر على إيصال العميل وبطاقات QR على الترابيزات.{% endif %}</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn" href="#logo">🧾 ارفع الشعار</a><a class="btn light" href="{% url 'shop_settings' %}#receipt">بيانات الإيصال</a></div>
+{% if not status.receipt.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="receipt"><button class="skip">بدون شعار الآن — تخطٍّ</button></form>{% endif %}</section>
+<section class="card st-sec {% if status.kitchen.done %}ok{% endif %}" id="kitchen"><h2><span class="n">✦</span> ورقة المطبخ</h2>
+<p class="muted why">مع كل طلب تُطبع ورقة بالطلب للمطبخ — الآن: <b>{{ s.get_kitchen_ticket_display }}</b>.</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'shop_settings' %}#kitchen">🍳 اضبط ورقة المطبخ</a></div>
+{% if not status.kitchen.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="kitchen"><button class="skip">لا أحتاج ورقة للمطبخ — تخطٍّ</button></form>{% endif %}</section>
+{% if no_limit %}<section class="card st-sec" id="reorder"><h2><span class="n">✦</span> حد الطلب</h2><p class="muted why"><b class="bad">{{ no_limit|count:"صنف" }} من غير حد طلب</b> — اكتبه ليعمل التنبيه.</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn light" href="{% url 'shop_items' %}?noreorder=1">اكتب حد الطلب الناقص</a></div></section>{% endif %}
+{% else %}<section class="card st-sec {% if status.items.done and status.reorder.done %}ok{% endif %}" id="items"><h2><span class="n">✦</span> الأصناف</h2>
+<p class="muted why">لديك {{ items|count:"صنف" }}.{% if no_limit %} <b class="bad">{{ no_limit|count:"صنف" }} من غير حد طلب</b> — اكتبه ليعمل التنبيه.{% endif %}</p>
 <div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'import_upload' 'items' %}">⬆ ارفع الأصناف من إكسل</a><a class="btn light" href="{% url 'shop_items' %}{% if no_limit %}?noreorder=1{% endif %}">{% if no_limit %}اكتب حد الطلب الناقص{% else %}أضف صنفًا يدويًا{% endif %}</a>
 {% if is_pharmacy %}<a class="btn light" href="{% url 'pharmacy' %}">💊 من مكتبة الأدوية</a>{% endif %}</div></section>
-<span id="reorder"></span>
+<span id="reorder"></span>{% endif %}
 
 {% if 'purchases' in mods %}<section class="card st-sec {% if status.suppliers.done %}ok{% endif %}" id="suppliers"><h2><span class="n">✦</span> الموردين</h2>
 {% if suppliers %}<div class="st-chips">{% for n in suppliers %}<span>{{ n }}</span>{% endfor %}</div>{% endif %}

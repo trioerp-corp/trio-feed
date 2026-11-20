@@ -90,3 +90,10 @@ form.filters{flex-direction:column;align-items:stretch}form.filters>*{width:100%
 .table-wrap table{font-size:13px}.kpi .v{font-size:18px}.seg{display:flex;overflow-x:auto}}
 @media print{.gg-foot{display:none}}
 .gg-nav a{white-space:nowrap}
+/* a long shop name never widens the page: it is cut with «…» (full name on hover) */
+.gg-brand{min-width:0;max-width:100%}.gg-name{min-width:0;max-width:min(360px,60vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gg-name small{overflow:hidden;text-overflow:ellipsis}main.page{min-width:0;overflow-wrap:anywhere}
+/* table.stack: on a phone every row becomes a small card, so no column hides off the screen */
+@media (max-width:700px){table.stack thead{display:none}table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:100%}
+table.stack tr{display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+table.stack td{padding:2px 0;border:0;text-align:start!important}table.stack td[data-label]::before{content:attr(data-label) " ";color:var(--muted);font-size:12px;display:block}}

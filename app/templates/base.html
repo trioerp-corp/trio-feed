@@ -14,7 +14,7 @@
 {% if user.is_authenticated and not hide_nav %}
 <header class="gg-top">
   <button type="button" class="gg-burger" aria-label="القائمة" aria-controls="ggSide" aria-expanded="false" onclick="ggSide(true)">☰</button>
-  <a class="gg-brand" href="{% url 'home' %}">{% if company.logo_svg %}<span style="width:42px;height:42px;display:inline-flex" aria-hidden="true">{{ company.logo_svg|safe }}</span>{% else %}<span class="gg-user" style="background:#fff;color:#0C4A76" aria-hidden="true">{{ company.name|slice:":1" }}</span>{% endif %}<span>{{ company.name }}<small>{{ business_label|default:"نظام المبيعات والمخزن" }}</small></span></a>
+  <a class="gg-brand" href="{% url 'home' %}">{% if company.logo_svg %}<span style="width:42px;height:42px;display:inline-flex" aria-hidden="true">{{ company.logo_svg|safe }}</span>{% else %}<span class="gg-user" style="background:#fff;color:#0C4A76" aria-hidden="true">{{ company.name|slice:":1" }}</span>{% endif %}<span class="gg-name" title="{{ company.name }}">{{ company.name }}<small>{{ business_label|default:"نظام المبيعات والمخزن" }}</small></span></a>
   <div class="gg-tools">
     {% if branch_on %}{% if branch_locked %}<span class="brchip" title="فرعك">🏬 {{ branch_view.name }}</span>{% else %}
     <form method="post" action="{% url 'branch_switch' %}" class="brsel">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">

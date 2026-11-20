@@ -57,17 +57,31 @@ def _save(request, s, op):
         s.save(update_fields=["onboarding"])
         return "تم التخطي — يمكنك العودة إليها في أي وقت من هنا"
     if op == "shop":
-        name = P.get("name", "").strip()
+        from core.setup_service import check_shop_name
+
+        name = " ".join(P.get("name", "").split())
         if not name:
             raise ValidationError("اكتب اسم المحل")
-        s.name, s.phone, s.address = name[:200], P.get("phone", "").strip()[:40], P.get("address", "").strip()[:250]
+        check_shop_name(name)
+        s.name, s.phone, s.address = name, P.get("phone", "").strip()[:40], P.get("address", "").strip()[:250]
         s.save(update_fields=["name", "phone", "address"])
         br = Branch.objects.order_by("pk").first()
         if br and P.get("footer") is not None:
             br.receipt_footer = P.get("footer", "").strip()[:200]
             br.save(update_fields=["receipt_footer"])
+        f, logo = request.FILES.get("logo"), ""
+        if f:  # the logo on the receipt, the program header and the QR cards
+            from core.setup_service import logo_svg
+
+            if f.size > 2 * 1024 * 1024:
+                raise ValidationError("صورة الشعار كبيرة — الحد الأقصى 2 ميجابايت")
+            s.logo_svg, logo = logo_svg(f.read(), f.name), " والشعار"
+            s.save(update_fields=["logo_svg"])
+        elif P.get("no_logo") == "1":
+            s.logo_svg = ""
+            s.save(update_fields=["logo_svg"])
         _mark(s, "shop")
-        return "تم حفظ بيانات المحل ✔"
+        return f"تم حفظ بيانات المحل{logo} ✔"
     if op == "tax":
         regime = P.get("tax_regime")
         if regime not in dict(s.TAX_REGIMES):
@@ -203,6 +217,11 @@ def page(request):
         if _pdf(key_for(s)):
             ctx["auto_guide"] = True
             _mark(s, "guide")
+    if s.business == "cafe":
+        from inventory import menu as MN
+        from pos.models import DiningTable
+
+        ctx.update(menu_n=len(MN.products()[0]), tables_n=DiningTable.objects.filter(active=True).count())
     if "clinic" in mods:
         Doctor, Service = apps.get_model("clinic", "Doctor"), apps.get_model("clinic", "Service")
         ctx.update(doctors=Doctor.objects.filter(active=True), services=Service.objects.filter(item__active=True).select_related("item", "doctor"))

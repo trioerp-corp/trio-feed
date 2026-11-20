@@ -34,12 +34,13 @@ def page(request):
             elif op == "stop":
                 it = Item.objects.get(pk=P.get("item"))
                 MN.stop(it)
-                messages.success(request, f"تم رفع «{it.name}» من المنيو — مبيعاته السابقة محفوظة")
+                messages.success(request, f"أُزيل «{it.name}» من المنيو — مبيعاته السابقة محفوظة")
         except (ValidationError, Item.DoesNotExist) as e:
             messages.error(request, e.messages[0] if hasattr(e, "messages") else "الصنف غير موجود")
             return redirect(f"{request.path}?{request.GET.urlencode()}")
         return redirect(request.path)
     rows, addons = MN.products()
+    rows = [r for r in rows if r["item"].code != "PLAY"]  # the hall's time charge is not a menu product
     recipes = dict(Recipe.objects.values_list("item_id", "pk"))
     edit = Item.objects.filter(pk=request.GET.get("edit") or 0, variant_of__isnull=True).first()
     edit_sizes = MN.sizes_of(edit) if edit else []

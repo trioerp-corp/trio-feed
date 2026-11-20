@@ -36,10 +36,23 @@ def checklist(s=None):
         from django.apps import apps
 
         add("stations", "أجهزة الصالة وسعر الساعة", apps.get_model("gaming", "Station").objects.filter(active=True).exists())
-    sellable = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code="0")
-    add("items", "الأصناف وأسعار البيع", sellable.exists(), "أضفهم واحدًا تلو الآخر أو ارفع ملف إكسل مرة واحدة")
+    if s.business == "cafe":  # a café / restaurant: its menu, its tables, its receipt and the kitchen's ticket
+        from inventory import menu as MN
+        from pos.models import DiningTable
+
+        add("menu", "المنيو (المنتجات وأسعارها وأحجامها)", MN.products()[0], "من صفحة المنيو: الاسم والسعر أو الأحجام فقط")
+        add("tables", "الترابيزات وبطاقات QR", DiningTable.objects.filter(active=True).exists(), "تخطَّ إن كان البيع تيك أواي فقط")
+        add("receipt", "شعار المحل وشكل الإيصال", s.logo_svg or ob.get("receipt"))
+        add("kitchen", "ورقة المطبخ (تُطبع مع كل طلب)", s.kitchen_ticket != "off" or ob.get("kitchen"))
+    else:
+        sellable = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code="0")
+        add("items", "الأصناف وأسعار البيع", sellable.exists(), "أضفهم واحدًا تلو الآخر أو ارفع ملف إكسل مرة واحدة")
     no_limit = Item.objects.filter(active=True, item_type="stock", reorder_level__isnull=True).exclude(code="0").count()
-    add("reorder", f"حد الطلب لكل صنف{f' (ناقص في {no_limit} صنف)' if no_limit else ''}", not no_limit)
+    if s.business != "cafe" or no_limit:  # a menu holds no stock; only the café's stock items (cans) need it
+        from .templatetags.ar import count_ar
+
+        left = f" (ناقص في {count_ar(no_limit, 'صنف')})" if no_limit else ""
+        add("reorder", f"حد الطلب لكل صنف{left}", not no_limit)
     if "purchases" in mods:
         add("suppliers", "الموردون الذين تشتري منهم", Partner.objects.filter(kind="supplier", active=True).exists())
     if "partners" in mods:

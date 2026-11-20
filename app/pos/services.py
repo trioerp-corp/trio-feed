@@ -107,7 +107,7 @@ def catalog(device):
     for v in Item.objects.filter(active=True, variant_of__isnull=False, variant_of__active=True, sale_price__isnull=False).order_by("id"):
         sizes.setdefault(v.variant_of_id, []).append(v)
     items = Item.objects.filter(Q(sale_price__isnull=False) | Q(pk__in=list(sizes)), active=True, variant_of__isnull=True, is_addon=False).exclude(
-        category__name__startswith="مستلزمات تشغيل").values(
+        category__name__startswith="مستلزمات تشغيل").exclude(code="PLAY").values(  # play time is billed by the hall screen only
         "id", "code", "name", "barcode", "sale_price", "vat_rate", "unit", "category__name", "extra", "aliases", "item_type", "qty_on_hand", "reorder_level")
 
     def _vat(x):
@@ -125,7 +125,7 @@ def catalog(device):
     for u in ItemUnit.objects.all():
         units.setdefault(u.item_id, []).append({"name": u.name, "factor": str(u.factor), "barcode": u.barcode,
                                                 "price": str(u.sale_price) if u.sale_price is not None else None})
-    cashiers = get_user_model().objects.filter(is_active=True).filter(groups__name__in=["كاشير", "مدير المحل"]).distinct()
+    cashiers = get_user_model().objects.filter(is_active=True).filter(groups__name__in=TILL_GROUPS).distinct()
     return {
         "branch": {"code": device.branch.code, "name": device.branch.name, "footer": device.branch.receipt_footer},
         "device": device.code, "next_seq": next_seq(device), "company": s.name, "phone": s.phone, "address": s.address, "tax_id": s.tax_registration,
@@ -134,13 +134,14 @@ def catalog(device):
         "logo": s.logo_svg,
         "kitchen": s.kitchen_ticket if s.business in ("cafe", "gaming") else "off", "biz": s.business,
         "tables": __import__("pos.tables", fromlist=["x"]).cfg(s), "can_edit": s.cashier_can_edit,
+        **_extras(s),
         "addons": addons,
         "scale": {"prefix": s.scale_prefix, "mode": s.scale_mode, "digits": s.scale_item_digits},
         "promos": promos(),
         "employees": [{"id": p.pk, "name": p.name} for p in Partner.objects.filter(kind="employee", active=True, merged_into__isnull=True).order_by("name")],
         "suppliers": [{"id": p.pk, "name": p.name} for p in Partner.objects.filter(kind="supplier", active=True, merged_into__isnull=True).order_by("name")],
         "expenses": [{"id": a.pk, "name": a.name} for a in __import__("pos.money", fromlist=["x"]).expense_accounts()],
-        "cashiers": [{"username": u.username, "name": u.first_name or u.username} for u in cashiers],
+        "cashiers": [{"username": u.username, "name": u.first_name or u.username, **({"w": True} if till_role(u) == "waiter" else {})} for u in cashiers],
         "customers": customers(),
         "items": [{**{k: v for k, v in i.items() if k not in ("category__name", "id", "extra", "aliases", "item_type", "qty_on_hand", "reorder_level")},
                    "cat": i["category__name"],
@@ -153,6 +154,20 @@ def catalog(device):
                    "sale_price": str(i["sale_price"] if i["sale_price"] is not None else min(v.sale_price for v in sizes[i["id"]])),
                    "vat_rate": _vat(i["vat_rate"])} for i in items],
     }
+
+
+def _extras(s):
+    """1.24: delivery (settings + address book), service charge %, kitchen stations — for the till."""
+    from . import delivery as D
+    from . import restaurant as R
+
+    d, svc = D.cfg(s), R.svc_cfg(s)
+    if d["on"]:
+        D.fee_item()
+    if svc["on"]:
+        R.svc_item()
+    return {"delivery": d, "dbook": D.book() if d["on"] else [], "svc": svc,
+            "stations": [dict(name=x["name"], cats=x["cats"]) for x in R.stations(s)] if s.business in R.BIZ else []}
 
 
 def _lowest_price(item):
@@ -210,10 +225,14 @@ def ingest_order(device, data, renumber=False):
     branch = device.branch
     shift = Shift.objects.filter(uid=data.get("shift_uid"), device=device).first()
     is_return = bool(data.get("is_return"))
+    ret_note = check_return(device, data) if is_return and renumber else ""  # renumber = it came from the till's sync
     order = Order.objects.create(uid=uid, device=device, shift=shift, created_at_device=_dt(data.get("created_at")),
                                  total=0, paid_cash=Decimal(str(data.get("paid_cash", 0))), paid_card=Decimal(str(data.get("paid_card", 0))),
                                  paid_credit=Decimal(str(data.get("paid_credit", 0) or 0)), is_return=is_return, raw=data,
+                                 paid_rider=Decimal(str(data.get("paid_rider", 0) or 0)),
                                  shift_seq=data.get("shift_seq") or None)
+    if order.paid_rider and (is_return or not isinstance(data.get("delivery"), dict) or order.paid_rider < 0):
+        raise ValidationError("«مع الطيار» لطلبات الدليفري فقط")
     if order.paid_credit:
         from ledger.models import Partner
 
@@ -238,7 +257,7 @@ def ingest_order(device, data, renumber=False):
     else:
         flags_pre = ""
     total = vat = Decimal(0)
-    flags = [flags_pre] if flags_pre else []
+    flags = [x for x in (flags_pre, ret_note) if x]
     sales_acc, cogs, by_rev = Account.objects.get(code=SALES), Account.objects.get(code=COGS), {}
     move = StockMove.objects.create(kind="return" if is_return else "issue", date=order.created_at_device.date(), warehouse=branch.warehouse,
                                     description=f"نقطة بيع {uid}", legacy_number=uid)
@@ -277,7 +296,12 @@ def ingest_order(device, data, renumber=False):
 
     if DayClose.objects.filter(date__gte=order.created_at_device.date()).exists():
         flags.append("وصلت بعد التقفيل النهائي لليوم")
-    paid = order.paid_cash + order.paid_card + order.paid_credit
+    paid = order.paid_cash + order.paid_card + order.paid_credit + order.paid_rider
+    from . import restaurant
+
+    svc_flag = restaurant.check_svc(data)
+    if svc_flag:
+        flags.append(svc_flag)
     if reused:
         flags.append("كرّر الجهاز رقم فاتورة قديمًا — سُجّلت برقم بديل")
     if under:
@@ -297,6 +321,10 @@ def ingest_order(device, data, renumber=False):
     if order.paid_credit:
         lines.append({"account": Account.objects.get(code="1203010101"), "partner": order.customer, sign_cash: order.paid_credit,
                       "description": f"بيع آجل {uid}"})
+    if order.paid_rider:  # 1.24 delivery: the money is with the rider until «تم التحصيل» at a till
+        from .delivery import clearing
+
+        lines.append({"account": clearing(), sign_cash: order.paid_rider, "description": f"دليفري مع الطيار {uid}"})
     diff = L.q2(total - paid)
     if diff:
         lines.append({"account": card_clearing(), sign_cash: abs(diff) if diff > 0 else 0, sign_sale: abs(diff) if diff < 0 else 0,
@@ -322,6 +350,10 @@ def ingest_order(device, data, renumber=False):
         move.delete()
     order.total, order.vat, order.flags = total, vat, "؛ ".join(flags)[:300]
     order.save()
+    if isinstance(data.get("delivery"), dict) and not is_return:
+        from .delivery import record
+
+        record(order, data)
     return order, True
 
 
@@ -354,13 +386,55 @@ def ingest_shift(device, data):
     return sh
 
 
+TILL_GROUPS = ["كاشير", "مدير المحل", "ويتر"]
+
+
 def verify_cashier(username, password):
     from django.contrib.auth import authenticate
 
     u = authenticate(username=username, password=password)
-    if not u or not u.is_active or not (u.is_superuser or u.groups.filter(name__in=["كاشير", "مدير المحل"]).exists()):
+    if not u or not u.is_active or not (u.is_superuser or u.groups.filter(name__in=TILL_GROUPS).exists()):
         return None
     return u
+
+
+def till_role(user):
+    """«waiter» = tables and the kitchen only (no payment, returns or cash moves); anyone else on the till is a cashier."""
+    if user.is_superuser or user.groups.filter(name__in=["كاشير", "مدير المحل"]).exists():
+        return "cashier"
+    return "waiter" if user.groups.filter(name="ويتر").exists() else "cashier"
+
+
+# ---------------------------------------------------------------- returns at the till need the owner (unless cashier_can_edit)
+RET_SALT, RET_AGE = "pos.return", 3 * 24 * 3600  # the till may go offline right after the approval: 3 days to sync
+
+
+def return_token(device, user, reason, amount):
+    from django.core import signing
+
+    return signing.dumps({"d": device.pk, "u": user.username, "r": str(reason)[:200], "a": str(L.q2(Decimal(str(amount)))),
+                          "n": __import__("secrets").token_hex(6)}, salt=RET_SALT)
+
+
+def check_return(device, data):
+    """A return from the till: approved by the owner / manager (signed token from /pos/api/return/ok/) or allowed to cashiers.
+    Returns the text kept on the order; raises ValidationError when the money would go out without control."""
+    from django.core import signing
+
+    reason = str(data.get("ret_reason") or "").strip()[:200]
+    if CompanySettings.get().cashier_can_edit:
+        return f"مرتجع — السبب: {reason or 'لم يُكتب'}"
+    tok = str(data.get("ret_ok") or "")
+    try:
+        t = signing.loads(tok, salt=RET_SALT, max_age=RET_AGE)
+    except signing.BadSignature:  # also SignatureExpired
+        raise ValidationError("مرتجع دون موافقة صاحب المحل أو المدير — لم يُسجَّل")
+    paid = sum((Decimal(str(data.get(k) or 0)) for k in ("paid_cash", "paid_card", "paid_credit")), Decimal(0))
+    if t.get("d") != device.pk or L.q2(paid) > Decimal(t.get("a") or 0):
+        raise ValidationError("موافقة المرتجع لا تخص هذه الفاتورة — لم يُسجَّل")
+    if Order.objects.filter(raw__ret_ok=tok).exists():
+        raise ValidationError("موافقة المرتجع استُخدمت من قبل — لم يُسجَّل")
+    return f"مرتجع بموافقة {t.get('u')} — السبب: {t.get('r') or reason}"
 
 
 def ingest_cash_move(device, data):
@@ -377,6 +451,8 @@ def ingest_cash_move(device, data):
         return m.kind == data.get("kind") and m.amount == L.q2(Decimal(str(data.get("amount") or 0)))
 
     ex = CashMove.objects.filter(uid=uid).first()
+    if ex and ex.kind == "delivery" == data.get("kind") and ex.note.endswith(str(data.get("order_uid") or "-")):
+        return ex  # a delivery collection sent again (its amount is the program's, not the till's)
     if ex and not same(ex):  # a used number on another paper (the till lost its counter): kept under «~n», never dropped
         twins = list(CashMove.objects.filter(uid__startswith=uid + "~"))
         hit = next((t for t in twins if same(t)), None)
@@ -384,6 +460,10 @@ def ingest_cash_move(device, data):
             return hit
         uid = f"{uid}~{len(twins) + 2}"
     shift = Shift.objects.filter(uid=data.get("shift_uid"), device=device).first()
+    if data.get("kind") == "delivery":  # 1.24: the rider handed a delivery order's money in
+        from .delivery import collect
+
+        return collect(device, dict(data, uid=uid), shift)
     return money.post(data["kind"], data.get("amount"), _dt(data.get("created_at")).date(), cash_account=device.branch.cashbox.account,
                       partner=Partner.objects.filter(pk=data.get("partner_id") or 0).first(),
                       account=Account.objects.filter(pk=data.get("account_id") or 0).first(), deduct_advance=data.get("deduct_advance") or 0,

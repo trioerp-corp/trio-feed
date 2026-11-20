@@ -12,10 +12,21 @@
 {% if a.state == 'booked' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="appt" value="{{ a.pk }}"><input type="hidden" name="reason" value="إلغاء الحجز"><button class="light" onclick="return confirm('إلغاء حجز {{ a.patient.name|escapejs }}؟{% if a.visit and a.visit.total %} سيُعاد المبلغ بقيد عكسي{% endif %}')">إلغاء</button></form>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="8" class="muted">لا توجد حجوزات في هذا اليوم</td></tr>{% endfor %}</tbody></table></div></div>
 <div class="side"><section class="card"><h2>+ حجز جديد</h2>
-<form method="post">{% csrf_token %}{% include "clinic/_pick.html" %}
+<form method="post" id="bookF">{% csrf_token %}<input type="hidden" name="allow_overlap" value="">{% include "clinic/_pick.html" %}
 <label class="field">اليوم<input type="date" name="date" value="{{ day|date:'Y-m-d' }}" required></label>
 <label class="field">الساعة (اختياري)<input type="time" name="time"></label>
 <label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}">{{ d }}</option>{% endfor %}</select></label>
 <label class="field">الخدمة<select name="service"><option value="">كشف</option>{% for s in services %}<option value="{{ s.pk }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label>
-<label class="field">ملاحظة<input name="note"></label>{% include "clinic/_paynow.html" %}<p style="margin:10px 0 0"><button>احجز</button></p></form></section></div></div>
+<label class="field">ملاحظة<input name="note"></label>{% include "clinic/_paynow.html" %}<p class="muted" id="clash" style="display:none;color:var(--bad);font-weight:700;margin:8px 0 0"></p>
+<p style="margin:10px 0 0"><button>احجز</button></p></form></section></div></div>
+<script>(function(){var f=document.getElementById('bookF'),w=document.getElementById('clash'),ok=false;
+function q(n){return f.querySelector('[name='+n+']')}
+function check(){var t=q('time').value;if(!t||(!q('doctor').value&&!q('service').value)){w.style.display='none';return Promise.resolve(null)}
+return fetch('?check=1&d='+encodeURIComponent(q('date').value)+'&time='+encodeURIComponent(t)+'&doctor='+q('doctor').value+'&service='+q('service').value,{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
+if(!j.clash||!j.clash.length){w.style.display='none';return null}
+w.textContent='⚠ '+j.doctor+' لديه حجز '+j.clash[0].name+' الساعة '+j.clash[0].time+(j.free?' — أول موعد متاح '+j.free:' — لا يوجد موعد متاح بعدها اليوم');w.style.display='block';return j}).catch(function(){return null})}
+['time','doctor','service','date'].forEach(function(n){q(n).addEventListener('change',function(){ok=false;q('allow_overlap').value='';check()})});
+f.addEventListener('submit',function(e){if(ok)return;e.preventDefault();check().then(function(j){
+if(j){if(confirm(w.textContent+'\n\n«موافق» = احجز في الوقت نفسه · «إلغاء» = '+(j.free?'اختر الساعة '+j.free:'غيّر الساعة'))){q('allow_overlap').value='1'}else{if(j.free)q('time').value=j.free;check();return}}
+ok=true;f.requestSubmit?f.requestSubmit():f.submit()})})})();</script>
 {% endblock %}

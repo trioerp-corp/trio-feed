@@ -1,11 +1,11 @@
-{% extends "base.html" %}{% load gg %}{% block title %}الفروع{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}الفروع{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>الفروع — {{ title }}</h1><p class="muted" style="margin:0">كل الفروع أمامك: المبيعات والربح والأموال والمخزون. اختر فرعًا من الأعلى لتعرضه كل الشاشات وحده.</p></div>
 <div class="actions"><div class="seg"><a href="?p=day" class="{% if kind == 'day' %}on{% endif %}">اليوم</a><a href="?p=month" class="{% if kind == 'month' %}on{% endif %}">الشهر</a><a href="?p=year" class="{% if kind == 'year' %}on{% endif %}">السنة</a></div>
 <a class="btn" href="#add">+ فرع جديد</a><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
 
 <section class="grid" style="margin-bottom:18px">
-<div class="card kpi hero"><span class="k">مبيعات كل الفروع</span><span class="v">{{ tot.sales|money:0 }}</span><span class="k">{{ tot.n }} فاتورة</span></div>
+<div class="card kpi hero"><span class="k">مبيعات كل الفروع</span><span class="v">{{ tot.sales|money:0 }}</span><span class="k">{{ tot.n|count:"فاتورة" }}</span></div>
 <div class="card kpi"><span class="k">مجمل الربح</span><span class="v">{{ tot.gross|money:0 }}</span></div>
 <div class="card kpi"><span class="k">صافي الربح</span><span class="v">{{ tot.net|money:0 }}</span><span class="k">بعد المصروفات {{ tot.exp_total|money:0 }}</span></div>
 <div class="card kpi gold"><span class="k">النقدية في الأدراج</span><span class="v">{{ tot.drawer|money:0 }}</span><span class="k">المخزون {{ tot.stock|money:0 }}</span></div></section>

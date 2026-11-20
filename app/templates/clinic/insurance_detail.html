@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}{{ ins.name }}{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}{{ ins.name }}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🛡 {{ ins.name }}</h1><p class="muted" style="margin:0">تتحمّل {{ ins.coverage_pct|floatformat:-2 }}%{% if ins.max_per_visit %} بحد {{ ins.max_per_visit|money:0 }} ج للزيارة{% endif %}{% if ins.contract_no %} · تعاقد {{ ins.contract_no }}{% endif %} — {{ company.name }}</p></div>
 <div class="actions noprint"><a class="btn light" href="?d1={{ d1|date:'Y-m-d' }}&d2={{ d2|date:'Y-m-d' }}&print=1" onclick="setTimeout(()=>print(),300)">🖨 اطبع المطالبة</a><a class="btn light" href="{% url 'clinic_insurance' %}">كل الشركات</a></div></div>
@@ -8,7 +8,7 @@
 <div class="kpi"><span class="k">المحصّل منها</span><span class="v">{{ st.collected|money }}</span></div>
 <div class="kpi gold"><span class="k">كل ما عليها حتى اليوم</span><span class="v">{{ st.owed|money }}</span></div></div>
 <div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>المريض</th><th>الرقم التأميني</th><th>الطبيب</th><th class="n">الفاتورة</th><th class="n">نصيب الشركة</th><th class="n">الباقي</th><th>الحالة</th></tr></thead><tbody>
-{% for r in st.rows %}<tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.patient.name }} <small class="muted">({{ r.patient.number }})</small></td><td dir="ltr">{{ r.patient.insurance_no }}</td><td>{{ r.visit.doctor|default:"" }}</td>
+{% for r in st.rows %}<tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.patient.name }} <small class="muted">({{ r.patient.number|unlocalize }})</small></td><td dir="ltr">{{ r.patient.insurance_no }}</td><td>{{ r.visit.doctor|default:"" }}</td>
 <td class="n">{{ r.total|money }}</td><td class="n"><b>{{ r.credit|money }}</b></td><td class="n">{{ r.remaining|money }}</td><td>{{ r.status }}</td></tr>
 {% empty %}<tr><td colspan="8" class="muted">لا توجد زيارات على هذه الشركة في الفترة</td></tr>{% endfor %}</tbody>
 <tfoot><tr><th colspan="5">الإجمالي</th><th class="n">{{ st.billed|money }}</th><th colspan="2"></th></tr></tfoot></table></div>

@@ -1,18 +1,18 @@
-{% extends "base.html" %}{% load gg %}{% block title %}التقارير{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}التقارير{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>تقارير المحل</h1><p class="muted" style="margin:0">{{ d1|date:"d/m/Y" }} — {{ d2|date:"d/m/Y" }}</p></div>
 <div class="actions noprint"><button class="btn light" onclick="window.print()">🖨 طباعة</button>{% if 'valuation' in mods %}<a class="btn light" href="{% url 'shop_valuation' %}">تقييم المخزون</a>{% endif %}<a class="btn light" href="{% url 'shop_money' %}">رصيد صاحب المحل</a>{% if user.is_superuser %}<a class="btn light" href="{% url 'reports_index' %}">🔧 التقارير المحاسبية</a>{% endif %}</div></div>
 <form class="filters" method="get"><label>من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label><label>إلى<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label>{% if branches|length > 1 %}<label>الفرع<select name="branch"><option value="">كل الفروع</option>{% for b in branches %}<option value="{{ b.pk }}" {% if g.branch == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select></label>{% endif %}<button>عرض</button></form>
 <section class="grid" style="margin-bottom:20px">
-<div class="card kpi hero"><span class="k">صافي المبيعات (بعد المرتجع)</span><span class="v">{{ t.net|money:0 }}</span><span class="k">{{ t.n }} فاتورة</span></div>
+<div class="card kpi hero"><span class="k">صافي المبيعات (بعد المرتجع)</span><span class="v">{{ t.net|money:0 }}</span><span class="k">{{ t.n|count:"فاتورة" }}</span></div>
 <div class="card kpi"><span class="k">تكلفة البضاعة المباعة</span><span class="v">{{ cogs|money:0 }}</span></div>
 <div class="card kpi gold"><span class="k">مجمل الربح</span><span class="v">{{ gross_profit|money:0 }}</span><span class="k">هامش {{ margin|floatformat:1 }}% (بدون ض.ق.م {{ t.vat|money:0 }})</span></div>
 <div class="card kpi"><span class="k">المصروفات</span><span class="v">{{ exp_total|money:0 }}</span></div>
 <div class="card kpi {% if net_profit < 0 %}bad{% else %}hero{% endif %}"><span class="k">صافي الربح</span><span class="v">{{ net_profit|money:0 }}</span></div></section>
 <div class="split"><div class="main">
-<h2>المبيعات يومًا بيوم</h2><div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>اليوم</th><th class="n">فواتير</th><th class="n">المبيعات</th><th class="n">المرتجع</th><th class="n">نقدي</th><th class="n">بطاقة</th><th class="n">ق.م</th></tr></thead><tbody>
-{% for d, s in days %}<tr><td>{{ d|date:"D d/m" }}</td><td class="n">{{ s.n }}</td><td class="n">{{ s.net|money }}</td><td class="n">{{ s.returns|money }}</td><td class="n">{{ s.cash|money }}</td><td class="n">{{ s.card|money }}</td><td class="n">{{ s.vat|money }}</td></tr>
-{% empty %}<tr><td colspan="7" class="muted">لا توجد مبيعات</td></tr>{% endfor %}</tbody></table></div>
+<h2>المبيعات يومًا بيوم</h2><div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>اليوم</th><th class="n">فواتير</th><th class="n">المبيعات</th><th class="n">المرتجع</th><th class="n">نقدي</th><th class="n">بطاقة</th><th class="n">آجل</th>{% if dlv %}<th class="n">مع الطيار</th>{% endif %}{% if t.disc %}<th class="n">خصومات</th>{% endif %}<th class="n">ق.م</th></tr></thead><tbody>
+{% for d, s in days %}<tr><td>{{ d|date:"D d/m" }}</td><td class="n">{{ s.n }}</td><td class="n">{{ s.net|money }}</td><td class="n">{{ s.returns|money }}</td><td class="n">{{ s.cash|money }}</td><td class="n">{{ s.card|money }}</td><td class="n">{{ s.credit|money }}</td>{% if dlv %}<td class="n">{{ s.rider|money }}</td>{% endif %}{% if t.disc %}<td class="n">{{ s.disc|money }}</td>{% endif %}<td class="n">{{ s.vat|money }}</td></tr>
+{% empty %}<tr><td colspan="10" class="muted">لا توجد مبيعات</td></tr>{% endfor %}</tbody></table></div>
 <h2>أكثر الأصناف مبيعًا</h2><div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>الصنف</th><th class="n">الكمية</th><th class="n">المبيعات</th></tr></thead><tbody>
 {% for it, v in top %}<tr><td>{{ it.name }}</td><td class="n">{{ v.qty|floatformat:-3 }} {{ it.unit }}</td><td class="n">{{ v.revenue|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">—</td></tr>{% endfor %}</tbody></table></div>
 <h2>الورديات</h2><div class="table-wrap"><table><thead><tr><th>الكاشير</th><th>الفتح</th><th>القفل</th><th class="n">المتوقع</th><th class="n">الفعلي</th><th class="n">الفرق</th></tr></thead><tbody>
