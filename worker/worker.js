@@ -246,7 +246,7 @@ async function ask(req, env) {
   // a made-up machine code is free, so the whole service also has a daily ceiling (AI_DAILY_CAP) — the bill can never run away
   if ((await bump(env, "rl:ai:" + today(), 90000)) > Number(env.AI_DAILY_CAP || 1500)) return err("المساعد مشغول اليوم — حاول غدًا", 429);
   const limit = parseInt(env.ASK_LIMIT || "30", 10), n = await bump(env, "rl:a:" + b.m + ":" + today(), 90000);
-  if (n > limit) return err("انتهت أسئلة اليوم (" + limit + ") — حاول غدًا أو تواصل مع Trio 01008030459", 429);
+  if (n > limit) return err("انتهت أسئلة اليوم (" + limit + ") — حاول غدًا أو تواصل مع Trio 01228827915", 429);
   const cut = (a, k) => (Array.isArray(a) ? a.slice(0, k) : []);
   const pages = cut(b.pages, 60).map((p) => "- " + String(p.name || "").slice(0, 60) + " → " + String(p.url || "").slice(0, 80)).join("\n");
   const topics = cut(b.topics, 8).map((t) => "## " + String(t.t || "").slice(0, 80) + "\n" + String(t.a || "").slice(0, 900)).join("\n\n");
@@ -327,7 +327,7 @@ async function tgHook(req, env) {
     if (id) { await env.ACC.put("tg:" + id, JSON.stringify((await tgChats(env, id)).filter((c) => c !== chat))); await env.ACC.delete("tgc:" + chat); }
     await reply("أُوقف ✔ — لن يصلك ملخص آخر. تعيده من «📱 الموبايل والتقارير» في البرنامج.");
   } else {
-    await reply("أهلًا 👋 هذا بوت Trio لملخص اليوم. اربطه من البرنامج: «📱 الموبايل والتقارير» ← «افتح تليجرام واربط».\nTrio · 01008030459");
+    await reply("أهلًا 👋 هذا بوت Trio لملخص اليوم. اربطه من البرنامج: «📱 الموبايل والتقارير» ← «افتح تليجرام واربط».\nTrio · 01228827915");
   }
   return new Response("ok");
 }
@@ -346,7 +346,7 @@ async function mail(env, to, subject, text, shop) {
   const html = `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;font-size:15px;line-height:1.8;color:#0B1F3A;max-width:560px">
 <div style="background:#17698F;color:#fff;padding:14px 18px;border-radius:12px 12px 0 0;font-weight:bold">${esc(subject)}</div>
 <div style="border:1px solid #DFE6EF;border-top:0;padding:16px 18px;border-radius:0 0 12px 12px;white-space:pre-line">${esc(text)}</div>
-<p style="color:#66788F;font-size:12px">أُرسل من Trio لـ ${esc(shop)} · 01008030459</p></div>`;
+<p style="color:#66788F;font-size:12px">أُرسل من Trio لـ ${esc(shop)} · 01228827915</p></div>`;
   const r = await fetch(env.MAIL_API || "https://api.brevo.com/v3/smtp/email", {
     method: "POST", headers: { "api-key": env.BREVO_KEY, "Content-Type": "application/json", accept: "application/json" },
     body: JSON.stringify({ sender: { name: "Trio", email: env.MAIL_FROM }, to: to.map((e) => ({ email: e })), subject, textContent: text + "\n\npowered by Trio", htmlContent: html }),
@@ -469,7 +469,9 @@ function render(r){
   if(d.play)h+='<section><h2>الأجهزة الشغالة <em>'+d.play.length+(d.play.some(p=>p.v!=null)?' · '+N(d.play.reduce((a,p)=>a+(+p.v||0),0)):'')+'</em></h2>'+list(d.play,p=>"<li><span>"+E(p.n)+(p.c?" — "+E(p.c):"")+' <span class="s">من '+E(p.at)+" · "+p.m+" د</span></span><span>"+(p.v!=null?N(p.v):p.m+" د")+"</span></li>","لا توجد أجهزة مشغولة الآن")+"</section>";
   if(d.hall&&(d.hall.disc||d.hall.void))h+='<section><h2>الصالة اليوم</h2><ul><li><span>خصومات العمال <span class="s">'+(d.hall.disc_n||0)+' فاتورة</span></span><span>'+N(d.hall.disc)+'</span></li><li><span>جلسات ملغاة</span><span>'+(d.hall.void||0)+'</span></li></ul></section>';
   if(d.clinic){const c=d.clinic;h+='<section><h2>العيادة اليوم</h2><ul><li><span>زيارات متحاسبة</span><span>'+(c.visits||0)+' · '+N(c.revenue)+'</span></li><li><span>ينتظر / عند الطبيب</span><span>'+(c.waiting||0)+' / '+(c.inside||0)+'</span></li><li><span>محجوز لم يصل / لم يحضر</span><span>'+(c.booked||0)+' / '+(c.noshow||0)+'</span></li><li><span>نسب الأطباء اليوم</span><span>'+N(c.shares)+'</span></li><li><span>مستحق على شركات التأمين</span><span>'+N(c.ins)+'</span></li></ul>'+
-   (c.docs&&c.docs.length?'<h2>الأطباء</h2>'+list(c.docs,x=>"<li><span>"+E(x.n)+' <span class="s">'+x.v+' كشف · ينتظر '+x.w+"</span></span><span>"+N(x.s)+"</span></li>",""):"")+"</section>";}
+   (c.docs&&c.docs.length?'<h2>الأطباء</h2>'+list(c.docs,x=>"<li><span>"+E(x.n)+' <span class="s">'+x.v+' كشف · ينتظر '+x.w+"</span></span><span>"+N(x.s)+"</span></li>",""):"")+
+   (c.disc_n?'<h2>خصومات الاستقبال <em>'+c.disc_n+' · '+N(c.disc)+'</em></h2>'+list(c.disc_list||[],x=>"<li><span>"+E(x.n)+' <span class="s">'+E(x.by)+(x.ok&&x.ok!==x.by?" · وافق "+E(x.ok):"")+"</span></span><span>"+N(x.v)+"</span></li>",""):"")+"</section>";}
+  if(d.sdiff&&d.sdiff.length)h+='<section><h2>فروق الأدراج اليوم</h2>'+list(d.sdiff,x=>"<li><span>"+E(x.c)+' <span class="s">'+E(x.d)+" · "+E(x.at)+'</span><span class="tag'+(+x.v<0?" r":"")+'">'+(+x.v<0?"عجز":"زيادة")+"</span></span><span>"+N(Math.abs(+x.v))+"</span></li>","")+"</section>";
   h+='<section><h2>آخر الفواتير</h2>'+list(d.recent,o=>"<li><span>#"+E(o.n)+' <span class="s">'+E(o.t)+" · "+E(o.d)+"</span>"+(o.r?'<span class="tag r">مرتجع</span>':"")+(o.x?'<span class="tag r">ملغية</span>':"")+'<span class="tag">'+E(o.pay)+"</span></span><span>"+N(o.v)+"</span></li>","لا توجد فواتير اليوم بعد")+"</section>";
   h+='<section><h2>الأكثر مبيعًا اليوم</h2>'+list(d.top,x=>"<li><span>"+E(x.n)+' <span class="s">× '+N(x.q)+"</span></span><span>"+N(x.v)+"</span></li>","لا يوجد بعد")+"</section>";
   h+='<section><h2>النواقص <em>'+(d.low_n||0)+'</em></h2>'+list(d.low,x=>"<li><span>"+E(x.n)+'</span><span>'+N(x.q)+' <span class="s">/ حد الطلب '+N(x.r)+"</span></span></li>","لا توجد نواقص 👌")+"</section>";
@@ -477,7 +479,7 @@ function render(r){
   if(d.shifts&&d.shifts.length)h+='<section><h2>ورديات مفتوحة</h2>'+list(d.shifts,s=>"<li><span>"+E(s.c)+' <span class="s">'+E(s.d)+"</span></span><span>من "+E(s.at)+"</span></li>","")+"</section>";
   h+='<div class="acts"><a class="btn" href="'+wa+'" target="_blank" rel="noopener">أرسل الملخص عبر واتساب</a><button class="btn l" onclick="load(1)">تحديث</button><button class="btn l" id="inst" style="display:none" onclick="deferred&&deferred.prompt()">ثبّت الأيقونة</button></div>'+
    '<div class="tip" id="ios"><b>ضيفه للشاشة الرئيسية:</b> اضغط زر المشاركة ⬆️ تحت ← «إضافة إلى الشاشة الرئيسية» ← ستجد أيقونة Trio.</div>'+
-   '<footer>Trio · 01008030459<br>تُحدَّث الأرقام كل 10 دقائق طالما البرنامج يعمل في المحل</footer>';
+   '<footer>Trio · 01228827915<br>تُحدَّث الأرقام كل 10 دقائق طالما البرنامج يعمل في المحل</footer>';
   $("#app").innerHTML=h;
   if(/iphone|ipad/i.test(navigator.userAgent)&&!navigator.standalone)$("#ios").style.display="block";
   if(deferred)$("#inst").style.display="";
@@ -1116,7 +1118,7 @@ const KIT = {
           "مثّل Trio بأدب ومظهر لائق؛ سمعتك هي سمعتنا."
         ] },
         { t: "cards", items: [
-          { h: "معلومات سريعة", x: "• يعمل على كمبيوتر ويندوز 10 أو 11، مع طابعة حرارية وقارئ باركود إن أراد.\n• تجربة مجانية 14 يومًا بكل الإمكانيات، والبيانات تبقى بعد التفعيل.\n• تحميل التجربة من الموقع، والتفعيل عن طريق Trio.\n• فريق Trio: واتساب 01008030459 · 01121460640" }
+          { h: "معلومات سريعة", x: "• يعمل على كمبيوتر ويندوز 10 أو 11، مع طابعة حرارية وقارئ باركود إن أراد.\n• تجربة مجانية 14 يومًا بكل الإمكانيات، والبيانات تبقى بعد التفعيل.\n• تحميل التجربة من الموقع، والتفعيل عن طريق Trio.\n• فريق Trio: واتساب 01228827915 · 01121460640" }
         ] }
       ]
     }
