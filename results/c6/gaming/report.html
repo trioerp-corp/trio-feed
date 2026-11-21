@@ -1,0 +1,337 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>Trio QA</title>
+<style>body{font-family:Tahoma,Arial;margin:20px;color:#0B1F3A}table{border-collapse:collapse;width:100%;margin:12px 0}td,th{border:1px solid #DCE5EF;padding:6px 8px;vertical-align:top;font-size:13px}
+th{background:#EEF2F7}tr.high td:first-child{background:#FDECEA}tr.medium td:first-child{background:#FFF4E0}pre{white-space:pre-wrap;margin:0;font:12px monospace;max-height:160px;overflow:auto}</style>
+<h1>تقرير اختبار Trio</h1><p>50 تشغيلة · الأنشطة: بلياردو وبلايستيشن، صالة بلايستيشن · مشاكل: 🔴 12 · 🟠 2 · ⚪ 0</p>
+<h2>المشاكل (مرتبة بالأهمية ثم بعدد التشغيلات التي ظهرت فيها)</h2><table><tr><th>الأهمية</th><th>النوع</th><th>المكان</th><th>التفاصيل</th><th>تكررت</th><th></th></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 1-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -   </pre></td><td>1</td><td><a href=shots/issue-1.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 9-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -  </pre></td><td>1</td><td><a href=shots/issue-4.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>صالة البلايستيشن</td><td><pre>TimeoutError: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#moGo&quot;)
+  -     - locator resolved to &lt;button id=&quot;moGo&quot;&gt;▶ ابدأ&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+ </pre></td><td>1</td><td><a href=shots/issue-5.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 16-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  - </pre></td><td>1</td><td><a href=shots/issue-6.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 27-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  - </pre></td><td>1</td><td><a href=shots/issue-7.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 28-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  - </pre></td><td>1</td><td><a href=shots/issue-8.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 32-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -  </pre></td><td>1</td><td><a href=shots/issue-9.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 33-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -  </pre></td><td>1</td><td><a href=shots/issue-10.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 43-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  - </pre></td><td>1</td><td><a href=shots/issue-11.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 45-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -  </pre></td><td>1</td><td><a href=shots/issue-12.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 47-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -  </pre></td><td>1</td><td><a href=shots/issue-13.jpg>صورة</a></td></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>إضافة منتجات بيد المالك</td><td><pre>TimeoutError: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;سلعة يدوي 48-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  - </pre></td><td>1</td><td><a href=shots/issue-14.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>till-empty</td><td>الكاشير</td><td><pre>لا توجد أصناف في الكاشير بعد التجهيز (لا يمكن البيع فورًا)</pre></td><td>50</td><td><a href=shots/issue-2.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>gaming-buffet</td><td>صالة الألعاب</td><td><pre>لا توجد أصناف بوفيه في لوحة الجهاز بعد التجهيز</pre></td><td>11</td><td><a href=shots/issue-3.jpg>صورة</a></td></tr></table>
+<h2>التشغيلات</h2><table><tr><th>#</th><th>النشاط</th><th>الشاشة</th><th>المدة</th><th>الخطوات</th></tr><tr><td>1</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.7s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.6s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 1-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.6s)<br>purchase: 1 lines, 12.00, split<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.2s)</small></td></tr><tr><td>2</td><td>صالة بلايستيشن</td><td>🖥</td><td>25 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.6s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 10, total 20<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 5 lines, 1466.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 20.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.5s)</small></td></tr><tr><td>3</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>24 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.5s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 10, total 20<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 20.00 ولا يكفي لدفع 20.75 — اختر «من صاحب المحل ) — on credit<br>purchase: 3 lines, 20.75, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 3<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 20.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.2s)</small></td></tr><tr><td>4</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.6s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 15, total 25<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 1740.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 15<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 25.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.7s)</small></td></tr><tr><td>5</td><td>صالة بلايستيشن</td><td>🖥</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.6s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 15, total 25<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 25.00 ولا يكفي لدفع 27.25 — اختر «من صاحب المحل ) — on credit<br>purchase: 2 lines, 27.25, credit<br>✔ فاتورة مشتريات (0.7s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 25.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.8s)</small></td></tr><tr><td>6</td><td>صالة بلايستيشن</td><td>📱</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.7s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.5s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 145, total 155<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 42.50, cash<br>✔ فاتورة مشتريات (0.7s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: -1 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 6<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 155.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.9s)</small></td></tr><tr><td>7</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.7s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 385, total 395<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 192.50, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 2<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 395.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.6s)</small></td></tr><tr><td>8</td><td>صالة بلايستيشن</td><td>🖥</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.5s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 5 lines, 359.50, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 10 → 9<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.8s)</small></td></tr><tr><td>9</td><td>صالة بلايستيشن</td><td>📱</td><td>39 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.7s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 9-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 10.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل ) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.9s)</small></td></tr><tr><td>10</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>49 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (4.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 21.50, cash<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 6<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (26.5s)</small></td></tr><tr><td>11</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>25 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.5s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 15, total 25<br>✔ صالة البلايستيشن (6.9s)<br>purchase: 2 lines, 57.25, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 1<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 25.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (4.9s)</small></td></tr><tr><td>12</td><td>صالة بلايستيشن</td><td>📱</td><td>47 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.6s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 464, total 474<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 2052.00, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 5 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 12<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 474.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (27.5s)</small></td></tr><tr><td>13</td><td>صالة بلايستيشن</td><td>🖥</td><td>50 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (5.3s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (2.0s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ صالة البلايستيشن: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#moGo&quot;)
+  -     - locator resolved to &lt;button id=&quot;moGo&quot;&gt;▶ ابدأ&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     - waiting for element to be visible, enabled and stable
+  -     - element is not visible
+  -   28 × retrying click action
+  -        - waiting 500ms
+  -        - waiting for element to be visible, enabled and stable
+  -        - element is visible, enabled and stable
+  -        - scrolling into view if needed
+  -        - done scrolling
+  -        - &lt;div id=&quot;mShift&quot; class=&quot;modal on&quot;&gt;…&lt;/div&gt; intercepts pointer events
+  -   - retrying click action
+  -     - waiting 500ms
+<br>purchase: 5 lines, 427.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.5s)</small></td></tr><tr><td>14</td><td>صالة بلايستيشن</td><td>🖥</td><td>29 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 2172.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 15<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.4s)</small></td></tr><tr><td>15</td><td>صالة بلايستيشن</td><td>📱</td><td>27 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 30, total 40<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 157.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 5 → 3<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 40.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.5s)</small></td></tr><tr><td>16</td><td>صالة بلايستيشن</td><td>🖥</td><td>60 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 16-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.6s)<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (25.9s)</small></td></tr><tr><td>17</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>46 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.8s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 161.25, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (26.5s)</small></td></tr><tr><td>18</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (1.0s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 30, total 40<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 40.00 ولا يكفي لدفع 43.50 — اختر «من صاحب المحل ) — on credit<br>purchase: 3 lines, 87.00, credit<br>✔ فاتورة مشتريات (0.7s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 1<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 40.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.2s)</small></td></tr><tr><td>19</td><td>صالة بلايستيشن</td><td>🖥</td><td>46 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 20, total 30<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 19.00, cash<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 6<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 30.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (25.1s)</small></td></tr><tr><td>20</td><td>صالة بلايستيشن</td><td>🖥</td><td>29 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 144, total 154<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 154.00 ولا يكفي لدفع 782.50 — اختر «من صاحب المح) — on credit<br>purchase: 2 lines, 1565.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 8<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 154.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.1s)</small></td></tr><tr><td>21</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>49 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 10, total 20<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 20.00 ولا يكفي لدفع 34.25 — اختر «من صاحب المحل ) — on credit<br>purchase: 3 lines, 34.25, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 20.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (27.9s)</small></td></tr><tr><td>22</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 27.25, cash<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 7<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 11<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.2s)</small></td></tr><tr><td>23</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>49 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 20, total 30<br>✔ صالة البلايستيشن (6.8s)<br>purchase: 4 lines, 590.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 1<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 10<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 30.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (28.4s)</small></td></tr><tr><td>24</td><td>صالة بلايستيشن</td><td>📱</td><td>30 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 30, total 40<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 2484.50, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 40.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.5s)</small></td></tr><tr><td>25</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>50 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 30, total 40<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 5 lines, 162.50, owner<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 40.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (28.9s)</small></td></tr><tr><td>26</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>48 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (1.0s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 684.50, owner<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 1<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.4s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (26.5s)</small></td></tr><tr><td>27</td><td>صالة بلايستيشن</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 27-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.2s)</small></td></tr><tr><td>28</td><td>صالة بلايستيشن</td><td>🖥</td><td>62 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 28-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (28.7s)</small></td></tr><tr><td>29</td><td>صالة بلايستيشن</td><td>🖥</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 334, total 344<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 32.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 7<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 344.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.0s)</small></td></tr><tr><td>30</td><td>صالة بلايستيشن</td><td>📱</td><td>27 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.8s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 499, total 509<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 275.00, split<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 509.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.1s)</small></td></tr><tr><td>31</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>46 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 400, total 410<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 39.00, cash<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 0<br>✔ الجرد والتسوية (0.3s)<br>returns: expired 1 × 12<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 410.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (26.5s)</small></td></tr><tr><td>32</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>61 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 32-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.6s)<br>purchase: 1 lines, 12.00, split<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (27.9s)</small></td></tr><tr><td>33</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 33-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 10.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل ) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.3s)</small></td></tr><tr><td>34</td><td>صالة بلايستيشن</td><td>🖥</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.5s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 284, total 294<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 373.25, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 2<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 6<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 294.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (5.4s)</small></td></tr><tr><td>35</td><td>صالة بلايستيشن</td><td>🖥</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 15, total 25<br>✔ صالة البلايستيشن (6.8s)<br>purchase: 3 lines, 247.25, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 8<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 25.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.1s)</small></td></tr><tr><td>36</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>26 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.8s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 204, total 214<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 31.50, cash<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 11<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 214.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.5s)</small></td></tr><tr><td>37</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>48 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.8s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.8s)<br>purchase: 3 lines, 31.75, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: -1 → 1<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (28.3s)</small></td></tr><tr><td>38</td><td>صالة بلايستيشن</td><td>🖥</td><td>29 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 195, total 205<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 3 lines, 24.25, cash<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 11<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 205.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.1s)</small></td></tr><tr><td>39</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>27 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.8s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 15, total 25<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 92.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 11<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 25.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.1s)</small></td></tr><tr><td>40</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (1.0s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 90, total 100<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 5 lines, 251.25, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 10 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 8<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 100.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.0s)</small></td></tr><tr><td>41</td><td>صالة بلايستيشن</td><td>🖥</td><td>28 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 45.00 ولا يكفي لدفع 53.25 — اختر «من صاحب المحل ) — on credit<br>purchase: 5 lines, 53.25, credit<br>✔ فاتورة مشتريات (0.7s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.6s)</small></td></tr><tr><td>42</td><td>صالة بلايستيشن</td><td>📱</td><td>29 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 20, total 30<br>✔ صالة البلايستيشن (6.7s)<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 30.00 ولا يكفي لدفع 74.50 — اختر «من صاحب المحل ) — on credit<br>purchase: 5 lines, 149.00, credit<br>✔ فاتورة مشتريات (0.8s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 12<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 30.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.1s)</small></td></tr><tr><td>43</td><td>صالة بلايستيشن</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;منتج يدوي 43-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.0s)</small></td></tr><tr><td>44</td><td>صالة بلايستيشن</td><td>🖥</td><td>27 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.1s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 35, total 45<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 172.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 45.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.0s)</small></td></tr><tr><td>45</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 45-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.5s)</small></td></tr><tr><td>46</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>30 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 353, total 363<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 389.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 0 → 3<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 8<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 363.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.9s)</small></td></tr><tr><td>47</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (1.9s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;صنف يدوي 47-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, split<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.4s)</small></td></tr><tr><td>48</td><td>بلياردو وبلايستيشن</td><td>📱</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.0s)<br>✖ إضافة منتجات بيد المالك: Locator.fill: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;details.card&quot;).first.locator(&quot;form&quot;).locator(&quot;[name=name]&quot;)
+  -     - locator resolved to &lt;input name=&quot;name&quot; required=&quot;&quot;/&gt;
+  -     - fill(&quot;سلعة يدوي 48-1&quot;)
+  -   - attempting fill action
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and editable
+  -       - element is not visible
+  -     - retrying fill action
+  -       - waiting 100ms
+  -     30 × waiting for element to be visible, enabled and editable
+  -        - element is not visible
+  -      - retrying fill action
+  -        - waiting 500ms
+<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 0, total 10<br>✔ صالة البلايستيشن (5.5s)<br>purchase: 1 lines, 12.00, split<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 3<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 10.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (6.4s)</small></td></tr><tr><td>49</td><td>صالة بلايستيشن</td><td>🖥</td><td>47 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.4s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 10, total 20<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 4 lines, 1514.25, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: -1 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 11<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 20.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (25.8s)</small></td></tr><tr><td>50</td><td>بلياردو وبلايستيشن</td><td>🖥</td><td>49 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.2s)<br>pages in the menu: 28<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>gaming: session 1 closed, buffet 363, total 373<br>✔ صالة البلايستيشن (6.7s)<br>purchase: 2 lines, 197.50, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 5 → 4<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 373.0 (1 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 1<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (28.2s)</small></td></tr></table></html>
