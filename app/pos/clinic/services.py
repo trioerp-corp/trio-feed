@@ -13,7 +13,7 @@ from inventory.models import Item, ItemCategory, Recipe, RecipeLine
 from ledger import services as L
 from ledger.models import Account, JournalLine, Partner
 
-from .models import Appointment, Doctor, Patient, Service, Visit, VisitLine, VisitPayment  # noqa: F401
+from .models import Appointment, ClinicSettings, Doctor, Patient, Service, Visit, VisitLine, VisitPayment  # noqa: F401
 
 Z = Decimal("0")
 SERVICES_CAT = "خدمات طبية"
@@ -219,7 +219,7 @@ def _queue(date, doctor):
 
 @transaction.atomic
 def book(patient, date, *, doctor=None, service=None, time=None, note="", user=None, pay=None, paid_card=0, paid_credit=0, discount=0,
-         allow_overlap=False, followup=None):
+         allow_overlap=False, followup=None, approver=None):
     """A booking. With `pay` («cash» / «card» / «credit» / «split») the visit is opened now and its service paid: the booking receipt.
     Two bookings of the same doctor at the same time are refused unless the reception confirms it (allow_overlap)."""
     if Appointment.objects.filter(patient=patient, date=date, state__in=["booked", "waiting", "inside"]).exists():
@@ -253,11 +253,12 @@ def book(patient, date, *, doctor=None, service=None, time=None, note="", user=N
         if not v.lines.exists():
             raise ValidationError("اختر الخدمة التي ستُدفع")
         total = v.unbilled - L.q2(Decimal(str(discount or 0)))
+        pay = resolve_pay(patient, pay)
         if pay in ("insurance", "insurance_card"):  # the company's share on its account, the patient's part now
-            checkout(v, user, discount=discount, kind="booking", insured=True, patient_by_card=pay == "insurance_card")
+            checkout(v, user, discount=discount, kind="booking", insured=True, patient_by_card=pay == "insurance_card", approver=approver)
         else:
             card, credit = (paid_card, paid_credit) if pay == "split" else (total if pay == "card" else 0, total if pay == "credit" else 0)
-            checkout(v, user, paid_card=card, paid_credit=credit, discount=discount, kind="booking")
+            checkout(v, user, paid_card=card, paid_credit=credit, discount=discount, kind="booking", approver=approver)
         appt.visit = v
         appt.state = "booked"
         appt.save(update_fields=["visit", "state"])
@@ -401,7 +402,26 @@ def insurance_share(ins, total):
     return max(min(amt, Decimal(str(total))), Z)
 
 
-def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kind=None, insured=False, patient_by_card=False):
+def _trusted(user):
+    """Internal calls (no user / «system») and the owner may discount freely; the reception is capped."""
+    from pos.voids import is_owner
+
+    return user in (None, "system") or getattr(user, "is_superuser", False) or is_owner(user)
+
+
+def resolve_pay(patient, pay):
+    """The reception's payment choice → what the server does: an insured patient (valid card) pays only his share by default —
+    «cash» / «card» become «insurance» / «insurance_card»; «cash_full» / «card_full» = without the insurance."""
+    pay = pay or "cash"
+    if pay in ("cash_full", "card_full"):
+        return pay[:-5]
+    if pay in ("cash", "card") and insurance_of(patient):
+        return "insurance" if pay == "cash" else "insurance_card"
+    return pay
+
+
+def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kind=None, insured=False, patient_by_card=False,
+             approver=None):
     """Bill what is not paid yet: one sales invoice (drawer / card / patient's account), the consumables leave the store,
     the doctor's share is booked as owed to him. insured: the patient's insurance company takes its share on its account
     (the patient pays the rest now, cash or card)."""
@@ -416,12 +436,12 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     total = sum((ln.amount for ln in lines), Z) - disc
     if total < 0:
         raise ValidationError("الخصم أكبر من الحساب")
-    if total == 0 and not disc and all(ln.amount == 0 for ln in lines):  # a free «إعادة»: nothing to invoice, the visit is settled
-        v.state, v.paid_by = "paid", _name(user)
-        v.save(update_fields=["state", "paid_by"])
-        if kind != "booking":
-            Appointment.objects.filter(visit=v).update(state="done")
-        return v
+    # a free «إعادة» (total 0) is still a normal invoice at 0.00: its consumables leave the store and cost goes to COGS
+    gross = sum((ln.amount for ln in lines), Z)
+    if disc and not _trusted(user) and not approver:
+        cap = L.q2(gross * ClinicSettings.get().max_discount_pct / 100)
+        if disc > cap:
+            raise ValidationError(f"الخصم أكبر من المسموح للاستقبال ({cap:,.2f} ج) — يكتب صاحب العيادة اسمه وكلمة سره للموافقة")
     paid_card, paid_credit = L.q2(Decimal(str(paid_card or 0))), L.q2(Decimal(str(paid_credit or 0)))
     ins, ins_amt = None, Z
     if insured:
@@ -453,7 +473,7 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     order, _ = ingest_order(d, dict(uid=f"{d.branch.code}-{d.code}-V{v.pk}-{seq}", created_at=now.isoformat(), lines=data_lines,
                                     shift_uid=sh.uid, shift_seq=sh.orders.count() + 1,
                                     paid_cash=str(total - paid_card - paid_credit), paid_card=str(paid_card), paid_credit=str(paid_credit),
-                                    customer_id=customer.pk if customer else None, cashier=_name(user)))
+                                    customer_id=customer.pk if customer else None, cashier=_name(user), zero_ok=total == 0))
     share = share_of(v, lines, disc)
     entry = None
     if share:
@@ -464,7 +484,12 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
             source=f"clinic.visit:{v.pk}", user=user if user and user != "system" else None)
     pay = VisitPayment.objects.create(visit=v, order=order, share_entry=entry, total=order.total, discount=disc, share=share, by=_name(user),
                                       kind=kind or ("extra" if v.payments.filter(cancelled=False).exists() else "visit"),
-                                      insurance=ins, insurance_amount=ins_amt)
+                                      insurance=ins, insurance_amount=ins_amt,
+                                      discount_by=(approver or _name(user)) if disc else "")
+    if disc and approver and approver != _name(user):
+        from core import audit
+
+        audit.log("clinic.discount", v, summary=f"خصم {disc} على زيارة {v.patient.name} — وافق {approver}، الاستقبال {_name(user)}")
     VisitLine.objects.filter(pk__in=[ln.pk for ln in lines]).update(payment=pay)
     v.state, v.paid_by = "paid", _name(user)
     _totals(v)
@@ -472,6 +497,12 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     if kind != "booking":
         Appointment.objects.filter(visit=v).update(state="done")
     return v
+
+
+def discounts(d1, d2):
+    """The bills with a discount in these days (who gave it, who approved): the owner board and the phone."""
+    return list(VisitPayment.objects.filter(cancelled=False, discount__gt=0, created_at__date__gte=d1, created_at__date__lte=d2)
+                .select_related("visit__patient", "visit__doctor").order_by("-id")[:200])
 
 
 def _undo_money(v: Visit, reason, user):

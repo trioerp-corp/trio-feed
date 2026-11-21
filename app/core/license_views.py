@@ -38,6 +38,6 @@ def page(request):
     ok = feed.state().get("ok")
     from urllib.parse import quote
 
-    wa = "https://wa.me/201008030459?text=" + quote(f"أرغب في الاشتراك في Trio\nالمحل: {s.name}\nكود الجهاز: {LIC.machine_code()}")
+    wa = "https://wa.me/201228827915?text=" + quote(f"أرغب في الاشتراك في Trio\nالمحل: {s.name}\nكود الجهاز: {LIC.machine_code()}")
     return render(request, "core/license.html", dict(st=LIC.status(s), support=LIC.SUPPORT, hide_nav=True, feed_url=feed.feed_url(s), wa=wa,
                                                      feed_ok=dt.datetime.fromisoformat(ok) if ok else None))

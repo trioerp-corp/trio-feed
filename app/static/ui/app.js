@@ -50,7 +50,24 @@
     });
   }
 
-  function initAll(root) { root.querySelectorAll('[data-lookup]').forEach(initLookup); }
+  // 1.24.1: the browser's own file box says «Choose File / No file chosen» in English — an Arabic button + file name instead
+  function initFile(inp) {
+    if (inp.dataset.ready) return;
+    inp.dataset.ready = '1';
+    const img = /^image|\.(png|jpe?g|svg|webp)/i.test(inp.accept || '');
+    const w = document.createElement('span'); w.className = 'filepick';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'light';
+    b.textContent = img ? '🖼 اختر صورة' : '📁 اختر ملفًا';
+    const n = document.createElement('span'); n.className = 'fp-name';
+    const none = img ? 'لم تُختر صورة بعد' : 'لم يُختر ملف بعد';
+    n.textContent = none;
+    inp.parentNode.insertBefore(w, inp); w.append(inp, b, n);
+    inp.classList.add('fp-in');
+    b.addEventListener('click', (e) => { e.preventDefault(); inp.click(); });
+    inp.addEventListener('change', () => { n.textContent = [...(inp.files || [])].map((f) => f.name).join('، ') || none; });
+  }
+
+  function initAll(root) { root.querySelectorAll('[data-lookup]').forEach(initLookup); root.querySelectorAll('input[type=file]').forEach(initFile); }
 
   // add a row to a Django formset: <tbody data-formset="prefix"> + <template id="prefix-empty">
   document.addEventListener('click', (e) => {

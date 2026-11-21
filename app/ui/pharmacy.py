@@ -73,3 +73,17 @@ def page(request):
         n, box = U.strip_info(it)
         rows.append(dict(it=it, n=n, box=box, guess=D.guess_strips(it.name)))
     return render(request, "ui/pharmacy.html", dict(q=q, q2=q2, results=results, rows=rows, total=len(D.library())))
+
+
+@login_required
+def lookup(request):
+    """The purchase page asks: is this typed name a drug of the library? → {found, strips, price} (the box's public price)."""
+    if not request.user.has_perm("inventory.add_stockmove"):
+        raise PermissionDenied
+    from django.http import JsonResponse
+
+    k = D.norm(request.GET.get("n") or "")
+    r = next((r for r in D.library() if D.norm(r["en"]) == k), None) if len(k) >= 2 else None
+    if not r:
+        return JsonResponse({"found": False})
+    return JsonResponse({"found": True, "strips": D.guess_strips(r["en"], r["route"]), "price": r["price"] or ""})

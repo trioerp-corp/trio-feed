@@ -404,6 +404,30 @@ def current(s=None):
     return s.activity if isinstance(s.activity, dict) and s.activity.get("categories") else for_base(s.business)
 
 
+APPAREL = ("clothes", "shoes")  # sizes and colours: no expiry dates, no cartons, no scale
+
+
+def unused(s=None):
+    """The shared parts that do not belong to this shop's activity ({"expiry", "units", "scale"} for clothes / shoes), unless the
+    shop already uses them (an expiry typed on a purchase, a carton unit added) — hidden, never removed."""
+    from inventory.models import ItemUnit, StockMoveLine
+
+    act = current(s)
+    out = set()
+    if act.get("key") in APPAREL:
+        out = {"expiry", "units", "scale"}
+        if StockMoveLine.objects.filter(expiry__isnull=False).exists():
+            out.discard("expiry")
+        if ItemUnit.objects.exists():
+            out.discard("units")
+    if act.get("key") and "production" not in (act.get("suggest") or []):  # 1.24.1: «التصنيع» only for shops that make things
+        from inventory.models import ProductionOrder
+
+        if not ProductionOrder.objects.exists():
+            out.add("production")
+    return out
+
+
 def lookup(request, text):
     """resolve() with the result kept in the session (the preview and the save ask once)."""
     from . import ai
@@ -443,6 +467,32 @@ def _menu_kind(p, name, cat, opt):
     return "stock" if any(norm(w).strip() in n for w in CANNED) else "menu"
 
 
+def _sample_model(name, price, extra, cat, key):
+    """A clothes / shoes sample as ONE model with a few sizes / colours around the sample's own (automatic EAN-13 barcodes)."""
+    from inventory import variants as VR
+
+    sz, col = str(extra.get("size") or ""), str(extra.get("color") or "")
+    sizes = []
+    if sz:
+        if sz in VR.SIZE_SETS["ملابس"]:
+            sizes = VR.SIZE_SETS["ملابس"]
+        elif "سن" in sz:
+            sizes = ["2 سنين", "4 سنين", "6 سنين", "8 سنين"]
+        elif sz.isdigit():
+            n = int(sz)
+            step = 1 if key == "shoes" else 2
+            sizes = [str(n + step * k) for k in range(-2, 3)]
+        else:
+            sizes = [sz]
+    colors = list(dict.fromkeys([col, "أسود" if col != "أسود" else "أبيض"])) if col else []
+    try:
+        VR.save(name, cat, price, sizes=sizes, colors=colors, reorder=str(DEFAULT_REORDER),
+                extra={k: v for k, v in extra.items() if k not in ("size", "color")})
+        return True
+    except ValidationError:  # never a broken setup: falls back to a plain item
+        return False
+
+
 def add_samples(p):
     """Example items of the activity (the trial), each in the closest of its categories. A café / restaurant gets its
     dishes as menu products (sizes on ONE product) and its canned drinks as stock items in «علبة»."""
@@ -467,6 +517,9 @@ def add_samples(p):
             cat = max(cats, key=lambda c: (len(words & {w for w in norm(c.name).split() if len(w) > 2}), c is not other)) if words else other
             if not words & {w for w in norm(cat.name).split() if len(w) > 2}:
                 cat = next((c for c in cats if c.name == p["categories"][0]), other) if p.get("categories") else other
+        if p.get("key") in APPAREL and (extra.get("size") or extra.get("color")) and _sample_model(name, price, extra, cat, p["key"]):
+            made += 1  # 1.24.1: a clothes / shoes sample is a model with its sizes × colours, each with its own barcode
+            continue
         kind = _menu_kind(p, name, cat.name, opt)
         if kind == "menu":
             sizes = [(n, str(pr)) for n, pr in opt.get("sizes") or []]
@@ -488,11 +541,45 @@ def add_samples(p):
                                 reorder_level=reorder)
         made += 1
     if p.get("base") == "clinic":  # a clinic also starts with its first services, priced as an example
-        from pos.clinic import services as CL
-        from pos.clinic.models import Service
+        made += add_services(p)
+    return made
 
-        if not Service.objects.exists():
-            for nm, pr in (("كشف", 300), ("استشارة (إعادة)", 150)):
-                CL.save_service(nm, pr)
-                made += 1
+
+# 1.24.1 the services each kind of clinic really sells (name, example price, minutes) — added on setup and from
+# «أضف الخدمات الجاهزة» on the clinic setup page; the owner changes the prices there
+SERVICES = {
+    "clinic": [("كشف", 300, 15), ("استشارة (إعادة)", 150, 10), ("قياس ضغط وسكر", 50, 5), ("حقنة", 50, 5), ("رسم قلب", 200, 15),
+               ("غيار جرح", 100, 15), ("خياطة جرح", 300, 20)],
+    "dental": [("كشف", 250, 15), ("استشارة (إعادة)", 100, 10), ("حشو عادي (أملغم)", 500, 30), ("حشو تجميلي (كومبوزيت)", 800, 40),
+               ("علاج عصب (جذور)", 1500, 60), ("خلع عادي", 400, 20), ("خلع جراحي (ضرس عقل)", 1200, 45), ("تنظيف وإزالة جير", 600, 30),
+               ("تلميع وتبييض", 2500, 60), ("تركيبة (طربوش)", 2500, 30), ("أشعة صغيرة (بانوراما موضعية)", 150, 10), ("تركيب تقويم", 8000, 60),
+               ("متابعة تقويم", 500, 20), ("زراعة سن", 12000, 90)],
+    "derma": [("كشف", 400, 15), ("استشارة (إعادة)", 200, 10), ("جلسة ليزر إزالة شعر", 800, 30), ("تقشير كيميائي", 1000, 30),
+              ("جلسة بلازما (PRP)", 1500, 30), ("حقن بوتوكس", 3500, 20), ("حقن فيلر", 5000, 30), ("جلسة تنظيف بشرة", 600, 45),
+              ("كي ثآليل / زوائد جلدية", 500, 20)],
+    "pediatrics": [("كشف", 300, 15), ("استشارة (إعادة)", 150, 10), ("كشف حديث ولادة", 350, 20), ("متابعة نمو ووزن", 150, 10),
+                   ("جلسة بخار (نيبولايزر)", 100, 15), ("تطعيم (خدمة)", 100, 10)],
+    "eyes": [("كشف", 350, 15), ("استشارة (إعادة)", 150, 10), ("قياس نظر بالكمبيوتر", 100, 10), ("قياس ضغط العين", 100, 10),
+             ("فحص قاع العين", 250, 15), ("مقاس عدسات لاصقة", 200, 15), ("جلسة ليزر", 2000, 30)],
+    "physio": [("كشف وتقييم", 300, 30), ("جلسة علاج طبيعي", 250, 45), ("جلسة تأهيل بعد الإصابة", 300, 45), ("جلسة موجات صادمة", 400, 20),
+               ("جلسة تمارين علاجية", 200, 45), ("باقة 10 جلسات", 2200, 45)],
+}
+
+
+def preset_services(p):
+    key = p.get("key") if isinstance(p, dict) else str(p or "")
+    return SERVICES.get(key) or SERVICES["clinic"]
+
+
+def add_services(p):
+    """Adds the preset services of this clinic kind that are not there yet (by name). Returns how many were added."""
+    from pos.clinic import services as CL
+    from pos.clinic.models import Service
+
+    have = set(Service.objects.values_list("item__name", flat=True))
+    made = 0
+    for nm, pr, mins in preset_services(p):
+        if nm not in have:
+            CL.save_service(nm, pr, minutes=mins)
+            made += 1
     return made

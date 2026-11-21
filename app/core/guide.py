@@ -154,7 +154,7 @@ def sections(key, words=None):
             ])]
         out += _items(words) + _money()
     out.append(dict(t="تحتاج مساعدة؟", shot=None, steps=[
-        "Trio: 01008030459 · 01121460640",
+        "Trio: 01228827915 · 01121460640",
         "يصلك أي تحديث جديد ويُثبَّت تلقائيًا ليلًا، أو اضغط «حدّث الآن».",
     ]))
     return out

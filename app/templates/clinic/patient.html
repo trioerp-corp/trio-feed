@@ -2,19 +2,19 @@
 {% block content %}
 <div class="page-head"><div><h1>{{ p.name }} <span class="muted" style="font-size:16px">ملف {{ p.number|unlocalize }}</span></h1>
 <p class="muted" style="margin:0">{% if p.phone %}<span dir="ltr">{{ p.phone }}</span> · {% endif %}{% if p.age %}{{ p.age }} سنة · {% endif %}{{ p.get_gender_display }}{% if balance %} · <b style="color:#A13A2A">عليه {{ balance|money }}</b>{% endif %}{% if p.insurance %} · 🛡 {{ p.insurance.name }} ({{ p.insurance_no }}){% if p.insurance_expiry and p.insurance_expiry < today %} <b class="bad">البطاقة منتهية</b>{% endif %}{% endif %}</p></div>
-<div class="actions"><a class="btn light" href="{% url 'clinic_appointments' %}?p={{ p.pk }}">حجز ميعاد</a></div></div>
+<div class="actions"><a class="btn light" href="{% url 'clinic_appointments' %}?p={{ p.pk|unlocalize }}">حجز ميعاد</a></div></div>
 {% if p.medical_notes %}<p class="card" style="border-color:#A13A2A;margin-bottom:14px"><b>⚠ </b>{{ p.medical_notes|linebreaksbr }}</p>{% endif %}
 <div class="split"><div class="main">
 <section class="card" style="margin-bottom:16px"><h2>كشف الآن</h2><form method="post" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">{% csrf_token %}<input type="hidden" name="action" value="visit">
-<label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}">{{ d }}</option>{% endfor %}</select></label>
-<label class="field">الخدمة<select name="service"><option value="">—</option>{% for s in services %}<option value="{{ s.pk }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label>
+<label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk|unlocalize }}">{{ d }}</option>{% endfor %}</select></label>
+<label class="field">الخدمة<select name="service"><option value="">—</option>{% for s in services %}<option value="{{ s.pk|unlocalize }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label>
 <button>افتح زيارة</button></form>
 {% if appts %}<p class="muted" style="margin:10px 0 0">حجوزات جاية: {% for a in appts %}{{ a.date|date:"d/m" }}{% if a.time %} {{ a.time|time:"H:i" }}{% endif %} {{ a.doctor|default:"" }}{% if not forloop.last %} · {% endif %}{% endfor %}</p>{% endif %}</section>
 {% if can_files %}<section class="card" style="margin-bottom:16px" id="files"><h2>📄 التحاليل والأشعة والتقارير</h2>
 {% if files %}<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px">{% for f in files %}
 <figure style="margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)"><a href="{% url 'clinic_file' f.pk %}" target="_blank" rel="noopener" style="display:block;height:110px;background:var(--bg);text-align:center;line-height:110px;font-size:40px">{% if f.is_image %}<img src="{% url 'clinic_file' f.pk %}" alt="{{ f.title|default:f.get_kind_display }}" style="width:100%;height:110px;object-fit:cover" loading="lazy">{% else %}📄{% endif %}</a>
 <figcaption style="padding:6px 8px;font-size:12.5px"><b>{{ f.get_kind_display }}</b>{% if f.title %} — {{ f.title }}{% endif %}<br><span class="muted">{{ f.taken_on|default:f.created_at|date:"d/m/Y" }}</span>
-<form method="post" style="display:inline" onsubmit="return confirm('حذف هذا الملف؟')">{% csrf_token %}<input type="hidden" name="action" value="file_del"><input type="hidden" name="file" value="{{ f.pk }}"><button class="skip" style="background:none;border:0;box-shadow:none;color:var(--bad);padding:0 4px;min-height:0" aria-label="امسح الملف">🗑</button></form></figcaption></figure>{% endfor %}</div>{% endif %}
+<form method="post" style="display:inline" onsubmit="return confirm('حذف هذا الملف؟')">{% csrf_token %}<input type="hidden" name="action" value="file_del"><input type="hidden" name="file" value="{{ f.pk|unlocalize }}"><button class="skip" style="background:none;border:0;box-shadow:none;color:var(--bad);padding:0 4px;min-height:0" aria-label="امسح الملف">🗑</button></form></figcaption></figure>{% endfor %}</div>{% endif %}
 <form method="post" enctype="multipart/form-data" class="form-grid">{% csrf_token %}<input type="hidden" name="action" value="file">
 <label class="field">الملف (صورة أو PDF)<input type="file" name="file" accept="image/*,application/pdf" required></label>
 <label class="field">النوع<select name="kind">{% for k, n in kinds %}<option value="{{ k }}">{{ n }}</option>{% endfor %}</select></label>
@@ -34,7 +34,7 @@
 {% empty %}<tr><td colspan="9" class="muted">لا توجد فواتير بعد</td></tr>{% endfor %}</tbody></table></div>
 {% if st.owed > 0 %}<form method="post" class="actions" style="justify-content:flex-start;margin-top:10px;align-items:end">{% csrf_token %}<input type="hidden" name="action" value="collect">
 <label class="field" style="max-width:160px">حصّل مبلغ<input name="amount" value="{{ st.owed|floatformat:2 }}" inputmode="decimal" dir="ltr" required></label>
-<label class="field" style="max-width:220px">في<select name="box">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label><button>💵 تحصيل</button></form>{% endif %}</section>
+<label class="field" style="max-width:220px">في<select name="box">{% for b in boxes %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}</select></label><button>💵 تحصيل</button></form>{% endif %}</section>
 
 <h2>الزيارات</h2>
 {% for v in visits %}<section class="card" style="margin-bottom:10px{% if v.state == 'cancelled' %};opacity:.55{% endif %}">
@@ -48,14 +48,14 @@
 <div class="side"><section class="card"><h2>بيانات المريض</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="save">
 <label class="field">الاسم<input name="name" value="{{ p.name }}"></label><label class="field">الموبايل<input name="phone" value="{{ p.phone }}" dir="ltr"></label>
 <div class="form-grid"><label class="field">النوع<select name="gender"><option value="">—</option><option value="m" {% if p.gender == 'm' %}selected{% endif %}>ذكر</option><option value="f" {% if p.gender == 'f' %}selected{% endif %}>أنثى</option></select></label>
-<label class="field">سنة الميلاد<input name="birth_year" value="{{ p.birth_year|default:'' }}" inputmode="numeric"></label></div>
+<label class="field">سنة الميلاد<input name="birth_year" value="{{ p.birth_year|default:''|unlocalize }}" inputmode="numeric"></label></div>
 <label class="field">العنوان<input name="address" value="{{ p.address }}"></label>
 <label class="field">أمراض مزمنة / حساسية / ملاحظات<textarea name="medical_notes" rows="4">{{ p.medical_notes }}</textarea></label>
 <fieldset style="border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0"><legend>🛡 التأمين الطبي</legend>
-<label class="field">الشركة<select name="insurance"><option value="">من غير تأمين</option>{% for i in insurers %}<option value="{{ i.pk }}" {% if p.insurance_id == i.pk %}selected{% endif %}>{{ i.name }} ({{ i.coverage_pct|floatformat:-2 }}%)</option>{% endfor %}</select></label>
+<label class="field">الشركة<select name="insurance"><option value="">من غير تأمين</option>{% for i in insurers %}<option value="{{ i.pk|unlocalize }}" {% if p.insurance_id == i.pk %}selected{% endif %}>{{ i.name }} ({{ i.coverage_pct|floatformat:-2 }}%)</option>{% endfor %}</select></label>
 <label class="field">الرقم التأميني<input name="insurance_no" value="{{ p.insurance_no }}" dir="ltr" maxlength="60"></label>
 <label class="field">المؤمن عليه / جهة العمل<input name="insurance_holder" value="{{ p.insurance_holder }}" maxlength="120"></label>
 <label class="field">البطاقة صالحة حتى<input type="date" name="insurance_expiry" value="{{ p.insurance_expiry|date:'Y-m-d' }}"></label>
 {% if not insurers %}<p class="muted" style="font-size:12.5px;margin:4px 0 0">أضف شركات التأمين من <a href="{% url 'clinic_insurance' %}">التأمين الطبي</a>.</p>{% endif %}</fieldset><button>حفظ</button></form>
-{% if p.partner_id %}<p class="muted" style="font-size:13px;margin:10px 0 0">حسابه الآجل: <a href="{% url 'shop_statement' %}?account=1203010101&partner={{ p.partner_id }}">كشف حساب</a></p>{% endif %}</section></div></div>
+{% if p.partner_id %}<p class="muted" style="font-size:13px;margin:10px 0 0">حسابه الآجل: <a href="{% url 'shop_statement' %}?account=1203010101&partner={{ p.partner_id|unlocalize }}">كشف حساب</a></p>{% endif %}</section></div></div>
 {% endblock %}

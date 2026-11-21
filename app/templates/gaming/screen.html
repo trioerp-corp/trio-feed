@@ -44,7 +44,8 @@ input,select{font:inherit;background:#0E1628;color:var(--ink);border:1px solid v
 .muted{color:var(--muted)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
 .modal.on{display:flex}.box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;width:440px;max-width:100%;display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
-.box h3{margin:0;font-size:20px}.seg{display:flex;gap:6px}.seg label{flex:1;border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+#mPay .box>.row:last-child{position:sticky;bottom:-18px;background:var(--panel);margin:0 -18px -18px;padding:10px 18px;border-top:1px solid var(--line)}
+.qb button,.row button,#sdClose{white-space:nowrap}#mPay .box{gap:8px}.box h3{margin:0;font-size:20px}.seg{display:flex;gap:6px}.seg label{flex:1;border:2px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
 .seg label:has(input:checked){border-color:var(--acc);background:#16244A}.seg input{display:none}
 label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:10px 18px;border-radius:12px;display:none;z-index:40;max-width:90%}
@@ -91,7 +92,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
     <div class="row"><button class="ghost" id="moveBtn">نقل إلى جهاز آخر</button><button class="ghost red" id="cancelBtn" style="color:#fff">إلغاء</button></div>
   </aside>
 </div>
-<div class="foot">powered by <b>Trio</b> · <a href="tel:01008030459">01008030459</a> · <a href="tel:01121460640">01121460640</a></div>
+<div class="foot">powered by <b>Trio</b> · <a href="tel:01228827915">01228827915</a> · <a href="tel:01121460640">01121460640</a></div>
 
 <div class="modal" id="mLow"><div class="box" style="border-top:6px solid #B45F06"><h3>⚠ أصناف وصلت لحد الطلب</h3>
   <p style="margin:0 0 8px;opacity:.8">وصل الرصيد إلى الحد المحدد للصنف — أبلغ المسؤول عن الشراء.</p><div id="lowList" style="max-height:50vh;overflow:auto"></div>
@@ -118,6 +119,10 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <div class="muted" id="mpChange"></div>
   <div class="row"><button class="green" id="mpGo">✔ تم الدفع واطبع</button><button class="ghost" data-close>رجوع</button></div></div></div>
 
+<div class="modal" id="mCancel"><div class="box"><h3>إلغاء الجلسة — موافقة صاحب المحل</h3>
+  <p class="muted" style="margin:0" id="mcMsg">مرّت أكثر من 5 دقائق أو أُضيفت طلبات: يكتب صاحب المحل اسمه وكلمة سره هنا.</p>
+  <div class="row"><label class="f">اسم مستخدم صاحب المحل<input id="mcOwnerU" autocomplete="off"></label><label class="f">كلمة السر<input id="mcOwnerP" type="password" autocomplete="new-password"></label></div>
+  <div class="row"><button class="red" id="mcGo" style="color:#fff">إلغاء الجلسة</button><button class="ghost" data-close>رجوع</button></div></div></div>
 <div class="modal" id="mMove"><div class="box"><h3>نقل اللعب إلى جهاز آخر</h3>
   <p class="muted" style="margin:0">يُحسب الوقت المنقضي بسعر الجهاز القديم، والقادم بسعر الجديد.</p>
   <select id="mvTo"></select><div class="row"><button id="mvGo">نقل</button><button class="ghost" data-close>رجوع</button></div></div></div>
@@ -208,7 +213,7 @@ function render(){
   if(sel){const s=allSessions().find(x=>x.id===sel); if(s) fillSide(s); else closeSide();}
 }
 function escapeHtml(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'});
+setInterval(()=>{const d=new Date();$('clock').textContent=d.toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
   document.querySelectorAll('[data-t]').forEach(e=>{if(e.dataset.p){const s={opened_at:e.dataset.t,planned:+e.dataset.p};e.textContent=tleft(s)}else e.textContent=hms(elapsed(e.dataset.t))});
   if(S)S.stations.forEach(st=>{if(st.session)watch(st.session,st.name)})},1000);
 setInterval(()=>load(false),15000);
@@ -217,8 +222,9 @@ let starting=null,afterShift=null;
 function openStart(st){
   if(!S.shift){afterShift=()=>openStart(st);$('shiftBtn').click();return}  // no «open the shift first»: open it, then go on
   starting=st;$('moTitle').textContent=`تشغيل ${st.name}`;
-  $('moMode').innerHTML=`<label><input type="radio" name="mode" value="single" checked><b>فردي</b><br>${fmt(st.rate)} ج/س</label>`+
-    (st.rate_multi?`<label><input type="radio" name="mode" value="multi"><b>مالتي</b><br>${fmt(st.rate_multi)} ج/س</label>`:'');
+  // one price (billiard, ping-pong…): no lone «فردي» choice — just the hour price
+  $('moMode').innerHTML=st.rate_multi?`<label><input type="radio" name="mode" value="single" checked><b>فردي</b><br>${fmt(st.rate)} ج/س</label><label><input type="radio" name="mode" value="multi"><b>مالتي</b><br>${fmt(st.rate_multi)} ج/س</label>`
+    :`<p style="margin:0;grid-column:1/-1">سعر الساعة <b>${fmt(st.rate)} ج</b></p>`;
   $('moCust').value='';$('moPlan').value='';show('mOpen');
 }
 $('moGo').onclick=async()=>{const mode=(document.querySelector('#moMode input:checked')||{}).value||'single';
@@ -251,7 +257,7 @@ function closeSide(){sel=null;$('side').classList.remove('on');render()}
 $('sdClose').onclick=closeSide;
 function fillSide(s){
   const st=s._st;$('sdName').textContent=st?st.name:'تيك أواي #'+(s.no||s.id)+(s.customer?' '+s.customer:'');
-  $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} ج`:'طلب بدون جهاز';
+  $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} ج`:'طلب بدون جهاز';
   const m=$('sdModes');m.innerHTML='';
   if(st&&st.rate_multi){['single','multi'].forEach(md=>{const b=document.createElement('button');b.className=s.mode===md?'':'ghost';b.textContent=md==='multi'?`مالتي ${fmt(st.rate_multi)}`:`فردي ${fmt(st.rate)}`;
     b.onclick=async()=>{if(s.mode===md)return;try{await api('switch',{session:s.id,mode:md});await load();toast('تغيّر السعر بدءًا من الآن')}catch(e){}};m.appendChild(b)})}
@@ -276,7 +282,13 @@ async function addItem(code){if(!sel)return;try{await api('add',{session:sel,cod
 $('search').addEventListener('input',renderMenu);
 $('search').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();const hit=catalog.find(i=>i.barcode===v||i.code===v);
   if(hit){addItem(hit.code);e.target.value='';renderMenu()}else{const f=$('menu').querySelector('button');if(f)f.click()}}});
-$('cancelBtn').onclick=async()=>{if(!sel||!confirmBox('إلغاء هذه الجلسة؟'))return;try{await api('cancel',{session:sel});sel=null;$('side').classList.remove('on');await load();toast('أُلغيت')}catch(e){}};
+async function cancelSes(body){const r=await fetch('/ui/play/api/cancel/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':CSRF},body:JSON.stringify(body),credentials:'same-origin'});
+  let j={};try{j=await r.json()}catch(e){}
+  if(r.ok&&!j.error){hide('mCancel');sel=null;$('side').classList.remove('on');await load();toast('أُلغيت');return}
+  if(j.need_owner){if(body.owner)toast(j.error,true);$('mcOwnerP').value='';show('mCancel');($('mcOwnerU').value?$('mcOwnerP'):$('mcOwnerU')).focus();return}
+  toast(j.error||'حدثت مشكلة — حاول مرة أخرى',true)}
+$('cancelBtn').onclick=()=>{if(!sel||!confirmBox('إلغاء هذه الجلسة؟'))return;cancelSes({session:sel})};
+$('mcGo').onclick=()=>{const o=$('mcOwnerU').value.trim();if(!o||!$('mcOwnerP').value){toast('اكتب اسم المستخدم وكلمة السر',true);return}cancelSes({session:sel,owner:o,password:$('mcOwnerP').value})};
 function confirmBox(m){return window.confirm(m)}
 // move
 $('moveBtn').onclick=()=>{const free=S.stations.filter(x=>!x.session);if(!free.length){toast('لا يوجد جهاز متاح',true);return}

@@ -254,7 +254,16 @@ def demo_start(request, ctx):
         except ValueError:
             return str(d)
 
-    stations = [x for x in [dict(kind="ps5", prefix="جهاز", count=n("ps_count", 3), rate=rate("ps_rate", 40)),
+    def multi(k):
+        try:
+            v = float(P.get(k) or 0)
+        except ValueError:
+            return ""
+        return str(v) if v > 0 else ""
+
+    two = n("ps4_count", 0) > 0  # both generations in the hall: the names tell them apart
+    stations = [x for x in [dict(kind="ps5", prefix="PS5" if two else "جهاز", count=n("ps_count", 3), rate=rate("ps_rate", 40), rate_multi=multi("ps_multi")),
+                            dict(kind="ps4", prefix="PS4", count=n("ps4_count", 0), rate=rate("ps4_rate", 30), rate_multi=multi("ps4_multi")),
                             dict(kind="billiard", prefix="ترابيزة", count=n("bl_count", 1), rate=rate("bl_rate", 50))] if x["count"]]
     data = dict(name=(P.get("shop") or "").strip(), phone=(P.get("phone") or "").strip(), address=(P.get("address") or "").strip(), business=business,
                 plan="basic", activity=act, modules=list(M.defaults("basic", business)), vat_rate="14", devices=n("devices", 1, 1, 10),
@@ -312,7 +321,7 @@ def self_setup_start(request, s, ctx):
         except Exception:  # noqa: BLE001
             from urllib.parse import quote
 
-            ctx["wa"] = f"https://wa.me/201008030459?text={quote(text)}"
+            ctx["wa"] = f"https://wa.me/201228827915?text={quote(text)}"
             messages.error(request, "لا يوجد إنترنت أو البريد غير مُجهّز — أرسل الطلب عبر واتساب من الزر")
         ctx["self_tab"] = True
         return render(request, "core/acc_login.html", ctx)

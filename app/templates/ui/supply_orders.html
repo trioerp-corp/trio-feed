@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}طلبات الشراء{% endblock %}
+{% block content %}
+<style>.sg{margin-bottom:16px}.sg h2{margin:0;font-size:18px}.sg .hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sg table{min-width:700px}.sg td b{word-break:normal}.sg input.q{width:84px}.prh{display:none}.why{font-size:12px;color:var(--muted)}
+.seg2{display:flex;gap:6px;flex-wrap:wrap}.seg2 a{padding:8px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;color:inherit;background:var(--card,#fff)}.seg2 a.on{background:var(--brand,#1F4E79);color:#fff;border-color:transparent}
+@media print{.noprint,.gg-top,.gg-foot,.sg .act,.why{display:none!important}.prh{display:block;margin-bottom:8px}body.pr-one .sg:not(.pr-this){display:none}.sg{break-inside:avoid;border:0}.sg table{min-width:0}.sg input.q{border:0;width:auto;padding:0}}</style>
+<div class="page-head noprint"><div><h1>طلبات الشراء من الموردين</h1><p class="muted" style="margin:0">{% if kind == "sizes" %}المقاسات والألوان التي نفدت من الموديلات التي تُباع — الكمية المقترحة = ما بيع منها في المدة.{% else %}الأصناف التي وصلت إلى حد الطلب أو أقل — مجمّعة حسب آخر مورد اشتريت منه، والكمية المقترحة تعيد الرصيد إلى ضعف حد الطلب.{% endif %} عدّل الكميات ثم اطبع الطلب أو أرسله للمورد على واتساب.</p></div></div>
+<div class="noprint" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px"><div class="seg2"><a href="?kind=low" class="{% if kind == 'low' %}on{% endif %}">النواقص (حد الطلب)</a>{% if sizes_on %}<a href="?kind=sizes" class="{% if kind == 'sizes' %}on{% endif %}">مقاسات نفدت من الموديلات المطلوبة</a>{% endif %}</div>
+{% if kind == "sizes" %}<form method="get" style="display:flex;gap:6px"><input type="hidden" name="kind" value="sizes"><select name="days" aria-label="مدة المبيعات">{% for d in day_opts %}<option value="{{ d }}" {% if d == days %}selected{% endif %}>مبيعات آخر {{ d }} يومًا</option>{% endfor %}</select><button class="light">عرض</button></form>{% endif %}</div>
+{% for g in groups %}<div class="card sg" id="sg{{ forloop.counter }}" data-sup="{{ g.supplier.name|default:'' }}" data-phone="{{ g.supplier.phone|default:'' }}">
+<div class="prh"><b style="font-size:16px">{{ company.name }}</b>{% if company.phone %} — {{ company.phone }}{% endif %}{% if company.address %} — {{ company.address }}{% endif %}<br><b>طلب شراء إلى: {{ g.supplier.name|default:"—" }}</b> — بتاريخ {{ today|date:"d/m/Y" }}</div>
+<div class="hd"><div><h2>{% if g.supplier %}{{ g.supplier.name }}{% else %}أصناف لم تُشترَ من مورد بعد{% endif %}</h2><span class="muted">{{ g.rows|length }} صنف{% if g.supplier.phone %} — {{ g.supplier.phone }}{% endif %}</span></div>
+<div class="act" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="light" onclick="prOne('sg{{ forloop.counter }}')">🖨 طباعة الطلب</button>{% if g.supplier %}<button type="button" class="light" onclick="wa('sg{{ forloop.counter }}')">واتساب للمورد</button>{% endif %}<a class="btn light" href="{% url 'shop_purchase_new' %}">فاتورة الاستلام</a></div></div>
+<div class="table-wrap"><table><thead><tr><th>الصنف</th><th class="n">الكمية المطلوبة</th><th>الوحدة</th><th class="n">آخر سعر شراء</th><th class="n">القيمة</th></tr></thead><tbody>
+{% for r in g.rows %}<tr data-name="{{ r.item.name }}" data-unit="{{ r.unit }}" data-price="{{ r.price_txt }}"><td><b dir="auto">{{ r.item.name }}</b><div class="why">{{ r.why }}{% if r.last %} — آخر شراء {{ r.last|date:"d/m/Y" }}{% endif %}</div></td>
+<td class="n"><input class="q" value="{{ r.qty_txt }}" inputmode="decimal" aria-label="الكمية" oninput="tot(this.closest('.sg'))"></td><td>{{ r.unit }}</td><td class="n">{% if r.price %}{{ r.price|money }}{% else %}—{% endif %}</td><td class="n lt">{{ r.total|money }}</td></tr>{% endfor %}
+</tbody><tfoot><tr><td colspan="4" class="n"><b>الإجمالي التقريبي</b></td><td class="n"><b class="gt">{{ g.total|money }}</b></td></tr></tfoot></table></div></div>
+{% empty %}<div class="card muted">{% if kind == "sizes" %}✔ لا توجد مقاسات نفدت من الموديلات التي تُباع في هذه المدة{% else %}✔ لا توجد أصناف وصلت إلى حد الطلب{% endif %}</div>{% endfor %}
+<script>
+const n2=v=>+String(v||'').replace('٫','.').replace(/,/g,'')||0,m=v=>v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function tot(c){let g=0;c.querySelectorAll('tbody tr').forEach(tr=>{const v=n2(tr.querySelector('.q').value)*n2(tr.dataset.price);g+=v;tr.querySelector('.lt').textContent=m(v)});c.querySelector('.gt').textContent=m(g)}
+function prOne(id){document.body.classList.add('pr-one');document.querySelectorAll('.sg').forEach(x=>x.classList.toggle('pr-this',x.id===id));window.print();setTimeout(()=>document.body.classList.remove('pr-one'),500)}
+function wa(id){const c=document.getElementById(id),L=['السلام عليكم، طلب شراء من {{ company.name|escapejs }}:'];
+c.querySelectorAll('tbody tr').forEach(tr=>{const q=n2(tr.querySelector('.q').value);if(q>0)L.push('• '+tr.dataset.name+' — '+q+' '+tr.dataset.unit)});L.push('برجاء التأكيد وموعد التوريد. شكرًا');
+let ph=(c.dataset.phone||'').replace(/\D/g,'');if(ph.startsWith('0'))ph='2'+ph;window.open('https://wa.me/'+ph+'?text='+encodeURIComponent(L.join('\n')),'_blank','noopener')}
+</script>
+{% endblock %}

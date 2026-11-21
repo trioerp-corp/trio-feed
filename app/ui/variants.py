@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.http import Http404
 from django.shortcuts import redirect, render
 
 from inventory import menu as MN
@@ -34,6 +35,8 @@ def _form_cells(P, sizes, colors):
 def page(request):
     if not request.user.has_perm("inventory.view_item"):
         raise PermissionDenied
+    if not V.enabled() and not Item.objects.filter(variant_of__isnull=True, extra__has_key="grid").exists():
+        raise Http404("المقاسات والألوان لا تخص نشاط هذا المحل")  # 1.24.1: a pharmacy / supermarket never reaches it by URL
     P = request.POST
     if request.method == "POST":
         if not request.user.has_perm("inventory.change_item"):
@@ -89,6 +92,8 @@ def _ctx(request, edit, posted=None):
 def report(request):
     if not request.user.has_perm("inventory.view_item"):
         raise PermissionDenied
+    if not V.enabled() and not Item.objects.filter(variant_of__isnull=True, extra__has_key="grid").exists():
+        raise Http404("المقاسات والألوان لا تخص نشاط هذا المحل")  # 1.24.1: a pharmacy / supermarket never reaches it by URL
     from ui.shop import _range
 
     cat = request.GET.get("cat") or ""

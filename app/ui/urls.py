@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import plus as plus_page
+from . import supply
 from . import branches, connect, delivery_page, find, guide, imports, manage, menu_page, pharmacy, profit, restore, setup, shop, start, tables_page, upgrade, variants, views
 
 urlpatterns = [
@@ -65,6 +66,8 @@ urlpatterns = [
     path("ui/shop/variants/", variants.page, name="shop_variants"),
     path("ui/shop/variants/stock/", variants.report, name="shop_variants_report"),
     path("ui/shop/expiry/", shop.expiry, name="shop_expiry"),
+    path("ui/shop/supply/returns/", supply.company_returns, name="supply_returns"),
+    path("ui/shop/supply/orders/", supply.orders, name="supply_orders"),
     path("ui/shop/requests/", shop.requests_page, name="shop_requests"),
     path("ui/shop/recipes/", shop.recipes, name="shop_recipes"),
     path("ui/shop/menu/", menu_page.page, name="shop_menu"),
@@ -74,6 +77,7 @@ urlpatterns = [
     path("ui/shop/tables/qr/", tables_page.qr_sheet, name="shop_tables_qr"),
     path("ui/shop/recipes/qr/", connect.menu_qr, name="menu_qr"),
     path("ui/shop/pharmacy/", pharmacy.page, name="pharmacy"),
+    path("ui/shop/pharmacy/lookup/", pharmacy.lookup, name="pharmacy_lookup"),
     path("ui/start/", start.page, name="start"),
     path("ui/find/", find.find, name="find"),
     path("ui/guide/", guide.page, name="guide"),

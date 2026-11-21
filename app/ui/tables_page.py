@@ -68,7 +68,7 @@ def page(request):
     tabs = list(TableTab.objects.filter(state="open").select_related("table"))
     for t in tabs:
         t.total = T.tab_total(t)
-    return render(request, "ui/tables.html", dict(s=s, cfg=T.cfg(s), raw=s.menu_cfg or {}, tables=tables, tabs=tabs,
+    return render(request, "ui/tables.html", dict(s=s, cfg=T.cfg(s), raw=s.menu_cfg or {}, tables=tables, tabs=tabs, missing=T.missing_sales(),
                                                   menu_link=menu_pub.link(s), kitchen=s.get_kitchen_ticket_display()))
 
 

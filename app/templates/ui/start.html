@@ -48,7 +48,7 @@
 {% with st=status.money %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="money"><h2><span class="n">3</span> طرق الدفع والدرج</h2>
 <p class="muted why">علّم على ما تقبله فقط — وما لم يُعلَّم لن يظهر في الكاشير ولا في الخزينة.</p>
 <form method="post">{% csrf_token %}<input type="hidden" name="op" value="money">
-<div class="st-chips" style="gap:14px">💵 نقدًا (الدرج) — دائمًا{% for b in boxes %}<label><input type="checkbox" name="box" value="{{ b.pk }}" {% if b.active %}checked{% endif %}> {{ b.name }}</label>{% endfor %}</div>
+<div class="st-chips" style="gap:14px">💵 نقدًا (الدرج) — دائمًا{% for b in boxes %}<label><input type="checkbox" name="box" value="{{ b.pk|unlocalize }}" {% if b.active %}checked{% endif %}> {{ b.name }}</label>{% endfor %}</div>
 <div class="st-row"><label class="field">محفظة / حساب بنكي آخر (اختياري)<input name="new_box" maxlength="100" placeholder="مثلًا: محفظة أورانج كاش"></label>
 <label class="field" style="max-width:160px">النوع<select name="new_kind"><option value="wallet">محفظة</option><option value="bank">بنك</option></select></label>
 <label class="field" style="max-width:220px">النقدية في الدرج اليوم{% if opening_cash %} <small class="muted">(تم التسجيل {{ opening_cash }})</small>{% endif %}<input name="opening_cash" inputmode="decimal" dir="ltr" placeholder="0" {% if opening_cash %}disabled{% endif %}></label>
@@ -64,7 +64,7 @@
 <div class="st-chips">{% for v in services %}<span>{{ v.item.name }} — {{ v.item.sale_price|floatformat:-2 }} ج{% if v.doctor %} (د. {{ v.doctor.name }}){% endif %}</span>{% empty %}<span class="muted">لا يوجد بعد</span>{% endfor %}</div>
 <form method="post" class="st-row">{% csrf_token %}<input type="hidden" name="op" value="service">
 <label class="field">الخدمة<input name="name" required maxlength="150" placeholder="كشف / استشارة / جلسة"></label><label class="field" style="max-width:150px">السعر<input name="price" required inputmode="decimal" dir="ltr"></label>
-<label class="field">الطبيب<select name="doctor"><option value="">أي طبيب</option>{% for d in doctors %}<option value="{{ d.pk }}">د. {{ d.name }}</option>{% endfor %}</select></label>
+<label class="field">الطبيب<select name="doctor"><option value="">أي طبيب</option>{% for d in doctors %}<option value="{{ d.pk|unlocalize }}">د. {{ d.name }}</option>{% endfor %}</select></label>
 <label class="field" style="max-width:130px">المدة (دقيقة)<input name="minutes" value="15" inputmode="numeric" dir="ltr"></label><button>إضافة</button></form>
 <p class="muted" style="margin:8px 0 0">المستهلكات التي تُخصم مع كل خدمة (قفاز، سرنجة…): من <a href="{% url 'clinic_setup' %}">الخدمات والأسعار</a>.</p></section>
 {% endif %}

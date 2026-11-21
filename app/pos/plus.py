@@ -167,30 +167,48 @@ def sale_promos(day=None):
 
 
 def slow_movers(days=60, branch=None):
-    """Items with stock and no sale for `days` days: (item, qty, value, last sale date or None)."""
-    from django.db.models import Max
+    """Items with stock and no sale for `days` days, counted from the last sale or — never sold since — the first time the stock came
+    in (today's purchase is not «slow»). Sizes / colours of a product are one row (the product): [dict(item, qty, value, last, days)]."""
+    from django.db.models import Max, Min
 
-    from inventory.models import Item, StockQuant
+    from inventory.models import Item, StockMoveLine, StockQuant
 
     from .models import OrderLine
 
-    since = dt.date.today() - dt.timedelta(days=int(days))
+    today = dt.date.today()
+    since = today - dt.timedelta(days=int(days))
     last = dict(OrderLine.objects.filter(order__is_return=False, order__cancelled=False).values("item_id").annotate(m=Max("order__created_at_device"))
                 .values_list("item_id", "m"))
-    qs = Item.objects.filter(active=True, item_type="stock", qty_on_hand__gt=0).select_related("category", "variant_of")
+    came = dict(StockMoveLine.objects.filter(move__state="posted", move__kind__in=["receipt", "opening", "adjust_in", "transfer"], qty__gt=0)
+                .values("item_id").annotate(m=Min("move__date")).values_list("item_id", "m"))
+    qs = Item.objects.filter(active=True, item_type="stock", qty_on_hand__gt=0).select_related("category", "variant_of", "variant_of__category")
     here = None
     if branch is not None:
         here = dict(StockQuant.objects.filter(warehouse=branch.warehouse, qty__gt=0).values_list("item_id", "qty"))
-    out = []
+    rows = {}
     for it in qs:
         q = here.get(it.pk, Z) if here is not None else it.qty_on_hand
         if q <= 0:
             continue
         ls = last.get(it.pk)
-        if ls and ls.date() >= since:
+        ls = ls.date() if ls else None
+        ref = max(x for x in (ls, came.get(it.pk)) if x) if (ls or came.get(it.pk)) else None
+        if ref and ref > since:
             continue
-        out.append({"item": it, "qty": q, "value": (it.avg_cost * q).quantize(Decimal("0.01")), "last": ls.date() if ls else None,
-                    "days": (dt.date.today() - ls.date()).days if ls else None})
+        model = it.variant_of or it
+        r = rows.setdefault(model.pk, {"item": model, "qty": Z, "value": Z, "last": None, "ref": None, "n": 0})
+        r["qty"] += q
+        r["value"] += (it.avg_cost * q).quantize(Decimal("0.01"))
+        r["n"] += 1
+        if ls and (r["last"] is None or ls > r["last"]):
+            r["last"] = ls
+        if ref and (r["ref"] is None or ref > r["ref"]):
+            r["ref"] = ref
+    out = []
+    for r in rows.values():
+        r["days"] = (today - r["last"]).days if r["last"] else None
+        r["idle"] = (today - r["ref"]).days if r["ref"] else None  # days since the last sale, or since the stock came in
+        out.append(r)
     out.sort(key=lambda r: -r["value"])
     return out
 
@@ -212,6 +230,7 @@ def decorate(out, device, s=None):
     if not c["pharm"]["on"]:
         return out
     codes = [i["code"] for i in out["items"]]
+    ph = is_pharmacy(s or CompanySettings.get())
     info = {i.code: i for i in Item.objects.filter(code__in=codes).only("id", "code", "item_type", "extra", "unit")}
     ids = [i.pk for i in info.values() if i.item_type == "stock"]
     here = dict(StockQuant.objects.filter(item_id__in=ids, warehouse=device.branch.warehouse).values_list("item_id", "qty"))
@@ -228,7 +247,8 @@ def decorate(out, device, s=None):
             row["g"] = g[:120]
         if x.get("generic_ar"):
             row["ga"] = str(x["generic_ar"])[:120]
-        if it.pk in tracked:  # only a stock the pharmacy put in (purchase / opening / count) is shown and checked
+        if it.pk in tracked or (ph and it.item_type == "stock"):  # a stock put in (purchase / opening / count) is shown and checked;
+            # in a pharmacy every drug is — one never bought is «نفد الرصيد», and tapping it offers the alternatives
             row["bq"] = str(here.get(it.pk, Z))
     return out
 
@@ -329,7 +349,16 @@ def who(phone):
     return d.name if d else ""
 
 
-def lookup(phone):
+LOY_SALT, LOY_AGE = "trio-loy-look", 2 * 86400
+
+
+def lookup(phone, device=None):
+    """The balance the till shows before redeeming + a signed token of what it saw: a redemption the balance no longer
+    covers at sync (used at another till, loyalty turned off) is still posted within that token (flag «نقاط غير مغطاة»)."""
+    import secrets
+
+    from django.core import signing
+
     c = cfg()["loy"]
     ph = norm_phone(phone)
     if not c["on"]:
@@ -337,36 +366,79 @@ def lookup(phone):
     if not ph:
         raise ValidationError("اكتب رقم موبايل صحيح")
     b = balance(ph)
+    tok = signing.dumps({"ph": ph, "b": b, "v": str(c["val"]), "m": c["min"], "d": device.pk if device else None, "n": secrets.token_hex(4)}, salt=LOY_SALT)
     return {"phone": ph, "name": who(ph), "points": b, "value": str((Decimal(b) * c["val"]).quantize(Decimal("0.01"))),
-            "min": c["min"], "val": str(c["val"]), "per": str(c["per"])}
+            "min": c["min"], "val": str(c["val"]), "per": str(c["per"]), "tok": tok}
 
 
-def loy_check(data, is_return):
+def _loy_seen(lo, ph, use, amt, device, pk):
+    """What the till's signed lookup covers: the points it showed (≥ use) at the value it showed. Returns the amount or None."""
+    from django.core import signing
+
+    from .models import Order
+
+    tok = str(lo.get("tok") or "")
+    if not tok:
+        return None
+    try:
+        t = signing.loads(tok, salt=LOY_SALT, max_age=LOY_AGE)
+    except signing.BadSignature:
+        return None
+    if t.get("ph") != ph or (device is not None and t.get("d") not in (None, device.pk)):
+        return None
+    if use < int(t.get("m") or 0) or use > int(t.get("b") or 0):
+        return None
+    cap = (Decimal(use) * _d(t.get("v"))).quantize(Decimal("0.01"))
+    if amt <= 0 or amt > cap + Decimal("0.01"):
+        return None
+    if Order.objects.filter(cancelled=False, raw__loy__tok=tok, raw__loy__ok=True).exclude(pk=pk).exists():
+        return None  # one lookup covers one invoice
+    return min(amt, cap)
+
+
+def loy_check(data, is_return, device=None, pk=None):
     """Before the discount check: the points redeemed on this sale. Returns the approved amount (what the balance and
-    the rules cover); the rest stays a manual discount. Cleans data["loy"]."""
+    the rules cover); the rest stays a manual discount. Cleans data["loy"].
+    A redemption the balance no longer covers (spent at another till meanwhile, loyalty turned off) never blocks the sale:
+    within the till's signed lookup (the points and value it showed) it is posted, the balance goes below zero and the
+    order carries «نقاط غير مغطاة» for the owner."""
     c = cfg()["loy"]
     lo = data.get("loy") if isinstance(data.get("loy"), dict) else None
     if lo is None:
         return Z, ""
     ph = norm_phone(lo.get("ph"))
-    if not c["on"] or not ph:
-        data.pop("loy", None)
-        return Z, ""
     use = int(_d(lo.get("use")))
     amt = _d(lo.get("amt")).quantize(Decimal("0.01"))
+    if not ph or (not c["on"] and (is_return or use <= 0)):
+        data.pop("loy", None)
+        return Z, ""
     clean = {"ph": ph, "n": str(lo.get("n") or "")[:80], "use": max(use, 0), "amt": str(amt), "ok": False, "earn": 0}
+    if lo.get("tok"):
+        clean["tok"] = str(lo["tok"])[:400]
     data["loy"] = clean
     if is_return or use <= 0:
         clean["use"], clean["amt"] = 0, "0"
         return Z, ""
+
+    def uncovered(why):
+        seen = _loy_seen(clean, ph, use, amt, device, pk)
+        if seen is None:
+            if not c["on"]:
+                data.pop("loy", None)
+            return Z, why
+        clean["ok"], clean["unc"], clean["amt"] = True, True, str(seen)
+        return seen, f"نقاط غير مغطاة: استبدال {use} نقطة ({seen} ج) — {why}"
+
+    if not c["on"]:
+        return uncovered("نقاط الولاء أُوقفت")
     bal = balance(ph)
     want = (Decimal(use) * c["val"]).quantize(Decimal("0.01"))
     if use < c["min"]:
-        return Z, f"استبدال {use} نقطة أقل من الحد ({c['min']})"
+        return uncovered(f"استبدال {use} نقطة أقل من الحد ({c['min']})")
     if use > bal:
-        return Z, f"استبدال {use} نقطة والرصيد {bal}"
+        return uncovered(f"الرصيد وقت المزامنة {bal}")
     if abs(want - amt) > Decimal("0.01"):
-        return Z, f"قيمة النقاط {amt} ≠ {want}"
+        return uncovered(f"قيمة النقاط {amt} ≠ {want}")
     clean["ok"] = True
     return amt, f"استبدال {use} نقطة ({amt} ج)"
 

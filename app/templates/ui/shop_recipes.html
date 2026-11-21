@@ -7,22 +7,22 @@
 <div class="table-wrap" style="margin-bottom:20px"><table><thead><tr><th>الصنف</th><th>التصنيف</th><th class="n">التكلفة (آخر شراء)</th><th class="n">السعر المقترح</th><th class="n">سعر البيع</th><th class="n">الهامش الفعلي</th><th></th></tr></thead><tbody>
 {% for x in rows %}{% if x.r %}<tr><td><b>{{ x.label }}</b>{% if x.c.missing %}<br><small class="bad">من غير تكلفة: {{ x.c.missing|join:"، " }}</small>{% endif %}</td><td>{{ x.cat }}</td>
 <td class="n">{{ x.c.cost|money:2 }}</td><td class="n"><b>{{ x.c.suggested|money:2 }}</b></td>
-<td class="n"><form method="post" style="display:flex;gap:6px;justify-content:flex-end">{% csrf_token %}<input type="hidden" name="op" value="price"><input type="hidden" name="recipe" value="{{ x.r.pk }}">
+<td class="n"><form method="post" style="display:flex;gap:6px;justify-content:flex-end">{% csrf_token %}<input type="hidden" name="op" value="price"><input type="hidden" name="recipe" value="{{ x.r.pk|unlocalize }}">
 <input name="price" value="{{ x.c.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:90px;min-height:36px"><button class="light" style="min-height:36px;padding:4px 10px">حفظ</button></form></td>
 <td class="n">{% if x.c.real_margin is not None %}<span class="badge {% if x.c.low %}red{% endif %}">{{ x.c.real_margin }}%</span>{% else %}—{% endif %}</td>
-<td class="actions"><a href="?edit={{ x.r.pk }}#form">تعديل المكونات</a>
-<form method="post" onsubmit="return confirm('إزالة «{{ x.label }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="remove"><input type="hidden" name="recipe" value="{{ x.r.pk }}"><button class="light" style="min-height:32px;padding:2px 10px">إزالة من المنيو</button></form></td></tr>
+<td class="actions"><a href="?edit={{ x.r.pk|unlocalize }}#form">تعديل المكونات</a>
+<form method="post" onsubmit="return confirm('إزالة «{{ x.label }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="remove"><input type="hidden" name="recipe" value="{{ x.r.pk|unlocalize }}"><button class="light" style="min-height:32px;padding:2px 10px">إزالة من المنيو</button></form></td></tr>
 {% else %}<tr><td><b>{{ x.label }}</b><br><small class="muted">لم تُكتب مكوناته بعد (اختياري — لحساب التكلفة وخصم الخامات)</small></td><td>{{ x.cat }}</td><td class="n">—</td><td class="n">—</td>
-<td class="n">{{ x.item.sale_price|money:2 }}</td><td class="n">—</td><td class="actions"><a class="btn light" style="min-height:32px;padding:2px 10px" href="?item={{ x.item.pk }}#form">+ المكونات</a></td></tr>{% endif %}
+<td class="n">{{ x.item.sale_price|money:2 }}</td><td class="n">—</td><td class="actions"><a class="btn light" style="min-height:32px;padding:2px 10px" href="?item={{ x.item.pk|unlocalize }}#form">+ المكونات</a></td></tr>{% endif %}
 {% empty %}<tr><td colspan="7" class="muted">لا توجد أصناف في المنيو بعد — أضفها من صفحة <a href="{% url 'shop_menu' %}">المنيو</a> ثم اكتب مكوناتها هنا</td></tr>{% endfor %}</tbody></table></div>
 
 {% if edit or for_item %}
 <form class="card" id="form" method="post" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">{% csrf_token %}
 <h2>{% if edit %}مكونات «{{ edit.item.name }}»{% else %}مكونات «{{ for_item.name }}»{% endif %}</h2>
-{% if edit %}<input type="hidden" name="recipe" value="{{ edit.pk }}">{% endif %}{% if for_item %}<input type="hidden" name="item" value="{{ for_item.pk }}">{% endif %}
+{% if edit %}<input type="hidden" name="recipe" value="{{ edit.pk|unlocalize }}">{% endif %}{% if for_item %}<input type="hidden" name="item" value="{{ for_item.pk|unlocalize }}">{% endif %}
 <div class="grid">
 <label class="field">اسم المشروب / الأكلة<input name="item_name" value="{% firstof edit.item.name for_item.name '' %}" required maxlength="150" placeholder="مثلًا: قهوة تركي"></label>
-<label class="field">التصنيف (في المنيو)<select name="category">{% for c in cats %}<option value="{{ c.pk }}" {% if edit and edit.item.category_id == c.pk or for_item and for_item.category_id == c.pk %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+<label class="field">التصنيف (في المنيو)<select name="category">{% for c in cats %}<option value="{{ c.pk|unlocalize }}" {% if edit and edit.item.category_id == c.pk or for_item and for_item.category_id == c.pk %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
 <label class="field">هامش الربح المستهدف %<input name="margin" id="margin" value="{{ edit.target_margin|default:'65'|unlocalize }}" inputmode="decimal" dir="ltr"></label>
 <label class="field">تكاليف إضافية للوحدة (كوب، غطاء…)<input name="extra" id="extra" value="{{ edit.extra_cost|default:'0'|unlocalize }}" inputmode="decimal" dir="ltr"></label>
 </div>
@@ -38,7 +38,7 @@
 <label class="field" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)"><input type="checkbox" name="use_suggested" value="1" style="width:20px;min-height:0" {% if not edit and not for_item %}checked{% endif %}> استخدم السعر المقترح كسعر بيع</label>
 <div class="actions"><button>حفظ الوصفة</button><a class="btn light" href="{% url 'shop_recipes' %}">رجوع</a></div>
 </form>
-<template id="tpl"><tr><td><select data-k="ing"><option value="">— اختر —</option>{% for i in ings %}<option value="{{ i.pk }}">{{ i.name }} ({{ i.unit }})</option>{% endfor %}</select></td>
+<template id="tpl"><tr><td><select data-k="ing"><option value="">— اختر —</option>{% for i in ings %}<option value="{{ i.pk|unlocalize }}">{{ i.name }} ({{ i.unit }})</option>{% endfor %}</select></td>
 <td><input data-k="qty" inputmode="decimal" dir="ltr" style="width:110px"></td><td><input data-k="waste" inputmode="decimal" dir="ltr" value="0" style="width:80px"></td>
 <td class="n uc">0</td><td class="n lc">0</td><td><button type="button" class="light x" style="min-height:34px;padding:2px 10px" aria-label="إزالة">✕</button></td></tr></template>
 {{ js|json_script:"rdata" }}

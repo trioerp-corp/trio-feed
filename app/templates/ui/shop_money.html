@@ -8,11 +8,11 @@
 <div class="card kpi"><span class="k">ما دفعه من ماله الخاص</span><span class="v">{{ paid_by_owner|money:0 }}</span><span class="k">موردين ومصروفات وأجور</span></div></section>{% endif %}
 <form method="post" class="card" style="margin-bottom:16px">{% csrf_token %}<h2>حركة جديدة</h2><div class="form-grid">
 <label class="field">النوع<select name="kind" id="k">{% for v, n in kinds %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
-<label class="field">من<select name="source">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}<option value="owner">مال صاحب المحل الخاص (يُسجَّل له)</option></select></label>
-<label class="field" data-for="expense">البند<select name="account">{% for a in expenses %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></label>
-<label class="field" data-for="wage advance">الموظف<select name="partner" data-p="emp"><option value="">—</option>{% for p in employees %}<option value="{{ p.pk }}">{{ p.name }}</option>{% endfor %}</select></label>
-{% if shop_partners|length > 1 %}<label class="field" data-for="drawing deposit">الشريك<select name="partner" data-p="sh" required><option value="">— اختر —</option>{% for sp in shop_partners %}<option value="{{ sp.partner.pk }}">{{ sp.partner.name }}</option>{% endfor %}</select></label>{% endif %}
-<label class="field" data-for="supplier">المورد<select name="partner" data-p="sup"><option value="">—</option>{% for p in suppliers %}<option value="{{ p.pk }}">{{ p.name }}</option>{% endfor %}</select></label>
+<label class="field">من<select name="source">{% for b in boxes %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}<option value="owner">مال صاحب المحل الخاص (يُسجَّل له)</option></select></label>
+<label class="field" data-for="expense">البند<select name="account">{% for a in expenses %}<option value="{{ a.pk|unlocalize }}">{{ a.name }}</option>{% endfor %}</select></label>
+<label class="field" data-for="wage advance">الموظف<select name="partner" data-p="emp"><option value="">—</option>{% for p in employees %}<option value="{{ p.pk|unlocalize }}">{{ p.name }}</option>{% endfor %}</select></label>
+{% if shop_partners|length > 1 %}<label class="field" data-for="drawing deposit">الشريك<select name="partner" data-p="sh" required><option value="">— اختر —</option>{% for sp in shop_partners %}<option value="{{ sp.partner.pk|unlocalize }}">{{ sp.partner.name }}</option>{% endfor %}</select></label>{% endif %}
+<label class="field" data-for="supplier">المورد<select name="partner" data-p="sup"><option value="">—</option>{% for p in suppliers %}<option value="{{ p.pk|unlocalize }}">{{ p.name }}</option>{% endfor %}</select></label>
 <label class="field">المبلغ<input name="amount" inputmode="decimal" required></label>
 <label class="field" data-for="wage">خصم سلفة<input name="adv" inputmode="decimal"></label><label class="field" data-for="wage">خصم / جزاء<input name="pen" inputmode="decimal"></label>
 <label class="field">التاريخ<input type="date" name="date" value="{{ today }}"></label><label class="field">بيان<input name="note"></label>

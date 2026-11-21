@@ -133,6 +133,9 @@ def void_order(order: Order, reason, user=None):
     _need_branch(user, branch=order.device.branch if order.device_id else None)
     if order.cancelled:
         raise ValidationError("الفاتورة ملغية بالفعل")
+    from gaming.bookings import on_order_void as hall_void
+
+    hall_void(order, editing=str(reason).startswith("تعديل:"))
     if order.entry_id and order.entry.state == "posted":
         L.reverse(order.entry, date=timezone.localdate(), reason=reason, user=user)
     if order.stock_move_id:
@@ -141,7 +144,12 @@ def void_order(order: Order, reason, user=None):
     order.flags = (f"ملغية: {reason}؛ " + order.flags)[:300]
     order.save(update_fields=["cancelled", "flags"])
     from .delivery import on_order_void
+    from .models import DeliveryOrder
 
+    if not str(reason).startswith("تعديل:"):  # a real cancel of a bill the rider already paid in: the collection goes back too
+        d = DeliveryOrder.objects.filter(order=order, state="paid", collect_move__isnull=False, collect_move__cancelled=False).first()
+        if d:
+            void_cash_move(d.collect_move, f"إلغاء الفاتورة {order.uid}: {reason}", user=user or "system")
     on_order_void(order)
     return order
 
@@ -162,6 +170,10 @@ def edit_order(order: Order, lines, reason, user=None, pay="", customer_id=None)
     if not lines:
         raise ValidationError("الفاتورة فارغة — لإلغائها كاملة استخدم «إلغاء الفاتورة»")
     who = "system" if user == "system" else user
+    from .models import DeliveryOrder as _DO
+
+    if _DO.objects.filter(order=order, collect_move__isnull=False, collect_move__cancelled=False).exists():
+        raise ValidationError("هذه الفاتورة حُصّلت من عامل التوصيل — ألغِها وسجّل بيعًا جديدًا بدل التعديل")
     void_order(order, f"تعديل: {reason}", who)
     n = 1
     while Order.objects.filter(uid=f"{order.uid}-E{n}").exists():

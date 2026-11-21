@@ -1,13 +1,13 @@
-{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}جرد وتسوية مخزنية{% endblock %}
+{% extends "base.html" %}{% load ar l10n %}{% load gg %}{% block title %}جرد وتسوية مخزنية{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>جرد وتسوية مخزنية</h1><p class="muted" style="margin:0">ارفع ملف الجرد (إكسل أو CSV أو PDF) — يقارنه النظام بالرصيد الدفتري وينشئ حركة تسوية بالزيادة والعجز.</p></div>
 <div class="actions"><a class="btn light" href="{% url 'move_list' %}">حركات المخازن</a></div></div>
 <form method="post" enctype="multipart/form-data" class="filters">{% csrf_token %}
-<label>المخزن<select name="warehouse" onchange="document.getElementById('tpl').href='?template=1&warehouse='+this.value">{% for w in whs %}<option value="{{ w.pk }}" {% if w == wh %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
+<label>المخزن<select name="warehouse" onchange="document.getElementById('tpl').href='?template=1&warehouse='+this.value">{% for w in whs %}<option value="{{ w.pk|unlocalize }}" {% if w == wh %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
 <label>تاريخ الجرد<input type="date" name="date" value="{{ date }}"></label>
 <label><span><input type="checkbox" name="opening" value="1" {% if opening %}checked{% endif %}> رصيد أول المدة (بضاعة البداية)</span></label>
 <label>ملف الجرد<input type="file" name="file" accept=".xlsx,.xlsm,.csv,.pdf" required></label>
-<button>رفع ومراجعة</button><a id="tpl" class="btn light" href="?template=1&warehouse={{ wh.pk }}">⬇ قالب الجرد (فيه الأرصدة الحالية)</a></form>
+<button>رفع ومراجعة</button><a id="tpl" class="btn light" href="?template=1&warehouse={{ wh.pk|unlocalize }}">⬇ قالب الجرد (فيه الأرصدة الحالية)</a></form>
 <div class="note">يجب أن يحتوي الملف على عمود «الكود» أو «الصنف»، وعمود «الكمية الفعلية» (أو «الجرد»). أسهل طريقة: نزّل القالب، واكتب الكميات المعدودة، وارفعه. الأصناف التي تركت كميتها فارغة لا تتغير. وإن كان عمود «سعر التكلفة» مملوءًا تُقيَّم به الزيادة (مهم في رصيد أول المدة ليظهر الربح صحيحًا).</div>
 {% if rows is not None %}
 <div class="grid" style="margin:16px 0"><div class="card kpi"><span class="k">أصناف في الملف</span><span class="v">{{ rows|length }}</span></div>

@@ -32,6 +32,25 @@ def _row(i):
     return dict(code=i.code, name=i.name, q=f"{i.qty_on_hand.normalize():f}", r=f"{i.reorder_level.normalize():f}", unit=i.unit)
 
 
+IN_KINDS = ("receipt", "opening", "adjust_in", "harvest", "return", "transfer")
+
+
+def never_stocked(ids):
+    """Of these item ids: the ones with nothing on hand that never received any stock (a sample / menu item the shop has
+    not bought yet). The «حد الطلب» pop-up skips them — warning on the very first sale of an item never bought is noise;
+    the stock pages still list it."""
+    from .models import Item, StockMoveLine
+
+    ids = set(ids)
+    if not ids:
+        return set()
+    empty = set(Item.objects.filter(pk__in=ids, qty_on_hand__lte=0).values_list("pk", flat=True))
+    if not empty:
+        return set()
+    got = set(StockMoveLine.objects.filter(item_id__in=empty, move__state="posted", move__kind__in=IN_KINDS).values_list("item_id", flat=True))
+    return empty - got
+
+
 def low(item_ids=None):
     """Stock items at or under their order limit (0 = no alert). With item_ids: only those items and the ingredients of
     the recipes among them — what one sale could have touched."""
@@ -44,7 +63,9 @@ def low(item_ids=None):
             return []
         ids |= set(RecipeLine.objects.filter(recipe__item_id__in=ids).values_list("ingredient_id", flat=True))
         qs = qs.filter(pk__in=ids)
-    return [_row(i) for i in qs.order_by("name") if i.qty_on_hand <= i.reorder_level]
+    rows = [i for i in qs.order_by("name") if i.qty_on_hand <= i.reorder_level]
+    skip = never_stocked([i.pk for i in rows])
+    return [_row(i) for i in rows if i.pk not in skip]
 
 
 def popup(request, item_ids):

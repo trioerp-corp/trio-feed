@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}الحجوزات{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الحجوزات{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>الحجوزات والمواعيد</h1><p class="muted" style="margin:0">{{ day|date:"l j F Y" }}</p></div>
 <div class="actions"><a class="btn light" href="{% url 'clinic_home' %}">دور اليوم</a></div></div>
@@ -9,14 +9,14 @@
 {% for a in appts %}<tr><td>{{ a.queue_no }}</td><td>{{ a.time|time:"H:i"|default:"—" }}</td><td><a href="{% url 'clinic_patient' a.patient_id %}">{{ a.patient.name }}</a></td><td dir="ltr">{{ a.patient.phone }}</td>
 <td>{{ a.doctor|default:"" }}</td><td>{{ a.service|default:"" }}</td><td><span class="badge {% if a.state == 'done' %}{% elif a.state == 'cancelled' or a.state == 'noshow' %}gray{% else %}gold{% endif %}">{{ a.get_state_display }}</span>{% if a.note %}<br><span class="muted" style="font-size:12px">{{ a.note }}</span>{% endif %}{% if a.visit and a.visit.total %}<br><span class="badge">مدفوع {{ a.visit.total|money:0 }}</span>{% endif %}</td>
 <td style="white-space:nowrap">{% if a.visit and a.visit.total %}<a class="btn light" href="{% url 'clinic_receipt' a.visit_id %}" target="_blank">🧾 إيصال</a>{% endif %}
-{% if a.state == 'booked' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="appt" value="{{ a.pk }}"><input type="hidden" name="reason" value="إلغاء الحجز"><button class="light" onclick="return confirm('إلغاء حجز {{ a.patient.name|escapejs }}؟{% if a.visit and a.visit.total %} سيُعاد المبلغ بقيد عكسي{% endif %}')">إلغاء</button></form>{% endif %}</td></tr>
+{% if a.state == 'booked' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="appt" value="{{ a.pk|unlocalize }}"><input type="hidden" name="reason" value="إلغاء الحجز"><button class="light" onclick="return confirm('إلغاء حجز {{ a.patient.name|escapejs }}؟{% if a.visit and a.visit.total %} سيُعاد المبلغ بقيد عكسي{% endif %}')">إلغاء</button></form>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="8" class="muted">لا توجد حجوزات في هذا اليوم</td></tr>{% endfor %}</tbody></table></div></div>
 <div class="side"><section class="card"><h2>+ حجز جديد</h2>
 <form method="post" id="bookF">{% csrf_token %}<input type="hidden" name="allow_overlap" value="">{% include "clinic/_pick.html" %}
 <label class="field">اليوم<input type="date" name="date" value="{{ day|date:'Y-m-d' }}" required></label>
 <label class="field">الساعة (اختياري)<input type="time" name="time"></label>
-<label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}">{{ d }}</option>{% endfor %}</select></label>
-<label class="field">الخدمة<select name="service"><option value="">كشف</option>{% for s in services %}<option value="{{ s.pk }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label>
+<label class="field">الطبيب<select name="doctor"><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk|unlocalize }}">{{ d }}</option>{% endfor %}</select></label>
+<label class="field">الخدمة<select name="service"><option value="">كشف</option>{% for s in services %}<option value="{{ s.pk|unlocalize }}">{{ s.item.name }} — {{ s.item.sale_price|money:0 }}</option>{% endfor %}</select></label>
 <label class="field">ملاحظة<input name="note"></label>{% include "clinic/_paynow.html" %}<p class="muted" id="clash" style="display:none;color:var(--bad);font-weight:700;margin:8px 0 0"></p>
 <div id="fuBox" style="display:none;margin:8px 0 0;padding:8px 10px;border-radius:10px;background:var(--brand-2,#E6F4F1)"><b id="fuTxt"></b><label style="display:flex;gap:6px;align-items:center;font-size:13px;margin-top:4px"><input type="checkbox" name="no_followup" value="1"> احسبه كشفًا كاملًا (ليس إعادة)</label></div>
 <p style="margin:10px 0 0"><button>احجز</button></p></form></section></div></div>

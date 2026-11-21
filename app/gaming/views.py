@@ -79,6 +79,26 @@ def state(request):
     return JsonResponse(out)
 
 
+BAD_OWNER = "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية الموافقة"
+
+
+def _approver(u, d):
+    """Who approves what the hall worker may not do alone: the owner himself (his name), the owner's name + password typed on
+    the hall screen (his name), nothing typed (None), or a wrong name / password (False)."""
+    from pos.voids import is_owner
+
+    if is_owner(u):
+        return _name(u)
+    if not d.get("owner"):
+        return None
+    from core import throttle as TH
+
+    o, stop = TH.owner_login(d.get("owner"), d.get("password"), f"gm{u.pk}", is_owner)
+    if stop:
+        raise ValidationError(TH.MSG)
+    return _name(o) if o else False
+
+
 @require_POST
 @_guard
 def action(request, name):
@@ -94,7 +114,7 @@ def action(request, name):
         if name == "open":
             st = get_object_or_404(Station, pk=d.get("station"), active=True)
             if not G.open_shift():
-                raise ValidationError("افتح الوردية الأول")
+                raise ValidationError("افتح الوردية أولًا")
             from . import bookings as BK
 
             planned = int(d.get("planned") or 0) or None
@@ -115,14 +135,9 @@ def action(request, name):
             st = get_object_or_404(Station, pk=d["station"], active=True) if d.get("station") else None
             G.switch(ses, u, mode=d.get("mode"), station=st)
         elif name == "close":
-            approver = _name(u) if is_owner(u) else None
-            if not approver and d.get("owner"):  # a discount above the cap: the owner types his name and password on the hall screen
-                from django.contrib.auth import authenticate
-
-                o = authenticate(username=str(d.get("owner"))[:150], password=str(d.get("password") or ""))
-                if not (o and is_owner(o)):
-                    return JsonResponse({"error": "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية الموافقة"}, status=403)
-                approver = _name(o)
+            approver = _approver(u, d)
+            if approver is False:
+                return JsonResponse({"error": BAD_OWNER}, status=403)
             new = d.get("customer_new") if isinstance(d.get("customer_new"), dict) else None
             pre = None
             if d.get("use_balance"):
@@ -167,8 +182,13 @@ def action(request, name):
             BK.set_state(get_object_or_404(Reservation, pk=d.get("booking")), d.get("state"))
         elif name == "extend":
             G.extend(ses, int(d.get("minutes") or 30))
-        elif name == "cancel":
-            G.cancel_session(ses, u, owner=is_owner(u))
+        elif name == "cancel":  # after 5 minutes / with orders: the owner types his name and password in the same box
+            approver = _approver(u, d)
+            if approver is False:
+                return JsonResponse({"error": BAD_OWNER, "need_owner": True}, status=403)
+            if not approver and not G.can_cancel(ses):
+                return JsonResponse({"error": "الإلغاء بعد 5 دقائق أو بعد إضافة طلبات يحتاج موافقة صاحب المحل", "need_owner": True}, status=403)
+            G.cancel_session(ses, u, owner=bool(approver), approver=approver if approver and approver != _name(u) else "")
         elif name == "shift_open":
             G.start_shift(u, Decimal(str(d.get("float") or 0)))
         elif name == "shift_close":

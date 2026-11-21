@@ -31,8 +31,8 @@ def enabled(s=None):
     from core.models import CompanySettings
 
     s = s or CompanySettings.get()
-    if s.business == "retail":
-        return True
+    if s.business == "retail":  # a pharmacy sells boxes and strips, never sizes / colours
+        return (s.activity or {}).get("key") != "pharmacy" if isinstance(s.activity, dict) else True
     return s.business == "market" and any(f.get("k") in ("size", "color") for f in current(s).get("fields") or [])
 
 

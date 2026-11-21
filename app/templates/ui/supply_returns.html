@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}مرتجعات الشركات{% endblock %}
+{% block content %}
+<style>.sg{margin-bottom:16px}.sg h2{margin:0;font-size:18px}.sg .hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.sg table{min-width:760px}.sg td b{word-break:normal}.sg input.q{width:84px}.prh{display:none}
+@media print{.noprint,.gg-top,.gg-foot,.sg .act{display:none!important}.prh{display:block;margin-bottom:8px}body.pr-one .sg:not(.pr-this){display:none}.sg{break-inside:avoid;border:0}.sg table{min-width:0}.sg input.q{border:0;width:auto;padding:0}}</style>
+<div class="page-head noprint"><div><h1>مرتجعات الشركات</h1><p class="muted" style="margin:0">الأصناف التي تنتهي صلاحيتها خلال المدة — مجمّعة حسب المورد الذي وردت منه، بسعر شراء كل دفعة من فاتورتها. اطبع قائمة كل مورد، ثم سجّل المرتجع بضغطة واحدة.</p></div>
+<form method="get" class="actions"><select name="days" aria-label="المدة">{% for d, t in day_opts %}<option value="{{ d }}" {% if d == days %}selected{% endif %}>{{ t }}</option>{% endfor %}</select><button class="light">عرض</button><a class="btn light" href="{% url 'shop_expiry' %}">الصلاحية</a></form></div>
+<section class="grid noprint" style="margin-bottom:16px"><div class="card kpi gold"><span class="k">قيمة المرتجعات بسعر الشراء</span><span class="v">{{ total|money:0 }}</span><span class="k">{{ groups|length }} مورد</span></div></section>
+{% for g in groups %}<form method="post" class="card sg" id="sg{{ forloop.counter }}">{% csrf_token %}
+<div class="prh"><b style="font-size:16px">{{ company.name }}</b>{% if company.phone %} — {{ company.phone }}{% endif %}<br><b>قائمة مرتجعات إلى: {{ g.supplier.name|default:"—" }}</b> — بتاريخ {{ today|date:"d/m/Y" }}</div>
+<div class="hd"><div><h2>{% if g.supplier %}{{ g.supplier.name }}{% else %}بدون مورد (رصيد أول المدة){% endif %}</h2><span class="muted">{{ g.rows|length }} صنف — {{ g.value|money }} ج بسعر الشراء{% if g.supplier.phone %} — {{ g.supplier.phone }}{% endif %}</span></div>
+<div class="act" style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="light" onclick="prOne('sg{{ forloop.counter }}')">🖨 طباعة القائمة</button>
+{% if g.supplier and can_post %}<input type="hidden" name="supplier" value="{{ g.supplier.pk|unlocalize }}"><button onclick="return confirm('تسجيل مرتجع للمورد «{{ g.supplier.name|escapejs }}» بالأصناف المختارة؟ تقل مستحقاته بقيمتها.')">↩ سجّل المرتجع لهذا المورد</button>{% endif %}</div></div>
+<div class="table-wrap"><table><thead><tr><th class="act"></th><th>الصنف</th><th>الشركة</th><th>تاريخ الانتهاء</th><th class="n">المتبقي</th><th class="n">الكمية</th><th class="n">سعر الشراء</th><th class="n">القيمة</th><th>من فاتورة</th></tr></thead><tbody>
+{% for r in g.rows %}<tr><td class="act">{% if g.supplier %}<input type="checkbox" name="src" value="{{ r.line.pk|unlocalize }}" checked aria-label="ضمن المرتجع">{% endif %}</td><td><b dir="auto">{{ r.item.name }}</b></td><td>{{ r.company|default:"—" }}</td><td>{{ r.expiry|date:"d/m/Y" }}</td>
+<td class="n"><span class="badge {% if r.days < 0 %}red{% elif r.days <= 30 %}gold{% endif %}">{% if r.days < 0 %}انتهت{% else %}{{ r.days }} يوم{% endif %}</span></td>
+<td class="n">{% if g.supplier %}<input class="q" name="q_{{ r.line.pk|unlocalize }}" value="{{ r.qty|floatformat:'-3'|unlocalize }}" inputmode="decimal" aria-label="الكمية">{% else %}{{ r.qty|floatformat:"-3" }}{% endif %} {{ r.item.unit }}</td>
+<td class="n">{{ r.cost|money }}</td><td class="n">{{ r.ret_value|money }}</td><td>{{ r.move.number }} — {{ r.move.date|date:"d/m/Y" }}</td></tr>{% endfor %}
+</tbody><tfoot><tr><td class="act"></td><td colspan="6" class="n"><b>الإجمالي</b></td><td class="n"><b>{{ g.value|money }}</b></td><td></td></tr></tfoot></table></div>
+<p class="prh" style="margin-top:24px">توقيع المستلم: ........................................</p></form>
+{% empty %}<div class="card muted">✔ لا توجد أصناف تنتهي صلاحيتها خلال هذه المدة</div>{% endfor %}
+<p class="muted noprint" style="font-size:13px">يُرجَع كل صنف إلى المورد الذي اشتُري منه وبسعر شرائه في تلك الفاتورة، فتقل مستحقات المورد بالقيمة نفسها ويخرج الصنف من المخزن. الدفعات المسجّلة رصيدَ أول المدة بلا مورد تُسجَّل تالفًا من صفحة «الصلاحية».</p>
+<script>function prOne(id){document.body.classList.add('pr-one');document.querySelectorAll('.sg').forEach(x=>x.classList.toggle('pr-this',x.id===id));window.print();setTimeout(()=>document.body.classList.remove('pr-one'),500)}</script>
+{% endblock %}

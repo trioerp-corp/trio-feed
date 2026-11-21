@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}تالف وهالك{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}تالف وهالك{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>تالف وهالك</h1><p class="muted" style="margin:0">صنف انكسر أو تلف أو انتهت صلاحيته؟ سجّله هنا — يخرج من المخزن ويُحسب خسارة بالتكلفة</p></div>
 <div class="actions"><a class="btn light" href="{% url 'shop_count' %}">جرد المخزن</a><a class="btn light" href="{% url 'shop_expiry' %}">الصلاحية</a></div></div>
@@ -7,7 +7,7 @@
 <datalist id="itemlist">{% for i in items %}<option value="{{ i.name }} | {{ i.code }}">رصيد {{ i.qty_on_hand|floatformat:"-3" }}</option>{% endfor %}</datalist>
 <form method="post" class="card" style="margin-bottom:16px">{% csrf_token %}<h2>تسجيل تالف</h2><div class="form-grid">
 <label class="field">السبب<select name="reason"><option>تالف / كسر</option><option>منتهي الصلاحية</option><option>تلف (تخزين / حرارة)</option><option>فاقد / سرقة</option><option>استهلاك المحل</option></select></label>
-<label class="field">من مخزن<select name="warehouse">{% for w in whs %}<option value="{{ w.pk }}">{{ w.name }}</option>{% endfor %}</select></label>
+<label class="field">من مخزن<select name="warehouse">{% for w in whs %}<option value="{{ w.pk|unlocalize }}">{{ w.name }}</option>{% endfor %}</select></label>
 <label class="field">التاريخ<input type="date" name="date" value="{{ today }}"></label><label class="field">ملاحظة<input name="note"></label></div>
 <div class="table-wrap" style="margin-top:12px;box-shadow:none"><table class="lines-table"><thead><tr><th style="min-width:240px">الصنف</th><th>الرصيد</th><th style="width:140px">الكمية التالفة</th><th class="n">الخسارة التقريبية</th></tr></thead><tbody id="rows"></tbody></table></div>
 <div class="actions" style="margin-top:10px"><button type="button" class="light" onclick="row()">+ صنف</button><button>تسجيل التالف</button></div></form>
@@ -16,7 +16,7 @@
 {% for m, v in rows %}<tr><td>{{ m.number }}</td><td>{{ m.date|date:"d/m/Y" }}</td><td>{{ m.description }}</td><td>{{ m.warehouse.name }}</td><td class="n">{{ v|money }}</td><td>{% if m.state == 'cancelled' %}<span class="badge red">ملغية</span>{% else %}{% include "ui/_void.html" with what="move" id=m.pk %}{% endif %}</td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا يوجد تالف مسجّل</td></tr>{% endfor %}</tbody></table></div>
 <script>
-const items={ {% for i in items %}"{{ i.name|escapejs }} | {{ i.code|escapejs }}":[{{ i.pk }},{{ i.qty_on_hand|stringformat:"s" }},{{ i.avg_cost|stringformat:".4f" }}],{% endfor %} };
+const items={ {% for i in items %}"{{ i.name|escapejs }} | {{ i.code|escapejs }}":[{{ i.pk|unlocalize }},{{ i.qty_on_hand|stringformat:"s" }},{{ i.avg_cost|stringformat:".4f" }}],{% endfor %} };
 function row(){const tr=document.createElement('tr');tr.innerHTML='<td><input list="itemlist" placeholder="اكتب اسم الصنف" style="width:100%"><input type="hidden" name="item"></td><td class="bal muted">—</td><td><input name="qty" inputmode="decimal"></td><td class="n loss"></td>';
 const [t,h]=tr.querySelectorAll('td:first-child input'),qi=tr.querySelector('[name=qty]');
 function upd(){const x=items[t.value];h.value=x?x[0]:'';t.style.borderColor=h.value||!t.value?'':'#B42318';tr.querySelector('.bal').textContent=x?(+x[1]):'—';

@@ -28,6 +28,12 @@
 <p class="muted" style="font-size:13px;margin:10px 0 0">التعديل يلغي هذه الفاتورة بقيد عكسي ويُعيد البضاعة، ويسجّل فاتورة صحيحة مكانها بالوقت والوردية نفسيهما (ينتهي رقمها بـ ‎-E1). كل شيء مسجّل باسمك مع السبب.</p>
 {% endif %}
 </form>
+{% if pkg %}<div class="card" style="margin-top:14px"><h2 style="margin:0 0 6px">⏱ استرداد الدقائق غير المستخدمة</h2>
+<p style="margin:0 0 8px">باقة {{ pkg.customer.name }}: {{ pkg.minutes }} دقيقة، استُخدم منها {{ pkg.used }} دقيقة، والمتبقي {{ pkg.left }} دقيقة.
+يُرد للعميل <b>{{ pkg.amount }} ج</b> (الدقائق المتبقية × سعر الدقيقة في الباقة)، وتُخصم هذه الدقائق من رصيده، وتبقى قيمة ما لعبه مبيعات.</p>
+{% if pkg.left and pkg.amount %}<form method="post" style="display:flex;gap:8px;flex-wrap:wrap" onsubmit="return confirm('رد {{ pkg.amount }} ج نقدًا للعميل وخصم {{ pkg.left }} دقيقة من رصيده؟')">{% csrf_token %}
+<input name="reason" required placeholder="السبب" style="flex:1;min-width:180px"><button class="danger" name="action" value="pkg_refund">رد {{ pkg.amount }} ج</button></form>
+{% else %}<p class="muted" style="margin:0">لا يوجد ما يُسترد.</p>{% endif %}</div>{% endif %}
 <script>
 (function(){const f=document.getElementById('ef');if(!f)return;const prices={ {% for i in items %}"{{ i.code|escapejs }}":"{{ i.sale_price|unlocalize }}",{% endfor %} };
 const n=v=>parseFloat(String(v||'0').replace('٫','.').replace(',','.'))||0;

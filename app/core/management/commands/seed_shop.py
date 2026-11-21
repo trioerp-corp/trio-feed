@@ -116,7 +116,7 @@ class Command(BaseCommand):
             ItemCategory.objects.update_or_create(name=c, defaults=dict(stock_account=by["1202010101"], farm_account=by["3101010101"],
                                                                          admin_account=by["3101010101"], needs_equipment=False))
         # packing bags, trays … used in the shop: issuing them from the operating store is an expense, not cost of goods
-        ItemCategory.objects.update_or_create(name="مستلزمات تشغيل (شنط وأطباق)", defaults=dict(
+        ItemCategory.objects.update_or_create(name="مستلزمات تشغيل (شنط وأطباق)" if cfg.get("business") in ("cafe", "gaming") else "مستلزمات تشغيل (أكياس وتغليف)", defaults=dict(
             stock_account=by["1202010101"], farm_account=by["3202010110"], admin_account=by["3202010110"], needs_equipment=False))
         from inventory.models import Item
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}استحقاق {{ a.number }}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>{{ a.description }}</h1><p class="muted" style="margin:0">{{ a.number }} — {{ a.date|date:"d/m/Y" }} — {{ a.get_source_display }} — {{ a.liability_account }}{% if a.partner %} — {{ a.partner }}{% endif %}</p></div>
-<div class="actions">{% if a.state == 'open' %}<a class="btn" href="{% url 'voucher_new' %}?kind=payment&accrual={{ a.pk }}">صرف من الخزينة</a>{% endif %}
+<div class="actions">{% if a.state == 'open' %}<a class="btn" href="{% url 'voucher_new' %}?kind=payment&accrual={{ a.pk|unlocalize }}">صرف من الخزينة</a>{% endif %}
 {% if a.state == 'draft' %}<form method="post">{% csrf_token %}<button name="post" value="1">ترحيل</button></form>{% endif %}
 {% if a.entry %}<a class="btn light" href="{% url 'entry_detail' a.entry.pk %}">القيد</a>{% endif %}<a class="btn light" href="{% url 'accrual_list' %}">كل الاستحقاقات</a></div></div>
 <div class="grid" style="margin-bottom:16px"><div class="card kpi"><span class="k">المبلغ</span><span class="v">{{ a.amount|money }}</span></div><div class="card kpi"><span class="k">صُرف</span><span class="v">{{ a.paid|money }}</span></div>

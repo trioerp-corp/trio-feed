@@ -152,10 +152,10 @@ def pages(mods, owner):
 def local_answer(q, mods):
     found = search(q, mods, 3)
     if not found:
-        return dict(answer="لم أجد نتيجة لهذا البحث. جرّب كلمة أخرى (مثلًا: مرتجع، جرد، مصروف، تقرير)، أو تواصل مع Trio 01008030459.", links=[])
+        return dict(answer="لم أجد نتيجة لهذا البحث. جرّب كلمة أخرى (مثلًا: مرتجع، جرد، مصروف، تقرير)، أو تواصل مع Trio 01228827915.", links=[])
     best = found[0]
     if not best["ok"]:
-        return dict(answer=f"«{best['t']}» غير متاحة لنوع نشاطك — تواصل مع Trio إن احتجت إليها: 01008030459.", links=["/ui/shop/upgrade/"])
+        return dict(answer=f"«{best['t']}» غير متاحة لنوع نشاطك — تواصل مع Trio إن احتجت إليها: 01228827915.", links=["/ui/shop/upgrade/"])
     more = [f["t"] for f in found[1:] if f["ok"]]
     return dict(answer=best["a"] + ("\n\nيمكن أيضًا: " + "، ".join(more) if more else ""), links=[best["url"]])
 

@@ -1,4 +1,4 @@
-{% load static %}<!doctype html>
+{% load static l10n %}<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -19,7 +19,7 @@
     {% if branch_on %}{% if branch_locked %}<span class="brchip" title="فرعك">🏬 {{ branch_view.name }}</span>{% else %}
     <form method="post" action="{% url 'branch_switch' %}" class="brsel">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
     <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden" for="brs">الفرع</label>
-    <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>{{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
+    <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk|unlocalize }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>{{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
     <form class="gg-search" action="{% url 'find' %}" role="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D9E7F5" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden">بحث</label><input name="q" type="search" placeholder="ابحث: صنف، عميل، فاتورة، صفحة…"></form>
     <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn light" title="تسجيل الخروج">خروج</button></form>
@@ -47,12 +47,12 @@
 <form method="post" action="{% url 'update_now' %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button>حدّث الآن</button></form></div>{% endif %}
 {% if upgraded.licence and not hide_nav %}<div class="updbar ok"><span>✨ <b>تم التفعيل لديك:</b> {{ upgraded.licence }}</span>
 <form method="post" action="{% url 'update_seen' %}">{% csrf_token %}<input type="hidden" name="what" value="upgrade"><input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="light">تمام</button></form></div>{% endif %}
-{% if messages %}{% for m in messages %}{% if 'popup' in m.tags %}<div class="popup-back" role="alertdialog" aria-modal="true" aria-labelledby="pp{{ forloop.counter }}"><div class="popup-box">
+{% block messages %}{% if messages %}{% for m in messages %}{% if 'popup' in m.tags %}<div class="popup-back" role="alertdialog" aria-modal="true" aria-labelledby="pp{{ forloop.counter }}"><div class="popup-box">
 <h2 id="pp{{ forloop.counter }}">تنبيه</h2><p>{{ m }}</p><button type="button" onclick="this.closest('.popup-back').remove()" autofocus>تمام</button></div></div>
-{% else %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endif %}{% endfor %}{% endif %}
+{% else %}<div class="msg {{ m.tags }}">{{ m }}</div>{% endif %}{% endfor %}{% endif %}{% endblock %}
 {% block content %}{% endblock %}
 </main>{% if user.is_authenticated and not hide_nav and menu %}</div>{% endif %}
-<footer class="gg-foot"><img src="{% static 'ui/trio-mark.png' %}" alt="" style="height:18px;vertical-align:-4px;margin-inline-end:4px"><b>Trio</b> <span dir="ltr">{{ app_version }}</span>{% if newer_version %} · <b>متاح {{ newer_version }}</b>{% endif %} · <a href="tel:01008030459" dir="ltr">01008030459</a> · <a href="tel:01121460640" dir="ltr">01121460640</a></footer>
+<footer class="gg-foot"><img src="{% static 'ui/trio-mark.png' %}" alt="" style="height:18px;vertical-align:-4px;margin-inline-end:4px"><b>Trio</b> <span dir="ltr">{{ app_version }}</span>{% if newer_version %} · <b>متاح {{ newer_version }}</b>{% endif %} · <a href="tel:01228827915" dir="ltr">01228827915</a> · <a href="tel:01121460640" dir="ltr">01121460640</a></footer>
 <script src="{% static 'ui/app.js' %}"></script>
 <script>
 function ggSide(open){document.body.classList.toggle('side-open',open);const b=document.querySelector('.gg-burger');if(b)b.setAttribute('aria-expanded',open)}

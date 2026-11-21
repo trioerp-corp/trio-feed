@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load static %}{% block title %}{% if first %}تثبيت Trio{% else %}واجهة المطور{% endif %}{% endblock %}
+{% extends "base.html" %}{% load static l10n %}{% block title %}{% if first %}تثبيت Trio{% else %}واجهة المطور{% endif %}{% endblock %}
 {% block content %}
 <style>
 .wz{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
@@ -153,16 +153,16 @@
 <label class="field">الرسالة التي ستظهر للعميل<input name="note" maxlength="200" placeholder="البرنامج موقوف مؤقتًا — برجاء التواصل مع Trio"></label>
 <p><button class="btn danger" name="action" value="stop" onclick="return confirm('إيقاف البرنامج لدى العميل الآن؟')">⏸ إيقاف البرنامج</button></p></form>{% endif %}
 <div class="msg" style="margin-top:10px">الإيقاف عن بعد: Trio-License.exe صفحة «إيقاف / تشغيل عميل» ترسل أمرًا موقّعًا إلى بريد البرنامج، ويراجع هذا الجهاز البريد كل ساعة.
-{% if mail %}آخر مراجعة: {{ s.control_checked|date:"d/m H:i"|default:"بعد" }}{% else %}<b>يحتاج إلى تجهيز «بريد إرسال الرموز».</b>{% endif %}</div>
+{% if mail %}آخر مراجعة: {{ s.control_checked|date:"d/m H:i"|default:"لم تتم بعد" }}{% else %}<b>يحتاج إلى تجهيز «بريد إرسال الرموز».</b>{% endif %}</div>
 <form method="post" action="/trio/control/">{% csrf_token %}<input type="hidden" name="control_url" value="{{ s.control_url }}"><button class="light" name="action" value="url">مراجعة الأوامر الآن</button></form>
 </div>{% endif %}
 
 {% if stations and s.business == "gaming" %}<form method="post" action="/trio/stations/" class="wz" id="stEdit" style="margin-top:16px">{% csrf_token %}
 <div class="table-wrap"><table><thead><tr><th>الجهاز</th><th>النوع</th><th>سعر الساعة</th><th>مالتي</th><th>شغال</th></tr></thead><tbody>
-{% for st in stations %}<tr><td><input name="st{{ st.pk }}_name" value="{{ st.name }}" maxlength="40"></td><td>{{ st.get_kind_display }}</td>
-<td><input name="st{{ st.pk }}_rate" value="{{ st.rate|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
-<td><input name="st{{ st.pk }}_rate_multi" value="{{ st.rate_multi|default_if_none:''|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
-<td><select name="st{{ st.pk }}_active"><option value="1" {% if st.active %}selected{% endif %}>شغال</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td></tr>{% endfor %}
+{% for st in stations %}<tr><td><input name="st{{ st.pk|unlocalize }}_name" value="{{ st.name }}" maxlength="40"></td><td>{{ st.get_kind_display }}</td>
+<td><input name="st{{ st.pk|unlocalize }}_rate" value="{{ st.rate|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
+<td><input name="st{{ st.pk|unlocalize }}_rate_multi" value="{{ st.rate_multi|default_if_none:''|floatformat:'-2' }}" inputmode="decimal" dir="ltr" style="width:110px"></td>
+<td><select name="st{{ st.pk|unlocalize }}_active"><option value="1" {% if st.active %}selected{% endif %}>شغال</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td></tr>{% endfor %}
 </tbody></table></div><p><button>حفظ الأجهزة</button></p></form>{% endif %}{% endif %}
 
 {{ js|json_script:"wzdata" }}

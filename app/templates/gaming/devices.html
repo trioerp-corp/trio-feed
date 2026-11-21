@@ -7,12 +7,12 @@
 <section class="card" style="margin-bottom:16px"><h2 style="margin-top:0">الأجهزة ({{ stations|length }})</h2>
 <div class="table-wrap"><table class="dv"><thead><tr><th>الاسم</th><th>النوع</th><th class="n">ساعة فردي</th><th class="n">ساعة مالتي</th><th>يعمل</th><th></th></tr></thead><tbody>
 {% for st in stations %}<tr{% if not st.active %} style="opacity:.55"{% endif %}>
-<td><input class="nm" form="sf{{ st.pk }}" name="name" value="{{ st.name }}" maxlength="40" aria-label="الاسم"></td>
-<td><select form="sf{{ st.pk }}" name="kind" aria-label="النوع">{% for k, t in KINDS %}<option value="{{ k }}" {% if k == st.kind %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></td>
-<td class="n"><input class="n" form="sf{{ st.pk }}" name="rate" value="{{ st.rate|unlocalize }}" inputmode="decimal" dir="ltr" aria-label="سعر الساعة فردي"></td>
-<td class="n"><input class="n" form="sf{{ st.pk }}" name="rate_multi" value="{{ st.rate_multi|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="لا يوجد" aria-label="سعر الساعة مالتي"></td>
-<td><select form="sf{{ st.pk }}" name="active" aria-label="يعمل"><option value="1" {% if st.active %}selected{% endif %}>نعم</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td>
-<td><form method="post" id="sf{{ st.pk }}">{% csrf_token %}<input type="hidden" name="op" value="save"><input type="hidden" name="pk" value="{{ st.pk }}"><button class="light">حفظ</button></form></td></tr>
+<td><input class="nm" form="sf{{ st.pk|unlocalize }}" name="name" value="{{ st.name }}" maxlength="40" aria-label="الاسم"></td>
+<td><select form="sf{{ st.pk|unlocalize }}" name="kind" aria-label="النوع">{% for k, t in KINDS %}<option value="{{ k }}" {% if k == st.kind %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></td>
+<td class="n"><input class="n" form="sf{{ st.pk|unlocalize }}" name="rate" value="{{ st.rate|unlocalize }}" inputmode="decimal" dir="ltr" aria-label="سعر الساعة فردي"></td>
+<td class="n"><input class="n" form="sf{{ st.pk|unlocalize }}" name="rate_multi" value="{{ st.rate_multi|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="لا يوجد" aria-label="سعر الساعة مالتي"></td>
+<td><select form="sf{{ st.pk|unlocalize }}" name="active" aria-label="يعمل"><option value="1" {% if st.active %}selected{% endif %}>نعم</option><option value="0" {% if not st.active %}selected{% endif %}>موقوف</option></select></td>
+<td><form method="post" id="sf{{ st.pk|unlocalize }}">{% csrf_token %}<input type="hidden" name="op" value="save"><input type="hidden" name="pk" value="{{ st.pk|unlocalize }}"><button class="light">حفظ</button></form></td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد أجهزة بعد — أضفها من «إضافة أجهزة».</td></tr>{% endfor %}</tbody></table></div>
 <p class="muted" style="font-size:13px;margin:8px 0 0">اترك «مالتي» فارغًا إذا كان للجهاز سعر واحد (مثل البلياردو) — فلا يظهر اختيار فردي / مالتي في الصالة. السعر الجديد يسري على الجلسات التي تبدأ بعد الحفظ.</p></section>
 {% if by_kind %}<section class="card"><h2 style="margin-top:0">سعر واحد لكل الأجهزة من نوع واحد</h2>
@@ -35,7 +35,7 @@
 <button>حفظ</button></form></section>
 <section class="card" style="margin-top:16px" id="pkg"><h2 style="margin-top:0">🎟 باقات الساعات</h2>
 <p class="muted" style="font-size:12.5px;margin:0 0 8px">يدفع العميل الباقة مقدمًا على شاشة الصالة ويُضاف رصيدها إلى رقم موبايله، وعند قفل حسابه تُخصم دقائق اللعب من رصيده ويدفع الباقي فقط. يُسجَّل ثمن الباقة إيرادًا يوم بيعها.</p>
-{% for p in packages %}<form method="post" class="form-grid" style="border-bottom:1px solid var(--line-2);padding-bottom:8px;margin-bottom:8px;{% if not p.active %}opacity:.6{% endif %}">{% csrf_token %}<input type="hidden" name="op" value="pkg_save"><input type="hidden" name="pk" value="{{ p.pk }}">
+{% for p in packages %}<form method="post" class="form-grid" style="border-bottom:1px solid var(--line-2);padding-bottom:8px;margin-bottom:8px;{% if not p.active %}opacity:.6{% endif %}">{% csrf_token %}<input type="hidden" name="op" value="pkg_save"><input type="hidden" name="pk" value="{{ p.pk|unlocalize }}">
 <label class="field">الاسم<input name="name" value="{{ p.name }}" required></label>
 <label class="field">الساعات<input name="hours" value="{{ p.hours|unlocalize }}" inputmode="decimal" dir="ltr" required></label>
 <label class="field">السعر<input name="price" value="{{ p.price|floatformat:-2|unlocalize }}" inputmode="decimal" dir="ltr" required></label>

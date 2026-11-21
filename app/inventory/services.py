@@ -120,7 +120,8 @@ def post_move(move: StockMove, user=None, allow_negative=False):
             if q.qty < ln.qty and not allow_neg:
                 raise ValidationError(f"{item}: الرصيد في {move.warehouse.name} ({q.qty}) لا يكفي لصرف {ln.qty}")
             # a café / restaurant order prices its ingredients at the last purchase invoice (set on the line by pos.services)
-            cost = ln.unit_cost if (move.kind == "issue" and ln.unit_cost is not None) else cost_now(item)
+            # a supplier return of a known batch (1.24.1) goes back at that batch's own purchase cost, not the average
+            cost = ln.unit_cost if (move.kind in ("issue", "preturn") and ln.unit_cost is not None) else cost_now(item)
             value = L.q2(ln.qty * cost)
             q.qty -= ln.qty
             q.save()

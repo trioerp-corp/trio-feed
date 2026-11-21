@@ -70,6 +70,33 @@ def norm(t):
     return re.sub(r"\s+", " ", re.sub(r"[^\w\s%]", " ", t)).strip()
 
 
+_UNIT_AR = {"MG": "مجم", "MGM": "مجم", "GM": "جم", "G": "جم", "GRAM": "جم", "MCG": "ميكروجرام", "ML": "مل", "IU": "وحدة", "%": "%"}
+_FORM_AR = [("F.C.TAB", "أقراص"), ("TAB", "أقراص"), ("CAP", "كبسولات"), ("SUSP", "معلق"), ("SYRUP", "شراب"), ("SYR", "شراب"), ("VIAL", "فيال"),
+            ("AMP", "أمبولات"), ("CREAM", "كريم"), ("OINT", "مرهم"), ("GEL", "جل"), ("DROP", "نقط"), ("SACHET", "أكياس"), ("SUPP", "لبوس"),
+            ("SPRAY", "بخاخ"), ("INHAL", "بخاخ"), ("EFF", "فوار"), ("LOTION", "لوشن"), ("SHAMPOO", "شامبو")]
+_STRENGTH = re.compile(r"(\d+(?:\.\d+)?)\s*(MCG|MGM|MG|GM|GRAM|G|ML|IU|%)(?![A-Z])(?:\s*/\s*(\d+(?:\.\d+)?)?\s*(MCG|MG|GM|G|ML)(?![A-Z]))?")
+
+
+def ar_name(en, ar):
+    """The Arabic trade name with the strength and form of the English one («أوجمينتين /» + «AUGMENTIN 625 MG 10 F.C.TABS.» →
+    «أوجمينتين 625 مجم أقراص») — the library's Arabic names lost their numbers, so 375 / 625 / 1 جم looked the same."""
+    ar = " ".join(t for t in (ar or "").split() if not re.fullmatch(r"[/.\-]+\S*|\d*", t)).strip(" ./-")
+    if not ar:
+        return ""
+    up = (en or "").upper()
+    m = _STRENGTH.search(up)
+    bits = []
+    if m:
+        st = f"{m.group(1)} {_UNIT_AR.get(m.group(2), m.group(2))}"
+        if m.group(4):
+            st += "/" + (f"{m.group(3)} " if m.group(3) else "") + _UNIT_AR.get(m.group(4), m.group(4))
+        bits.append(st.replace(" %", "%"))
+    form = next((f for k, f in _FORM_AR if k in up), "")
+    if form and form not in ar:
+        bits.append(form)
+    return " ".join([ar] + bits)
+
+
 @lru_cache(maxsize=1)
 def library():
     if not FILE.exists():
@@ -80,6 +107,7 @@ def library():
     for i, r in enumerate(rows):
         r["id"] = i
         r["sci_ar"] = generic_ar(r["sci"])
+        r["ar"] = ar_name(r["en"], r["ar"])
         r["_s"] = " " + norm(" ".join([r["en"], r["ar"], r["sci"], r["sci_ar"], r["company"]])) + " "
         r["_k"] = _skel(r["_s"])
     return rows

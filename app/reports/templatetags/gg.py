@@ -36,3 +36,16 @@ def get(d, k):
         return d.get(k)
     except AttributeError:
         return None
+
+
+@register.filter
+def hm(v):
+    """Minutes as the hall says them: «10 ساعات»، «ساعة و30 دقيقة»، «45 دقيقة»."""
+    try:
+        m = int(v or 0)
+    except (TypeError, ValueError):
+        return v
+    h, r = divmod(abs(m), 60)
+    hs = "" if not h else "ساعة" if h == 1 else "ساعتان" if h == 2 else f"{h} ساعات" if h <= 10 else f"{h} ساعة"
+    out = " و".join(x for x in (hs, f"{r} دقيقة" if r else "") if x) or "0 دقيقة"
+    return ("-" if m < 0 else "") + out

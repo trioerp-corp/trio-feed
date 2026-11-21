@@ -120,9 +120,48 @@ def api_cashier(request):
     from .voids import is_owner
 
     out = {"ok": True, "name": u.first_name or u.username, "role": P.till_role(u)}
+    try:  # the cash the books hold for this branch's drawer (the till offers to book an opening float above it as the owner's deposit)
+        from treasury import services as T
+
+        from .models import Shift
+
+        if not Shift.objects.filter(device__branch=dev.branch, closed_at__isnull=True).exclude(device=dev).exists():
+            out["book"] = str(T.cashbox_balance(dev.branch.cashbox))
+    except Exception:  # noqa: BLE001 — never blocks opening the shift
+        pass
     if is_owner(u):  # the owner / manager on the till may always discount: his shift carries his signed approval
         out["boss"] = P.disc_token(dev, u)
     return JsonResponse(out)
+
+
+@csrf_exempt
+def api_nos(request):
+    """A block of receipt numbers for this till (it asks again when few are left)."""
+    dev, err = _device(request)
+    if err:
+        return err
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+    try:
+        n = int(json.loads(request.body or "{}").get("n") or P.NOS_BLOCK)
+    except (ValueError, TypeError, AttributeError):
+        n = P.NOS_BLOCK
+    a, b = P.reserve_nos(dev, n)
+    return JsonResponse({"from": a, "to": b})
+
+
+def api_link(request):
+    """«اربط هذا الجهاز»: the owner / manager signed in on this browser picks a cashier device — no key to copy."""
+    from pos.branches import home_branch
+
+    u = request.user
+    if not (u.is_authenticated and (u.is_superuser or u.groups.filter(name="مدير المحل").exists())) or not CompanySettings.get().pos_enabled:
+        return JsonResponse({"devices": []})
+    qs = Device.objects.filter(active=True, branch__active=True).exclude(code__in=["CL", "GM"]).select_related("branch").order_by("branch__id", "code")
+    hb = home_branch(u)
+    if hb:
+        qs = qs.filter(branch=hb)
+    return JsonResponse({"devices": [dict(name=f"{d.name} — {d.branch.name}", token=d.token, used=bool(d.last_sync)) for d in qs[:40]]})
 
 
 @csrf_exempt
@@ -310,12 +349,14 @@ def api_tables(request, tid=None, tab=None, op=None):
         if op == "remove":
             ok = s.cashier_can_edit
             if not ok and b.get("owner"):  # the owner / manager types his password on the till
-                from django.contrib.auth import authenticate
+                from core import throttle as TH
 
                 from .voids import is_owner
 
-                u = authenticate(username=str(b.get("owner"))[:150], password=str(b.get("password") or ""))
-                ok = bool(u and is_owner(u))
+                u, stop = TH.owner_login(b.get("owner"), b.get("password"), f"dev{dev.pk}", is_owner)
+                if stop:
+                    return JsonResponse({"error": TH.MSG}, status=403)
+                ok = bool(u)
                 if not ok:
                     return JsonResponse({"error": "اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية الإلغاء"}, status=403)
             return JsonResponse({"tab": T.tab_json(T.remove(t, b.get("line") or 0, who, may_cancel_sent=ok, qty=b.get("qty")))})
@@ -342,6 +383,6 @@ def api_loyalty(request):
     from . import plus
 
     try:
-        return JsonResponse(plus.lookup(request.GET.get("phone", "")))
+        return JsonResponse(plus.lookup(request.GET.get("phone", ""), dev))
     except ValidationError as e:
         return JsonResponse({"error": "؛ ".join(e.messages)}, status=400)

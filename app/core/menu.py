@@ -66,6 +66,12 @@ def build(request, ctx):
     shelf = business in ("market", "retail")  # cartons, shelf labels and «buy one get one» belong to shops with shelves
     path = request.path
     groups = []
+    try:
+        from .activities import unused
+
+        off = unused(s)
+    except Exception:  # a menu never breaks on a half-set-up copy
+        off = set()
 
     def link(label, url, icon="", match=(), exact=False, badge=None, new_tab=False):
         if not url:
@@ -83,7 +89,9 @@ def build(request, ctx):
     cash = u.has_perm("treasury.view_voucher") or u.is_superuser
 
     # ---- the day's work
-    home = link(w["home"], _url("home"), "🏠", ("/", "/ui/clinic/"), exact=True)
+    hall_worker = business == "gaming" and "gaming" in mods and not cash
+    # the hall worker's day is the hall screen (the shop's home page with money is the owner's)
+    home = link(w["home"], "/ui/play/" if hall_worker else _url("home"), "🏠", ("/ui/play/",) if hall_worker else ("/", "/ui/clinic/"), exact=True)
     front_doctor = clinic and u.groups.filter(name="دكتور").exists() and not owner
     if clinic:
         group("العيادة", home,
@@ -99,7 +107,7 @@ def build(request, ctx):
     else:
         hall = "gaming" in mods and business == "gaming"
         group(w["sell"], home,
-              link("🎮 الصالة", "/ui/play/" if "gaming" in mods else None, "", ("/ui/play/",), exact=True),
+              link("🎮 الصالة", "/ui/play/" if "gaming" in mods and not hall_worker else None, "", ("/ui/play/",), exact=True),
               link("حجوزات الأجهزة", _url("play_bookings") if hall else None, "📅", ("/ui/play/bookings",)),
               link("أرصدة الباقات", _url("play_customers") if hall else None, "🎟", ("/ui/play/customers",)),
               link("🎮 الأجهزة والأسعار", _url("play_devices") if hall and owner else None, "", ("/ui/play/devices",)),
@@ -117,16 +125,20 @@ def build(request, ctx):
               link("💊 مكتبة الأدوية والشريط", _url("pharmacy") if ctx.get("is_pharmacy") else None, "", ("/ui/shop/pharmacy",)),
               link("المنيو", _url("shop_menu") if "recipes" in mods else None, "🍽", ("/ui/shop/menu",)),
               link("الترابيزات وطلبات QR", _url("shop_tables") if "recipes" in mods and owner and business != "gaming" else None, "🪑", ("/ui/shop/tables",)),
-              link("الخدمة ومحطات المطبخ", _url("shop_kitchen") if "recipes" in mods and owner else None, "🧑‍🍳", ("/ui/shop/kitchen",)),
-              link("المكونات والتكلفة", _url("shop_recipes") if "recipes" in mods else None, "🧪", ("/ui/shop/recipes",)),
-              link(w["count"], _url("shop_count"), "📋", ("/ui/shop/count", "/ui/shop/damage")),
-              link(w["purchases"], _url("shop_purchases") if "purchases" in mods else None, "🛒", ("/ui/shop/purchases",)),
+              link("الخدمة ومحطات المطبخ", _url("shop_kitchen") if "recipes" in mods and owner and business != "gaming" else None, "🧑‍🍳", ("/ui/shop/kitchen",)),
+              link("المكونات والتكلفة", _url("shop_recipes") if "recipes" in mods and (owner or u.has_perm("inventory.change_item")) else None, "🧪", ("/ui/shop/recipes",)),
+              link(w["count"], _url("shop_count") if not hall_worker or u.has_perm("inventory.add_stockmove") else None, "📋", ("/ui/shop/count", "/ui/shop/damage")),
+              link(w["purchases"], _url("shop_purchases") if "purchases" in mods and u.has_perm("inventory.view_stockmove") else None, "🛒", ("/ui/shop/purchases",)),
+              link("طلبات الشراء من الموردين", _url("supply_orders") if "purchases" in mods and u.has_perm("inventory.view_stockmove") and business != "gaming" else None,
+                   "📝", ("/ui/shop/supply/orders",)),
               link(w["returns"], _url("shop_returns") if "returns" in mods else None, "↩", ("/ui/shop/returns",)),
               link("المخازن والتحويلات", _url("move_list") if "stores" in mods else None, "🏬", ("/ui/moves",)),
-              link("التصنيع", _url("shop_production") if "production" in mods else None, "🏭", ("/ui/shop/production",)),
-              link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods and shelf else None, "📐", ("/ui/shop/units",)),
+              link("التصنيع", _url("shop_production") if "production" in mods and "production" not in off else None, "🏭", ("/ui/shop/production",)),
+              link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods and shelf and "units" not in off else None, "📐", ("/ui/shop/units",)),
               link("ملصقات الباركود", _url("shop_labels") if "labels" in mods and shelf else None, "🏷", ("/ui/shop/labels",)),
-              link("الصلاحية", _url("shop_expiry") if "expiry" in mods else None, "⏳", ("/ui/shop/expiry",)),
+              link("الصلاحية", _url("shop_expiry") if "expiry" in mods and "expiry" not in off else None, "⏳", ("/ui/shop/expiry",)),
+              link("مرتجعات الشركات", _url("supply_returns") if "expiry" in mods and "expiry" not in off and "returns" in mods and shelf else None, "📦",
+                   ("/ui/shop/supply/returns",)),
               link("العروض والخصومات", _url("shop_promos") if owner and "promos" in mods and shelf else None, "🎁", ("/ui/shop/promos",)),
               link("التخفيض الموسمي والراكد", _url("plus_season") if owner and "promos" in mods and shelf else None, "🏷", ("/ui/shop/season",)))
 

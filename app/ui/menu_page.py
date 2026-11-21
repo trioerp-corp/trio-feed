@@ -10,7 +10,23 @@ from inventory.models import Item, ItemCategory, Recipe
 
 
 def _cats():
-    return ItemCategory.objects.exclude(name__startswith="خامات").exclude(name__startswith="مستلزمات").exclude(name="إضافات").order_by("name")
+    """The menu's sections: the activity's own + those already holding something sold (1.24.1: no supermarket leftovers
+    such as «منظفات» from the shop's first setup); all of them when that leaves nothing."""
+    from django.db.models import Q
+
+    from core.activities import current
+
+    qs = ItemCategory.objects.exclude(name__startswith="خامات").exclude(name__startswith="مستلزمات").exclude(name="إضافات")
+    mine = set(current().get("categories") or []) | set(ItemCategory.objects.filter(
+        Q(item__sale_price__isnull=False) | Q(item__item_type="recipe"), item__active=True).values_list("name", flat=True))
+    own = qs.filter(name__in=mine)
+    return (own if own.exists() else qs).order_by("name")
+
+
+def _last_cat():
+    """The section of the last product added — the next one most likely goes there too (not alphabetically first)."""
+    it = Item.objects.filter(variant_of__isnull=True, is_addon=False, sale_price__isnull=False).exclude(category__name="أخرى").order_by("-id").first()
+    return it.category_id if it else None
 
 
 @login_required
@@ -53,6 +69,6 @@ def page(request):
             v.recipe_id_ = recipes.get(v.pk)
         groups.setdefault(r["item"].category.name, []).append(r)
     return render(request, "ui/menu.html", dict(
-        groups=groups, n=len(rows), addons=addons, cats=_cats(), edit=edit if edit and not edit.is_addon else None,
+        groups=groups, n=len(rows), addons=addons, cats=_cats(), last_cat=_last_cat(), edit=edit if edit and not edit.is_addon else None,
         edit_addon=edit if edit and edit.is_addon else None, slots=slots, edit_desc=(edit.extra or {}).get("desc", "") if edit else "",
         edit_cats=set(edit.addon_for.values_list("pk", flat=True)) if edit and edit.is_addon else set()))

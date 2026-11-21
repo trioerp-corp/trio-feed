@@ -1,13 +1,13 @@
-{% extends "base.html" %}{% load gg %}{% block title %}الأطباء ونسبهم{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الأطباء ونسبهم{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>الأطباء ونسبهم</h1><p class="muted" style="margin:0">من {{ d1|date:"d/m/Y" }} لـ {{ d2|date:"d/m/Y" }}</p></div>
 <form class="actions" style="align-items:end"><label class="field">من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label><label class="field">لـ<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label><button class="light">عرض</button>
 <a class="btn light" href="?from={{ last_month|date:'Y-m' }}-01&to={{ last_month|date:'Y-m-d' }}">الشهر السابق</a></form></div>
 <div class="table-wrap" style="margin-bottom:18px"><table><thead><tr><th>الطبيب</th><th class="n">زيارات</th><th class="n">إيراد زياراته</th><th class="n">نسبته في الفترة</th><th class="n">المستحق له الآن</th><th>صرف</th></tr></thead><tbody>
 {% for r in rows %}<tr><td><b>{{ r.doctor }}</b>{% if r.doctor.specialty %}<br><span class="muted" style="font-size:12px">{{ r.doctor.specialty }} · {{ r.doctor.share_pct|floatformat:-2 }}%</span>{% endif %}</td>
-<td class="n">{{ r.visits }}</td><td class="n">{{ r.revenue|money }}</td><td class="n">{{ r.share|money }}</td><td class="n"><b>{{ r.balance|money }}</b>{% if r.doctor.partner_id %}<br><a style="font-size:12px" href="{% url 'shop_statement' %}?account=2301050103&partner={{ r.doctor.partner_id }}">كشف حساب</a>{% endif %}</td>
-<td>{% if r.balance > 0 %}<form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="doctor" value="{{ r.doctor.pk }}">
-<input name="amount" value="{{ r.balance|stringformat:'s' }}" inputmode="decimal" dir="ltr" style="width:100px"><select name="box">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select>
+<td class="n">{{ r.visits }}</td><td class="n">{{ r.revenue|money }}</td><td class="n">{{ r.share|money }}</td><td class="n"><b>{{ r.balance|money }}</b>{% if r.doctor.partner_id %}<br><a style="font-size:12px" href="{% url 'shop_statement' %}?account=2301050103&partner={{ r.doctor.partner_id|unlocalize }}">كشف حساب</a>{% endif %}</td>
+<td>{% if r.balance > 0 %}<form method="post" style="display:flex;gap:6px;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="doctor" value="{{ r.doctor.pk|unlocalize }}">
+<input name="amount" value="{{ r.balance|stringformat:'s' }}" inputmode="decimal" dir="ltr" style="width:100px"><select name="box">{% for b in boxes %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}</select>
 <button onclick="return confirm('صرف المبلغ للطبيب من الخزينة؟')">اصرف</button></form>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="6" class="muted">سجّل الأطباء من «الخدمات والأسعار»</td></tr>{% endfor %}</tbody></table></div>
 <h2>الزيارات المحاسَبة في الفترة</h2>

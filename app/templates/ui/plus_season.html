@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}التخفيض الموسمي{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}التخفيض الموسمي{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🏷 التخفيض الموسمي والأصناف الراكدة</h1><p class="muted" style="margin:0">نسبة خصم على تصنيفات أو أصناف بين تاريخين — يطبّقها الكاشير تلقائيًا مثل العروض وتظهر على الإيصال.</p></div>
 <div class="actions"><a class="btn light" href="{% url 'shop_promos' %}">🎁 العروض</a></div></div>
@@ -12,13 +12,13 @@
 <div class="table-wrap" style="margin-bottom:24px"><table><thead><tr><th>التخفيض</th><th class="n">%</th><th>على</th><th>المدة</th><th>الحالة</th><th></th></tr></thead><tbody>
 {% for s in sales %}<tr><td>{{ s.name }}</td><td class="n">{{ s.pct }}%</td><td>{{ s.cats|join:"، " }}{% if s.cats and s.names %} + {% endif %}{% if s.names %}{{ s.names|length }} صنف{% endif %}</td><td>{{ s.start }} — {{ s.end }}</td>
 <td>{% if not s.on %}<span class="badge">موقوف</span>{% elif s.live %}<span class="badge green">شغال الآن</span>{% else %}<span class="badge">خارج المدة</span>{% endif %}</td>
-<td><form method="post">{% csrf_token %}<input type="hidden" name="id" value="{{ s.id }}"><button class="light" name="op" value="toggle">{% if s.on %}إيقاف{% else %}تشغيل{% endif %}</button> <button class="light danger" name="op" value="delete" onclick="return confirm('حذف هذا التخفيض؟ المبيعات السابقة تبقى كما هي')">🗑</button></form></td></tr>
+<td><form method="post">{% csrf_token %}<input type="hidden" name="id" value="{{ s.id|unlocalize }}"><button class="light" name="op" value="toggle">{% if s.on %}إيقاف{% else %}تشغيل{% endif %}</button> <button class="light danger" name="op" value="delete" onclick="return confirm('حذف هذا التخفيض؟ المبيعات السابقة تبقى كما هي')">🗑</button></form></td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد تخفيضات</td></tr>{% endfor %}</tbody></table></div>
 <h2 id="slow">📦 أصناف راكدة</h2>
 <form class="filters" method="get" action="#slow"><label>لم تُبع منذ<select name="days">{% for d in day_opts %}<option value="{{ d }}"{% if d == days %} selected{% endif %}>{{ d }} يومًا</option>{% endfor %}</select></label><button>عرض</button></form>
 <p class="muted">{{ slow|length }} صنف لها رصيد ولم تُبع منذ {{ days }} يومًا — رأس مال مجمّد بالتكلفة: <b>{{ slow_value|money }} ج</b></p>
 <form method="get" action="#new"><div class="table-wrap"><table><thead><tr><th><input type="checkbox" onclick="document.querySelectorAll('.pk').forEach(x=>x.checked=this.checked)" aria-label="الكل"></th><th>الصنف</th><th>التصنيف</th><th class="n">الرصيد</th><th class="n">القيمة</th><th>آخر بيع</th></tr></thead><tbody>
-{% for r in slow %}<tr><td><input type="checkbox" class="pk" name="pick" value="{{ r.item.code }}"></td><td>{{ r.item }}</td><td>{{ r.item.category.name }}</td><td class="n">{{ r.qty|floatformat:-3 }}</td><td class="n">{{ r.value|money }}</td><td>{% if r.last %}{{ r.last|date:"j/n/Y" }} (منذ {{ r.days }} يومًا){% else %}لم يُبع أبدًا{% endif %}</td></tr>
+{% for r in slow %}<tr><td><input type="checkbox" class="pk" name="pick" value="{{ r.item.code }}"></td><td>{{ r.item }}{% if r.n > 1 %} <small class="muted">({{ r.n }} مقاس/لون)</small>{% endif %}</td><td>{{ r.item.category.name }}</td><td class="n">{{ r.qty|floatformat:-3 }}</td><td class="n">{{ r.value|money }}</td><td>{% if r.last %}{{ r.last|date:"j/n/Y" }} (منذ {{ r.days }} يومًا){% elif r.idle is not None %}لم يُبع منذ دخوله المخزن قبل {{ r.idle }} يومًا{% else %}لم يُبع أبدًا{% endif %}</td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد أصناف راكدة 👍</td></tr>{% endfor %}</tbody></table></div>
 {% if slow %}<input type="hidden" name="days" value="{{ days }}"><p><button>🏷 ضع المختار في تخفيض</button></p>{% endif %}</form>
 {% endblock %}

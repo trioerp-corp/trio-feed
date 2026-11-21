@@ -268,6 +268,10 @@ def apply(data, logo=None, logo_name=""):
         play_item()
     if first and cfg.get("tables"):
         save_tables(cfg["tables"])
+    if first and cfg["business"] == "clinic":  # 1.24.1 the clinic kind's usual services (dental: fillings, root canal…), example prices
+        from . import activities as A
+
+        A.add_services(cfg["activity"])
     (Path(settings.BASE_DIR) / "data").mkdir(exist_ok=True)
     (Path(settings.BASE_DIR) / "data" / "shop_name.txt").write_text(cfg["name"], encoding="utf-8")
     return cfg, first

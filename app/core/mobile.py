@@ -132,6 +132,10 @@ def snapshot(now=None):
               for o in sorted(orders, key=lambda o: o.created_at_device, reverse=True)[:12]]
     shifts = [dict(c=sh.cashier, at=timezone.localtime(sh.opened_at).strftime("%H:%M"), d=sh.device.name)
               for sh in Shift.objects.filter(closed_at__isnull=True).select_related("device")[:10]]
+    # 1.24.1 drawers counted today with a shortage / surplus (till, reception, hall): the owner sees them on the phone
+    sdiff = [dict(c=sh.cashier, d=sh.device.name, at=timezone.localtime(sh.closed_at).strftime("%H:%M"), v=_f((sh.counted_cash or 0) - (sh.expected_cash or 0)))
+             for sh in Shift.objects.filter(closed_at__date=today, counted_cash__isnull=False, expected_cash__isnull=False).select_related("device").order_by("-closed_at")[:20]
+             if (sh.counted_cash or 0) != (sh.expected_cash or 0)]
     data = dict(
         shop=s.name, at=now.isoformat(timespec="seconds"), day=today.isoformat(),
         today=dict(net=_f(t["net"]), n=t["n"], cash=_f(t["cash"]), card=_f(t["card"]), credit=_f(t["credit"]), returns=_f(t["returns"]),
@@ -141,7 +145,7 @@ def snapshot(now=None):
         top=[dict(n=k, q=_f(v[0]), v=_f(v[1])) for k, v in sorted(top.items(), key=lambda kv: -kv[1][1])[:6]],
         low=[dict(n=i.name, q=_f(i.qty_on_hand), r=_f(i.reorder_level)) for i in low[:15]], low_n=len(low),
         exp=[dict(n=r["item"].name, d=r["days"]) for r in exp[:10]], exp_n=len(exp),
-        recent=recent, shifts=shifts,
+        recent=recent, shifts=shifts, sdiff=sdiff,
     )
     try:
         data["owner"] = _f(owner_balance())
@@ -192,7 +196,10 @@ def _clinic(today):
             docs.append(dict(n=str(d), v=n, s=_f(paid.aggregate(s=Sum("doctor_share"))["s"]),
                              w=appts.filter(doctor=d, state="waiting").count()))
     ins = [(i.name, C._balance(i.partner)) for i in InsuranceCompany.objects.filter(partner__isnull=False).select_related("partner")]
-    return dict(visits=t["visits"], revenue=_f(t["revenue"]), shares=_f(t["shares"]), waiting=t["waiting"], inside=t["inside"],
+    disc = C.discounts(today, today)
+    return dict(disc=_f(sum((x.discount for x in disc), Decimal(0))), disc_n=len(disc),
+                disc_list=[dict(n=x.visit.patient.name[:30], v=_f(x.discount), by=x.by[:30], ok=x.discount_by[:30]) for x in disc][:10],
+                visits=t["visits"], revenue=_f(t["revenue"]), shares=_f(t["shares"]), waiting=t["waiting"], inside=t["inside"],
                 booked=t["booked"], noshow=appts.filter(state="noshow").count(), docs=docs[:12],
                 ins=_f(sum((b for _, b in ins), Decimal(0))), ins_list=[dict(n=n, v=_f(b)) for n, b in ins if b][:10])
 

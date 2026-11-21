@@ -230,7 +230,12 @@ def sell_package(pkg, name, phone, user, paid_card=0):
     if card < 0 or card > pkg.price:
         raise ValidationError("المدفوع بالبطاقة أكبر من سعر الباقة")
     d, now = G.device(), timezone.now()
-    order, _ = ingest_order(d, dict(uid=f"{d.branch.code}-{d.code}-K{now:%y%m%d%H%M%S%f}", created_at=now.isoformat(), shift_uid=sh.uid,
+    n = MinuteMove.objects.filter(minutes__gt=0, order__isnull=False, at__date=timezone.localdate()).count() + 1
+    from pos.models import Order
+
+    while Order.objects.filter(uid=f"{d.branch.code}-{d.code}-K{now:%y%m%d}-{n}").exists():
+        n += 1
+    order, _ = ingest_order(d, dict(uid=f"{d.branch.code}-{d.code}-K{now:%y%m%d}-{n}", created_at=now.isoformat(), shift_uid=sh.uid,
                                     shift_seq=sh.orders.count() + 1, cashier=_name(user),
                                     lines=[dict(item_code=pkg.item.code, qty="1", price=str(pkg.price), discount="0")],
                                     paid_cash=str(pkg.price - card), paid_card=str(card), paid_credit="0"))
@@ -280,3 +285,81 @@ def customers(q=""):
         b = balance(c)
         rows.append(dict(c=c, bal=[(kind_name(k) if k else "أي جهاز", m) for k, m in sorted(b.items()) if m], total=sum(b.values())))
     return rows
+
+
+def on_order_void(order, editing=False):
+    """An invoice is cancelled (pos.voids.void_order): a package sale takes its minutes back off the balance — refused when the
+    customer has already played part of them (the money of a used package cannot come back whole); a play bill gives back the
+    package minutes it had used."""
+    moves = list(MinuteMove.objects.select_for_update().filter(order=order, minutes__gt=0).select_related("customer"))
+    for mv in moves:
+        if editing:
+            raise ValidationError("فاتورة الباقة لا تُعدّل — ألغها ثم بع الباقة من جديد")
+        left = balance(mv.customer).get(mv.kind, 0)
+        if left < mv.minutes:
+            used = mv.minutes - max(0, left)
+            raise ValidationError(f"لا يمكن إلغاء فاتورة الباقة كلها: استخدم العميل {mv.customer.name} {used} دقيقة منها، "
+                                  f"والمتبقي في رصيده {max(0, left)} دقيقة فقط — استخدم «استرداد الدقائق غير المستخدمة» في صفحة الفاتورة")
+        MinuteMove.objects.create(customer=mv.customer, kind=mv.kind, minutes=-mv.minutes, package=mv.package, order=order,
+                                  amount=-mv.amount, by="إلغاء الفاتورة")
+    ses = PlaySession.objects.filter(order=order).first()
+    if ses and not editing:
+        for mv in MinuteMove.objects.filter(session=ses, minutes__lt=0):
+            MinuteMove.objects.create(customer=mv.customer, kind=mv.kind, minutes=-mv.minutes, session=ses, by="إلغاء الفاتورة")
+
+
+def refund_info(order):
+    """A package invoice whose minutes were partly played: what may still come back = the unused minutes × the package's
+    rate (price ÷ minutes). None when the invoice is not a package sale, or is cancelled / already refunded."""
+    from pos.models import Order
+
+    if not order or order.cancelled or order.is_return:
+        return None
+    mv = MinuteMove.objects.filter(order=order, minutes__gt=0).select_related("customer", "package").first()
+    if not mv or Order.objects.filter(raw__pkg_refund_of=order.uid, cancelled=False).exists():
+        return None
+    left = min(mv.minutes, max(0, balance(mv.customer).get(mv.kind, 0)))
+    amount = q2(mv.amount * Decimal(left) / Decimal(mv.minutes)) if mv.minutes else Z
+    return dict(move=mv, customer=mv.customer, minutes=mv.minutes, used=mv.minutes - left, left=left, amount=amount)
+
+
+@transaction.atomic
+def refund_package(order, reason, user):
+    """«استرداد الدقائق غير المستخدمة»: the customer gives back the rest of a package he partly played — a return invoice of
+    the package item for the unused minutes × the package rate (cash out of the drawer, revenue back), and those minutes
+    leave his balance. Owner only (the caller checks)."""
+    from pos.services import ingest_order
+
+    from . import services as G
+
+    reason = str(reason or "").strip()
+    if not reason:
+        raise ValidationError("اكتب السبب")
+    MinuteMove.objects.select_for_update().filter(order=order)
+    info = refund_info(order)
+    if not info:
+        raise ValidationError("هذه الفاتورة ليست فاتورة باقة يمكن استرداد جزء منها")
+    if info["left"] <= 0 or info["amount"] <= 0:
+        raise ValidationError(f"استخدم العميل دقائق الباقة كلها — لا يوجد ما يُسترد")
+    mv, d, now = info["move"], G.device(), timezone.now()
+    sh = G.open_shift()
+    uid = f"{order.uid}-R"
+    from pos.models import Order
+
+    n = 1
+    while Order.objects.filter(uid=uid).exists():
+        n += 1
+        uid = f"{order.uid}-R{n}"
+    ret, _ = ingest_order(d, dict(uid=uid, created_at=now.isoformat(), shift_uid=sh.uid if sh else "", cashier=_name(user), is_return=True,
+                                  pkg_refund_of=order.uid, ret_of=order.uid, note=f"استرداد {info['left']} دقيقة غير مستخدمة: {reason}"[:200],
+                                  lines=[dict(item_code=mv.package.item.code if mv.package_id else order.lines.first().item.code, qty="1",
+                                              price=str(info["amount"]), discount="0")],
+                                  paid_cash=str(info["amount"]), paid_card="0", paid_credit="0"))
+    MinuteMove.objects.create(customer=mv.customer, kind=mv.kind, minutes=-info["left"], package=mv.package, order=ret,
+                              amount=-info["amount"], by=_name(user))
+    order.flags = (f"استُرد منها {info['amount']} ج عن {info['left']} دقيقة (فاتورة {uid})؛ " + order.flags)[:300]
+    order.save(update_fields=["flags"])
+    from core import audit
+
+    audit.log("gaming.package_refund", ret, summary=f"استرداد {info['amount']} ج عن {info['left']} دقيقة من باقة {mv.customer.name} — {reason}")
+    return ret

@@ -30,6 +30,22 @@ def clear(name):
 MSG = "محاولات خاطئة كثيرة — انتظر 10 دقائق وحاول مرة أخرى، أو اطلب من صاحب المحل إعادة تعيين كلمة السر من الإعدادات."
 
 
+def owner_login(name, password, where, ok):
+    """An approval typed on a screen (owner's name + password: discount, cancel, remove a sent item): wrong tries count per
+    name and per screen/device like the login. Returns (user or None, blocked)."""
+    from django.contrib.auth import authenticate
+
+    name = str(name or "").strip()[:150]
+    if blocked(name, where):
+        return None, True
+    u = authenticate(username=name, password=str(password or ""))
+    if not (u and u.is_active and ok(u)):
+        fail(name, where)
+        return None, False
+    clear(name)
+    return u, False
+
+
 def login_view():
     from django.contrib.auth.views import LoginView
 

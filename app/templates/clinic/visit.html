@@ -8,22 +8,25 @@
 <form method="post" id="vf">{% csrf_token %}
 <div class="split vs"><div class="main">
 <section class="card" style="margin-bottom:16px"><h2>الكشف</h2>
-<label class="field">الطبيب<select name="doctor" {% if v.live_payments %}disabled title="دُفع الحساب — لتغيير الطبيب: «تعديل الحساب»"{% endif %}><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk }}" {% if d.pk == v.doctor_id %}selected{% endif %}>{{ d }}{% if d.share_pct and not is_doc %} ({{ d.share_pct|floatformat:-2 }}%){% endif %}</option>{% endfor %}</select></label>
-<label class="field">الشكوى<textarea name="complaint" rows="2">{{ v.complaint }}</textarea></label>
+<label class="field">الطبيب<select name="doctor" {% if v.live_payments %}disabled title="دُفع الحساب — لتغيير الطبيب: «تعديل الحساب»"{% endif %}><option value="">—</option>{% for d in doctors %}<option value="{{ d.pk|unlocalize }}" {% if d.pk == v.doctor_id %}selected{% endif %}>{{ d }}{% if d.share_pct and owner %} ({{ d.share_pct|floatformat:-2 }}%){% endif %}</option>{% endfor %}</select></label>
+{% if med %}<label class="field">الشكوى<textarea name="complaint" rows="2">{{ v.complaint }}</textarea></label>
 <label class="field">التشخيص<textarea name="diagnosis" rows="2">{{ v.diagnosis }}</textarea></label>
 <label class="field">الروشتة / العلاج (سطر لكل دواء)<textarea name="prescription" rows="5" placeholder="مثلًا: Augmentin 1g — قرص كل 12 ساعة × 7 أيام">{{ v.prescription }}</textarea></label>
 <div class="form-grid"><label class="field">الوزن (كجم)<input name="weight" value="{{ v.weight|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" placeholder="مثلًا 72.5"></label></div>
 <div class="form-grid"><label class="field">ملاحظات الطبيب (لا تُطبع)<textarea name="notes" rows="2">{{ v.notes }}</textarea></label>
+{% else %}<p class="muted" style="margin:0 0 8px;font-size:13px">الشكوى والتشخيص والروشتة يكتبها الطبيب.</p><div class="form-grid">{% endif %}
+<label class="field">السن أو سنة الميلاد<input name="p_birth" inputmode="numeric" dir="ltr" maxlength="4" value="{{ v.patient.birth_year|default_if_none:''|unlocalize }}" placeholder="مثلًا 35 أو 1990"></label>
+<label class="field">النوع<select name="p_gender"><option value="">—</option><option value="m" {% if v.patient.gender == 'm' %}selected{% endif %}>ذكر</option><option value="f" {% if v.patient.gender == 'f' %}selected{% endif %}>أنثى</option></select></label>
 <label class="field">ميعاد المتابعة<input type="date" name="next_visit" value="{{ v.next_visit|date:'Y-m-d' }}"></label></div>
 <p style="margin:8px 0 0"><button name="action" value="save" class="light">حفظ الكشف</button></p></section>
-{% if history %}<section class="card"><h2>زيارات سابقة</h2>{% for h in history %}<p style="margin:0 0 8px"><b>{{ h.opened_at|date:"d/m/Y" }}</b> {{ h.doctor|default:"" }} — {{ h.diagnosis|default:"بدون تشخيص"|truncatechars:120 }}{% if h.prescription %}<br><span class="muted" style="font-size:13px">{{ h.prescription|truncatechars:160 }}</span>{% endif %} <a href="{% url 'clinic_visit' h.pk %}">فتح</a></p>{% endfor %}</section>{% endif %}
+{% if history and med %}<section class="card"><h2>زيارات سابقة</h2>{% for h in history %}<p style="margin:0 0 8px"><b>{{ h.opened_at|date:"d/m/Y" }}</b> {{ h.doctor|default:"" }} — {{ h.diagnosis|default:"بدون تشخيص"|truncatechars:120 }}{% if h.prescription %}<br><span class="muted" style="font-size:13px">{{ h.prescription|truncatechars:160 }}</span>{% endif %} <a href="{% url 'clinic_visit' h.pk %}">فتح</a></p>{% endfor %}</section>{% endif %}
 </div>
 <div class="side"><section class="card"><h2>الحساب</h2>
-<div class="table-wrap"><table class="lines-table"><thead><tr><th>الخدمة / الصنف</th><th class="n">كمية</th><th class="n">سعر</th><th></th></tr></thead><tbody>
+<div class="table-wrap"><table class="lines-table"><thead><tr><th>الخدمة / الصنف</th><th class="n">كمية</th><th class="n">سعر</th><th>حذف</th></tr></thead><tbody>
 {% for ln in lines %}<tr>{% if ln.payment_id %}<td>{{ ln.item.name }}</td><td class="n">{{ ln.qty|floatformat:-3 }}</td><td class="n">{{ ln.price|money }}</td><td><span class="badge">✔ دُفع</span></td>
-{% elif v.state != 'cancelled' %}<td>{{ ln.item.name }}</td><td class="n"><input name="qty_{{ ln.pk }}" value="{{ ln.qty|floatformat:-3|unlocalize }}" inputmode="decimal" dir="ltr" style="width:56px" class="c"></td>
-<td class="n">{% if can_edit %}<input name="price_{{ ln.pk }}" value="{{ ln.price|unlocalize }}" inputmode="decimal" dir="ltr" style="width:76px" class="c">{% else %}<span class="pr" data-p="{{ ln.price|unlocalize }}">{{ ln.price|money }}</span>{% endif %}</td>
-<td><label title="إزالة" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" name="drop_{{ ln.pk }}" value="1" class="c">إزالة</label></td>
+{% elif v.state != 'cancelled' %}<td>{{ ln.item.name }}</td><td class="n"><input name="qty_{{ ln.pk|unlocalize }}" value="{{ ln.qty|floatformat:-3|unlocalize }}" inputmode="decimal" dir="ltr" style="width:56px" class="c"></td>
+<td class="n">{% if can_edit %}<input name="price_{{ ln.pk|unlocalize }}" value="{{ ln.price|unlocalize }}" inputmode="decimal" dir="ltr" style="width:76px" class="c">{% else %}<span class="pr" data-p="{{ ln.price|unlocalize }}">{{ ln.price|money }}</span>{% endif %}</td>
+<td><label title="إزالة" style="display:flex;gap:4px;align-items:center;white-space:nowrap"><input type="checkbox" name="drop_{{ ln.pk|unlocalize }}" value="1" class="c">إزالة</label></td>
 {% else %}<td>{{ ln.item.name }}</td><td class="n">{{ ln.qty|floatformat:-3 }}</td><td class="n">{{ ln.price|money }}</td><td></td>{% endif %}</tr>
 {% empty %}<tr><td colspan="4" class="muted">أضف الكشف أو الخدمة</td></tr>{% endfor %}</tbody></table></div>
 {% if v.state != 'cancelled' %}
@@ -31,15 +34,18 @@
 <div style="display:flex;gap:6px;margin:8px 0"><input name="add_code" list="itl" placeholder="+ خدمة / دواء / صنف (الكود)" dir="ltr" style="flex:3"><input name="add_qty" value="1" inputmode="decimal" style="flex:1"><button name="action" value="add" class="light">أضف</button></div>
 {% endif %}
 {% if payments %}<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px">{% for p in payments %}
-<p style="margin:0 0 6px;font-size:13px{% if p.cancelled %};opacity:.5;text-decoration:line-through{% endif %}"><b>{{ p.get_kind_display }}</b> {{ p.total|money }} — {{ p.order.uid }}{% if p.order.paid_card %} · بطاقة {{ p.order.paid_card|money }}{% endif %}{% if p.order.paid_credit %} · آجل {{ p.order.paid_credit|money }}{% endif %}{% if p.share and not is_doc or p.share and own_visit %} · نسبة الطبيب {{ p.share|money }}{% endif %}
-{% if not p.cancelled %}<a href="{% url 'clinic_receipt' v.pk %}?p={{ p.pk }}" target="_blank">🧾 إيصال</a>{% endif %}</p>{% endfor %}
+<p style="margin:0 0 6px;font-size:13px{% if p.cancelled %};opacity:.5;text-decoration:line-through{% endif %}"><b>{{ p.get_kind_display }}</b> {{ p.total|money }} — {{ p.order.uid }}{% if p.order.paid_card %} · بطاقة {{ p.order.paid_card|money }}{% endif %}{% if p.order.paid_credit %} · آجل {{ p.order.paid_credit|money }}{% endif %}{% if p.share and owner or p.share and own_visit %} · نسبة الطبيب {{ p.share|money }}{% endif %}
+{% if not p.cancelled %}<a href="{% url 'clinic_receipt' v.pk %}?p={{ p.pk|unlocalize }}" target="_blank">🧾 إيصال</a>{% endif %}</p>{% endfor %}
 <p style="margin:4px 0 0"><b>المدفوع: {{ v.total|money }}</b></p></div>{% endif %}
 {% if v.state != 'cancelled' and unbilled and is_doc %}<p style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px;font-size:16px"><b>المطلوب: {{ unbilled|money }}</b> — يُدفع في الاستقبال</p>
 {% elif v.state != 'cancelled' and unbilled %}
 <div style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px">
 <label class="field">خصم<input name="discount" id="disc" value="0" inputmode="decimal" dir="ltr" class="c"></label>
+{% if not owner %}<div id="ownBox" style="display:none;border:1px dashed var(--bad,#A13A2A);border-radius:10px;padding:8px;margin-bottom:8px"><p class="muted" style="margin:0 0 6px;font-size:13px">خصم أكبر من {{ disc_cap|floatformat:-2 }}% يحتاج موافقة صاحب العيادة:</p>
+<div class="form-grid"><label class="field">اسم المستخدم<input name="owner" autocomplete="off"></label><label class="field">كلمة السر<input name="owner_password" type="password" autocomplete="new-password"></label></div></div>
+<script>(function(){var d=document.getElementById('disc'),b=document.getElementById('ownBox');d.addEventListener('input',function(){b.style.display=(parseFloat(d.value)||0)>{{ unbilled|unlocalize }}*{{ disc_cap|unlocalize }}/100+0.001?'block':'none'})})();</script>{% endif %}
 <p style="font-size:18px;margin:6px 0"><b>{% if payments %}الباقي{% else %}الإجمالي{% endif %}: <span id="tot">{{ unbilled|money }}</span></b></p>
-<label class="field">الدفع<select name="pay" id="pay"><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option><option value="credit">آجل على المريض</option><option value="split">جزء وجزء</option>{% if insurance %}<option value="insurance">تأمين {{ insurance.name }} ({{ insurance.coverage_pct|floatformat:-2 }}%) — يدفع المريض الباقي نقدًا</option><option value="insurance_card">تأمين {{ insurance.name }} — يدفع المريض الباقي بالبطاقة</option>{% endif %}</select></label>{% if insurance %}<p class="muted" style="margin:4px 0 0;font-size:13px">🛡 {{ insurance.name }}: رقم {{ v.patient.insurance_no|default:"—" }} — نصيب الشركة {{ ins_share|floatformat:2 }} ج والمريض {{ ins_rest|floatformat:2 }} ج</p>{% endif %}
+<label class="field">الدفع<select name="pay" id="pay">{% if insurance %}<option value="insurance" selected>تأمين {{ insurance.name }} ({{ insurance.coverage_pct|floatformat:-2 }}%) — يدفع المريض حصته نقدًا</option><option value="insurance_card">تأمين {{ insurance.name }} — يدفع المريض حصته بالبطاقة</option><option value="cash_full">بدون تأمين — نقدي كامل</option><option value="card_full">بدون تأمين — بطاقة كاملة</option>{% else %}<option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option>{% endif %}<option value="credit">آجل على المريض</option><option value="split">جزء وجزء</option></select></label>{% if insurance %}<p class="muted" style="margin:4px 0 0;font-size:13px">🛡 {{ insurance.name }}: رقم {{ v.patient.insurance_no|default:"—" }} — نصيب الشركة {{ ins_share|floatformat:2 }} ج والمريض {{ ins_rest|floatformat:2 }} ج</p>{% endif %}
 <div id="split" style="display:none" class="form-grid"><label class="field">بطاقة<input name="card" inputmode="decimal" dir="ltr"></label><label class="field">آجل<input name="credit" inputmode="decimal" dir="ltr"></label></div>
 <label style="display:flex;gap:6px;align-items:center;margin:6px 0"><input type="checkbox" name="print" value="1" checked> اطبع الإيصال</label>
 <button name="action" value="pay" style="width:100%">حاسب ✔</button>

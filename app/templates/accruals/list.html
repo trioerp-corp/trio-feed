@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}الاستحقاقات{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الاستحقاقات{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>الاستحقاقات والالتزامات</h1><p class="muted" style="margin:0">مصروف الشهر الذي يُصرف لاحقًا: مرتبات، استشارات، إيجارات، خدمات ثابتة. ويُربط بها الصرف من الخزينة ويقفلها.</p></div>
 <div class="actions"><a class="btn" href="{% url 'accrual_new' %}">+ إضافة استحقاق</a><a class="btn light" href="/admin/accruals/recurringaccrual/">الاستحقاقات الثابتة الشهرية</a></div></div>
@@ -9,6 +9,6 @@
 <div class="table-wrap"><table><thead><tr><th>الرقم</th><th>التاريخ</th><th>البيان</th><th>المستحق له</th><th>الحساب</th><th class="n">المبلغ</th><th class="n">صُرف</th><th class="n">الباقي</th><th></th></tr></thead><tbody>
 {% for a in rows %}<tr><td><a href="{% url 'accrual_detail' a.pk %}">{{ a.number|default:"مسودة" }}</a></td><td>{{ a.date|date:"d/m/Y" }}</td><td>{{ a.description }}</td><td>{{ a.partner|default:"" }}</td><td>{{ a.liability_account.name }}</td>
 <td class="n">{{ a.amount|money }}</td><td class="n">{{ a.paid|money }}</td><td class="n"><b>{{ a.remaining|money }}</b></td>
-<td>{% if a.state == 'open' %}<a class="btn light" href="{% url 'voucher_new' %}?kind=payment&accrual={{ a.pk }}">صرف</a>{% else %}<span class="badge gray">{{ a.get_state_display }}</span>{% endif %}</td></tr>
+<td>{% if a.state == 'open' %}<a class="btn light" href="{% url 'voucher_new' %}?kind=payment&accrual={{ a.pk|unlocalize }}">صرف</a>{% else %}<span class="badge gray">{{ a.get_state_display }}</span>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="9" class="muted">لا يوجد</td></tr>{% endfor %}</tbody></table></div>
 {% endblock %}

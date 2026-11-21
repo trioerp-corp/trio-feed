@@ -8,6 +8,7 @@ main{display:grid;gap:22px;padding:24px 28px;grid-template-columns:repeat(auto-f
 .d{background:var(--card);border-radius:24px;padding:22px 26px;border:2px solid #1C3A5E}.d.flash{animation:fl 1.2s 3}@keyframes fl{50%{border-color:var(--gold);box-shadow:0 0 0 10px rgba(242,193,78,.25)}}
 .d h2{margin:0;font-size:clamp(22px,2.6vw,36px)}.d h2 small{display:block;font-size:.55em;color:var(--mut);font-weight:600}
 .cur{display:flex;align-items:baseline;gap:16px;margin:12px 0}.cur span{font-size:clamp(18px,2vw,28px);color:var(--mut)}.cur b{font-size:clamp(72px,11vw,170px);line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.cur .none{font-style:normal;font-size:clamp(28px,3vw,44px);color:var(--mut);font-weight:700}
 .nx{font-size:clamp(18px,2vw,28px);color:var(--mut)}.nx b{display:inline-block;background:#163A60;color:var(--ink);border-radius:12px;padding:2px 14px;margin:4px;font-size:1.15em}
 .empty{grid-column:1/-1;text-align:center;color:var(--mut);font-size:clamp(22px,3vw,40px);padding:12vh 0}
 #snd{position:fixed;bottom:14px;left:14px;background:#163A60;color:var(--ink);border:0;border-radius:12px;padding:10px 16px;font:inherit;cursor:pointer}
@@ -22,7 +23,7 @@ function chime(){if(!on||!AC)return;const t=AC.currentTime;[660,880,1100].forEac
 function draw(j){document.getElementById('clock').textContent=j.now;if(!j.rows.length){m.innerHTML='<div class="empty">لا يوجد مرضى في الانتظار الآن</div>';return}
   let changed=false;m.innerHTML=j.rows.map(r=>{const k=r.doctor,ch=r.current!=null&&last[k]!==undefined&&last[k]!==r.current;if(ch)changed=true;last[k]=r.current;
   return `<section class="d${ch?' flash':''}"><h2>${E(r.doctor)}${r.specialty?`<small>${E(r.specialty)}</small>`:''}</h2>
-  <div class="cur"><span>الدور الحالي</span><b>${r.current!=null?r.current:'—'}</b></div>
+  <div class="cur"><span>الدور الحالي</span>${r.current!=null&&r.current!==''?`<b>${E(r.current)}</b>`:'<i class="none">—</i>'}</div>
   <div class="nx">${r.next.length?'التالي: '+r.next.map(n=>`<b>${n}</b>`).join(''):'لا يوجد من ينتظر'}</div></section>`}).join('');
   if(changed)chime()}
 async function load(){try{const r=await fetch('?data=1',{credentials:'same-origin',cache:'no-store'});if(r.redirected||!r.ok)return;draw(await r.json())}catch(e){}}

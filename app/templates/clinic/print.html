@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}{% if receipt %}إيصال{% else %}روشتة{% endif %} — {{ v.patient.name }}{% endblock %}
-{% block content %}
+{% block messages %}{% for m in messages %}{% endfor %}{% endblock %}{% block content %}
 <style>@media print{.noprint,body>*:not(main),.ask-fab{display:none!important}body{background:#fff}main.page{padding:0}}
 .rx{max-width:720px;margin:0 auto;background:#fff;color:#111;padding:28px 32px;border:1px solid #ddd;border-radius:10px;min-height:80vh;display:flex;flex-direction:column}
 .rx header{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid #17698F;padding-bottom:12px}.rx h1{margin:0;font-size:22px;color:#17698F}
@@ -16,6 +16,6 @@
 {% for ln in lines %}<tr><td>{{ ln.item.name }}</td><td>{{ ln.qty|floatformat:-3 }}</td><td>{{ ln.amount|money }}</td></tr>{% endfor %}
 {% if v.discount %}<tr><td>خصم</td><td></td><td>-{{ v.discount|money }}</td></tr>{% endif %}<tr><th>الإجمالي</th><th></th><th>{{ v.total|money }}</th></tr></tbody></table>
 {% else %}{% if v.diagnosis %}<p style="margin:0 0 8px"><b>التشخيص:</b> {{ v.diagnosis }}</p>{% endif %}<div class="sym">℞</div>
-<div class="body">{% for l in v.prescription.splitlines %}<div dir="auto" style="text-align:start">{% if l %}{{ l }}{% else %}&nbsp;{% endif %}</div>{% endfor %}</div>{% endif %}
+<div class="body">{% for l in v.prescription.splitlines %}<div dir="auto" style="text-align:start;unicode-bidi:plaintext">{% if l %}{{ l }}{% else %}&nbsp;{% endif %}</div>{% endfor %}</div>{% endif %}
 <footer><span>{% if v.next_visit %}ميعاد المتابعة: <b>{{ v.next_visit|date:"l d/m/Y" }}</b>{% endif %}</span><span>{% if not receipt %}توقيع الطبيب: ____________{% endif %}</span></footer></div>
 {% endblock %}

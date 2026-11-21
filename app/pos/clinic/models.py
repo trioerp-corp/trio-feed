@@ -26,7 +26,17 @@ class Doctor(models.Model):
         ordering = ["order", "id"]
 
     def __str__(self):
-        return f"د. {self.name}"
+        return f"د. {bare_name(self.name)}"
+
+    def save(self, *a, **k):
+        self.name = bare_name(self.name)  # «د. منى» / «دكتور منى» typed by the owner: the program adds «د.» itself
+        super().save(*a, **k)
+
+
+def bare_name(name):
+    import re
+
+    return re.sub(r"^\s*(?:(?:الدكتورة|الدكتور|دكتورة|دكتور|Dr|د)(?:\s*[./]\s*|\s+))+", "", str(name or ""), flags=re.I).strip() or str(name or "").strip()
 
 
 class Service(models.Model):
@@ -115,7 +125,7 @@ class Patient(models.Model):
 
 
 class Visit(models.Model):
-    STATES = [("open", "مفتوحة"), ("paid", "حُوسبت"), ("cancelled", "ملغية")]
+    STATES = [("open", "مفتوحة"), ("paid", "مدفوعة"), ("cancelled", "ملغية")]
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT, related_name="visits", verbose_name="المريض")
     doctor = models.ForeignKey(Doctor, null=True, blank=True, on_delete=models.PROTECT, related_name="visits", verbose_name="الطبيب")
     opened_at = models.DateTimeField("الوقت")
@@ -175,6 +185,7 @@ class VisitPayment(models.Model):
     insurance_amount = models.DecimalField("على شركة التأمين", max_digits=12, decimal_places=2, default=0)
     cancelled = models.BooleanField(default=False)
     by = models.CharField(max_length=100, blank=True)
+    discount_by = models.CharField("وافق على الخصم", max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -272,6 +283,8 @@ class ClinicSettings(models.Model):
 
     followup_days = models.PositiveSmallIntegerField("الإعادة خلال (يوم)", default=0, help_text="0 = لا توجد إعادة")
     followup_price = models.DecimalField("سعر الإعادة", max_digits=12, decimal_places=2, default=0, help_text="0 = إعادة مجانية")
+    max_discount_pct = models.DecimalField("أقصى خصم يمنحه الاستقبال دون موافقتك (%)", max_digits=5, decimal_places=2, default=Decimal("0"),
+                                           help_text="0 = لا خصم من الاستقبال إلا باسم صاحب العيادة وكلمة سره")
 
     class Meta:
         verbose_name = "إعدادات العيادة"

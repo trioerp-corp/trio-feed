@@ -4,12 +4,12 @@
 <section class="card" style="margin-bottom:18px"><h2>مكتبة الأدوية</h2>
 <form style="display:flex;gap:8px;margin-bottom:12px"><input name="q" value="{{ q }}" placeholder="مثلًا: بانادول، augmentin، paracetamol" style="flex:1" autofocus><input type="hidden" name="q2" value="{{ q2 }}"><button>بحث</button></form>
 {% if q %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="add">
-<div class="table-wrap"><table><thead><tr><th><input type="checkbox" onclick="document.querySelectorAll('.pk').forEach(c=>c.checked=this.checked)"></th><th>الدواء</th><th>المادة الفعالة / الشركة</th><th class="n">سعر العلبة</th><th class="n">شرايط في العلبة</th><th class="n">سعر الشريط</th></tr></thead><tbody>
+<div class="table-wrap"><table><thead><tr><th><input type="checkbox" onclick="document.querySelectorAll('.pk').forEach(c=>c.checked=this.checked)"></th><th>الدواء</th><th>المادة الفعالة / الشركة</th><th class="n">سعر العلبة</th><th class="n">شرائط في العلبة</th><th class="n">سعر الشريط</th></tr></thead><tbody>
 {% for r in results %}<tr>{% if r.have %}<td></td><td><b dir="ltr">{{ r.en }}</b><br><span class="muted">{{ r.ar }}</span> <span class="badge">موجود لديك</span></td>
-{% else %}<td><input type="checkbox" class="pk" name="id" value="{{ r.id }}"></td><td><b dir="ltr">{{ r.en }}</b><br><span class="muted">{{ r.ar }}{% if r.route %} · {{ r.route }}{% endif %}</span></td>{% endif %}
+{% else %}<td><input type="checkbox" class="pk" name="id" value="{{ r.id|unlocalize }}"></td><td><b dir="ltr">{{ r.en }}</b><br><span class="muted">{{ r.ar }}{% if r.route %} · {{ r.route }}{% endif %}</span></td>{% endif %}
 <td style="font-size:13px"><span dir="ltr">{{ r.sci|truncatechars:60 }}</span>{% if r.sci_ar %}<br><span>{{ r.sci_ar }}</span>{% endif %}<br><span class="muted" dir="ltr">{{ r.company }}</span></td>
-<td class="n">{% if not r.have %}<input name="p_{{ r.id }}" value="{{ r.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:80px"{% if not r.price %} placeholder="السعر" class="need"{% endif %}>{% else %}{{ r.price|default_if_none:'' }}{% endif %}</td>
-<td class="n">{% if not r.have %}<input name="n_{{ r.id }}" value="{{ r.strips }}" inputmode="numeric" dir="ltr" style="width:56px">{% endif %}</td>
+<td class="n">{% if not r.have %}<input name="p_{{ r.id|unlocalize }}" value="{{ r.price|default_if_none:''|unlocalize }}" inputmode="decimal" dir="ltr" style="width:80px"{% if not r.price %} placeholder="السعر" class="need"{% endif %}>{% else %}{{ r.price|default_if_none:'' }}{% endif %}</td>
+<td class="n">{% if not r.have %}<input name="n_{{ r.id|unlocalize }}" value="{{ r.strips|unlocalize }}" inputmode="numeric" dir="ltr" style="width:56px">{% endif %}</td>
 <td class="n">{% if r.strip_price %}{{ r.strip_price|money }}{% endif %}</td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد نتائج — جرّب كتابة أخرى</td></tr>{% endfor %}</tbody></table></div>
 {% if results %}<p style="margin:10px 0 0;display:flex;gap:10px;align-items:end;flex-wrap:wrap"><label class="field" style="max-width:260px">حد الطلب لكل دواء (بالعلبة) <small class="muted">0 = من غير تنبيه</small><input name="reorder" value="1" inputmode="decimal" dir="ltr" required></label><button>أضف المختار إلى الأصناف</button></p>{% endif %}
@@ -18,14 +18,14 @@
 <section class="card"><h2>البيع بالشريط</h2>
 <p class="muted" style="margin:0 0 10px">الصنف الذي يُباع بالشريط يُعدّ رصيده بالشرائط، والعلبة وحدة أكبر بسعرها وباركودها — يمسح الكاشير العلبة فتُباع علبة، أو يختار «شريط». ويتحوّل الرصيد القديم بالعلب إلى شرائط تلقائيًا.</p>
 <form style="display:flex;gap:8px;margin-bottom:12px"><input name="q2" value="{{ q2 }}" placeholder="ابحث في أصنافك (فارغ = تصنيف «أدوية»)" style="flex:1"><input type="hidden" name="q" value="{{ q }}"><button class="light">بحث</button></form>
-<div class="table-wrap"><table><thead><tr><th>الصنف</th><th class="n">الرصيد</th><th class="n">شرايط في العلبة</th><th class="n">سعر العلبة</th><th class="n">سعر الشريط</th><th></th></tr></thead><tbody>
+<div class="table-wrap"><table><thead><tr><th>الصنف</th><th class="n">الرصيد</th><th class="n">شرائط في العلبة</th><th class="n">سعر العلبة</th><th class="n">سعر الشريط</th><th></th></tr></thead><tbody>
 {% for r in rows %}<tr>
-<td><form method="post" id="sf{{ r.it.pk }}">{% csrf_token %}<input type="hidden" name="action" value="strip"><input type="hidden" name="item" value="{{ r.it.pk }}"></form><b dir="auto">{{ r.it.name }}</b>{% if r.n %} <span class="badge">بالشريط</span>{% endif %}</td>
+<td><form method="post" id="sf{{ r.it.pk|unlocalize }}">{% csrf_token %}<input type="hidden" name="action" value="strip"><input type="hidden" name="item" value="{{ r.it.pk|unlocalize }}"></form><b dir="auto">{{ r.it.name }}</b>{% if r.n %} <span class="badge">بالشريط</span>{% endif %}</td>
 <td class="n">{% if r.n %}{{ r.it.qty_on_hand|floatformat:-3 }} شريط{% else %}{{ r.it.qty_on_hand|floatformat:-3 }} {{ r.it.unit }}{% endif %}</td>
-<td class="n"><input form="sf{{ r.it.pk }}" name="n" value="{{ r.n|default:r.guess }}" inputmode="numeric" dir="ltr" style="width:56px"></td>
-<td class="n"><input form="sf{{ r.it.pk }}" name="box" value="{% if r.box %}{{ r.box.sale_price|default_if_none:''|unlocalize }}{% else %}{{ r.it.sale_price|default_if_none:''|unlocalize }}{% endif %}" inputmode="decimal" dir="ltr" style="width:80px"></td>
-<td class="n"><input form="sf{{ r.it.pk }}" name="strip" value="{% if r.n %}{{ r.it.sale_price|default_if_none:''|unlocalize }}{% endif %}" placeholder="تلقائي" inputmode="decimal" dir="ltr" style="width:80px"></td>
-<td><button class="light" form="sf{{ r.it.pk }}">{% if r.n %}حفظ{% else %}بيع بالشريط{% endif %}</button></td></tr>
+<td class="n"><input form="sf{{ r.it.pk|unlocalize }}" name="n" value="{{ r.n|default:r.guess }}" inputmode="numeric" dir="ltr" style="width:56px"></td>
+<td class="n"><input form="sf{{ r.it.pk|unlocalize }}" name="box" value="{% if r.box %}{{ r.box.sale_price|default_if_none:''|unlocalize }}{% else %}{{ r.it.sale_price|default_if_none:''|unlocalize }}{% endif %}" inputmode="decimal" dir="ltr" style="width:80px"></td>
+<td class="n"><input form="sf{{ r.it.pk|unlocalize }}" name="strip" value="{% if r.n %}{{ r.it.sale_price|default_if_none:''|unlocalize }}{% endif %}" placeholder="تلقائي" inputmode="decimal" dir="ltr" style="width:80px"></td>
+<td><button class="light" form="sf{{ r.it.pk|unlocalize }}">{% if r.n %}حفظ{% else %}بيع بالشريط{% endif %}</button></td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد أصناف — أضف من المكتبة في الأعلى</td></tr>{% endfor %}</tbody></table></div>
 <p class="muted" style="font-size:12px;margin:8px 0 0">اكتب 1 في «شرائط في العلبة» ليعود البيع بالعلبة فقط. سعر الشريط فارغ = سعر العلبة ÷ عدد الشرائط. وفي فاتورة الشراء اختر وحدة «علبة».</p></section>
 {% endblock %}

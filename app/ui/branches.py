@@ -92,7 +92,7 @@ def text(rows, tot, title, company, single=False):
     if not single:
         out += [f"الإجمالي: مبيعات {tot['sales']:,.2f} ({tot['n']} فاتورة) — صافي الربح {tot['net']:,.2f}",
                 f"النقدية في الأدراج {tot['drawer']:,.2f} — المخزون {tot['stock']:,.2f}"]
-    out.append("powered by Trio")
+    out.append("بواسطة برنامج Trio")
     return "\n".join(out)
 
 

@@ -67,6 +67,10 @@ def restaurant(request):
         try:
             if P.get("op") == "svc":
                 R.set_svc(pct=P.get("pct", ""), dine=P.get("dine") == "1")
+            elif P.get("op") == "disc":
+                from pos.services import set_till_cfg
+
+                set_till_cfg(P.get("disc_max", ""))
             else:
                 rows = []
                 for i in range(int(P.get("n") or 0)):
@@ -77,11 +81,23 @@ def restaurant(request):
             messages.error(request, e.messages[0] if hasattr(e, "messages") else "بيانات غير صحيحة")
         return redirect(request.path)
     from pos import kitchen
+    from pos.services import till_cfg
 
     sts = R.stations(s)
-    cats = list(ItemCategory.objects.exclude(name__in=["خدمات"]).exclude(name__startswith="مستلزمات تشغيل").order_by("name").values_list("name", flat=True))
+    # 1.24.1: only the café's own sections (its activity's + those holding something it sells) — no supermarket leftovers
+    from core.activities import current
+    from django.db.models import Q
+
+    mine = set(current(s).get("categories") or []) | set(ItemCategory.objects.filter(
+        Q(item__sale_price__isnull=False) | Q(item__item_type="recipe"), item__active=True).values_list("name", flat=True))
+    cats = list(ItemCategory.objects.filter(name__in=mine).exclude(name__in=["خدمات", "أخرى"]).exclude(name__startswith="مستلزمات تشغيل")
+                .exclude(name__startswith="خامات").order_by("name").values_list("name", flat=True))
+    cats += [c for st in sts for c in st.get("cats") or [] if c not in cats]  # a section saved before stays visible
     blank = 2 if len(sts) < 2 else 1
     rows = sts + [dict(name="", printer="", cats=[]) for _ in range(blank)]
+    prn = kitchen.printers()
+    for r in rows:  # a saved printer that is not connected now stays choosable (with a note)
+        r["missing"] = bool(prn and r.get("printer") and r["printer"] not in prn)
     return render(request, "ui/restaurant_cfg.html", dict(svc=R.svc_cfg(s), raw=(s.menu_cfg or {}).get("service") or {}, rows=rows, cats=cats,
-                                                          printers=kitchen.printers(), kitchen=s.get_kitchen_ticket_display(),
+                                                          till=till_cfg(s), printers=prn, kitchen=s.get_kitchen_ticket_display(),
                                                           main_printer=s.kitchen_printer))

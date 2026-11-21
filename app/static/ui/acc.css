@@ -173,3 +173,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);box-shado
 /* 1.21 data pages */
 .field.check{flex-direction:row;align-items:center;gap:8px}.field.check input{width:22px;height:22px;min-height:0}
 button.danger{background:var(--card);color:var(--bad);border:1px solid var(--bad)}
+
+/* 1.24.1 Arabic file picker (static/ui/app.js initFile) */
+.filepick{display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative;margin-top:4px}
+.filepick .fp-in{position:absolute;inset-inline-start:0;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.filepick button{width:auto;flex:0 0 auto;white-space:nowrap}
+.filepick .fp-name{color:var(--muted,#667);font-size:13px;font-weight:400;overflow-wrap:anywhere;min-width:0}
+/* «؟ اسأل» on a phone (a round «؟», templates/core/_ask.html): the page ends with room above it so it never covers the last figures */
+@media(max-width:600px){body:has(.ask-btn) main.page::after{content:"";display:block;height:60px}}
+/* 1.24.1: table cells never break inside a word («الجه/از», «إيقا/ف») — a narrow screen scrolls the table instead */
+.table-wrap th,.table-wrap td{overflow-wrap:normal}
+.table-wrap td code{overflow-wrap:anywhere}
+.table-wrap td button,.table-wrap td .btn{white-space:nowrap}

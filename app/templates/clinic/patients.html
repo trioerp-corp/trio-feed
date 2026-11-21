@@ -5,7 +5,7 @@
 <form style="display:flex;gap:8px;margin-bottom:12px"><input name="q" value="{{ q }}" placeholder="اسم / هاتف / رقم ملف" style="flex:1" autofocus><button class="light">بحث</button></form>
 <div class="table-wrap"><table><thead><tr><th>الملف</th><th>الاسم</th><th>الموبايل</th><th>السن</th><th></th></tr></thead><tbody>
 {% for p in patients %}<tr><td>{{ p.number|unlocalize }}</td><td><a href="{% url 'clinic_patient' p.pk %}">{{ p.name }}</a>{% if p.medical_notes %} <span class="badge red" title="{{ p.medical_notes }}">!</span>{% endif %}</td><td dir="ltr">{{ p.phone }}</td><td>{{ p.age|default:"" }}</td>
-<td><a class="btn light" href="{% url 'clinic_appointments' %}?p={{ p.pk }}">حجز</a></td></tr>
+<td><a class="btn light" href="{% url 'clinic_appointments' %}?p={{ p.pk|unlocalize }}">حجز</a></td></tr>
 {% empty %}<tr><td colspan="5" class="muted">لا توجد نتائج</td></tr>{% endfor %}</tbody></table></div></div>
 <div class="side"><section class="card"><h2>+ ملف جديد</h2><form method="post">{% csrf_token %}
 <label class="field">الاسم *<input name="name" required></label><label class="field">الموبايل<input name="phone" inputmode="tel" dir="ltr"></label>
@@ -13,7 +13,7 @@
 <label class="field">سنة الميلاد<input name="birth_year" inputmode="numeric" placeholder="1990"></label></div>
 <label class="field">العنوان<input name="address"></label>
 <label class="field">أمراض مزمنة / حساسية<textarea name="medical_notes" rows="2"></textarea></label>
-{% if insurers %}<label class="field">التأمين الطبي<select name="insurance"><option value="">بدون تأمين</option>{% for i in insurers %}<option value="{{ i.pk }}">{{ i.name }}</option>{% endfor %}</select></label>
+{% if insurers %}<label class="field">التأمين الطبي<select name="insurance"><option value="">بدون تأمين</option>{% for i in insurers %}<option value="{{ i.pk|unlocalize }}">{{ i.name }}</option>{% endfor %}</select></label>
 <div class="form-grid"><label class="field">الرقم التأميني<input name="insurance_no" dir="ltr"></label><label class="field">البطاقة صالحة حتى<input type="date" name="insurance_expiry"></label></div>{% endif %}
 <button>افتح الملف</button></form></section></div></div>
 {% endblock %}

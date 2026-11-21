@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}نقاط الولاء{% endblock %}
+{% extends "base.html" %}{% load l10n %}{% load gg %}{% block title %}نقاط الولاء{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>⭐ نقاط الولاء</h1><p class="muted" style="margin:0">يكتب الكاشير موبايل العميل على الفاتورة فتُحسب نقاطه، ويستبدلها خصمًا من فاتورة لاحقة.</p></div>
 <div class="actions"><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
@@ -6,7 +6,7 @@
 <label class="field check"><input type="checkbox" name="on" value="1"{% if c.on %} checked{% endif %}> تشغيل نقاط الولاء على شاشة الكاشير</label>
 <div class="form-grid"><label class="field">نقطة لكل (ج.م مشتريات)<input name="per" inputmode="decimal" value="{{ c.per|floatformat:-2 }}" dir="ltr"></label>
 <label class="field">قيمة النقطة عند الاستبدال (ج.م)<input name="val" inputmode="decimal" value="{{ c.val|floatformat:-2 }}" dir="ltr"></label>
-<label class="field">أقل عدد نقاط للاستبدال<input name="min" inputmode="numeric" value="{{ c.min }}" dir="ltr"></label></div>
+<label class="field">أقل عدد نقاط للاستبدال<input name="min" inputmode="numeric" value="{{ c.min|unlocalize }}" dir="ltr"></label></div>
 <p class="muted" style="margin:0 0 8px;font-size:13px">مثال بالإعداد الحالي: فاتورة 100 ج تعطي {{ example }} نقطة. الاستبدال خصم على الفاتورة يُراجع على رصيد العميل في البرنامج؛ ما يزيد على الرصيد يُعامل خصمًا يدويًا بحدود الكاشير.</p>
 <button>حفظ</button></form>
 <form class="filters" method="get"><label>بحث (موبايل أو اسم)<input name="q" value="{{ q }}"></label><button>بحث</button></form>

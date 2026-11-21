@@ -19,8 +19,11 @@ hr{border:0;border-top:1px dashed #000;margin:6px 0}.big{font-size:16px;font-wei
 <table>{% if ses.prepaid_minutes %}<tr><td>من رصيد الباقة {{ ses.prepaid_minutes }} دقيقة{% if ses.hall_customer %}<br><small>{{ ses.hall_customer.name }} — الباقي {{ left }} دقيقة</small>{% endif %}</td><td class="n">-{{ ses.prepaid_value|floatformat:2 }}</td></tr>{% endif %}
 {% if ses.discount %}<tr><td>خصم</td><td class="n">-{{ ses.discount|floatformat:2 }}</td></tr>{% endif %}
 <tr class="big"><td>الإجمالي</td><td class="n">{{ ses.total|floatformat:2 }}</td></tr>
+{% if ses.order.paid_credit or ses.order.paid_card %}{% if ses.order.paid_cash %}<tr><td>نقدي</td><td class="n">{{ ses.order.paid_cash|floatformat:2 }}</td></tr>{% endif %}{% endif %}
 {% if ses.order.paid_card %}<tr><td>بطاقة / محفظة</td><td class="n">{{ ses.order.paid_card|floatformat:2 }}</td></tr>{% endif %}
-{% if ses.order.paid_credit %}<tr><td>آجل</td><td class="n">{{ ses.order.paid_credit|floatformat:2 }}</td></tr>{% endif %}</table><hr>
-<div class="c">شكرًا لزيارتكم<br><small>Trio · 01008030459</small></div>
+{% if ses.order.paid_credit %}<tr><td>آجل على الحساب</td><td class="n">{{ ses.order.paid_credit|floatformat:2 }}</td></tr>{% endif %}</table>
+{% if ses.order.paid_credit and ses.order.customer %}<hr><table><tr><td>عميل الآجل</td><td>{{ ses.order.customer.name }}</td></tr>{% if ses.order.customer.phone %}<tr><td>الموبايل</td><td class="n">{{ ses.order.customer.phone }}</td></tr>{% endif %}</table>
+<div style="margin-top:14px">توقيع العميل: ____________________</div>{% endif %}<hr>
+<div class="c">شكرًا لزيارتكم<br><small>Trio · 01228827915</small></div>
 <div class="no"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div>
 </div></body></html>

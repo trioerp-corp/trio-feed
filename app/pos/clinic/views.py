@@ -7,7 +7,9 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Q, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from core.models import CompanySettings
 from inventory.models import Item
@@ -16,7 +18,7 @@ from treasury.models import CashBox
 
 from . import services as C
 from . import files as F
-from .models import Appointment, Doctor, InsuranceCompany, Patient, PatientFile, Service, Visit, VisitLine, VisitPayment
+from .models import Appointment, ClinicSettings, Doctor, InsuranceCompany, Patient, PatientFile, Service, Visit, VisitLine, VisitPayment
 
 STAFF = ["مدير المحل", "كاشير", "دكتور", "استقبال"]
 
@@ -76,7 +78,14 @@ def _patient_from(request):
         raise ValidationError("اختر المريض أو اكتب اسم مريض جديد")
     phone = request.POST.get("new_phone", "").strip()
     same = Patient.objects.filter(name=name, phone=phone).first() if phone else None
-    return same or C.add_patient(name, phone, **_insurance_from(request, "new_"))
+    if same:
+        return same
+    by = request.POST.get("new_birth_year", "").strip().translate(str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789"))
+    if by and not (by.isdigit() and 1900 <= int(by) <= timezone.localdate().year):
+        raise ValidationError("سنة الميلاد غير صحيحة")
+    g = request.POST.get("new_gender", "")
+    return C.add_patient(name, phone, birth_year=int(by) if by else None, gender=g if g in ("m", "f") else "",
+                         **_insurance_from(request, "new_"))
 
 
 def _insurance_from(request, prefix=""):
@@ -100,12 +109,53 @@ def _insurance_warn(request, appt):
                                   "يُحاسب نقدًا أو تُحدَّث البطاقة من ملفه")
 
 
+def _approver(request):
+    """A discount above the reception's cap: the owner's name + password typed in the same form → his name (None = nothing typed)."""
+    if V.is_owner(request.user) or request.user.is_superuser:
+        return None
+    name = (request.POST.get("owner") or "").strip()
+    if not name:
+        return None
+    from core import throttle as TH
+
+    o, stop = TH.owner_login(name, request.POST.get("owner_password"), f"cl{request.user.pk}", V.is_owner)
+    if stop:
+        raise ValidationError(TH.MSG)
+    if not o:
+        raise ValidationError("اسم المستخدم أو كلمة السر غير صحيحة، أو ليس له صلاحية الموافقة")
+    return o.first_name or o.username
+
+
+def _patient_age_sex(p, birth, gender):
+    """The visit page's «السن أو سنة الميلاد» (an age under 130 or a year) and «النوع»."""
+    from django.utils import timezone
+
+    b = str(birth or "").strip().translate(str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789"))
+    year = timezone.localdate().year
+    if b:
+        if not b.isdigit():
+            raise ValidationError("اكتب السن أو سنة الميلاد بالأرقام")
+        n = int(b)
+        n = year - n if n < 130 else n
+        if not (year - 130 <= n <= year):
+            raise ValidationError("سنة الميلاد غير صحيحة")
+        p.birth_year = n
+    if gender in ("m", "f"):
+        p.gender = gender
+    p.save(update_fields=["birth_year", "gender"])
+
+
+def _medical_ok(u):
+    """Complaint / diagnosis / prescription / doctor's notes: the doctors and the owner — never the reception."""
+    return u.is_superuser or V.is_owner(u) or u.groups.filter(name="دكتور").exists()
+
+
 def _pay_from(request):
     """The «دُفع الآن» part of a booking / walk-in form: {} when it is paid later at the visit."""
     if not request.POST.get("pay_now"):
         return {}
     pay = request.POST.get("pay", "cash")
-    out = dict(pay=pay, discount=_dec(request.POST.get("discount"), Decimal(0)))
+    out = dict(pay=pay, discount=_dec(request.POST.get("discount"), Decimal(0)), approver=_approver(request))
     if pay == "split":
         out.update(paid_card=_dec(request.POST.get("card"), Decimal(0)), paid_credit=_dec(request.POST.get("credit"), Decimal(0)))
     return out
@@ -164,9 +214,9 @@ def home(request, reception=False):
                 for w in FU.schedule_warnings(appt.doctor, appt.date, exclude=appt.pk):
                     messages.warning(request, "⚠ " + w)
                 _insurance_warn(request, appt)
-                r = _paid_redirect(appt)
-                if r:
-                    return r
+                # 1.24.1 the form stays open for the next patient; a paid walk-in prints its receipt from the same page
+                q = "?walk=1" + (f"&rcpt={appt.visit_id}" if appt.visit_id and appt.visit.live_payments else "")
+                return redirect(reverse("clinic_reception" if reception else "clinic_home") + q)
             elif a == "arrive":
                 appt = C.arrive(get_object_or_404(Appointment, pk=request.POST["appt"]), request.user)
                 messages.success(request, f"{appt.patient.name} وصل — دوره {appt.queue_no}")
@@ -183,7 +233,7 @@ def home(request, reception=False):
                     return redirect("clinic_visit", appt.visit_id)
         except ValidationError as e:
             _errs(request, e)
-        return redirect("clinic_reception" if reception else "clinic_home")
+        return redirect(reverse("clinic_reception" if reception else "clinic_home") + ("?walk=1" if a == "walkin" else ""))
     day = timezone.localdate()
     appts = list(Appointment.objects.filter(date=day).select_related("patient", "doctor", "service__item", "visit", "patient__insurance"))
     lanes = {k: [a for a in appts if a.state == k] for k in ("booked", "waiting", "inside", "done")}
@@ -195,7 +245,8 @@ def home(request, reception=False):
                                                     others=[a for a in appts if a.state in ("cancelled", "noshow")],
                                                     upcoming=Appointment.objects.filter(date__gt=day, state="booked").count(),
                                                     follow=Visit.objects.filter(next_visit=day).exclude(state="cancelled").select_related("patient")[:20],
-                                                    reception=reception,
+                                                    reception=reception, walk=request.GET.get("walk") == "1",
+                                                    rcpt=int(request.GET["rcpt"]) if request.GET.get("rcpt", "").isdigit() else None,
                                                     unpaid=[v for v in Visit.objects.filter(state="open", opened_at__date=day).select_related("patient", "doctor")
                                                             .prefetch_related("lines") if v.unbilled > 0]))
 
@@ -293,7 +344,7 @@ def owner_board(request):
     ins_owed = sum((C._balance(i.partner) for i in InsuranceCompany.objects.filter(partner__isnull=False).select_related("partner")), Decimal(0))
     return render(request, "clinic/owner.html", _ctx(
         d1=d1, d2=d2, tday=C.today_summary(day), total=total, cash=cash, card=card, credit=credit, ins=ins, bars=bars,
-        doc_rows=C.shares_report(d1, d2), top=top, patients_owed=patients_owed, ins_owed=ins_owed,
+        doc_rows=C.shares_report(d1, d2), top=top, discounts=C.discounts(d1, d2), patients_owed=patients_owed, ins_owed=ins_owed,
         visits=Visit.objects.filter(state="paid", opened_at__date__gte=d1, opened_at__date__lte=d2).count(),
         new_patients=Patient.objects.filter(created_at__date__gte=d1, created_at__date__lte=d2).count()))
 
@@ -455,17 +506,24 @@ def visit(request, pk):
             if a == "pay" and is_doc:
                 raise ValidationError("المحاسبة في الاستقبال")
             if a in ("save", "pay", "add"):
+                med = _medical_ok(request.user)
                 for f in ("complaint", "diagnosis", "prescription", "notes"):
                     if f in request.POST:
+                        if not med:
+                            if request.POST[f] != getattr(v, f):
+                                raise ValidationError("الشكوى والتشخيص والروشتة يكتبها الطبيب فقط")
+                            continue
                         setattr(v, f, request.POST[f])
                 v.next_visit = C.parse_date(request.POST["next_visit"]) if request.POST.get("next_visit") else None
-                if "weight" in request.POST:
+                if "weight" in request.POST and med:
                     w = _dec(request.POST.get("weight"))
                     if w is not None and not (0 < w < 400):
                         raise ValidationError("الوزن غير صحيح")
                     v.weight = w
                 if not v.live_payments and "doctor" in request.POST:
                     v.doctor = _doctor(request.POST.get("doctor"))
+                if "p_birth" in request.POST or "p_gender" in request.POST:  # 1.24.1 age / sex for the prescription
+                    _patient_age_sex(v.patient, request.POST.get("p_birth", ""), request.POST.get("p_gender"))
                 v.save()
                 if v.state != "cancelled":
                     for ln in v.lines.filter(payment__isnull=True):
@@ -500,17 +558,20 @@ def visit(request, pk):
                     v.state = "paid"
                     v.save(update_fields=["state"])
                 if a == "pay":
-                    pay = request.POST.get("pay", "cash")
                     v.refresh_from_db()
+                    pay = C.resolve_pay(v.patient, request.POST.get("pay", "cash"))
                     total = v.unbilled - (_dec(request.POST.get("discount"), Decimal(0)))
+                    appr = _approver(request)
                     if pay in ("insurance", "insurance_card"):
-                        C.checkout(v, request.user, discount=request.POST.get("discount") or 0, insured=True, patient_by_card=pay == "insurance_card")
+                        C.checkout(v, request.user, discount=request.POST.get("discount") or 0, insured=True, patient_by_card=pay == "insurance_card",
+                                   approver=appr)
                     else:
                         if pay == "split":
                             card, credit = _dec(request.POST.get("card"), 0), _dec(request.POST.get("credit"), 0)
                         else:
                             card, credit = (total if pay == "card" else 0), (total if pay == "credit" else 0)
-                        C.checkout(v, request.user, paid_card=card or 0, paid_credit=credit or 0, discount=request.POST.get("discount") or 0)
+                        C.checkout(v, request.user, paid_card=card or 0, paid_credit=credit or 0, discount=request.POST.get("discount") or 0,
+                                   approver=appr)
                     messages.success(request, f"تمت محاسبة الزيارة ✔ — {v.patient.name}")
                     if _stock_ok(request.user):  # the reorder alert goes to the owner / store keeper, not over the reception's receipt
                         from inventory.reorder import popup
@@ -539,12 +600,15 @@ def visit(request, pk):
     return render(request, "clinic/visit.html", _ctx(
         insurance=ins, ins_share=ins_share, ins_rest=(v.unbilled - ins_share) if ins else None, files=v.patient.files.defer("data")[:12],
         v=v, lines=v.lines.select_related("item", "payment"), items=items, can_edit=V.can_edit(request.user), is_doc=is_doc,
+        med=_medical_ok(request.user), owner=V.is_owner(request.user) or request.user.is_superuser,
+        disc_cap=ClinicSettings.get().max_discount_pct,
         own_visit=bool(v.doctor_id and v.doctor.user_id == request.user.pk),
         payments=v.payments.select_related("order"), unbilled=v.unbilled,
         in_queue=Appointment.objects.filter(visit=v, state__in=["waiting", "inside"]).exists(),
         history=v.patient.visits.exclude(pk=v.pk).exclude(state="cancelled").select_related("doctor")[:10]))
 
 
+@xframe_options_sameorigin  # 1.24.1 the reception page prints it in a hidden frame right after a paid walk-in
 @guard
 def receipt(request, pk):
     """The thermal receipt of a visit's payment (the booking receipt or a later bill): with the queue number."""
@@ -617,6 +681,11 @@ def setup(request):
                 svc.followup_price = _dec(fp) if fp else None
                 svc.save(update_fields=["followup_days", "followup_price"])
                 messages.success(request, f"تم حفظ «{svc.item.name}»")
+            elif a == "presets":  # 1.24.1 «أضف الخدمات الجاهزة» of this clinic kind (only the missing ones)
+                from core import activities as ACT
+
+                n = ACT.add_services(ACT.current())
+                messages.success(request, f"أُضيفت {n} خدمة بأسعار مثال — عدّل أسعارها من القائمة" if n else "الخدمات الجاهزة موجودة كلها بالفعل")
             elif a == "followup":
                 from .models import ClinicSettings
 
@@ -629,6 +698,16 @@ def setup(request):
                     raise ValidationError("سعر الإعادة بالسالب")
                 cs.save()
                 messages.success(request, "حُفظ إعداد الإعادة ✔")
+            elif a == "disc_cap":
+                from .models import ClinicSettings
+
+                cs = ClinicSettings.get()
+                pct = _dec(request.POST.get("max_discount_pct"), Decimal(0))
+                if not 0 <= pct <= 100:
+                    raise ValidationError("النسبة من 0 إلى 100")
+                cs.max_discount_pct = pct
+                cs.save(update_fields=["max_discount_pct"])
+                messages.success(request, "حُفظ حد خصم الاستقبال ✔")
             elif a == "service_off":
                 svc = _service(request.POST.get("pk"))
                 if svc:
@@ -650,7 +729,13 @@ def setup(request):
         cs=ClinicSettings.get(), sched=sched, sched_text={d.pk: FU.schedule_text(d) for d in Doctor.objects.prefetch_related("shifts")},
         all_doctors=Doctor.objects.all(), edit_doc=edit_doc, edit_svc=edit_svc,
         edit_cons=list(edit_svc.item.recipe.lines.select_related("ingredient")) if edit_svc and hasattr(edit_svc.item, "recipe") else [],
-        stock_items=Item.objects.filter(active=True, item_type="stock").exclude(code="0").order_by("name")))
+        stock_items=Item.objects.filter(active=True, item_type="stock").exclude(code="0").order_by("name"), act_name=_act_name()))
+
+
+def _act_name():
+    from core import activities as ACT
+
+    return ACT.current().get("name") or "العيادة"
 
 
 @guard

@@ -118,6 +118,10 @@ def catalog(device):
         category__name__startswith="مستلزمات تشغيل").exclude(code="PLAY").values(  # play time is billed by the hall screen only
         "id", "code", "name", "barcode", "sale_price", "vat_rate", "unit", "category__name", "extra", "aliases", "item_type", "qty_on_hand", "reorder_level")
 
+    items = list(items)
+    _fresh = __import__("inventory.reorder", fromlist=["x"]).never_stocked(
+        [i["id"] for i in items if i["item_type"] == "stock" and (i["reorder_level"] or 0) > 0 and (i["qty_on_hand"] or 0) <= 0])
+
     def _vat(x):
         return str(x if x is not None else s.default_vat_rate)
 
@@ -145,7 +149,7 @@ def catalog(device):
                                                 "price": str(u.sale_price) if u.sale_price is not None else None})
     cashiers = get_user_model().objects.filter(is_active=True).filter(groups__name__in=TILL_GROUPS).distinct()
     return __import__("pos.plus", fromlist=["x"]).decorate({
-        "branch": {"code": device.branch.code, "name": device.branch.name, "footer": device.branch.receipt_footer},
+        "branch": {"code": device.branch.code, "name": device.branch.name, "footer": device.branch.receipt_footer, "policy": receipt_policy(s)},
         "device": device.code, "next_seq": next_seq(device), "company": s.name, "phone": s.phone, "address": s.address, "tax_id": s.tax_registration,
         "prices_include_vat": s.pos_prices_include_vat, "neg": s.allow_negative_stock,
         "default_vat": str(s.default_vat_rate),
@@ -164,7 +168,9 @@ def catalog(device):
         "items": [{**{k: v for k, v in i.items() if k not in ("category__name", "id", "extra", "aliases", "item_type", "qty_on_hand", "reorder_level")},
                    "cat": i["category__name"],
                    # «حد الطلب»: the till warns when a sale takes the stock down to it (refreshed with every catalog load)
-                   **({"q": str(i["qty_on_hand"]), "r": str(i["reorder_level"])} if i["item_type"] == "stock" and (i["reorder_level"] or 0) > 0 else {}), "units": units.get(i["id"], []),
+                   # (1.24.1: not for an item never bought yet — a sample / new menu item would warn on its first sale)
+                   **({"q": str(i["qty_on_hand"]), **({} if i["id"] in _fresh else {"r": str(i["reorder_level"])})}
+                      if i["item_type"] == "stock" and (i["reorder_level"] or 0) > 0 else {}), "units": units.get(i["id"], []),
                    "x": " ".join([str(v) for v in (i["extra"] or {}).values() if v and not isinstance(v, dict)] + ([i["aliases"]] if i["aliases"] else [])
                                  + [str(x) for k in ("sizes", "colors") for x in ((i["extra"] or {}).get("grid") or {}).get(k, [])]),
                    "xs": " · ".join(str((i["extra"] or {}).get(f["k"])) for f in xfields if f["s"] and (i["extra"] or {}).get(f["k"]))[:60],
@@ -220,6 +226,23 @@ def next_seq(device):
             if uid.startswith(pre) and tail.isdigit():
                 top = max(top, int(tail))
     return top
+
+
+NOS_BLOCK = 50
+
+
+@transaction.atomic
+def reserve_nos(device, n=NOS_BLOCK):
+    """Receipt numbers for one till, handed out in blocks so it keeps numbering offline. Never twice: each block starts after
+    the highest number this device ever reserved or used (two tabs / a new browser get new numbers)."""
+    from .models import Device
+
+    d = Device.objects.select_for_update().get(pk=device.pk)
+    n = max(1, min(int(n or NOS_BLOCK), 500))
+    start = max(d.next_no, next_seq(d)) + 1
+    d.next_no = start + n - 1
+    d.save(update_fields=["next_no"])
+    return start, d.next_no
 
 
 @transaction.atomic
@@ -283,6 +306,7 @@ def ingest_order(device, data, renumber=False):
     move = StockMove.objects.create(kind="return" if is_return else "issue", date=order.created_at_device.date(), warehouse=branch.warehouse,
                                     description=f"نقطة بيع {uid}", legacy_number=uid)
     under, gross, manual, day = [], Decimal(0), Decimal(0), order.created_at_device.date()
+    swap = _swap_prices(data) if renumber and not is_return else {}
     for ln in data.get("lines", []):
         item = Item.objects.filter(code=ln["item_code"]).first()
         if item is None:
@@ -292,7 +316,8 @@ def ingest_order(device, data, renumber=False):
             raise ValidationError(f"كمية أو سعر غير صحيح في «{item.name}»")
         if item.variant_of_id is None and isinstance((item.extra or {}).get("grid"), dict):  # 1.25: the picker sells a size / colour
             raise ValidationError(f"«{item.name}» صنف بمقاسات وألوان — اختر المقاس واللون")
-        if renumber and not is_return and item.sale_price and price < _lowest_price(item) - Decimal("0.005"):
+        if renumber and not is_return and item.sale_price and price < _lowest_price(item) - Decimal("0.005") \
+                and not price >= swap.get(item.variant_of_id or item.pk, price + 1) - Decimal("0.005"):  # a swap at the price paid is not under
             under.append(f"«{item.name}» بيع بـ {L.q2(price)} والسعر {L.q2(_lowest_price(item))}")
         gross += qty * price
         if renumber and not is_return and disc > 0:  # 1.25: what the offers do not explain is a manual discount
@@ -327,7 +352,7 @@ def ingest_order(device, data, renumber=False):
         data["sp"] = sp
     else:
         data.pop("sp", None)
-    loy_amt, loy_note = plus.loy_check(data, is_return)  # 1.26 points redeemed = a discount the balance approves
+    loy_amt, loy_note = plus.loy_check(data, is_return, device, order.pk)  # 1.26 points redeemed = a discount the balance approves
     if loy_note:
         flags.append(loy_note)
     if renumber and not is_return:
@@ -384,8 +409,9 @@ def ingest_order(device, data, renumber=False):
         lines.append({"account": sales_acc, sign_sale: rest, "dim1": branch.cost_center, "description": f"مبيعات {uid}"})
     if vat:
         lines.append({"account": Account.objects.get(code=VAT_OUT), sign_sale: vat, "description": f"ق.م {uid}"})
-    order.entry = L.create_entry("SI", order.created_at_device.date(), f"نقطة بيع {branch.name} {uid}", lines, source=f"pos.order:{order.pk}",
-                                 legacy_ref=uid)
+    if lines or not (data.get("zero_ok") and device.code == "CL"):  # zero_ok: a clinic's free follow-up — no money, no revenue; only its stock move posts
+        order.entry = L.create_entry("SI", order.created_at_device.date(), f"نقطة بيع {branch.name} {uid}", lines, source=f"pos.order:{order.pk}",
+                                     legacy_ref=uid)
     if move.lines.exists():
         INV.post_move(move, allow_negative=True)
         order.stock_move = move
@@ -411,6 +437,10 @@ def till_cfg(s=None):
     s = s or CompanySettings.get()
     c = dict((s.menu_cfg or {}).get("till") or {})
     try:
+        if c.get("disc_max") is None:  # never set: a clothes / shoes shop bargains, so the cashier may give 5 % by default
+            from core.activities import APPAREL, current
+
+            c["disc_max"] = 5 if current(s).get("key") in APPAREL else 0
         mx = Decimal(str(c.get("disc_max") or 0))
     except (ArithmeticError, ValueError):
         mx = Decimal(0)
@@ -418,7 +448,24 @@ def till_cfg(s=None):
     return {"disc_max": Decimal(format(mx.normalize(), "f"))}
 
 
-def set_till_cfg(disc_max):
+POLICY_APPAREL = "الاستبدال خلال 14 يومًا بالفاتورة والبضاعة بحالتها الأصلية"
+
+
+def receipt_policy(s=None):
+    """«سياسة الاستبدال والاسترجاع» printed on the receipt (menu_cfg["till"]["policy"]); never set → the usual one for clothes / shoes."""
+    s = s or CompanySettings.get()
+    p = ((s.menu_cfg or {}).get("till") or {}).get("policy")
+    if p is None:
+        from core.activities import APPAREL, current
+
+        try:
+            return POLICY_APPAREL if current(s).get("key") in APPAREL else ""
+        except Exception:
+            return ""
+    return p
+
+
+def set_till_cfg(disc_max, policy=None):
     s = CompanySettings.get()
     try:
         mx = Decimal(str(disc_max).replace(",", ".").strip() or "0")
@@ -428,6 +475,8 @@ def set_till_cfg(disc_max):
         raise ValidationError("النسبة من 0 إلى 100")
     m = dict(s.menu_cfg or {})
     m["till"] = {**dict(m.get("till") or {}), "disc_max": str(L.q2(mx))}
+    if policy is not None:
+        m["till"]["policy"] = " ".join(str(policy).split())[:300]
     s.menu_cfg = m
     s.save(update_fields=["menu_cfg"])
 
@@ -485,6 +534,10 @@ def check_discount(device, data, manual, gross, pk=None):
         raise ValidationError(f"{txt} أكبر من المسموح للكاشير ({mx}%) دون موافقة صاحب المحل — لم يُسجَّل")
     if t.get("d") != device.pk:
         raise ValidationError("موافقة الخصم لا تخص هذا الجهاز — لم يُسجَّل")
+    if t.get("a") is None:  # the owner's own shift-wide approval: only on the shift he opened himself
+        sh = Shift.objects.filter(uid=data.get("shift_uid"), device=device).first()
+        if not sh or sh.cashier != t.get("u"):
+            raise ValidationError("موافقة الخصم لصاحب المحل في ورديته فقط — لم يُسجَّل")
     if t.get("a") is not None:
         if manual > Decimal(t["a"]) + Decimal("0.01"):
             raise ValidationError(f"{txt} أكبر من الخصم المعتمد ({t['a']}) — لم يُسجَّل")
@@ -528,6 +581,19 @@ def find_orders(q, limit=8):
                           "price": str(ln.price), "discount": str(ln.discount), "vr": str(ln.item.vat_rate if ln.item.vat_rate is not None else CompanySettings.get().default_vat_rate)})
         out.append({"uid": o.uid, "seq": o.shift_seq, "at": o.created_at_device.isoformat(), "total": str(o.total),
                     "customer": o.customer.name if o.customer_id else "", "lines": lines})
+    return out
+
+
+def _swap_prices(data):
+    """An exchange's new invoice: {model (the item, or the product a size / colour belongs to): the lowest unit price paid for it on
+    the original invoice} — the same model in another size is sold at the price the customer paid (difference 0)."""
+    src = str(data.get("exch_src") or "")
+    orig = Order.objects.filter(uid=src, is_return=False, cancelled=False).first() if src and data.get("exch_of") else None
+    out = {}
+    for ln in orig.lines.select_related("item") if orig else []:
+        if ln.qty > 0:
+            k, unit = ln.item.variant_of_id or ln.item_id, (ln.qty * ln.price - ln.discount) / ln.qty
+            out[k] = min(out.get(k, unit), unit)
     return out
 
 
@@ -639,11 +705,15 @@ def check_return(device, data):
     if CompanySettings.get().cashier_can_edit:
         return f"مرتجع — السبب: {reason or 'لم يُكتب'}"
     tok = str(data.get("ret_ok") or "")
+    paid = sum((Decimal(str(data.get(k) or 0)) for k in ("paid_cash", "paid_card", "paid_credit")), Decimal(0))
+    if not tok and data.get("exch_to"):  # an exchange where no money goes back: its new invoice (synced first) pays the whole return
+        sale = Order.objects.filter(device=device, is_return=False, cancelled=False, raw__exch_of=str(data.get("uid"))).first()
+        if sale and sale.total >= L.q2(paid) - Decimal("0.01"):
+            return f"استبدال بالفاتورة {sale.uid} — لم يُرد مال للعميل"
     try:
         t = signing.loads(tok, salt=RET_SALT, max_age=RET_AGE)
     except signing.BadSignature:  # also SignatureExpired
         raise ValidationError("مرتجع دون موافقة صاحب المحل أو المدير — لم يُسجَّل")
-    paid = sum((Decimal(str(data.get(k) or 0)) for k in ("paid_cash", "paid_card", "paid_credit")), Decimal(0))
     if t.get("d") != device.pk or L.q2(paid) > Decimal(t.get("a") or 0):
         raise ValidationError("موافقة المرتجع لا تخص هذه الفاتورة — لم يُسجَّل")
     if Order.objects.filter(raw__ret_ok=tok).exists():

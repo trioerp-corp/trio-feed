@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load ar %}{% load gg %}{% block title %}الفروع{% endblock %}
+{% extends "base.html" %}{% load ar l10n %}{% load gg %}{% block title %}الفروع{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>الفروع — {{ title }}</h1><p class="muted" style="margin:0">كل الفروع أمامك: المبيعات والربح والأموال والمخزون. اختر فرعًا من الأعلى لتعرضه كل الشاشات وحده.</p></div>
 <div class="actions"><div class="seg"><a href="?p=day" class="{% if kind == 'day' %}on{% endif %}">اليوم</a><a href="?p=month" class="{% if kind == 'month' %}on{% endif %}">الشهر</a><a href="?p=year" class="{% if kind == 'year' %}on{% endif %}">السنة</a></div>
@@ -16,10 +16,10 @@
 <div class="brbar" aria-hidden="true"><i style="width:{{ r.bar|stringformat:'.1f' }}%"></i></div>
 <div class="brkpis"><div><span>المبيعات</span><b>{{ r.t.net|money:0 }}</b></div><div><span>الفواتير</span><b>{{ r.t.n }}</b></div><div><span>صافي الربح</span><b>{{ r.net|money:0 }}</b></div>
 <div><span>الدرج</span><b>{{ r.drawer|money:0 }}</b></div><div><span>المخزون</span><b>{{ r.stock|money:0 }}</b></div><div><span>تالف / عجز</span><b>{{ r.damage|money:0 }}</b></div></div>
-<p class="muted" style="margin:0;font-size:13px">{% if r.open_shifts %}<span class="badge gold">{{ r.open_shifts }} وردية مفتوحة</span> {% endif %}آخر مزامنة: {{ r.last_sync|date:"d/m H:i"|default:"بعد" }}
+<p class="muted" style="margin:0;font-size:13px">{% if r.open_shifts %}<span class="badge gold">{{ r.open_shifts }} وردية مفتوحة</span> {% endif %}آخر مزامنة: {{ r.last_sync|date:"d/m H:i"|default:"لم تتم بعد" }}
 {% for st in r.staff %}{% if forloop.first %} — {% endif %}{{ st.user.first_name|default:st.user.username }} ({{ st.title }}){% if not forloop.last %}، {% endif %}{% endfor %}</p>
 <div class="actions"><a class="btn light" href="{% url 'branch_report' r.branch.pk %}?p={{ kind }}">التقرير المفصل</a>
-<form method="post" action="{% url 'branch_switch' %}">{% csrf_token %}<input type="hidden" name="b" value="{{ r.branch.pk }}"><input type="hidden" name="next" value="/"><button class="light">اعرض هذا الفرع</button></form></div>
+<form method="post" action="{% url 'branch_switch' %}">{% csrf_token %}<input type="hidden" name="b" value="{{ r.branch.pk|unlocalize }}"><input type="hidden" name="next" value="/"><button class="light">اعرض هذا الفرع</button></form></div>
 </div>{% endfor %}</div>
 
 <div class="split">
@@ -38,7 +38,7 @@
 <form method="post" action="{% url 'branch_staff' %}" class="card" id="staff">{% csrf_token %}<h2>موظف جديد</h2>
 <div class="form-grid"><label class="field">الاسم<input name="name" required></label><label class="field">اسم الدخول<input name="username" dir="ltr" required autocomplete="off"></label>
 <label class="field">كلمة السر<input name="password" dir="ltr" required autocomplete="new-password"></label>
-<label class="field">الفرع<select name="branch"><option value="">كل الفروع (الإدارة)</option>{% for b in branches %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+<label class="field">الفرع<select name="branch"><option value="">كل الفروع (الإدارة)</option>{% for b in branches %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}</select></label>
 <label class="field">القالب<select name="role" id="role">{% for k, t in templates %}<option value="{{ k }}" data-caps="{{ t.1|join:',' }}" {% if k == 'cashier' %}selected{% endif %}>{{ t.0 }}</option>{% endfor %}</select></label>
 <label class="field">المسمى الوظيفي<input name="title" placeholder="مثلًا: مشرف صالة"></label>
 <label class="field">البريد (للتقارير)<input name="email" type="email" dir="ltr"></label></div>

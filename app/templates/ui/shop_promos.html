@@ -1,10 +1,10 @@
-{% extends "base.html" %}{% load gg %}{% block title %}العروض والخصومات{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}العروض والخصومات{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>العروض والخصومات</h1><p class="muted" style="margin:0">يُطبّق الكاشير العرض تلقائيًا ويظهر في الإيصال</p></div></div>
 <form method="post" class="card form-grid" style="margin-bottom:16px">{% csrf_token %}
 <label class="field">اسم العرض<input name="name" placeholder="مثلًا: اشترِ 2 والثالث هدية"></label>
 <label class="field">النوع<select name="kind" id="pk">{% for v, n in kinds %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
-<label class="field">الصنف<select name="item">{% for i in items %}<option value="{{ i.pk }}">{{ i.name }} — {{ i.sale_price|default_if_none:"" }}</option>{% endfor %}</select></label>
+<label class="field">الصنف<select name="item">{% for i in items %}<option value="{{ i.pk|unlocalize }}">{{ i.name }} — {{ i.sale_price|default_if_none:"" }}</option>{% endfor %}</select></label>
 <label class="field" id="vL">القيمة<input name="value" inputmode="decimal" placeholder="% أو جنيه أو سعر الجملة"></label>
 <label class="field">من كمية<input name="min_qty" inputmode="decimal" value="1"></label>
 <label class="field" id="fL">الهدية<input name="free_qty" inputmode="decimal" value="0"></label>
@@ -13,7 +13,7 @@
 <div class="table-wrap"><table><thead><tr><th>العرض</th><th>الصنف</th><th>النوع</th><th>التفاصيل</th><th>المدة</th><th></th></tr></thead><tbody>
 {% for p in promos %}<tr><td>{{ p.name }}</td><td>{{ p.item.name }}</td><td>{{ p.get_kind_display }}</td>
 <td>{% if p.kind == 'percent' %}{{ p.value|floatformat:-2 }}%{% elif p.kind == 'amount' %}−{{ p.value|money }} للوحدة{% elif p.kind == 'bxgy' %}اشتري {{ p.min_qty|floatformat:-3 }} وخد {{ p.free_qty|floatformat:-3 }} هدية{% else %}{{ p.value|money }} للوحدة{% endif %}{% if p.kind != 'bxgy' and p.min_qty > 1 %} من {{ p.min_qty|floatformat:-3 }}{% endif %}</td>
-<td>{{ p.start|date:"d/m" }} — {{ p.end|date:"d/m" }}</td><td><form method="post">{% csrf_token %}<button class="light" name="toggle" value="{{ p.pk }}">{% if p.active %}إيقاف{% else %}تشغيل{% endif %}</button> <button class="light danger" name="delete" value="{{ p.pk }}" onclick="return confirm('حذف هذا العرض؟')">🗑</button></form></td></tr>
+<td>{{ p.start|date:"d/m" }} — {{ p.end|date:"d/m" }}</td><td><form method="post">{% csrf_token %}<button class="light" name="toggle" value="{{ p.pk|unlocalize }}">{% if p.active %}إيقاف{% else %}تشغيل{% endif %}</button> <button class="light danger" name="delete" value="{{ p.pk|unlocalize }}" onclick="return confirm('حذف هذا العرض؟')">🗑</button></form></td></tr>
 {% empty %}<tr><td colspan="6" class="muted">لا توجد عروض</td></tr>{% endfor %}</tbody></table></div>
 <script>const k=document.getElementById('pk');function sh(){document.getElementById('fL').style.display=k.value==='bxgy'?'':'none';document.getElementById('vL').style.display=k.value==='bxgy'?'none':''}k.onchange=sh;sh();</script>
 {% endblock %}

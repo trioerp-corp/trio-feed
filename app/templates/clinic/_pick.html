@@ -1,10 +1,10 @@
 {% load l10n %}{# patient picker: search an existing file (name / phone / file number) or type a new patient #}
 <div class="pick" style="position:relative">
 <label class="field">المريض (اسم / هاتف / رقم ملف)<input class="pq" autocomplete="off" placeholder="اكتب للبحث…" value="{% if pick %}{{ pick.name }} (ملف {{ pick.number|unlocalize }}){% endif %}"></label>
-<input type="hidden" name="patient" class="pid" value="{{ pick.pk|default:'' }}">
+<input type="hidden" name="patient" class="pid" value="{{ pick.pk|default:''|unlocalize }}">
 <div class="pres card" style="display:none;position:absolute;z-index:5;inset-inline:0;top:100%;padding:4px;max-height:240px;overflow:auto"></div>
-<div class="pnew" style="display:none;gap:8px;flex-wrap:wrap"><label class="field" style="flex:2">مريض جديد — الاسم<input name="new_name"></label><label class="field" style="flex:1">الموبايل<input name="new_phone" inputmode="tel" dir="ltr"></label>
-{% if insurers %}<label class="field" style="flex:1">التأمين الطبي<select name="new_insurance"><option value="">بدون تأمين</option>{% for i in insurers %}<option value="{{ i.pk }}">{{ i.name }}</option>{% endfor %}</select></label>
+<div class="pnew" style="display:none;gap:8px;flex-wrap:wrap"><label class="field" style="flex:2">مريض جديد — الاسم<input name="new_name"></label><label class="field" style="flex:1">الموبايل<input name="new_phone" inputmode="tel" dir="ltr"></label><label class="field" style="flex:1">سنة الميلاد<input name="new_birth_year" inputmode="numeric" dir="ltr" maxlength="4" placeholder="مثلًا 1985"></label><label class="field" style="flex:1">النوع<select name="new_gender"><option value="">—</option><option value="m">ذكر</option><option value="f">أنثى</option></select></label>
+{% if insurers %}<label class="field" style="flex:1">التأمين الطبي<select name="new_insurance"><option value="">بدون تأمين</option>{% for i in insurers %}<option value="{{ i.pk|unlocalize }}">{{ i.name }}</option>{% endfor %}</select></label>
 <label class="field" style="flex:1">الرقم التأميني<input name="new_insurance_no" dir="ltr"></label><label class="field" style="flex:1">البطاقة صالحة حتى<input type="date" name="new_insurance_expiry"></label>{% endif %}</div>
 </div>
 <script>(function(){document.querySelectorAll('.pick').forEach(function(w){if(w.dataset.on)return;w.dataset.on=1;

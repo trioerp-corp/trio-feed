@@ -1,5 +1,5 @@
-{% extends "base.html" %}{% block title %}فاتورة مشتريات{% endblock %}
-{% block content %}
+{% extends "base.html" %}{% load l10n %}{% block title %}فاتورة مشتريات{% endblock %}
+{% block content %}{% localize off %}
 <div class="page-head"><div><h1>فاتورة مشتريات</h1><p class="muted" style="margin:0">تدخل البضاعة المخزن بسعر الشراء — والدفع: نقدًا، أو آجلًا على المورد، أو جزء نقدًا والباقي آجل، أو من صاحب المحل من جيبه.</p></div></div>
 <form method="post" id="pf">{% csrf_token %}
 <div class="card form-grid" style="margin-bottom:16px">
@@ -13,11 +13,17 @@
 {% if ask %}<div class="card" role="alert" style="margin-bottom:16px;border-color:#B7791F;background:var(--gold-2)"><b>⚠ قبل الحفظ</b>{% for a in ask %}<p style="margin:6px 0">{{ a }}</p>{% endfor %}
 <label style="display:flex;gap:8px;align-items:center;font-weight:700"><input type="checkbox" name="confirm" value="1"> نعم، راجعتها — سجّلها</label></div>{% endif %}
 <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">الأصناف</h2>
-<label style="font-size:14px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="phOn" {% if is_pharmacy %}checked{% endif %}> سعر الجمهور والخصم والبونص</label></div>
+{% if not ph_on %}<span hidden>{% endif %}<label style="font-size:14px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="phOn" {% if is_pharmacy %}checked{% endif %}> سعر الجمهور والخصم والبونص</label>{% if not ph_on %}</span>{% endif %}</div>
 <datalist id="itemlist">{% for i in items %}<option value="{{ i.name }} | {{ i.code }}">{% if i.aliases %}{{ i.aliases|truncatechars:60 }}{% endif %}</option>{% endfor %}</datalist>
-<div class="scroll"><table class="lines-table" id="lt"><thead><tr><th style="min-width:220px">الصنف</th><th style="min-width:96px">الوحدة</th><th>الكمية</th><th class="ph">بونص <small class="muted">(مجانًا)</small></th><th class="ph">سعر الجمهور</th><th class="ph">خصم %</th><th>سعر الشراء للوحدة</th><th>تاريخ الإنتاج</th><th>تاريخ الانتهاء</th><th class="n">الإجمالي</th><th></th></tr></thead><tbody id="rows"></tbody>
-<tfoot><tr><td colspan="3"><button type="button" class="light" id="addRow">+ صنف</button></td><td class="ph"></td><td class="ph"></td><td class="ph"></td><td colspan="3" class="n muted">إجمالي الأصناف</td><td class="n"><b id="grand">0.00</b></td><td></td></tr></tfoot></table></div>
-<p class="muted" style="font-size:13px;margin:8px 0 0">اختر الوحدة كما في فاتورة المورد (علبة، كرتونة…) — يحوّلها البرنامج إلى وحدة البيع ويحسب تكلفة الوحدة الصغيرة. البونص كمية مجانية تدخل المخزن وتوزَّع عليها التكلفة. صنف تشتريه لأول مرة؟ اكتب اسمه في السطر ويُضاف عند الحفظ. تاريخ الانتهاء اختياري — إن كُتب نبّهك البرنامج قبله لتبيع هذا الصنف أولًا.</p>
+{% if grids %}<div id="gridBox" class="card" style="display:none;margin:10px 0;border-color:var(--brand,#1F4E79)"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+<label class="field" style="flex:2;min-width:200px">الموديل<input id="gModel" list="gModels" placeholder="اكتب اسم الموديل"></label><datalist id="gModels">{% for k, g in grids.items %}<option value="{{ g.n }}"></option>{% endfor %}</datalist>
+<label class="field" style="flex:1;min-width:110px">سعر الشراء للقطعة<input id="gCost" inputmode="decimal"></label></div>
+<div id="gGrid" class="scroll" style="margin-top:10px"></div><p class="muted" style="font-size:13px;margin:6px 0">اكتب عدد القطع المستلمة من كل مقاس ولون، ثم «أضف للفاتورة» — يُضاف سطر لكل مقاس ولون بكميته.</p>
+<div class="actions"><button type="button" id="gAdd">أضف للفاتورة</button><button type="button" class="light" id="gClose">إغلاق</button></div></div>
+<style>#gGrid table{border-collapse:collapse}#gGrid th,#gGrid td{padding:4px;text-align:center;white-space:nowrap}#gGrid input{width:58px;min-width:58px;text-align:center;padding:6px 4px}#gGrid th:first-child{position:sticky;right:0;background:var(--card,#fff)}</style>{% endif %}
+<div class="scroll"><table class="lines-table" id="lt"><thead><tr><th style="min-width:220px">الصنف</th><th style="min-width:96px">الوحدة</th><th>الكمية</th><th class="ph">بونص <small class="muted">(مجانًا)</small></th><th class="ph">سعر الجمهور</th><th class="ph">خصم %</th><th>سعر الشراء للوحدة</th><th class="ex">تاريخ الإنتاج</th><th class="ex">تاريخ الانتهاء</th><th class="n">الإجمالي</th><th></th></tr></thead><tbody id="rows"></tbody>
+<tfoot><tr><td colspan="3"><button type="button" class="light" id="addRow">+ صنف</button>{% if grids %} <button type="button" class="light" id="gridBtn">👕 شراء بالمقاسات</button>{% endif %}</td><td class="ph"></td><td class="ph"></td><td class="ph"></td><td colspan="{% if exp_on %}3{% else %}1{% endif %}" class="n muted">إجمالي الأصناف</td><td class="n"><b id="grand">0.00</b></td><td></td></tr></tfoot></table></div>
+<p class="muted" style="font-size:13px;margin:8px 0 0">اختر الوحدة كما في فاتورة المورد (علبة، كرتونة…) — يحوّلها البرنامج إلى وحدة البيع ويحسب تكلفة الوحدة الصغيرة. البونص كمية مجانية تدخل المخزن وتوزَّع عليها التكلفة. صنف تشتريه لأول مرة؟ اكتب اسمه في السطر ويُضاف عند الحفظ.{% if exp_on %} تاريخ الانتهاء اختياري — إن كُتب نبّهك البرنامج قبله لتبيع هذا الصنف أولًا.{% endif %}</p>
 <div class="form-grid" style="margin-top:12px">
 <label class="field">خصم على الفاتورة (مبلغ)<input name="inv_disc" inputmode="decimal" value="{{ p.inv_disc }}" placeholder="0.00"></label>
 <label class="field">ضريبة القيمة المضافة %<input name="vat_pct" inputmode="decimal" value="{{ p.vat_pct }}" placeholder="بدون"><small class="muted">{% if vat_registered %}تُسجَّل ضريبة مدخلات تُخصم من ضريبة مبيعاتك{% else %}تُضاف إلى تكلفة الأصناف (المحل غير مسجّل في القيمة المضافة){% endif %}</small></label>
@@ -37,17 +43,22 @@
 <div class="paysum"><div><span>إجمالي الفاتورة</span><b id="sTotal">0.00</b></div><div><span id="sPaidL">مدفوع نقدًا</span><b id="sPaid">0.00</b></div><div class="gold"><span>الباقي آجل على المورد</span><b id="sRest">0.00</b></div></div>
 </div>
 <div class="actions"><button>حفظ الفاتورة</button><a class="btn light" href="{% url 'shop_purchases' %}">رجوع</a></div></form>
-{{ old_lines|json_script:"oldlines" }}{{ item_units|json_script:"itemunits" }}
-<style>#lt.noph .ph{display:none}#lt td.uc span{display:block;text-align:center}#lt th{white-space:nowrap}#lt [name=qty],#lt [name=public],#lt [name=cost]{min-width:84px}
+{{ old_lines|json_script:"oldlines" }}{% if grids %}{{ grids|json_script:"gridsData" }}{% endif %}{{ item_units|json_script:"itemunits" }}
+<style>#lt.noph .ph{display:none}{% if not exp_on %}#lt .ex{display:none}{% endif %}#lt td.uc span{display:block;text-align:center}#lt th{white-space:nowrap}#lt [name=qty],#lt [name=public],#lt [name=cost]{min-width:84px}
 #lt [name=bonus],#lt [name=disc],#lt [name=factor]{min-width:64px}#lt [name=unit]{min-width:110px}#lt input[type=date]{min-width:140px}#lt .per{white-space:nowrap}</style>
 <script>
 const items={ {% for i in items %}"{{ i.name|escapejs }} | {{ i.code|escapejs }}":{{ i.pk }},{% endfor %} };
 const UN=JSON.parse(document.getElementById('itemunits').textContent||'{}');
 const names=Object.fromEntries(Object.entries(items).map(([k,v])=>[v,k]));
+/* the exact name (a size / colour «بلوزة — M / أسود» too), the code or the barcode typed without picking from the list */
+const alt={ {% for i in items %}"{{ i.name|escapejs }}":{{ i.pk }},{% if i.barcode %}"{{ i.barcode|escapejs }}":{{ i.pk }},{% endif %}{% endfor %} };
+{% for i in items %}if(!alt["{{ i.code|escapejs }}"])alt["{{ i.code|escapejs }}"]={{ i.pk }};{% endfor %}
+const IS_PH={{ is_pharmacy|yesno:"true,false" }},LIB={};
 const UNITS={{ units_on|yesno:"true,false" }};
-function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+const $id=x=>document.getElementById(x);function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 const n2=v=>+String(v||'').replace('٫','.').replace(',','.')||0;
 function unitCell(tr,o){const td=tr.querySelector('.uc'),id=tr.querySelector('[name=item]').value,u=UN[id];
+if(!u&&tr.dataset.lib){td.innerHTML='<select name="unit"><option value="علبة" data-f="'+tr.dataset.lib+'">علبة ('+tr.dataset.lib+' شريط)</option><option value="شريط" data-f="1">شريط</option></select><input type="hidden" name="factor" value="1">';const s=td.querySelector('select');if(o&&o.unit)s.value=o.unit;s.onchange=calc;return}
 if(u){td.innerHTML='<select name="unit">'+'<option value="">'+esc(u[0])+'</option>'+u[1].map(x=>'<option value="'+esc(x[0])+'" data-f="'+x[1]+'">'+esc(x[0])+' ('+x[1]+' '+esc(u[0])+')</option>').join('')+'</select><input type="hidden" name="factor" value="1">';
 const s=td.querySelector('select');s.value=(o&&o.unit!==undefined&&o.item==id)?o.unit:u[2];s.onchange=calc}
 else td.innerHTML='<input type="hidden" name="unit" value="">'+(UNITS&&(id||tr.querySelector('[name=item_text]').value.trim())?'<input name="factor" inputmode="decimal" value="'+esc((o&&o.factor)||1)+'" title="كم وحدة في العبوة (1 أو 12 للكرتونة)" aria-label="محتوى العبوة">':'<input type="hidden" name="factor" value="1"><span class="muted">—</span>');
@@ -56,10 +67,12 @@ function row(o){o=o||{};const tr=document.createElement('tr');
 tr.innerHTML='<td><input list="itemlist" name="item_text" placeholder="اكتب اسم الصنف أو الكود" style="width:100%" value="'+esc(names[o.item]||o.text||'')+'"><small class="muted newit" style="display:none">صنف جديد — سيُضاف عند الحفظ</small><input type="hidden" name="item" value="'+esc(o.item||'')+'"></td>'
 +'<td class="uc"></td><td><input name="qty" inputmode="decimal" value="'+esc(o.qty||'')+'"></td>'
 +'<td class="ph"><input name="bonus" inputmode="decimal" value="'+esc(o.bonus||'')+'" placeholder="0"></td><td class="ph"><input name="public" inputmode="decimal" value="'+esc(o.public||'')+'"></td><td class="ph"><input name="disc" inputmode="decimal" value="'+esc(o.disc||'')+'" placeholder="0" style="width:64px"></td>'
-+'<td><input name="cost" inputmode="decimal" value="'+esc(o.cost||'')+'"></td><td><input type="date" name="produced" value="'+esc(o.produced||'')+'"></td><td><input type="date" name="expiry" value="'+esc(o.expiry||'')+'"></td><td class="n"><span class="tot">0.00</span><br><small class="muted per"></small></td>'
++'<td><input name="cost" inputmode="decimal" value="'+esc(o.cost||'')+'"></td><td class="ex"><input type="date" name="produced" value="'+esc(o.produced||'')+'"></td><td class="ex"><input type="date" name="expiry" value="'+esc(o.expiry||'')+'"></td><td class="n"><span class="tot">0.00</span><br><small class="muted per"></small></td>'
 +'<td><button type="button" class="light del" title="احذف السطر" aria-label="احذف السطر">✕</button></td>';
 const [t,h]=tr.querySelectorAll('td:first-child input'),nw=tr.querySelector('.newit');
-t.onchange=()=>{h.value=items[t.value]||'';const isNew=!h.value&&t.value.trim().length>1;t.style.borderColor=isNew?'#B7791F':'';nw.style.display=isNew?'':'none';unitCell(tr);calc()};
+t.onchange=()=>{h.value=items[t.value]||alt[t.value.trim()]||'';if(h.value&&!items[t.value])t.value=names[h.value]||t.value;const isNew=!h.value&&t.value.trim().length>1;t.style.borderColor=isNew?'#B7791F':'';nw.textContent='صنف جديد — سيُضاف عند الحفظ';nw.style.display=isNew?'':'none';tr.dataset.lib='';unitCell(tr);calc();
+if(isNew&&IS_PH){const k=t.value.trim();(LIB[k]?Promise.resolve(LIB[k]):fetch('{% url "pharmacy_lookup" %}?n='+encodeURIComponent(k)).then(r=>r.json())).then(r=>{LIB[k]=r;if(!r.found||t.value.trim()!==k)return;
+nw.textContent='دواء من المكتبة — يُضاف عند الحفظ'+(r.strips>1?' ('+r.strips+' شرائط في العلبة)':'');if(r.strips>1){tr.dataset.lib=r.strips;unitCell(tr)}const pb=tr.querySelector('[name=public]');if(r.price&&!pb.value){pb.value=r.price;pb.oninput()}calc()}).catch(()=>{})}};
 unitCell(tr,o);if(o.text&&!o.item){t.onchange()}
 const c=tr.querySelector('[name=cost]');c.dataset.auto=o.cost?'':'1';c.oninput=()=>{c.dataset.auto=c.value?'':'1';calc()};
 tr.querySelectorAll('[name=public],[name=disc]').forEach(i=>i.oninput=()=>{const pb=n2(tr.querySelector('[name=public]').value),d=n2(tr.querySelector('[name=disc]').value);if(c.dataset.auto&&pb)c.value=(pb*(100-d)/100).toFixed(2);calc()});
@@ -80,7 +93,19 @@ function phShow(){document.getElementById('lt').classList.toggle('noph',!documen
 document.getElementById('phOn').onchange=phShow;document.querySelectorAll('[name=inv_disc],[name=vat_pct]').forEach(i=>i.oninput=calc);
 document.querySelectorAll('input[name=pay]').forEach(r=>r.onchange=payShow);document.querySelector('[name=paid]').oninput=calc;
 document.getElementById('addRow').onclick=()=>row();
+{% if grids %}const GR=JSON.parse($id('gridsData').textContent||'{}');
+(function(){const box=$id('gridBox'),M=$id('gModel'),C=$id('gCost'),G=$id('gGrid');let cur=null;
+function draw(){const nx=Object.values(GR).find(g=>g.n===M.value.trim())||null;if(nx&&nx===cur)return;cur=nx;if(!cur){G.innerHTML=M.value.trim()?'<p class="muted">اختر الموديل من القائمة</p>':'';return}
+const cs=cur.c,ss=cur.s;let h='<table><thead><tr><th>المقاس</th>'+cs.map(c=>'<th>'+esc(c||'—')+'</th>').join('')+'</tr></thead><tbody>';
+ss.forEach(z=>{h+='<tr><th>'+esc(z||'—')+'</th>'+cs.map(c=>{const v=cur.v[z+'|'+c];return '<td>'+(v?'<input inputmode="numeric" data-id="'+v[0]+'" aria-label="'+esc(z+' '+c)+'">':'—')+'</td>'}).join('')+'</tr>'});G.innerHTML=h+'</tbody></table>';
+if(!C.value){const any=Object.values(cur.v).find(v=>v[1]);if(any)C.value=any[1]}}
+M.oninput=M.onchange=draw;$id('gridBtn').onclick=()=>{box.style.display='';M.focus()};$id('gClose').onclick=()=>{box.style.display='none'};
+$id('gAdd').onclick=()=>{if(!cur)return draw();let n=0;G.querySelectorAll('input').forEach(i=>{const q=n2(i.value);if(q>0){
+const emp=[...document.querySelectorAll('#rows tr')].find(tr=>!tr.querySelector('[name=item]').value&&!tr.querySelector('[name=item_text]').value.trim()&&!tr.querySelector('[name=qty]').value);if(emp)emp.remove();
+row({item:i.dataset.id,qty:String(q),cost:C.value});n++}});if(!n){G.insertAdjacentHTML('beforeend','<p class="bad" role="alert">اكتب عدد القطع في مقاس واحد على الأقل</p>');return}
+const rs=document.getElementById('rows');[...rs.querySelectorAll('tr')].filter(tr=>!tr.querySelector('[name=item]').value&&!tr.querySelector('[name=item_text]').value.trim()).forEach(tr=>rs.appendChild(tr));
+calc();M.value='';C.value='';G.innerHTML='';cur=null;box.style.display='none'}})();{% endif %}
 const old=JSON.parse(document.getElementById('oldlines').textContent||'[]');(old.length?old:[{},{},{},{},{}]).forEach(row);
 if(old.some(o=>o.bonus||o.public||o.disc))document.getElementById('phOn').checked=true;phShow();payShow();
 </script>
-{% endblock %}
+{% endlocalize %}{% endblock %}

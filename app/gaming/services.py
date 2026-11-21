@@ -306,14 +306,24 @@ def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_cre
     return ses
 
 
+def can_cancel(ses):
+    """The hall worker alone may cancel a session opened by mistake: in its first 5 minutes and with nothing ordered."""
+    return (timezone.now() - ses.opened_at).total_seconds() / 60 <= 5 and not ses.items.exists()
+
+
 @transaction.atomic
-def cancel_session(ses, user, owner=False):
-    """An open session opened by mistake: the cashier can cancel it in the first 5 minutes if nothing was ordered; the owner always."""
+def cancel_session(ses, user, owner=False, approver=""):
+    """An open session opened by mistake: the cashier can cancel it in the first 5 minutes if nothing was ordered; the owner always
+    (himself, or by typing his name and password on the hall screen → approver)."""
     if ses.state != "open":
         raise ValidationError("هذه الجلسة أُغلقت — إلغاء الفاتورة من «المبيعات» بحساب صاحب المحل")
-    age = (timezone.now() - ses.opened_at).total_seconds() / 60
-    if not owner and (age > 5 or ses.items.exists()):
-        raise ValidationError("الإلغاء بعد 5 دقائق أو بعد إضافة طلبات يحتاج صاحب المحل")
+    if not owner and not can_cancel(ses):
+        raise ValidationError("الإلغاء بعد 5 دقائق أو بعد إضافة طلبات يحتاج موافقة صاحب المحل")
+    if approver:
+        ses.note = f"ألغاها {_name(user)} بموافقة {approver}"[:200]
+        from core import audit
+
+        audit.log("gaming.cancel", ses, summary=f"إلغاء {ses} — وافق {approver}، العامل {_name(user)}")
     now = timezone.now()
     ses.segments.filter(end__isnull=True).update(end=now)
     ses.minutes = int(sum(seg_minutes(g) for g in ses.segments.all()))
@@ -363,7 +373,13 @@ def shift_report(sh):
     voids = PlaySession.objects.filter(state="void", closed_at__gte=sh.opened_at, closed_at__lte=end).select_related("station")
     running = PlaySession.objects.filter(state="open").select_related("station")
     Z = Decimal(0)
-    return dict(sh=sh, n=orders.count(), cash=agg["cash"] or Z, card=agg["card"] or Z, credit=agg["credit"] or Z, total=agg["total"] or Z,
+    from .models import MinuteMove
+
+    pk = list(MinuteMove.objects.filter(order__in=orders, minutes__gt=0).select_related("package", "customer"))
+    pk_orders = [m.order_id for m in pk]
+    play = orders.exclude(pk__in=pk_orders).aggregate(t=Sum("total"))["t"] or Z
+    return dict(sh=sh, n=orders.count(), play_total=play, packages=pk, packages_total=sum((m.amount for m in pk), Z),
+                prepaid_minutes=sum(x.prepaid_minutes for x in sessions), prepaid_value=sum((x.prepaid_value for x in sessions), Z), cash=agg["cash"] or Z, card=agg["card"] or Z, credit=agg["credit"] or Z, total=agg["total"] or Z,
                 discount=sum((x.discount for x in disc), Z), discounts=disc, voids=list(voids), running=list(running),
                 expected=sh.expected_cash, counted=sh.counted_cash,
                 diff=(sh.counted_cash - sh.expected_cash) if sh.closed_at and sh.expected_cash is not None else None)

@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block title %}الموبايل والتقارير{% endblock %}
+{% extends "base.html" %}{% load l10n %}{% block title %}الموبايل والتقارير{% endblock %}
 {% block content %}
 <style>.qr svg{width:200px;height:200px;max-width:100%;display:block}.qr{background:#fff;border-radius:14px;padding:6px;border:1px solid var(--line);width:fit-content}
 .lnk{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.lnk code{user-select:all;direction:ltr;background:var(--bg);padding:6px 10px;border-radius:8px;font-size:13px;word-break:break-all}
@@ -27,7 +27,7 @@
 <p class="muted" style="font-size:13px;margin:0">الكود صالح 15 دقيقة ولمرة واحدة. سيطلب منك الهاتف اختيار <b>رقم سري (PIN)</b> يُطلب قبل أي سحب أو فاتورة. بعد الربط حدّث هذه الصفحة.</p></div>
 <div><div class="qr">{{ pair_qr|safe }}</div></div></div>
 {% else %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="pair"><button>🔗 اربط موبايلي</button></form>{% endif %}
-{% for p in phones %}<form method="post" class="lnk" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="action" value="unpair"><input type="hidden" name="pk" value="{{ p.pk }}">
+{% for p in phones %}<form method="post" class="lnk" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="action" value="unpair"><input type="hidden" name="pk" value="{{ p.pk|unlocalize }}">
 <span>📱 {{ p.name }} — {{ p.user.get_username }}{% if p.last_seen %} · آخر ظهور {{ p.last_seen|date:"d/m H:i" }}{% endif %}</span><button class="light" onclick="return confirm('فصل هذا الهاتف؟')">افصله</button></form>{% endfor %}
 </div>{% endif %}
 <details style="margin-top:12px"><summary class="muted">وصل الرابط إلى شخص آخر؟</summary><form method="post" style="margin-top:8px">{% csrf_token %}<input type="hidden" name="action" value="rotate">
@@ -57,7 +57,7 @@
 <div><div class="qr">{{ tg_qr|safe }}</div></div></div>
 {% else %}<p class="muted" style="margin:0">سيظهر ربط تليجرام هنا فور اتصال الجهاز بخادم Trio.</p>{% endif %}</div>{% endif %}
 <form method="post" class="actions" style="margin-top:12px">{% csrf_token %}<input type="hidden" name="action" value="test"><button class="light">أرسل ملخص تجربة الآن</button></form>
-<p class="muted" style="font-size:13px;margin:8px 0 0">يُرسل الملخص تلقائيًا بعد التقفيل النهائي لليوم، أو الساعة {{ s.report_hour }} إن لم يُقفل اليوم. آخر ملخص: {{ s.last_report|date:"d/m"|default:"بعد" }}</p>
+<p class="muted" style="font-size:13px;margin:8px 0 0">يُرسل الملخص تلقائيًا بعد التقفيل النهائي لليوم، أو الساعة {{ s.report_hour }} إن لم يُقفل اليوم. آخر ملخص: {{ s.last_report|date:"d/m"|default:"لم تتم بعد" }}</p>
 {% else %}
 <p style="margin:0 0 10px">يصلك ملخص كل يوم (المبيعات، النقدي والبطاقات، الربح، رصيد الدرج) على واتساب أو تليجرام أو البريد.</p>
 <a class="btn" href="{% url 'upgrade' %}">⭐ ضيفه لنسختك</a>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load static %}{% block title %}واجهة المطور{% endblock %}
+{% extends "base.html" %}{% load l10n %}{% load static %}{% block title %}واجهة المطور{% endblock %}
 {% block content %}
 <style>
 .acc-box{max-width:460px;margin:28px auto;display:flex;flex-direction:column;gap:14px}
@@ -28,11 +28,12 @@
       <label class="field">العنوان (اختياري — يظهر على الإيصال)<input name="address" maxlength="200" value="{{ demo.address|default:'' }}"></label></section>
     <section class="wz" data-step="2"><h3>3 · بعض الأسئلة</h3>
       <label class="field"><span id="qDevL">كم جهاز كاشير لديك (تبيع منه)؟</span><select name="devices"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
-      <div id="qHall" style="display:none;grid-template-columns:1fr 1fr;gap:8px">
-        <label class="field">كم جهاز بلايستيشن؟<input name="ps_count" value="3" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة (فردي)<input name="ps_rate" value="40" inputmode="decimal" dir="ltr"></label>
-        <label class="field">كم طاولة بلياردو؟<input name="bl_count" value="1" inputmode="numeric" dir="ltr"></label><label class="field">سعر الساعة<input name="bl_rate" value="50" inputmode="decimal" dir="ltr"></label>
+      <div id="qHall" style="display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <b style="grid-column:1/-1">🎮 بلايستيشن 5</b><label class="field">عدد الأجهزة<input name="ps_count" value="3" inputmode="numeric" dir="ltr"></label><label class="field">الساعة فردي<input name="ps_rate" value="40" inputmode="decimal" dir="ltr"></label><label class="field">الساعة مالتي<input name="ps_multi" value="60" inputmode="decimal" dir="ltr"></label>
+        <b style="grid-column:1/-1">🎮 بلايستيشن 4</b><label class="field">عدد الأجهزة<input name="ps4_count" value="0" inputmode="numeric" dir="ltr"></label><label class="field">الساعة فردي<input name="ps4_rate" value="30" inputmode="decimal" dir="ltr"></label><label class="field">الساعة مالتي<input name="ps4_multi" value="45" inputmode="decimal" dir="ltr"></label>
+        <b style="grid-column:1/-1">🎱 بلياردو</b><label class="field">عدد الطاولات<input name="bl_count" value="1" inputmode="numeric" dir="ltr"></label><label class="field" style="grid-column:span 2">سعر الساعة<input name="bl_rate" value="50" inputmode="decimal" dir="ltr"></label>
         <label class="field" style="grid-column:1/-1">يُحسب الوقت بـ<select name="g_round"><option value="15">ربع ساعة (يُحاسب على أي ربع بدأ)</option><option value="30">نصف ساعة</option><option value="60">ساعة</option></select></label></div>
-      <div id="qTables" style="display:none"><label class="field">كم ترابيزة لديك؟ <small class="muted">(0 إن كان البيع تيك أواي فقط — تُطبع لكل ترابيزة بطاقة QR)</small><input name="tables" value="{{ demo.tables|default:'0' }}" inputmode="numeric" dir="ltr" maxlength="3"></label></div>
+      <div id="qTables" style="display:none"><label class="field">كم ترابيزة لديك؟ <small class="muted">(0 إن كان البيع تيك أواي فقط — تُطبع لكل ترابيزة بطاقة QR)</small><input name="tables" value="{{ demo.tables|default:'0'|unlocalize }}" inputmode="numeric" dir="ltr" maxlength="3"></label></div>
       <div class="field">هل لديك أكثر من مخزن أو فرع؟<div class="yn"><label><input type="radio" name="multi" value="0" checked> لا</label><label><input type="radio" name="multi" value="1"> نعم</label></div></div>
       <div class="field">هل نضيف لك أصنافًا نموذجية من نشاطك لتجرّب مباشرة؟<div class="yn"><label><input type="radio" name="samples" value="1" checked> نعم</label><label><input type="radio" name="samples" value="0"> لا، سأضيف بنفسي</label></div></div></section>
     <section class="wz" data-step="3"><h3>4 · حسابك</h3>
@@ -59,7 +60,7 @@
     if((p.fields||[]).length)h+='<div>🏷 بيانات لكل '+esc(p.item||'صنف')+': '+p.fields.map(x=>esc(x.n)).join('، ')+'</div>';
     h+='<div>🖥 '+$('devices').value+(p.clinic?' مكتب استقبال':' جهاز كاشير')+'</div>';
     if(p.tables)h+='<div>🪑 '+(Math.max(0,Math.min(100,parseInt($('tables').value)||0))||'بدون')+' ترابيزة'+(+$('tables').value>0?' مع بطاقات QR':' (تيك أواي)')+'</div>';
-    if(p.hall)h+='<div>🎮 '+(+$('ps_count').value||0)+' بلايستيشن ('+esc($('ps_rate').value)+' ج/ساعة) و'+(+$('bl_count').value||0)+' بلياردو</div>';
+    if(p.hall){const g=[];if(+$('ps_count').value>0)g.push((+$('ps_count').value)+' بلايستيشن 5 ('+esc($('ps_rate').value)+' فردي / '+esc($('ps_multi').value||'—')+' مالتي)');if(+$('ps4_count').value>0)g.push((+$('ps4_count').value)+' بلايستيشن 4 ('+esc($('ps4_rate').value)+' فردي / '+esc($('ps4_multi').value||'—')+' مالتي)');if(+$('bl_count').value>0)g.push((+$('bl_count').value)+' بلياردو ('+esc($('bl_rate').value)+' ج/ساعة)');h+='<div>🎮 '+(g.join('، ')||'بدون أجهزة')+'</div>'}
     if(f.querySelector('[name=samples]:checked').value==='1'&&(p.samples||[]).length)h+='<div>🧪 '+p.samples.length+' أصناف أمثلة: '+p.samples.slice(0,3).map(x=>esc(x[0])).join('، ')+'…</div>';
     h+='<div>👤 دخولك: <b dir="ltr">'+esc($('username').value)+'</b></div>';
     h+='<div style="margin-top:6px">✔ التجربة 14 يومًا بكل إمكانيات البرنامج.</div>';
@@ -75,7 +76,7 @@
     <button name="action" value="self_claim">فعّل نسختي وابدأ التثبيت</button></form>
   <b style="font-size:14px">اشتريت بطريقة أخرى (إنستاباي / فودافون كاش)؟</b>
   <ol style="font-size:14px;line-height:1.9;padding-inline-start:18px">
-    <li>أرسل كود هذا الجهاز إلى Trio (واتساب 01008030459): <code dir="ltr" style="user-select:all;font-weight:700">{{ machine }}</code></li>
+    <li>أرسل كود هذا الجهاز إلى Trio (واتساب 01228827915): <code dir="ltr" style="user-select:all;font-weight:700">{{ machine }}</code></li>
     <li>بعد الدفع سيصلك «كود التثبيت» — الصقه في الأسفل واضغط «ابدأ التثبيت».</li>
     <li>املأ بيانات محلك والمستخدمين — و Trio سيحدد معك موعد التدريب.</li></ol>
   <form method="post" style="display:flex;flex-direction:column;gap:8px">{% csrf_token %}

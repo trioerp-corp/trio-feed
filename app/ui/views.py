@@ -202,7 +202,7 @@ def move_list(request):
     qs = StockMove.objects.select_related("warehouse", "partner").order_by("-date", "-id")
     return _list(request, qs, {"kind": "kind", "state": "state", "warehouse": "warehouse_id"},
                  ["number", "legacy_number", "description", "receiver", "lines__item__name"], "ui/move_list.html",
-                 dict(warehouses=Warehouse.objects.filter(active=True), kinds=StockMove.KINDS, states=StockMove.STATES))
+                 dict(warehouses=Warehouse.objects.filter(active=True), kinds=[k for k in StockMove.KINDS if k[0] != "harvest"], states=StockMove.STATES))
 
 
 @login_required

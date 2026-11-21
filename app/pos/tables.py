@@ -254,9 +254,42 @@ def close(tab, order_uid, by):
     tab = TableTab.objects.select_for_update().get(pk=tab.pk)
     if tab.state != "open":
         raise ValidationError("الحساب مغلق بالفعل")
+    amt = tab_total(tab)
     tab.state, tab.closed_at, tab.closed_by, tab.order_uid = "paid", timezone.now(), str(by)[:100], str(order_uid)[:60]
-    tab.save(update_fields=["state", "closed_at", "closed_by", "order_uid"])
+    tab.log = tab.log + [dict(at=timezone.now().isoformat(), by=str(by)[:60], part=tab.order_uid, amt=str(amt), last=True,
+                              what=f"حوسب الحساب بالفاتورة {tab.order_uid} ({amt} ج)")]
+    tab.save(update_fields=["state", "closed_at", "closed_by", "order_uid", "log"])
     return tab
+
+
+def missing_sales(hours=24, days=30):
+    """Bills of tables paid (whole or a part) at the till whose sale never reached the program within `hours`: the till
+    closed the table but its invoice did not sync (device off, browser data wiped, or a closed table with no sale). The
+    owner sees them on the tables page."""
+    import datetime as dt
+
+    from .models import Order
+
+    now = timezone.now()
+    out = []
+    for tab in TableTab.objects.filter(state="paid", closed_at__gte=now - dt.timedelta(days=days)).select_related("table"):
+        parts = [g for g in tab.log if g.get("part")]
+        if tab.order_uid and not any(g.get("part") == tab.order_uid for g in parts):
+            parts.append(dict(at=tab.closed_at.isoformat(), part=tab.order_uid, amt="", by=tab.closed_by))
+        for g in parts:
+            try:
+                at = dt.datetime.fromisoformat(g["at"])
+            except (TypeError, ValueError, KeyError):
+                at = tab.closed_at
+            if timezone.is_naive(at):
+                at = timezone.make_aware(at)
+            if now - at < dt.timedelta(hours=hours):
+                continue
+            uid = g["part"]
+            if Order.objects.filter(uid=uid).exists() or Order.objects.filter(uid__startswith=uid + "~").exists():
+                continue
+            out.append(dict(tab=tab, table=tab.table.name, uid=uid, at=at, amt=g.get("amt") or "", by=g.get("by") or ""))
+    return sorted(out, key=lambda r: r["at"], reverse=True)
 
 
 @transaction.atomic
@@ -278,18 +311,19 @@ def pay_part(tab, order_uid, picks, by):
         take[lid] = take.get(lid, Decimal(0)) + q
     if not take:
         raise ValidationError("اختر أصناف هذا الجزء")
-    names = []
+    names, amt = [], Decimal(0)
     for lid, q in take.items():
         ln = next((x for x in tab.lines if x["id"] == lid), None)
         have = Decimal(ln["qty"]) if ln else Decimal(0)
         if not ln or q <= 0 or q > have:
             raise ValidationError("أصناف الجزء لا تطابق حساب الترابيزة — حدّث الشاشة")
         names.append(f"{q.normalize():f} × {ln['name']}")
+        amt += q * Decimal(str(ln["price"])) + sum(q * Decimal(str(a["p"])) for a in ln.get("adds") or [])
         if q == have:
             tab.lines = [x for x in tab.lines if x["id"] != lid]
         else:
             ln["qty"] = str(have - q)
-    tab.log = tab.log + [dict(at=timezone.now().isoformat(), by=str(by)[:60], part=uid, what=f"دفع جزء من الحساب بالفاتورة {uid}: " + "، ".join(names)[:300])]
+    tab.log = tab.log + [dict(at=timezone.now().isoformat(), by=str(by)[:60], part=uid, amt=str(amt.quantize(Decimal("0.01"))), what=f"دفع جزء من الحساب بالفاتورة {uid}: " + "، ".join(names)[:300])]
     fields = ["lines", "log"]
     if not tab.lines:
         tab.state, tab.closed_at, tab.closed_by, tab.order_uid = "paid", timezone.now(), str(by)[:100], uid

@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load gg %}{% block title %}الإقرارات الضريبية{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الإقرارات الضريبية{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🧮 الإقرارات الضريبية</h1><p class="muted" style="margin:0">{{ s.get_tax_regime_display }}{% if s.tax_file_no %} · ملف {{ s.tax_file_no }}{% endif %}{% if s.tax_office %} · مأمورية {{ s.tax_office }}{% endif %}</p></div>
 <div class="actions noprint"><a class="btn light" href="{% url 'start' %}#tax">تعديل الملف الضريبي</a><button type="button" class="light" onclick="print()">🖨 اطبع</button></div></div>
@@ -6,7 +6,7 @@
 
 <section class="card" style="margin-bottom:16px" id="vat"><h2 style="margin-top:0">ضريبة القيمة المضافة {% if quarterly %}(ربع سنوي — النظام المبسّط){% else %}(شهري){% endif %}</h2>
 {% if not vat %}<p class="muted">المحل غير مسجّل في القيمة المضافة — إن سُجّلت فعلّم عليها في <a href="{% url 'start' %}#tax">تجهيز المحل</a>.</p>
-{% else %}<form method="get" class="filters noprint"><label>الفترة التي تبدأ<input type="month" name="p" value="{{ d1|date:'Y-m' }}"></label><input type="hidden" name="y" value="{{ y }}"><button>عرض</button></form>
+{% else %}<form method="get" class="filters noprint"><label>الفترة التي تبدأ<input type="month" name="p" value="{{ d1|date:'Y-m' }}"></label><input type="hidden" name="y" value="{{ y|unlocalize }}"><button>عرض</button></form>
 <p class="muted">من {{ d1|date:"d/m/Y" }} حتى {{ d2|date:"d/m/Y" }}</p>
 <div class="table-wrap"><table><thead><tr><th>النسبة</th><th class="n">المبيعات (بدون الضريبة)</th><th class="n">الضريبة</th></tr></thead><tbody>
 {% for r in vat.rows %}<tr><td>{% if r.rate %}{{ r.rate|floatformat:-2 }}%{% else %}معفى / صفر{% endif %}</td><td class="n">{{ r.sales|money }}</td><td class="n">{{ r.vat|money }}</td></tr>{% empty %}<tr><td colspan="3" class="muted">لا توجد مبيعات في الفترة</td></tr>{% endfor %}</tbody></table></div>
@@ -45,6 +45,6 @@
 <form method="post" class="actions" style="justify-content:flex-start;align-items:end">{% csrf_token %}
 <label class="field" style="max-width:220px">سدّدت<select name="what"><option value="ins">التأمينات</option><option value="tax">ضريبة كسب العمل</option><option value="martyrs">صندوق الشهداء</option><option value="vat">القيمة المضافة</option></select></label>
 <label class="field" style="max-width:150px">المبلغ<input name="amount" inputmode="decimal" dir="ltr" required></label>
-<label class="field" style="max-width:220px">من<select name="box">{% for b in boxes %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+<label class="field" style="max-width:220px">من<select name="box">{% for b in boxes %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}</select></label>
 <label class="field" style="max-width:200px">رقم الإيصال<input name="ref" maxlength="60"></label><button>تسجيل السداد</button></form></section>
 {% endblock %}

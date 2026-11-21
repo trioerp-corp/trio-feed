@@ -1,8 +1,8 @@
-{% extends "base.html" %}{% load gg %}{% block title %}{{ title }}{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}{{ title }}{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>{{ title }}{% if partner %} — {{ partner.name }}{% endif %}</h1><p class="muted" style="margin:0">من {{ d1|date:"d/m/Y" }} حتى {{ d2|date:"d/m/Y" }}</p></div>
 <div class="actions"><button class="light" onclick="window.print()">🖨 طباعة</button><a class="btn light" href="javascript:history.back()">رجوع</a></div></div>
-<form method="get" class="filters"><input type="hidden" name="account" value="{{ code }}">{% if partner %}<input type="hidden" name="partner" value="{{ partner.pk }}">{% endif %}
+<form method="get" class="filters"><input type="hidden" name="account" value="{{ code }}">{% if partner %}<input type="hidden" name="partner" value="{{ partner.pk|unlocalize }}">{% endif %}
 <label>من<input type="date" name="from" value="{{ d1|date:'Y-m-d' }}"></label><label>إلى<input type="date" name="to" value="{{ d2|date:'Y-m-d' }}"></label><button class="light">عرض</button></form>
 <section class="grid" style="margin-bottom:16px">
 <div class="card kpi"><span class="k">رصيد أول المدة</span><span class="v">{{ opening|money }}</span></div>

@@ -1,20 +1,20 @@
-{% extends "base.html" %}{% load gg %}{% block title %}حجوزات الأجهزة{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}حجوزات الأجهزة{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>📅 حجوزات الأجهزة</h1><p class="muted" style="margin:0">{{ day|date:"l j F Y" }}</p></div>
 <div class="actions"><a class="btn {% if day != today %}light{% endif %}" href="?d={{ today|date:'Y-m-d' }}">اليوم</a><a class="btn {% if day != tomorrow %}light{% endif %}" href="?d={{ tomorrow|date:'Y-m-d' }}">غدًا</a>
 <form style="display:inline-flex;gap:6px"><input type="date" name="d" value="{{ day|date:'Y-m-d' }}" aria-label="اليوم"><button class="light">عرض</button></form>
 <a class="btn light" href="/ui/play/">🎮 الصالة</a></div></div>
-<div class="split"><div class="main"><section class="card"><div class="table-wrap"><table><thead><tr><th>الموعد</th><th>الجهاز</th><th>العميل</th><th>الموبايل</th><th class="n">المدة</th><th>الحالة</th><th></th></tr></thead><tbody>
-{% for r in rows %}<tr><td><b>{{ r.at }}</b></td><td>{{ r.where }}</td><td>{{ r.customer }}{% if r.note %}<br><span class="muted" style="font-size:12px">{{ r.note }}</span>{% endif %}</td>
-<td dir="ltr">{% if r.phone %}<a href="tel:{{ r.phone }}">{{ r.phone }}</a>{% endif %}</td><td class="n">{{ r.minutes }} د</td>
-<td><span class="badge {% if r.state == 'booked' %}{% if r.start < now %}red{% else %}gold{% endif %}{% elif r.state == 'arrived' %}{% else %}gray{% endif %}">{% if r.state == 'booked' and r.start < now %}متأخر{% else %}{{ r.get_state_display }}{% endif %}</span></td>
-<td style="white-space:nowrap">{% if r.state == 'booked' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="pk" value="{{ r.pk }}"><button class="light" name="op" value="noshow">لم يحضر</button> <button class="light" name="op" value="cancelled" onclick="return confirm('إلغاء حجز {{ r.customer|escapejs }}؟')">إلغاء</button></form>{% endif %}</td></tr>
+<div class="split"><div class="main"><section class="card"><div class="table-wrap"><table><thead><tr><th style="white-space:nowrap">الموعد</th><th>الجهاز</th><th>العميل</th><th>الموبايل</th><th class="n">المدة</th><th>الحالة</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td style="white-space:nowrap"><b>{{ r.at }}</b></td><td>{{ r.where }}</td><td>{{ r.customer }}{% if r.note %}<br><span class="muted" style="font-size:12px">{{ r.note }}</span>{% endif %}</td>
+<td dir="ltr">{% if r.phone %}<a href="tel:{{ r.phone }}">{{ r.phone }}</a>{% endif %}</td><td class="n" style="white-space:nowrap">{{ r.minutes|hm }}</td>
+<td style="white-space:nowrap"><span class="badge {% if r.state == 'booked' %}{% if r.start < now %}red{% else %}gold{% endif %}{% elif r.state == 'arrived' %}{% else %}gray{% endif %}">{% if r.state == 'booked' and r.start < now %}متأخر{% else %}{{ r.get_state_display }}{% endif %}</span></td>
+<td style="white-space:nowrap">{% if r.state == 'booked' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="pk" value="{{ r.pk|unlocalize }}"><button class="light" name="op" value="noshow">لم يحضر</button> <button class="light" name="op" value="cancelled" onclick="return confirm('إلغاء حجز {{ r.customer|escapejs }}؟')">إلغاء</button></form>{% endif %}</td></tr>
 {% empty %}<tr><td colspan="7" class="muted">لا توجد حجوزات في هذا اليوم</td></tr>{% endfor %}</tbody></table></div>
 <p class="muted" style="font-size:12px;margin:8px 0 0">عند وصول العميل: اضغط حجزه أعلى شاشة الصالة ← «وصل — ابدأ».</p></section></div>
 <div class="side"><section class="card"><h2 style="margin-top:0">+ حجز جديد</h2><form method="post">{% csrf_token %}
 <label class="field">اسم العميل *<input name="customer" required maxlength="80"></label>
 <label class="field">الموبايل<input name="phone" inputmode="tel" dir="ltr" maxlength="40"></label>
-<label class="field">الجهاز<select name="where">{% for k, t in kinds %}<option value="k{{ k }}">أي {{ t }}</option>{% endfor %}{% for st in stations %}<option value="s{{ st.pk }}">{{ st.name }}</option>{% endfor %}</select></label>
+<label class="field">الجهاز<select name="where">{% for k, t in kinds %}<option value="k{{ k }}">أي {{ t }}</option>{% endfor %}{% for st in stations %}<option value="s{{ st.pk|unlocalize }}">{{ st.name }}</option>{% endfor %}</select></label>
 <div class="form-grid"><label class="field">اليوم<input type="date" name="date" value="{{ day|date:'Y-m-d' }}" required></label><label class="field">الساعة *<input type="time" name="time" required></label></div>
 <label class="field">المدة<select name="minutes"><option value="60">ساعة</option><option value="30">نصف ساعة</option><option value="90">ساعة ونصف</option><option value="120">ساعتان</option><option value="180">3 ساعات</option><option value="240">4 ساعات</option></select></label>
 <label class="field">ملاحظة<input name="note" maxlength="200"></label>

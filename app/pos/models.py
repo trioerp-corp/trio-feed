@@ -40,6 +40,7 @@ class Device(models.Model):
     active = models.BooleanField("نشط", default=True)
     last_sync = models.DateTimeField("آخر مزامنة", null=True, blank=True)
     stuck = models.JSONField("ورق مرفوض من آخر مزامنة", default=dict, blank=True)  # {uid: reason} — shown to the manager
+    next_no = models.PositiveIntegerField("آخر رقم فاتورة محجوز", default=0)  # receipt numbers handed to the till in blocks
 
     class Meta:
         verbose_name = "جهاز كاشير"

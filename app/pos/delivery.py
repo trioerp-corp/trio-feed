@@ -187,7 +187,7 @@ def collect(device, data, shift=None):
         from .services import _dt
 
         when = _dt(created)
-    desc = f"تحصيل دليفري {d.order.uid} — الطيار {d.rider or '—'}"
+    desc = f"تحصيل دليفري {d.order.uid} — عامل التوصيل {d.rider or '—'}"
     entry = L.create_entry("JV", when.date(), desc, [dict(account=box, debit=amount, description=desc),
                                                      dict(account=clearing(), credit=amount, description=desc)],
                            source=f"pos.cashmove:{uid}", legacy_ref=uid[:30])

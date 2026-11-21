@@ -67,8 +67,11 @@ def templates_for(business):
     there are tables)."""
     from .tables import TABLE_BIZ
 
-    return {k: v for k, v in TEMPLATES.items()
-            if (business == "clinic" or k not in CLINIC_ONLY) and (business in TABLE_BIZ or k not in TABLES_ONLY)}
+    out = {k: v for k, v in TEMPLATES.items()
+           if (business == "clinic" or k not in CLINIC_ONLY) and ((business in TABLE_BIZ and business != "gaming") or k not in TABLES_ONLY)}
+    if business == "gaming":  # a hall has no waiters (no tables): its worker runs the devices, the buffet and the drawer
+        out["cashier"] = ("عامل الصالة", TEMPLATES["cashier"][1])
+    return out
 
 
 def staff_of(user):

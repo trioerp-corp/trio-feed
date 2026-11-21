@@ -103,6 +103,36 @@ def _sales(orders):
     return t
 
 
+def _kinds(orders):
+    """Day close: the service charge, the delivery fees, and the sales by kind (dine-in tables / takeaway / delivery / counter)."""
+    from pos.delivery import FEE_CODE
+    from pos.restaurant import SVC_CODE
+
+    k = dict(svc=Z, fees=Z, split=[])
+    by = {}
+    for o in orders:
+        if o.cancelled:
+            continue
+        sign, raw = (-1 if o.is_return else 1), (o.raw or {})
+        for ln in raw.get("lines") or []:
+            if not isinstance(ln, dict):
+                continue
+            try:
+                v = Decimal(str(ln.get("qty") or 0)) * Decimal(str(ln.get("price") or 0)) - Decimal(str(ln.get("discount") or 0))
+            except (InvalidOperation, ValueError):
+                continue
+            code = str(ln.get("item_code"))
+            if code == SVC_CODE:
+                k["svc"] += sign * v
+            elif code == FEE_CODE:
+                k["fees"] += sign * v
+        kind = "tbl" if raw.get("table") else "dlv" if isinstance(raw.get("delivery"), dict) else "away" if raw.get("away") else "ctr"
+        by[kind] = by.get(kind, Z) + sign * o.total
+    names = dict(tbl="الصالة (الترابيزات)", away="تيك أواي", dlv="دليفري", ctr="بيع مباشر")
+    k["split"] = [(names[x], by[x]) for x in ("tbl", "away", "dlv", "ctr") if by.get(x)]
+    return k
+
+
 def _cogs(orders):
     moves = [o.stock_move_id for o in orders if o.stock_move_id and not o.cancelled]
     out = Z
@@ -142,7 +172,7 @@ def home(request):
 
     from pos.models import ShopPartner
 
-    return render(request, "ui/shop_home.html", dict(has_partners=ShopPartner.objects.filter(active=True).exists(), db_problem=problem(), owner=owner_balance(), expiring_n=len(expiring(14)), settings_obj=CompanySettings.get(), open_shifts=Shift.objects.filter(closed_at__isnull=True).count(),
+    return render(request, "ui/shop_home.html", dict(many_stores=Warehouse.objects.filter(active=True).count() > 1, no_expiry="expiry" in __import__("core.activities", fromlist=["x"]).unused(), no_production="production" in __import__("core.activities", fromlist=["x"]).unused(), has_partners=ShopPartner.objects.filter(active=True).exists(), db_problem=problem(), owner=owner_balance(), expiring_n=len(expiring(14)), settings_obj=CompanySettings.get(), open_shifts=Shift.objects.filter(closed_at__isnull=True).count(),
                                                      last_close=DayClose.objects.order_by("-date").first(),t=t, today=today, drawer=drawer, drawer_bal=T.cashbox_balance(drawer) if drawer else Z,
                                                      low=low[:15], low_n=len(low), stock_value=stock_value, devices=devices,
                                                      recent=(Order.objects.filter(device__branch=b) if b else Order.objects).select_related("device").order_by("-created_at_device")[:10],
@@ -216,35 +246,58 @@ def items(request):
                                         unit=request.POST.get("unit") or "قطعة", barcode=request.POST.get("barcode", "").strip(),
                                         sale_price=num(request.POST.get("price")) or None,
                                         reorder_level=reorder, extra=_extra(request.POST, "x_{}", fields))
+                    request.session["last_cat"] = request.POST.get("category")
                     messages.success(request, f"تمت الإضافة «{name}» بكود {code}")
         elif "save" in request.POST:
-            it = Item.objects.get(pk=request.POST["save"])
+            # every row the owner changed is saved — the row's own «حفظ», Enter after a scan, or «حفظ الكل» (nothing typed is lost)
             from inventory import variants as VR
-
-            if VR.is_parent(it):  # its price / barcode live on its sizes and colours
-                messages.info(request, f"«{it.name}» صنف بمقاسات وألوان — عدّله من هنا")
-                return redirect(f"/ui/shop/variants/?edit={it.pk}#vform")
-            p = request.POST.get(f"price_{it.pk}", "").strip()
-            if (num(p) or 0) < 0:
-                messages.error(request, f"«{it.name}»: سعر البيع لا يكون سالبًا")
-                return redirect(request.get_full_path())
-            it.sale_price = num(p)
-            it.barcode = request.POST.get(f"barcode_{it.pk}", "").strip()
             from inventory.reorder import parse as reorder_of
 
-            try:
-                it.reorder_level = reorder_of(request.POST.get(f"reorder_{it.pk}"), it.item_type)
-            except ValidationError as e:
-                messages.error(request, f"«{it.name}»: {e.messages[0]}")
-                return redirect(request.get_full_path())
-            if fields:
-                it.extra = {**(it.extra or {}), **_extra(request.POST, "x_{}_" + str(it.pk), fields, keep_empty=True)}
-                it.extra = {k: v for k, v in it.extra.items() if v}
-            it.save()
-            messages.success(request, f"تم الحفظ «{it.name}»")
+            pks = sorted({int(k.split("_")[1]) for k in request.POST if k.startswith("price_") and k.split("_")[1].isdigit()})
+            done, bad, at = [], [], request.POST.get("save")
+            for it in Item.objects.filter(pk__in=pks):
+                p = request.POST.get(f"price_{it.pk}", "").strip()
+                bc = request.POST.get(f"barcode_{it.pk}", "").strip()
+                ro = request.POST.get(f"reorder_{it.pk}", "").strip()
+                xs = _extra(request.POST, "x_{}_" + str(it.pk), fields, keep_empty=True) if fields else {}
+                same = (num(p) == it.sale_price or (not p and it.sale_price is None)) and bc == (it.barcode or "") and \
+                    ro == ("" if it.reorder_level is None else f"{it.reorder_level.normalize():f}") and \
+                    all((v or "") == str((it.extra or {}).get(k, "") or "") for k, v in xs.items())
+                if same and str(it.pk) != at:
+                    continue
+                if VR.is_parent(it):  # its price / barcode live on its sizes and colours
+                    if str(it.pk) == at:
+                        messages.info(request, f"«{it.name}» صنف بمقاسات وألوان — عدّله من هنا")
+                        return redirect(f"/ui/shop/variants/?edit={it.pk}#vform")
+                    continue
+                if (num(p) or 0) < 0:
+                    bad.append(f"«{it.name}»: سعر البيع لا يكون سالبًا")
+                    continue
+                try:
+                    reorder = reorder_of(ro, it.item_type)
+                except ValidationError as e:
+                    bad.append(f"«{it.name}»: {e.messages[0]}")
+                    continue
+                if bc and Item.objects.filter(barcode=bc).exclude(pk=it.pk).exists():
+                    bad.append(f"«{it.name}»: الباركود {bc} مسجّل لصنف آخر")
+                    continue
+                it.sale_price, it.barcode, it.reorder_level = num(p), bc, reorder
+                if fields:
+                    it.extra = {k: v for k, v in {**(it.extra or {}), **xs}.items() if v}
+                it.save()
+                done.append(it.name)
+            for m in bad:
+                messages.error(request, m)
+            if done:
+                messages.success(request, f"تم الحفظ «{done[0]}»" if len(done) == 1 else f"تم حفظ {len(done)} أصناف: " + "، ".join(done[:8]))
+            elif not bad:
+                messages.info(request, "لا يوجد تعديل للحفظ")
+            return redirect(request.get_full_path() + (f"#r{at}" if at and at.isdigit() else ""))
         return redirect(request.get_full_path())
     q = request.GET.get("q", "").strip()
-    qs = Item.objects.select_related("category").order_by("category__name", "name")
+    qs = Item.objects.select_related("category").exclude(code="0").order_by("category__name", "name")  # «صنف بدون كود» is the till's, not a row
+    # the hall's play time and package items are sold from the hall screen and priced on «الأجهزة والأسعار» / «الباقات» — not buffet rows
+    qs = qs.exclude(code="PLAY").exclude(play_package__isnull=False)
     if q:
         from inventory.names import norm as nz  # «اوجمنتين» finds «أوجمنتين», «panadol» finds «PANADOL»
 
@@ -263,7 +316,12 @@ def items(request):
     rows = list(qs[:400])
     for i in rows:
         i.xvals = [(f, (i.extra or {}).get(f["k"], "")) for f in fields]
-    return render(request, "ui/shop_items.html", dict(items=rows, q=q, cats=sorted(ItemCategory.objects.all(), key=lambda c: (c.name == "أخرى" or c.name.startswith("مستلزمات تشغيل"), c.name)),
+    cats = sorted(ItemCategory.objects.all(), key=lambda c: (c.name == "أخرى" or c.name.startswith("مستلزمات تشغيل"), c.name))
+    last = str(request.session.get("last_cat") or "")
+    if not any(str(c.pk) == last for c in cats):  # the category used last, else the shop's main one
+        main = next((c for c in cats if c.name in ("بقالة وتموين", "بقالة", "مشروبات")), None)
+        last = str(main.pk) if main else ""
+    return render(request, "ui/shop_items.html", dict(items=rows, q=q, cats=cats, last_cat=last,
                                                       g=request.GET, act=act, fields=fields, variants_on=__import__("inventory.variants", fromlist=["x"]).enabled()))
 
 
@@ -362,7 +420,11 @@ def purchases(request):
         total = sum((l.value or Z for l in m.lines.all()), Z) + vat.get(f"inventory.purchase-vat:{m.pk}", Z)
         pd = paid.get(f"PUR-{m.pk}", Z)
         rows.append((m, total, pd, total - pd))
-    return render(request, "ui/shop_purchases.html", dict(rows=rows))
+    saved = StockMove.objects.filter(pk=request.GET.get("saved") or 0, kind="receipt").first() if str(request.GET.get("saved", "")).isdigit() else None
+    from core.modules import enabled
+
+    labels_on = "labels" in enabled() and CompanySettings.get().business in ("market", "retail")
+    return render(request, "ui/shop_purchases.html", dict(rows=rows, saved=saved, labels_on=labels_on))
 
 
 @login_required
@@ -387,6 +449,9 @@ def purchase_new(request):
     ctx = dict(whs=whs, boxes=boxes, suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"),
                items=items, item_units=_purchase_units(items), today=timezone.localdate().isoformat(), p=P, old_lines=old,
                units_on="units" in enabled(), vat_registered=CompanySettings.get().vat_registered, ask=[])
+    off = __import__("core.activities", fromlist=["x"]).unused()
+    ctx.update(exp_on="expiry" not in off, ph_on="expiry" not in off)  # clothes / shoes: no expiry, no public price / bonus columns
+    ctx["grids"] = __import__("ui.supply", fromlist=["x"]).purchase_grid()  # 1.24.1 «شراء بالمقاسات»: one model, every size × colour at once
     if request.method == "POST":
         try:
             with transaction.atomic():
@@ -402,14 +467,17 @@ def purchase_new(request):
                         ctx["ask"].append(f"فاتورة رقم {inv_no} من «{sup.name}» مسجّلة من قبل ({dup.number} بتاريخ {dup.date:%d/%m/%Y}) — "
                                           "راجعها حتى لا تدخل البضاعة مرتين")
                 if ctx["ask"]:
-                    raise ValidationError("راجع التنبيه في أعلى الصفحة، ثم علّم «نعم، سجّلها» واضغط حفظ مرة أخرى إن كانت صحيحة")
+                    raise ValidationError("راجع التنبيه في أعلى الصفحة، ثم علّم «نعم، راجعتها — سجّلها» واضغط «حفظ الفاتورة» مرة أخرى إن كانت صحيحة")
                 date = dt.date.fromisoformat(P["date"])
                 rows, new_items = [], []
                 for ln in (dict(x) for x in old):  # copies: a refused save rolls the new item back, the form keeps its text
                     if not ln["item"] and ln["qty"] and ln["text"]:  # a material bought for the first time: added right here
-                        it = _purchase_new_item(ln["text"])
+                        it, made = _purchase_new_item(ln["text"], public=num(ln["public"]), unit=ln["unit"])
                         ln["item"] = str(it.pk)
-                        new_items.append(it.name)
+                        if made:
+                            new_items.append(it.name)
+                            if not ln["unit"] and it.units.filter(name="علبة").exists():  # a new drug sold by the strip is bought by the box
+                                ln["unit"] = "علبة"
                     if not ln["item"] or not ln["qty"]:
                         if ln["qty"] and not ln["item"]:
                             raise ValidationError("يوجد سطر بلا اسم صنف — اكتب اسم الصنف أو اختره من القائمة")
@@ -445,7 +513,7 @@ def purchase_new(request):
             if new_items:
                 msg += f" — وأُضيف صنف جديد: {'، '.join(new_items)} (اضبط وحدته وحد الطلب من الأصناف)"
             messages.success(request, msg)
-            return redirect("shop_purchases")
+            return redirect(__import__("django.urls", fromlist=["x"]).reverse("shop_purchases") + f"?saved={mv.pk}")  # → «اطبع ملصقات هذه الفاتورة»
         except (ValidationError, ValueError, KeyError, CashBox.DoesNotExist) as e:
             _errs(request, e)
     return render(request, "ui/shop_purchase_form.html", ctx)
@@ -490,30 +558,42 @@ def _purchase_supplier(name, phone, ok, ask):
     return Partner.objects.create(name=name, kind="supplier", phone=(phone or "")[:40])
 
 
-def _purchase_new_item(text):
-    """A name typed on a purchase line that is not in the list: a new stock item (the materials category of a café /
-    restaurant, «أخرى» elsewhere), without a reorder alert until the owner sets one."""
+def _purchase_new_item(text, public=None, unit=""):
+    """A name typed on a purchase line that is not picked from the list → (item, made). The item already there when the text is
+    its exact name — a size / colour of a model too («بلوزة — M / أسود») — its code or its barcode; else a new stock item (the
+    materials category of a café / restaurant, a drug of the library in a pharmacy, «أخرى» elsewhere) without a reorder alert."""
     from inventory import menu as MN
     from inventory import names as NM
+    from inventory.models import ItemUnit
 
     name = NM.clean(text.split(" | ")[0])
     if len(name) < 2:
         raise ValidationError("اكتب اسم الصنف الجديد كاملًا")
+    got = Item.objects.filter(active=True).filter(Q(code=name) | Q(barcode=name)).order_by("variant_of_id", "pk").first() \
+        or getattr(ItemUnit.objects.filter(barcode=name, item__active=True).select_related("item").first(), "item", None)
+    if got:
+        return got, False
+    k = NM.norm(name)
     got = NM.clash(name)
     if got:
-        return Item.objects.filter(name=got, active=True, variant_of__isnull=True).first()
+        return Item.objects.filter(name=got, active=True, variant_of__isnull=True).first(), False
+    got = next((v for v in Item.objects.filter(active=True, variant_of__isnull=False).only("pk", "name") if NM.norm(v.name) == k), None)
+    if got:
+        return Item.objects.get(pk=got.pk), False
     if (CompanySettings.get().activity or {}).get("key") == "pharmacy":  # a drug of the library: its Arabic names, generic, strips and price
         from inventory import drugs as D
 
         k = D.norm(name)
         r = next((r for r in D.library() if D.norm(r["en"]) == k), None)
-        if r:
-            return D.add(r)[0]
+        if r:  # the public price on the invoice is the box's (or the strip's when bought by the strip): it beats the library's reference
+            n = D.guess_strips(r["en"], r["route"])
+            box = (public * n if unit == "شريط" and n > 1 else public) if public and public > 0 else None
+            return D.add(r, box_price=box)[0], True
     cat = (ItemCategory.objects.filter(name__startswith="خامات").order_by("pk").first() if CompanySettings.get().business in ("cafe", "gaming") else None) \
         or ItemCategory.objects.filter(name="أخرى").first() or ItemCategory.objects.exclude(name__startswith="مستلزمات").order_by("pk").first()
     if not cat:
         raise ValidationError("لا يوجد تصنيف للأصناف — أضف تصنيفًا أولًا")
-    return Item.objects.create(code=MN._code(), name=name, category=cat, unit="قطعة", reorder_level=Z)
+    return Item.objects.create(code=MN._code(), name=name, category=cat, unit="قطعة", reorder_level=Z), True
 
 
 # ------------------------------------------------------------------ customers & suppliers with balances
@@ -644,9 +724,15 @@ def day_close(request):
     unverified = [s for s in shifts if not s.verified]
     from urllib.parse import quote
 
+    from pos.delivery import open_orders
+
+    kinds = _kinds(orders)
+    dq = [d for d in open_orders(b) if timezone.localtime(d.order.created_at_device).date() <= day]
+    kinds["dlv_out"], kinds["dlv_n"] = sum((d.due for d in dq), Z), len(dq)
+
     wa_phone = "".join(ch for ch in CompanySettings.get().owner_whatsapp if ch.isdigit())
     wa = f"https://wa.me/{wa_phone}?text={quote(whatsapp_text(day))}" if wa_phone else f"https://wa.me/?text={quote(whatsapp_text(day))}"
-    return render(request, "ui/shop_close.html", dict(day=day, shifts=shifts, t=t, drawer=drawer, drawer_bal=T.cashbox_balance(drawer, upto=day) if drawer else Z,
+    return render(request, "ui/shop_close.html", dict(day=day, shifts=shifts, t=t, k=kinds, drawer=drawer, drawer_bal=T.cashbox_balance(drawer, upto=day) if drawer else Z,
                                                       closed=closed and closed >= day, unverified=unverified, wa=wa,
                                                       branch=b, wallets=[(x, T.cashbox_balance(x, upto=day)) for x in ([b.cashbox] if b else CashBox.objects.filter(active=True))]))
 
@@ -717,15 +803,22 @@ def returns(request):
                 cc = p if p.is_postable else p.children.filter(is_postable=True).first()
                 from inventory.models import ItemUnit
 
+                from ui import supply as SUP
+
                 n = 0
-                units = request.POST.getlist("unit")
+                units, srcs = request.POST.getlist("unit"), request.POST.getlist("src")
                 for k, (item_id, qty) in enumerate(zip(request.POST.getlist("item"), request.POST.getlist("qty"))):
                     if item_id and qty:
                         q = num(qty)
                         if not q or q <= 0:
                             raise ValidationError("يجب أن تكون الكمية أكبر من صفر")
                         u = ItemUnit.objects.filter(item_id=item_id, name=units[k]).first() if k < len(units) and units[k] else None
-                        StockMoveLine.objects.create(move=mv, item_id=item_id, qty=q * (u.factor if u else 1), dim1=cc)  # 2 boxes = 2 × strips
+                        src = SUP.source_line(srcs[k], item_id) if kind == "preturn" and k < len(srcs) else None
+                        if src:  # 1.24.1: a batch from the expiry page goes back to its own supplier at its own purchase cost
+                            SUP.check_source(src, sup)
+                        StockMoveLine.objects.create(move=mv, item_id=item_id, qty=q * (u.factor if u else 1), dim1=cc,  # 2 boxes = 2 × strips
+                                                     unit_cost=SUP.batch_cost(src) if src else None,
+                                                     note=f"من فاتورة {src.move.number}" if src else "")
                         n += 1
                 if not n:
                     raise ValidationError("أضف صنفًا واحدًا على الأقل")
@@ -741,7 +834,12 @@ def returns(request):
     if (G.get("item") or "").isdigit():
         it = next((i for i in items if i.pk == int(G["item"])), None)
         if it:
-            pre = dict(item=it.pk, text=f"{it.name} | {it.code}", qty=G.get("qty", "")[:12], unit="")
+            pre = dict(item=it.pk, text=f"{it.name} | {it.code}", qty=G.get("qty", "")[:12], unit="", src=(G.get("src") or "")[:12])
+            from ui import supply as SUP
+
+            src = SUP.source_line(pre["src"], it.pk)
+            if src:  # the batch's own cost and supplier, shown before saving
+                pre.update(src_txt=f"من فاتورة {src.move.number} بسعر شراء {SUP.batch_cost(src):,.2f} ج للوحدة")
     return render(request, "ui/shop_returns.html", dict(
         rows=[(m, sum((l.value or Z for l in m.lines.all()), Z)) for m in qs], whs=Warehouse.objects.filter(active=True),
         suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"), item_units=_purchase_units(items),
@@ -857,7 +955,7 @@ def shop_settings(request):
             from pos.services import set_till_cfg
 
             try:
-                set_till_cfg(request.POST.get("disc_max", "0"))
+                set_till_cfg(request.POST.get("disc_max", "0"), policy=request.POST.get("policy") if "policy" in request.POST else None)
                 s = CompanySettings.get()
                 pre = request.POST.get("scale_preset", "")
                 if pre in SCALE_PRESETS:
@@ -997,8 +1095,8 @@ def shop_settings(request):
                                                           users=U.objects.filter(is_superuser=False).order_by("username"),
                                                           s=CompanySettings.get(), br=Branch.objects.first(), bkey=_bkey(request),
                                                           printers=__import__("pos.kitchen", fromlist=["x"]).printers(),
-                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), plus=__import__("pos.plus", fromlist=["x"]).cfg(), scale_presets=[
-                                                              (k, v[0]) for k, v in SCALE_PRESETS.items()], scale_now=_scale_now(),
+                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), policy=__import__("pos.services", fromlist=["x"]).receipt_policy(), plus=__import__("pos.plus", fromlist=["x"]).cfg(), scale_presets=[
+                                                              (k, v[0]) for k, v in SCALE_PRESETS.items()], scale_now=_scale_now(), off=__import__("core.activities", fromlist=["x"]).unused(),
                                                           **_user_roles()))
 
 
@@ -1095,6 +1193,14 @@ def order_edit(request, pk):
                 V.void_order(order, reason, request.user)
                 messages.success(request, f"الفاتورة {order.uid} أُلغيت وعادت البضاعة إلى المخزن")
                 return redirect("shop_sales")
+            if request.POST.get("action") == "pkg_refund":  # 1.24.1 a partly played hall package: the unused minutes come back
+                if not V.is_owner(request.user):
+                    raise PermissionDenied
+                from gaming.bookings import refund_package
+
+                ret = refund_package(order, reason, request.user)
+                messages.success(request, f"سُجّل الاسترداد {ret.total:,.2f} ج بالفاتورة {ret.uid} وخُصمت الدقائق من رصيد العميل")
+                return redirect("order_edit", order.pk)
             lines = []
             for i in range(int(request.POST.get("rows") or 0)):
                 code = request.POST.get(f"code_{i}", "").strip()
@@ -1110,8 +1216,11 @@ def order_edit(request, pk):
         return redirect("order_edit", order.pk)
     items = Item.objects.filter(active=True, sale_price__isnull=False).order_by("name").values("code", "name", "sale_price")
     later = Order.objects.filter(uid__startswith=order.uid + "-E").order_by("-id").first()
+    from gaming.bookings import refund_info
+
+    pkg = refund_info(order) if editable and V.is_owner(request.user) else None
     return render(request, "ui/order_edit.html", dict(o=order, lines=list(order.lines.select_related("item")), editable=editable, items=items,
-                                                      later=later, can_cash=can_see_cash(request.user)))
+                                                      later=later, can_cash=can_see_cash(request.user), pkg=pkg))
 
 
 @login_required
@@ -1218,12 +1327,20 @@ def labels(request):
         qs = VR.variants(parent)
         for v in qs:
             v.n_default, v.lbl_on = (max(1, int(v.qty_on_hand)), True) if v.qty_on_hand > 0 else (1, False)  # only what is on the shelf
+    move = StockMove.objects.filter(pk=request.GET.get("move") or 0, kind__in=("receipt", "opening")).first() if str(request.GET.get("move", "")).isdigit() else None
+    if move:  # 1.24.1 «اطبع ملصقات هذه الفاتورة»: every item of a purchase, as many labels as were received
+        got = {}
+        for ln in move.lines.select_related("item__variant_of"):
+            got[ln.item_id] = got.get(ln.item_id, Decimal(0)) + ln.qty
+        qs = sorted(Item.objects.filter(pk__in=got).select_related("variant_of"), key=lambda i: i.name)
+        for v in qs:
+            v.n_default, v.lbl_on = max(1, min(int(got[v.pk]), 200)), True
     chosen = []
     if request.method == "POST":
         for it in Item.objects.filter(pk__in=request.POST.getlist("item")).select_related("variant_of"):
             n = int(num(request.POST.get(f"n_{it.pk}")) or 1)
             chosen += [it] * max(1, min(n, 200))
-    return render(request, "ui/shop_labels.html", dict(items=qs[:300], chosen=chosen, q=q, company=CompanySettings.get(), parent=parent))
+    return render(request, "ui/shop_labels.html", dict(items=qs[:300], chosen=chosen, q=q, company=CompanySettings.get(), parent=parent, move=move))
 
 
 def expiring(days=30):
@@ -1243,7 +1360,7 @@ def expiring(days=30):
         in_stock = min(ln.qty, left)
         left -= in_stock
         if ln.expiry <= limit:
-            rows.append(dict(item=ln.item, expiry=ln.expiry, produced=ln.produced, qty=in_stock, days=(ln.expiry - today).days, move=ln.move,
+            rows.append(dict(item=ln.item, expiry=ln.expiry, produced=ln.produced, qty=in_stock, days=(ln.expiry - today).days, move=ln.move, line=ln,
                              value=(in_stock * ln.item.avg_cost).quantize(Decimal("0.01"))))
     return sorted(rows, key=lambda r: r["expiry"])
 
@@ -1252,10 +1369,11 @@ def expiring(days=30):
 def expiry(request):
     if not request.user.has_perm("inventory.view_item"):
         raise PermissionDenied
+    dflt = 180 if (CompanySettings.get().activity or {}).get("key") == "pharmacy" else 30  # a pharmacy returns to the company months before
     try:
-        days = max(1, min(int(request.GET.get("days") or 30), 365))
+        days = max(1, min(int(request.GET.get("days") or dflt), 365))
     except ValueError:
-        days = 30
+        days = dflt
     rows = expiring(days)
     return render(request, "ui/shop_expiry.html", dict(rows=rows, days=days, expired=[r for r in rows if r["days"] < 0],
                                                        value=sum((r["value"] for r in rows), Z)))
@@ -1271,7 +1389,7 @@ def whatsapp_text(day):
     lines = [f"ملخص {CompanySettings.get().name} — {day:%d/%m/%Y}",
              f"المبيعات: {t['net']:,.2f} ج ({t['n']} فاتورة)", f"نقدي {t['cash']:,.2f} — فيزا/محافظ {t['card']:,.2f} — آجل {t['credit']:,.2f}",
              f"مجمل الربح التقريبي: {t['net_ex_vat'] - cogs:,.2f}", f"رصيد الدرج: {T.cashbox_balance(drawer, upto=day) if drawer else 0:,.2f}",
-             f"رصيد صاحب المحل: {owner_balance():,.2f}", "powered by Trio"]
+             f"رصيد صاحب المحل: {owner_balance():,.2f}", "بواسطة برنامج Trio"]
     return "\n".join(lines)
 
 
@@ -1424,6 +1542,9 @@ def count(request):
     """جرد: every item with its book balance, type what was counted, see the differences, then settle them (shortage → losses)."""
     if not request.user.has_perm("inventory.view_item"):
         raise PermissionDenied
+    if CompanySettings.get().business in ("gaming", "clinic") and not (V.is_owner(request.user) or request.user.has_perm("inventory.add_stockmove")):
+        # 1.24.1 the hall worker / the reception: counting the buffet or the store is the owner's (or the store keeper's)
+        raise PermissionDenied("جرد المخزن لصاحب المحل أو أمين المخزن فقط")
     from inventory import count as CNT
 
     b = _b(request)

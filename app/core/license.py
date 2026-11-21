@@ -16,7 +16,7 @@ from functools import lru_cache
 
 PUBLIC_KEY = "tM+bQlw/40oF17B+DvmHJ1TxQd1oIs0oMTOJ3LxDs4c="
 TRIAL_DAYS, WARN_DAYS = 14, 10
-SUPPORT = "Trio · 01008030459 · 01121460640"
+SUPPORT = "Trio · 01228827915 · 01121460640"
 
 
 def _b64d(s):
