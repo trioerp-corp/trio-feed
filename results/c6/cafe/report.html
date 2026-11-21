@@ -1,0 +1,865 @@
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>Trio QA</title>
+<style>body{font-family:Tahoma,Arial;margin:20px;color:#0B1F3A}table{border-collapse:collapse;width:100%;margin:12px 0}td,th{border:1px solid #DCE5EF;padding:6px 8px;vertical-align:top;font-size:13px}
+th{background:#EEF2F7}tr.high td:first-child{background:#FDECEA}tr.medium td:first-child{background:#FFF4E0}pre{white-space:pre-wrap;margin:0;font:12px monospace;max-height:160px;overflow:auto}</style>
+<h1>تقرير اختبار Trio</h1><p>50 تشغيلة · الأنشطة: كافيه، محل عصير، مطعم مشويات · مشاكل: 🔴 1 · 🟠 4 · ⚪ 0</p>
+<h2>المشاكل (مرتبة بالأهمية ثم بعدد التشغيلات التي ظهرت فيها)</h2><table><tr><th>الأهمية</th><th>النوع</th><th>المكان</th><th>التفاصيل</th><th>تكررت</th><th></th></tr><tr class='high'><td>🔴 عالية</td><td>flow</td><td>الترابيزات</td><td><pre>TimeoutError: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for e</pre></td><td>50</td><td><a href=shots/issue-2.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>till-empty</td><td>الكاشير</td><td><pre>لا توجد أصناف في الكاشير بعد التجهيز (لا يمكن البيع فورًا)</pre></td><td>50</td><td><a href=shots/issue-1.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>garbage-text</td><td>/ui/shop/menu/</td><td><pre>«None» ظاهرة على الشاشة</pre></td><td>1</td><td><a href=shots/issue-3.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>garbage-text</td><td>/ui/shop/menu/ ← نموذج 3 (فارغ)</td><td><pre>«None» ظاهرة على الشاشة</pre></td><td>1</td><td><a href=shots/issue-4.jpg>صورة</a></td></tr><tr class='medium'><td>🟠 متوسطة</td><td>garbage-text</td><td>/ui/shop/menu/ ← نموذج 3 (بقيم)</td><td><pre>«None» ظاهرة على الشاشة</pre></td><td>1</td><td><a href=shots/issue-5.jpg>صورة</a></td></tr></table>
+<h2>التشغيلات</h2><table><tr><th>#</th><th>النشاط</th><th>الشاشة</th><th>المدة</th><th>الخطوات</th></tr><tr><td>1</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (3.0s)<br>pages in the menu: 27<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 600.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 5 → 7<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.8s)</small></td></tr><tr><td>2</td><td>كافيه</td><td>🖥</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (1.9s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 300.00, credit<br>✔ فاتورة مشتريات (0.3s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 14<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.6s)</small></td></tr><tr><td>3</td><td>مطعم مشويات</td><td>📱</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (1.7s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 300.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 11<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.8s)</small></td></tr><tr><td>4</td><td>محل عصير</td><td>🖥</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.1s)</small></td></tr><tr><td>5</td><td>كافيه</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 26.50, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.1s)</small></td></tr><tr><td>6</td><td>كافيه</td><td>📱</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.5s)</small></td></tr><tr><td>7</td><td>مطعم مشويات</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 15.50, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.2s)</small></td></tr><tr><td>8</td><td>كافيه</td><td>🖥</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.3s)</small></td></tr><tr><td>9</td><td>محل عصير</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.7s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.4s)</small></td></tr><tr><td>10</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 1440.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 19<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.6s)</small></td></tr><tr><td>11</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 156.00 — اختر «من صاحب المحل ) — on credit<br>purchase: 2 lines, 312.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.4s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.3s)</small></td></tr><tr><td>12</td><td>محل عصير</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.7s)</small></td></tr><tr><td>13</td><td>محل عصير</td><td>🖥</td><td>52 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (5.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (2.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (3.2s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.9s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.1s)</small></td></tr><tr><td>14</td><td>محل عصير</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.3s)</small></td></tr><tr><td>15</td><td>محل عصير</td><td>📱</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.1s)</small></td></tr><tr><td>16</td><td>محل عصير</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.3s)</small></td></tr><tr><td>17</td><td>مطعم مشويات</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.6s)</small></td></tr><tr><td>18</td><td>مطعم مشويات</td><td>📱</td><td>46 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 250.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 10 → 13<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (12.7s)</small></td></tr><tr><td>19</td><td>كافيه</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.1s)</small></td></tr><tr><td>20</td><td>كافيه</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 112.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 15<br>✔ مرتجع مشتريات / هالك (0.5s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.9s)</small></td></tr><tr><td>21</td><td>محل عصير</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.2s)</small></td></tr><tr><td>22</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.7s)</small></td></tr><tr><td>23</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 7.25, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.8s)</small></td></tr><tr><td>24</td><td>كافيه</td><td>📱</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 62.50 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 125.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 5 → 12<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.4s)</small></td></tr><tr><td>25</td><td>مطعم مشويات</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.9s)</small></td></tr><tr><td>26</td><td>مطعم مشويات</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 250.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 10 → 8<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.5s)</small></td></tr><tr><td>27</td><td>محل عصير</td><td>📱</td><td>44 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.9s)</small></td></tr><tr><td>28</td><td>محل عصير</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.3s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.8s)</small></td></tr><tr><td>29</td><td>كافيه</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.5s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 32.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.5s)</small></td></tr><tr><td>30</td><td>كافيه</td><td>📱</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 132.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.6s)</small></td></tr><tr><td>31</td><td>محل عصير</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.9s)</small></td></tr><tr><td>32</td><td>مطعم مشويات</td><td>🖥</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.2s)</small></td></tr><tr><td>33</td><td>مطعم مشويات</td><td>📱</td><td>44 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.3s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.2s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 14.75 — اختر «من صاحب المحل () — on credit<br>purchase: 2 lines, 29.50, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 14<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (11.5s)</small></td></tr><tr><td>34</td><td>كافيه</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 35.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 10 → 17<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.9s)</small></td></tr><tr><td>35</td><td>كافيه</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.8s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.5s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.7s)</small></td></tr><tr><td>36</td><td>مطعم مشويات</td><td>📱</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 19.25 — اختر «من صاحب المحل () — on credit<br>purchase: 2 lines, 19.25, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 1 → 0<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 20<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.0s)</small></td></tr><tr><td>37</td><td>محل عصير</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.4s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.4s)</small></td></tr><tr><td>38</td><td>كافيه</td><td>🖥</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 120.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 10<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.1s)</small></td></tr><tr><td>39</td><td>محل عصير</td><td>📱</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 5<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.7s)</small></td></tr><tr><td>40</td><td>مطعم مشويات</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 26.50, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 20<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.1s)</small></td></tr><tr><td>41</td><td>كافيه</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 7.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 7.00, credit<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 2 → 9<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 9<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.2s)</small></td></tr><tr><td>42</td><td>محل عصير</td><td>📱</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.8s)</small></td></tr><tr><td>43</td><td>كافيه</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 2 lines, 1452.00, owner<br>✔ فاتورة مشتريات (0.5s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 12 → 19<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 15<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.7s)</small></td></tr><tr><td>44</td><td>محل عصير</td><td>🖥</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.6s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.8s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.5s)<br>returns: expired 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.7s)</small></td></tr><tr><td>45</td><td>محل عصير</td><td>📱</td><td>40 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (7.7s)</small></td></tr><tr><td>46</td><td>محل عصير</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.5s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.4s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (9.1s)</small></td></tr><tr><td>47</td><td>مطعم مشويات</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.1s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 1<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.6s)</small></td></tr><tr><td>48</td><td>مطعم مشويات</td><td>📱</td><td>43 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.7s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.0s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: 1 lines, 12.00, owner<br>✔ فاتورة مشتريات (0.4s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 2<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (10.0s)</small></td></tr><tr><td>49</td><td>كافيه</td><td>🖥</td><td>42 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.5s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.3s)<br>✔ إضافة منتجات بيد المالك (0.7s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 12.00 — اختر «من صاحب المحل () — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: expired 1 × 7<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.8s)</small></td></tr><tr><td>50</td><td>محل عصير</td><td>🖥</td><td>41 ث</td><td><small>✔ أول تشغيل (معالج التجربة) (2.4s)<br>pages in the menu: 27<br>✔ كل الصفحات (2.4s)<br>✔ إضافة منتجات بيد المالك (0.9s)<br>logo: uploaded and shown in the top bar<br>✔ تجهيز المحل: الشعار (0.3s)<br>✔ الكاشير والبيع (2.6s)<br>✖ الترابيزات: Page.click: Timeout 15000ms exceeded.
+Call log:
+  - waiting for locator(&quot;#tablesBtn&quot;)
+  -     - locator resolved to &lt;button class=&quot;btn&quot; type=&quot;button&quot; id=&quot;tablesBtn&quot;&gt;🍽 الترابيزات&lt;/button&gt;
+  -   - attempting click action
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -     - waiting 20ms
+  -     2 × waiting for element to be visible, enabled and stable
+  -       - element is not visible
+  -     - retrying click action
+  -       - waiting 100ms
+  -     29 × waiting for element to be visible, enabled and stable
+  -        - element is not visible
+  -      - retrying click action
+  -        - waiting 500ms
+<br>purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 6.00 — اختر «من صاحب المحل (م) — on credit<br>purchase: 1 lines, 12.00, credit<br>✔ فاتورة مشتريات (0.6s)<br>dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.<br>stocktake: 3 → 6<br>✔ الجرد والتسوية (0.4s)<br>returns: preturn 1 × 13<br>✔ مرتجع مشتريات / هالك (0.3s)<br>day close: 0.0 (0 orders)<br>✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)<br>orders in the books: 0<br>✔ الحسابات متوازنة (0.0s)<br>✔ النماذج (8.0s)</small></td></tr></table></html>
