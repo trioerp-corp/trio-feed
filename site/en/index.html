@@ -3,7 +3,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
-<style>[hidden]{display:none!important}img{max-width:100%}</style><style>
+<style>[hidden]{display:none!important}img{max-width:100%}
+/* phone: the top bar must fit (حسابي + language + order button) — no sideways scroll */
+html,body{max-width:100%;overflow-x:hidden}
+@media (max-width:620px){nav.top{gap:8px}nav.top .navr{gap:6px;flex-wrap:nowrap;min-width:0}nav.top .navr .lang{font-size:12.5px;padding:6px 8px;white-space:nowrap}nav.top .navr .btn{padding:8px 12px;font-size:13px;white-space:nowrap}nav.top .brand img,nav.top .logo img{max-height:30px}}
+@media (max-width:400px){nav.top .navr .lang[hreflang]{display:none}nav.top .navr .btn{padding:8px 10px}}
+</style><style>
 /* Layout: dark brand hero with the real cashier screen, then light sections; plans as cards, the lifetime offer as a dark band, the order calculator as a receipt beside the form */
 :root{
   --bg:#f4f7fb; --paper:#ffffff; --ink:#0a1f3c; --muted:#56677d; --line:#dce5ef;
