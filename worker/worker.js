@@ -383,6 +383,70 @@ async function notify(req, env) {
   return json(out);
 }
 
+// ---------- 1.25 WhatsApp alerts to shop owners (WhatsApp Cloud API, Trio's own WhatsApp Business number)
+// secrets: WA_TOKEN (permanent system-user token), WA_PHONE_ID (the number's Phone number ID); optional vars: WA_TPL_ALERT (default
+// trio_alert: {{1}} shop, {{2}} what, {{3}} details), WA_TPL_DAILY (default trio_daily: {{1}} shop, {{2}} the digest), WA_LANG (ar),
+// WA_DAILY_CAP (1000 a day for all shops). Only licensed copies (like the e-mail); a shop at most 30 a day, one number at most 12.
+const WA_ERR = { 131026: "الرقم ليس على واتساب", 131030: "الرقم غير مسموح له بعد (رقم تجريبي في حساب ميتا)", 132001: "القالب غير موجود أو لم يُعتمد بعد",
+  132000: "عدد متغيرات القالب غير صحيح", 190: "مفتاح واتساب منتهي — جدّد WA_TOKEN", 131056: "رسائل كثيرة لنفس الرقم — بعد قليل", 131049: "ميتا أوقفت الرسالة مؤقتًا" };
+function waParam(s, n) { return String(s || "").replace(/[\r\n\t]+/g, " • ").replace(/ {4,}/g, "   ").slice(0, n); }
+async function waSend(req, env) {
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "")) return err("طلب ناقص");
+  if (!(env.WA_TOKEN && env.WA_PHONE_ID)) return json({ wa: "off" });
+  const to = String(b.to || "").replace(/\D/g, "");
+  if (!/^[1-9]\d{9,14}$/.test(to)) return json({ wa: "رقم واتساب صاحب المحل غير صحيح" });
+  const lic = await readLicence(b.lic);
+  if (!lic || lic.m !== b.m || (lic.e && !lic.l && lic.e < today())) return json({ wa: "واتساب التلقائي للنسخ المفعّلة — يصل التنبيه على تليجرام / البريد" });
+  const id = await sidOf(b.k);
+  if ((await bump(env, "rl:wa:" + id + ":" + today(), 90000)) > 30) return json({ wa: "وصلت تنبيهات اليوم إلى حدها (30) — غدًا" });
+  if ((await bump(env, "rl:wan:" + to + ":" + today(), 90000)) > 12) return json({ wa: "وصلت تنبيهات هذا الرقم اليوم إلى حدها — غدًا" });
+  if ((await bump(env, "rl:wa:" + today(), 90000)) > Number(env.WA_DAILY_CAP || 1000)) return json({ wa: "خدمة واتساب وصلت حدها اليومي — غدًا" });
+  const daily = b.kind === "daily", shop = waParam(b.shop || "محلك", 60), text = waParam(b.text, 900) || "—";
+  const params = daily ? [shop, text] : [shop, waParam(b.title || "تنبيه", 60), text];
+  const body = { messaging_product: "whatsapp", to, type: "template", template: { name: daily ? (env.WA_TPL_DAILY || "trio_daily") : (env.WA_TPL_ALERT || "trio_alert"),
+    language: { code: env.WA_LANG || "ar" }, components: [{ type: "body", parameters: params.map((t) => ({ type: "text", text: t })) }] } };
+  try {
+    const r = await fetch("https://graph.facebook.com/" + (env.WA_API_VER || "v21.0") + "/" + env.WA_PHONE_ID + "/messages",
+      { method: "POST", headers: { Authorization: "Bearer " + env.WA_TOKEN, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.messages && j.messages.length) return json({ wa: "ok", id: j.messages[0].id });
+    const c = j.error && (j.error.code || 0);
+    return json({ wa: WA_ERR[c] || "واتساب رفض الرسالة" + (c ? " (" + c + ")" : "") });
+  } catch (e) { return json({ wa: "لا يوجد اتصال بواتساب الآن" }); }
+}
+function waGuide(env) {
+  const on = !!(env.WA_TOKEN && env.WA_PHONE_ID);
+  return new Response(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Trio — تفعيل تنبيهات واتساب</title>
+<meta name="robots" content="noindex"><style>body{font:16px/1.8 system-ui,Tahoma,sans-serif;background:#F3F6FA;color:#0B1F3A;margin:0}main{max-width:760px;margin:auto;padding:18px}
+h1{font-size:22px;color:#0A3A66}h2{font-size:17px;margin:22px 0 6px;color:#17698F}.c{background:#fff;border-radius:14px;padding:14px 18px;border:1px solid #DFE6EF;margin-top:12px}
+code,pre{background:#EEF3F7;border-radius:6px;padding:1px 6px;direction:ltr;unicode-bidi:embed}pre{padding:10px;white-space:pre-wrap;text-align:left}
+.st{display:inline-block;padding:3px 12px;border-radius:99px;font-weight:700;background:${on ? "#DCFCE7;color:#166534" : "#FEF3C7;color:#92400E"}}li{margin:4px 0}</style></head><body><main>
+<h1>تفعيل تنبيهات واتساب التلقائية لأصحاب المحلات</h1><p>الحالة الآن على خادم Trio: <span class="st">${on ? "مفعّل ✔" : "غير مفعّل بعد — تصل التنبيهات على تليجرام والبريد"}</span></p>
+<div class="c"><b>الفكرة:</b> رقم واتساب واحد لـ Trio (حساب واتساب للأعمال تملكه أنت) يرسل لكل صاحب محل تنبيهاته على رقمه المكتوب في «الإعدادات». الرسائل التي تبدأها الشركة لازم تكون <b>قوالب معتمدة</b> من ميتا، وتُحاسَب ميتا عليها بالمحادثة (فئة «Utility» أرخص من التسويق).</div>
+<h2>١) الحساب (تعمله أنت بنفسك مرة واحدة)</h2><ol>
+<li>ادخل <code>business.facebook.com</code> بحسابك وأنشئ «حساب أعمال» باسم Trio (مع أوراق النشاط لو طلبت ميتا التحقق).</li>
+<li>من <code>developers.facebook.com</code> ← «إنشاء تطبيق» ← النوع «أعمال» ← أضف منتج <b>WhatsApp</b> واربطه بحساب الأعمال.</li>
+<li>WhatsApp ← «API Setup» ← أضف رقم هاتف <b>غير مستخدم على واتساب العادي</b> (شريحة جديدة) وأكّده بالكود، واكتب اسم العرض «Trio».</li>
+<li>أضف وسيلة دفع في «WhatsApp Manager» ← الفواتير (بدونها لا تُرسل القوالب لأرقام حقيقية).</li></ol>
+<h2>٢) القالبان (WhatsApp Manager ← Message templates ← Create)</h2>
+<p>الفئة: <b>Utility</b> · اللغة: <b>Arabic (ar)</b> · النص بالضبط (المتغيرات بين القوسين):</p>
+<pre>الاسم: trio_alert
+تنبيه من برنامج Trio لمحل {{1}}
+{{2}}: {{3}}</pre><pre>الاسم: trio_daily
+ملخص اليوم لمحل {{1}} من برنامج Trio:
+{{2}}</pre><p>انتظر حتى تصبح حالتهما «Active» (عادةً دقائق إلى ساعات). لو اخترت أسماء أخرى اكتبها في المتغيرين <code>WA_TPL_ALERT</code> و<code>WA_TPL_DAILY</code>.</p>
+<h2>٣) المفتاح الدائم</h2><ol><li>إعدادات الأعمال ← المستخدمون ← <b>System users</b> ← أضف مستخدم نظام (Admin).</li>
+<li>«Assign assets»: اختر التطبيق وحساب واتساب (WhatsApp account) بصلاحية كاملة.</li>
+<li>«Generate new token» ← التطبيق ← المدة <b>Never</b> ← الصلاحيات <code>whatsapp_business_messaging</code> و<code>whatsapp_business_management</code> ← انسخ المفتاح.</li>
+<li>من صفحة API Setup انسخ <b>Phone number ID</b> (رقم طويل — ليس رقم الهاتف).</li></ol>
+<h2>٤) ضعهما في الـ Worker</h2><pre>npx wrangler secret put WA_TOKEN
+npx wrangler secret put WA_PHONE_ID</pre><p>(أو من لوحة Cloudflare ← Workers ← trio ← Settings ← Variables and Secrets.) لا حاجة لإعادة رفع الكود. بعدها تتحول الحالة في أعلى هذه الصفحة إلى «مفعّل».</p>
+<h2>٥) التجربة</h2><p>في البرنامج: «الإعدادات» ← «تنبيهات صاحب المحل» ← اكتب رقم واتساب صاحب المحل ← «أرسل تنبيه تجربة». التنبيهات التلقائية للنسخ المفعّلة فقط، وحتى 30 رسالة يوميًا لكل محل. لو لم يُفعَّل واتساب أو رفض الرسالة يصل التنبيه نفسه على تليجرام / البريد.</p>
+<div class="c">لا ينشئ Trio أي حساب نيابةً عنك، ولا يحفظ مفتاح واتساب إلا كسرّ في Cloudflare.</div></main></body></html>`, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+}
+
 function png(b64) { return new Response(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)), { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=604800" } }); }
 function manifest(k, shop) {
   return new Response(JSON.stringify({
@@ -423,7 +487,7 @@ section h2{font-size:15px;margin:0;padding:12px 14px;border-bottom:1px solid var
 section h2 em{font-style:normal;font-size:12px;color:var(--mut);font-weight:600}
 ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}li:last-child{border:0}
 li span:last-child{font-weight:700;white-space:nowrap}li .s{color:var(--mut);font-size:12px;font-weight:400}.empty{padding:14px;color:var(--mut);font-size:14px}
-.tag{font-size:11px;border-radius:6px;padding:1px 6px;background:var(--bg);color:var(--mut);margin-inline-start:6px}.tag.r{color:var(--bad)}
+.tag{font-size:11px;border-radius:6px;padding:1px 6px;background:var(--bg);color:var(--mut);margin-inline-start:6px}.tag.r{color:var(--bad)}.tag.g{color:var(--good)}
 .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.btn{flex:1;min-width:140px;border:0;border-radius:14px;padding:13px;font:700 15px Cairo,system-ui;background:var(--brand);color:#fff;text-decoration:none;text-align:center;cursor:pointer}
 .btn.l{background:var(--card);color:var(--brand);border:1.5px solid var(--brand)}
 .tip{background:var(--card);border:1px dashed var(--gold);border-radius:14px;padding:12px 14px;margin-top:12px;font-size:13.5px;display:none}.tip b{color:var(--gold)}
@@ -455,6 +519,17 @@ const N=v=>Number(v||0).toLocaleString("en-US",{maximumFractionDigits:2});
 const ago=t=>{const m=Math.round((Date.now()-Date.parse(t))/60000);return m<1?"الآن":m<60?"من "+m+" دقيقة":m<1440?"من "+Math.round(m/60)+" ساعة":"من "+Math.round(m/1440)+" يوم"};
 let deferred=null;addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;const b=$("#inst");if(b)b.style.display=""});
 function list(rows,f,emptyText){return rows&&rows.length?"<ul>"+rows.map(f).join("")+"</ul>":'<div class="empty">'+emptyText+"</div>"}
+// 1.25 comparisons: today vs the same weekday last week (same hour), month vs last month, best / most profitable items, shortages, per branch
+function pc(v,now){if(v==null)return +now?'<span class="tag">جديد</span>':"";const up=+v>=0;return '<span class="tag'+(up?" g":" r")+'">'+(up?"▲ ":"▼ ")+Math.abs(+v)+"%</span>"}
+function cmpH(c){let h='<section><h2>مقارنات</h2><ul>';
+ if(c.d)h+="<li><span>اليوم مقابل "+E(c.d.label)+' <span class="s">'+N(c.d.prev)+" ج — "+(c.d.pn||0)+" فاتورة</span></span><span>"+N(c.d.now)+" "+pc(c.d.pct,c.d.now)+"</span></li>";
+ if(c.m)h+="<li><span>الشهر حتى اليوم مقابل "+E(c.m.label)+' <span class="s">'+N(c.m.prev)+" ج · الشهر الماضي كله "+N(c.m.full)+"</span></span><span>"+N(c.m.now)+" "+pc(c.m.pct,c.m.now)+"</span></li>";
+ h+="</ul>";
+ if(c.br&&c.br.length)h+='<h2>الفروع <em>اليوم · الشهر</em></h2>'+list(c.br,b=>"<li><span>"+E(b.n)+' <span class="s">الشهر '+N(b.m)+" "+pc(b.mpct,b.m)+(+b.s?' · عجز أدراج '+N(Math.abs(+b.s)):"")+"</span></span><span>"+N(b.d)+" "+pc(b.dpct,b.d)+"</span></li>","");
+ if(c.best&&c.best.length)h+='<h2>الأكثر مبيعًا هذا الشهر</h2>'+list(c.best,x=>"<li><span>"+E(x.n)+' <span class="s">× '+N(x.q)+"</span></span><span>"+N(x.v)+"</span></li>","");
+ if(c.prof&&c.prof.length)h+='<h2>الأكثر ربحًا هذا الشهر</h2>'+list(c.prof,x=>"<li><span>"+E(x.n)+' <span class="s">هامش '+x.m+"% من "+N(x.v)+"</span></span><span>"+N(x.p)+"</span></li>","");
+ if(c.short&&c.short.length)h+='<h2>عجز الكاشيرات <em>آخر 30 يومًا</em></h2>'+list(c.short,x=>"<li><span>"+E(x.c)+' <span class="s">'+x.k+" من "+x.n+" وردية بعجز"+(+x.o?" · زيادة "+N(x.o):"")+'</span></span><span class="'+(+x.s<0?"no":"")+'">'+N(Math.abs(+x.s))+"</span></li>","");
+ return h+"</section>"}
 function render(r){
   const d=r.d,old=(Date.now()-Date.parse(r.at))>25*60000,today=d.day===new Date(Date.now()+2*3600e3).toISOString().slice(0,10);
   $("#shop").textContent=d.shop||"محلك";document.title="Trio — "+(d.shop||"");
@@ -466,6 +541,7 @@ function render(r){
    '<div class="tile"><div class="k">مبيعات الشهر</div><div class="v">'+N((d.month||{}).net)+'</div></div><div class="tile'+(d.low_n?" warn":"")+'"><div class="k">نواقص</div><div class="v">'+(d.low_n||0)+' صنف</div></div>'+
    (t.credit?'<div class="tile"><div class="k">آجل اليوم</div><div class="v">'+N(t.credit)+'</div></div>':"")+(t.returns?'<div class="tile warn"><div class="k">مرتجعات</div><div class="v">'+N(t.returns)+'</div></div>':"")+"</div>";
   if(d.branches)h+='<section><h2>الفروع اليوم</h2>'+list(d.branches,b=>"<li><span>"+E(b.n)+' <span class="s">درج '+N(b.cash)+"</span></span><span>"+N(b.v)+"</span></li>","")+"</section>";
+  if(d.cmp)h+=cmpH(d.cmp);
   if(d.play)h+='<section><h2>الأجهزة الشغالة <em>'+d.play.length+(d.play.some(p=>p.v!=null)?' · '+N(d.play.reduce((a,p)=>a+(+p.v||0),0)):'')+'</em></h2>'+list(d.play,p=>"<li><span>"+E(p.n)+(p.c?" — "+E(p.c):"")+' <span class="s">من '+E(p.at)+" · "+p.m+" د</span></span><span>"+(p.v!=null?N(p.v):p.m+" د")+"</span></li>","لا توجد أجهزة مشغولة الآن")+"</section>";
   if(d.hall&&(d.hall.disc||d.hall.void))h+='<section><h2>الصالة اليوم</h2><ul><li><span>خصومات العمال <span class="s">'+(d.hall.disc_n||0)+' فاتورة</span></span><span>'+N(d.hall.disc)+'</span></li><li><span>جلسات ملغاة</span><span>'+(d.hall.void||0)+'</span></li></ul></section>';
   if(d.clinic){const c=d.clinic;h+='<section><h2>العيادة اليوم</h2><ul><li><span>زيارات متحاسبة</span><span>'+(c.visits||0)+' · '+N(c.revenue)+'</span></li><li><span>ينتظر / عند الطبيب</span><span>'+(c.waiting||0)+' / '+(c.inside||0)+'</span></li><li><span>محجوز لم يصل / لم يحضر</span><span>'+(c.booked||0)+' / '+(c.noshow||0)+'</span></li><li><span>نسب الأطباء اليوم</span><span>'+N(c.shares)+'</span></li><li><span>مستحق على شركات التأمين</span><span>'+N(c.ins)+'</span></li></ul>'+
@@ -706,6 +782,182 @@ async function qrPull(req, env) { // the shop's program: new orders, and its ans
   for (const r of rows) await d.prepare("UPDATE qord SET status = 'sent', sent = ? WHERE id = ?").bind(iso(), r.id).run();
   await d.prepare("DELETE FROM qord WHERE at < ?").bind(new Date(Date.now() - 3 * 864e5).toISOString()).run();
   return json({ orders: rows.map((r) => ({ id: r.id, t: r.t, at: r.at, ...JSON.parse(r.body) })) });
+}
+
+// ---------------------------------------------------------------- 1.25 clinic online booking: public page /book/<id>
+// id = sha256("acc-book:" + shop secret)[:10 bytes]. The program publishes the doctors, services, open hours and taken times
+// (KV cb:<id>); the patient's request waits in D1 cbook until the program picks it up (pos/clinic/online.py) and answers.
+async function bookId(k) { const h = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode("acc-book:" + k))); return [...h.slice(0, 10)].map((x) => x.toString(16).padStart(2, "0")).join(""); }
+let cbReady = false;
+async function cbdb(env) {
+  const d = await db(env);
+  if (!d) throw new Error("لا توجد قاعدة بيانات");
+  if (!cbReady) {
+    await d.batch([d.prepare("CREATE TABLE IF NOT EXISTS cbook (id TEXT PRIMARY KEY, shop TEXT, at TEXT, day TEXT, doc INTEGER, t0 INTEGER, t1 INTEGER, phone TEXT, ip TEXT, body TEXT, status TEXT, msg TEXT, sent TEXT)"),
+      d.prepare("CREATE INDEX IF NOT EXISTS cbook_s ON cbook (shop, status)"), d.prepare("CREATE INDEX IF NOT EXISTS cbook_p ON cbook (shop, phone)")]);
+    cbReady = true;
+  }
+  return d;
+}
+function cairoNow() { // the clinic's own day and minute (Africa/Cairo, summer time included)
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+  return { day: `${p.year}-${p.month}-${p.day}`, min: (+p.hour % 24) * 60 + +p.minute };
+}
+async function bookPut(req, env) {
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "") || typeof b.d !== "object" || !b.d) return err("طلب ناقص");
+  const body = JSON.stringify(b.d);
+  if (body.length > 150000) return err("البيانات كبيرة", 413);
+  const id = await bookId(b.k);
+  await env.ACC.put("cb:" + id, JSON.stringify({ d: b.d, at: iso() }));
+  return json({ ok: true, id });
+}
+async function bookHeld(d, id, today) { // requests not answered «no» yet hold their time
+  const r = (await d.prepare("SELECT doc, day, t0, t1 FROM cbook WHERE shop = ? AND day >= ? AND status IN ('new','sent','got')").bind(id, today).all()).results || [];
+  return r.map((x) => [x.doc, x.day, x.t0, x.t1]);
+}
+function slotFree(dd, held, doc, day, t0, mi) { // inside the doctor's hours that day, not taken, not held by another request
+  const win = ((dd.open || {})[day] || {})[String(doc)];
+  if (!win || !win.some((w) => w[0] <= t0 && t0 + mi <= w[1])) return false;
+  const busy = ((dd.busy || {})[day] || {})[String(doc)] || [];
+  if (busy.some((x) => t0 < x[1] && x[0] < t0 + mi)) return false;
+  return !held.some((h) => h[0] === doc && h[1] === day && t0 < h[3] && h[2] < t0 + mi);
+}
+async function bookReq(req, env, id) {
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  const v = await env.ACC.get("cb:" + id);
+  if (!v) return err("صفحة الحجز غير متاحة الآن", 404);
+  const dd = JSON.parse(v).d;
+  if (dd.off) return err("الحجز أونلاين متوقف الآن — اتصل بالعيادة", 403);
+  if (b.web) return err("طلب غير صحيح"); // the hidden field only robots fill
+  const name = cleanTxt(b.name, 60).replace(/\s+/g, " "), phone = digits(b.phone).replace(/^0020/, "0").replace(/^20(?=1\d{9}$)/, "0");
+  if (name.length < 2) return err("اكتب اسمك بالكامل");
+  if (!/^01[0125]\d{8}$/.test(phone)) return err("اكتب رقم موبايل مصري صحيح (11 رقمًا يبدأ بـ 01)");
+  const doc = parseInt(b.doc) || 0, svc = parseInt(b.svc) || 0, day = String(b.day || ""), tm = /^(\d{2}):(\d{2})$/.exec(String(b.time || ""));
+  if (!(dd.docs || []).some((x) => x.i === doc)) return err("اختر الطبيب");
+  const sv = (dd.svcs || []).find((x) => x.i === svc);
+  if (svc && (!sv || (sv.d && sv.d !== doc))) return err("اختر الخدمة");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !tm) return err("اختر اليوم والموعد");
+  const now = cairoNow(), t0 = +tm[1] * 60 + +tm[2], mi = sv ? sv.mi || 15 : 15;
+  if (day < now.day || (day === now.day && t0 < now.min + 15)) return err("فات هذا الموعد — اختر موعدًا آخر");
+  const d = await cbdb(env);
+  if (!slotFree(dd, await bookHeld(d, id, now.day), doc, day, t0, mi)) return err("هذا الموعد لم يعد متاحًا — اختر موعدًا آخر", 409);
+  const ip = req.headers.get("CF-Connecting-IP") || "?";
+  const ki = `cbi:${id}:${ip}`, ni = parseInt((await env.ACC.get(ki)) || "0");
+  if (ni >= 4) return err("طلبات كثيرة من هذا الجهاز — حاول بعد ساعة أو اتصل بالعيادة", 429);
+  const kd = `cbd:${id}:${now.day}`, nd = parseInt((await env.ACC.get(kd)) || "0");
+  if (nd >= 80) return err("الحجز أونلاين مكتمل اليوم — اتصل بالعيادة", 429);
+  const open = await d.prepare("SELECT COUNT(*) AS n FROM cbook WHERE shop = ? AND phone = ? AND status IN ('new','sent','got')").bind(id, phone).first();
+  if (open && open.n >= 2) return err("لديك طلبات حجز تنتظر رد العيادة — انتظر الرد أو اتصل بالعيادة", 429);
+  const same = await d.prepare("SELECT COUNT(*) AS n FROM cbook WHERE shop = ? AND phone = ? AND day = ? AND status IN ('new','sent','got','ok')").bind(id, phone, day).first();
+  if (same && same.n) return err("لديك حجز في هذا اليوم بالفعل");
+  await env.ACC.put(ki, String(ni + 1), { expirationTtl: 3600 });
+  await env.ACC.put(kd, String(nd + 1), { expirationTtl: 2 * 86400 });
+  const rid = sid6();
+  await d.prepare("INSERT INTO cbook (id, shop, at, day, doc, t0, t1, phone, ip, body, status, msg, sent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', '', '')")
+    .bind(rid, id, iso(), day, doc, t0, t0 + mi, phone, ip.slice(0, 60), JSON.stringify({ name, phone, doc, svc, day, time: tm[0], note: cleanTxt(b.note, 150) })).run();
+  return json({ ok: true, id: rid });
+}
+async function bookStatus(env, id, rid) {
+  const r = await (await cbdb(env)).prepare("SELECT status, msg FROM cbook WHERE id = ? AND shop = ?").bind(rid, id).first();
+  return r ? json({ status: r.status === "sent" ? "new" : r.status, msg: r.msg }) : err("غير موجود", 404);
+}
+async function bookPull(req, env) { // the clinic's program: new requests, and its answers (got = received, ok / no = decided)
+  let b = {};
+  try { b = await req.json(); } catch (e) { return err("طلب ناقص"); }
+  if (!KEYRE.test(b.k || "") || !MACHINE.test(b.m || "")) return err("طلب ناقص");
+  const id = await bookId(b.k), d = await cbdb(env);
+  if (Array.isArray(b.res) && b.res.length) {
+    for (const r of b.res.slice(0, 50)) {
+      const st = ["got", "ok", "no"].includes(r.st) ? r.st : "got";
+      await d.prepare("UPDATE cbook SET status = ?, msg = ? WHERE id = ? AND shop = ?").bind(st, cleanTxt(r.msg, 200), String(r.id || ""), id).run();
+    }
+    return json({ ok: true });
+  }
+  const old = new Date(Date.now() - 60e3).toISOString();
+  const rows = (await d.prepare("SELECT * FROM cbook WHERE shop = ? AND (status = 'new' OR (status = 'sent' AND sent < ?)) ORDER BY at LIMIT 20").bind(id, old).all()).results || [];
+  for (const r of rows) await d.prepare("UPDATE cbook SET status = 'sent', sent = ? WHERE id = ?").bind(iso(), r.id).run();
+  await d.prepare("DELETE FROM cbook WHERE day < ?").bind(new Date(Date.now() - 10 * 864e5).toISOString().slice(0, 10)).run();
+  return json({ reqs: rows.map((r) => ({ id: r.id, at: r.at, ...JSON.parse(r.body) })) });
+}
+function bookPage(rec, id, held) {
+  const d = rec.d;
+  const head = `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(d.name)} — احجز موعدك</title><meta name="theme-color" content="#0B1F3A"><link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0;font-family:Cairo,system-ui,sans-serif;background:#F3F6FA;color:#0B1F3A}
+header{background:#0B1F3A;color:#fff;padding:22px 16px 16px;text-align:center}header h1{margin:0;font-size:24px}header p{margin:4px 0 0;opacity:.85;font-size:14px}
+main{max-width:640px;margin:0 auto;padding:10px 14px 40px}h2{font-size:17px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}h2 i{font-style:normal;background:#17698F;color:#fff;border-radius:50%;width:26px;height:26px;display:inline-grid;place-items:center;font-size:14px}
+.card{background:#fff;border-radius:16px;padding:12px;box-shadow:0 1px 3px #0000000d}.opts{display:grid;gap:8px}
+.opt{border:1.5px solid #DCE5EF;border-radius:12px;padding:10px 12px;cursor:pointer;background:#fff;text-align:start;font:inherit;color:inherit;display:flex;justify-content:space-between;gap:8px;align-items:center;width:100%}
+.opt small{display:block;color:#66788F;font-size:13px}.opt.on{border-color:#17698F;background:#E3F0F6}.opt b.p{color:#17698F;white-space:nowrap}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}.day{flex:none;min-width:74px;text-align:center;border:1.5px solid #DCE5EF;border-radius:12px;padding:8px 6px;background:#fff;cursor:pointer;font:inherit;color:inherit}
+.day b{display:block;font-size:18px}.day small{font-size:12px;color:#66788F}.day.on{border-color:#17698F;background:#E3F0F6}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}.tm{border:1.5px solid #DCE5EF;border-radius:10px;padding:8px 4px;background:#fff;cursor:pointer;font:700 15px Cairo,sans-serif;color:#0B1F3A}.tm.on{background:#17698F;border-color:#17698F;color:#fff}
+input,textarea{width:100%;font:inherit;border:1.5px solid #DCE5EF;border-radius:12px;padding:10px;margin:6px 0;background:#fff}label{font-weight:700;font-size:14px}
+.go{width:100%;border:0;background:#3CC2B5;color:#04203f;font:800 18px Cairo,sans-serif;border-radius:14px;padding:13px;cursor:pointer;margin-top:10px}.go:disabled{opacity:.6}
+.muted{color:#66788F;font-size:13px}.er{color:#B42318;font-weight:700;min-height:1em}.ok{text-align:center;padding:26px 10px}.ok b{display:block;font-size:22px;margin-bottom:8px}
+.sum{background:#E3F0F6;border-radius:12px;padding:10px 12px;font-size:15px;margin:10px 0}.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);opacity:0;pointer-events:none}
+footer{text-align:center;font-size:12px;color:#7F8EA3;padding:10px 16px 30px}footer a{color:#17698F}</style></head><body>
+<header><h1>${esc(d.name)}</h1><p>احجز موعدك أونلاين${d.address ? " · " + esc(d.address) : ""}${d.phone ? ` · <span dir="ltr">${esc(d.phone)}</span>` : ""}</p></header>`;
+  const foot = `<footer>الحجز عبر برنامج العيادة · <a href="https://trioerp.pages.dev/" rel="noopener">Trio</a></footer></body></html>`;
+  if (d.off || !(d.docs || []).length) return head + `<main><div class="card ok"><b>الحجز أونلاين غير متاح الآن</b><span>${d.phone ? `للحجز اتصل على <span dir="ltr">${esc(d.phone)}</span>` : "تواصل مع العيادة للحجز"}</span></div></main>` + foot;
+  const D = { docs: d.docs, svcs: d.svcs || [], open: d.open || {}, busy: d.busy || {}, held, days: d.days || 14 };
+  return head + `<main>${d.note ? `<p class="muted" style="text-align:center">${esc(d.note)}</p>` : ""}
+<div id="flow"><h2><i>1</i> الطبيب</h2><div class="opts" id="docs"></div>
+<div id="svB" hidden><h2><i>2</i> الخدمة</h2><div class="opts" id="svcs"></div></div>
+<div id="dayB" hidden><h2><i>3</i> اليوم</h2><div class="days" id="days"></div></div>
+<div id="tmB" hidden><h2><i>4</i> الموعد</h2><div class="times" id="times"></div><p class="muted" id="tmN"></p></div>
+<div id="fmB" hidden><h2><i>5</i> بياناتك</h2><div class="card"><div class="sum" id="sum"></div>
+<label>الاسم بالكامل<input id="nm" maxlength="60" autocomplete="name"></label><label>رقم الموبايل<input id="ph" inputmode="tel" maxlength="14" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel"></label>
+<label>ملاحظة (اختياري)<textarea id="nt" rows="2" maxlength="150" placeholder="مثال: متابعة، أول زيارة"></textarea></label><div class="hp"><input id="web" tabindex="-1" autocomplete="off"></div>
+<button class="go" type="button" id="send">طلب الحجز</button><p class="er" id="er"></p><p class="muted">يصلك تأكيد العيادة على هذه الصفحة خلال دقائق في مواعيد العمل.</p></div></div></div>
+<div id="done" hidden class="card ok"></div></main>
+<script>const D=${JSON.stringify(D).replace(/</g, "\\u003c")},U="/book/${id}";
+const $=i=>document.getElementById(i),F=n=>Number(n||0).toLocaleString("ar-EG-u-nu-latn",{maximumFractionDigits:2}),H=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const WD=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"],t12=m=>{let h=Math.floor(m/60),mm=String(m%60).padStart(2,"0"),s=h<12?"ص":"م";h=h%12||12;return h+":"+mm+" "+s},hm=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+let S={doc:null,svc:null,day:null,t:null};
+function nowC(){const p=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).map(x=>[x.type,x.value]));return {day:p.year+"-"+p.month+"-"+p.day,min:(+p.hour%24)*60+ +p.minute}}
+function mins(){const s=D.svcs.find(x=>x.i===S.svc);return s?s.mi||15:15}
+function drawDocs(){$("docs").innerHTML=D.docs.map(d=>"<button type='button' class='opt"+(S.doc===d.i?" on":"")+"' data-d='"+d.i+"'><span><b>"+H(d.n)+"</b>"+(d.sp?"<small>"+H(d.sp)+"</small>":"")+"</span>"+(S.doc===d.i?"✔":"")+"</button>").join("");
+$("docs").querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{S={doc:+b.dataset.d,svc:null,day:null,t:null};drawDocs();drawSvcs()})}
+function drawSvcs(){const l=D.svcs.filter(s=>!s.d||s.d===S.doc);$("svB").hidden=!l.length;if(l.length&&S.svc==null)S.svc=l[0].i;
+$("svcs").innerHTML=l.map(s=>"<button type='button' class='opt"+(S.svc===s.i?" on":"")+"' data-s='"+s.i+"'><span><b>"+H(s.n)+"</b><small>"+F(s.mi||15)+" دقيقة</small></span>"+(s.p?"<b class='p'>"+F(s.p)+" ج</b>":"")+"</button>").join("");
+$("svcs").querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{S.svc=+b.dataset.s;S.t=null;drawSvcs()});drawDays()}
+function free(day){const w=(D.open[day]||{})[String(S.doc)];if(!w)return [];const mi=mins(),st=Math.max(10,Math.min(mi,30)),busy=(D.busy[day]||{})[String(S.doc)]||[],n=nowC(),out=[];
+for(const [a,b] of w)for(let t=a;t+mi<=b;t+=st){if(day===n.day&&t<n.min+15)continue;if(busy.some(x=>t<x[1]&&x[0]<t+mi))continue;if(D.held.some(h=>h[0]===S.doc&&h[1]===day&&t<h[3]&&h[2]<t+mi))continue;out.push(t)}return out}
+function drawDays(){$("dayB").hidden=false;const n=nowC(),base=new Date(n.day+"T12:00:00Z"),ds=[];for(let k=0;k<=D.days;k++){const x=new Date(base.getTime()+k*864e5),key=x.toISOString().slice(0,10);if(free(key).length)ds.push([key,x])}
+if(!ds.length){$("days").innerHTML="<p class='muted'>لا توجد مواعيد متاحة أونلاين لهذا الطبيب في الأيام القادمة — اتصل بالعيادة.</p>";$("tmB").hidden=true;$("fmB").hidden=true;return}
+if(!S.day||!ds.some(x=>x[0]===S.day))S.day=ds[0][0];
+$("days").innerHTML=ds.map(([k,x])=>"<button type='button' class='day"+(S.day===k?" on":"")+"' data-k='"+k+"'><small>"+(k===n.day?"اليوم":WD[x.getUTCDay()])+"</small><b>"+x.getUTCDate()+"</b><small>"+(x.getUTCMonth()+1)+"/"+x.getUTCFullYear()%100+"</small></button>").join("");
+$("days").querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{S.day=b.dataset.k;S.t=null;drawDays()});drawTimes()}
+function drawTimes(){const l=free(S.day);$("tmB").hidden=false;$("times").innerHTML=l.map(t=>"<button type='button' class='tm"+(S.t===t?" on":"")+"' data-t='"+t+"'>"+t12(t)+"</button>").join("");
+$("tmN").textContent=l.length?"":"لا توجد مواعيد متاحة في هذا اليوم";$("times").querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{S.t=+b.dataset.t;drawTimes()});drawForm()}
+function drawForm(){$("fmB").hidden=S.t==null;if(S.t==null)return;const d=D.docs.find(x=>x.i===S.doc),s=D.svcs.find(x=>x.i===S.svc),x=new Date(S.day+"T12:00:00Z");
+$("sum").innerHTML="<b>"+H(d.n)+"</b>"+(s?" — "+H(s.n):"")+"<br>"+WD[x.getUTCDay()]+" "+x.getUTCDate()+"/"+(x.getUTCMonth()+1)+" — الساعة "+t12(S.t)+(s&&s.p?"<br><span class='muted'>السعر "+F(s.p)+" ج يُدفع في العيادة</span>":"")}
+try{const k=JSON.parse(localStorage.getItem("trio_book_me")||"{}");if(k.n)$("nm").value=k.n;if(k.p)$("ph").value=k.p}catch(e){}
+$("send").onclick=async()=>{$("er").textContent="";const nm=$("nm").value.trim(),ph=$("ph").value.trim();if(nm.length<2){$("er").textContent="اكتب اسمك بالكامل";return}if(!/^0?1[0125]\\d{8}$/.test(ph.replace(/\\D/g,"").replace(/^20/,""))){$("er").textContent="اكتب رقم موبايل صحيح (11 رقمًا يبدأ بـ 01)";return}
+$("send").disabled=true;try{const r=await fetch(U+"/req",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({doc:S.doc,svc:S.svc||0,day:S.day,time:hm(S.t),name:nm,phone:ph,note:$("nt").value.trim(),web:$("web").value})});
+const j=await r.json();if(!r.ok){if(r.status===409){D.held.push([S.doc,S.day,S.t,S.t+mins()]);S.t=null;drawTimes()}throw new Error(j.error||"تعذّر الإرسال")}try{localStorage.setItem("trio_book_me",JSON.stringify({n:nm,p:ph}));localStorage.setItem("trio_book_last",JSON.stringify({id:j.id,at:Date.now()}))}catch(e){}wait(j.id)}catch(e){$("er").textContent=e.message;$("send").disabled=false}};
+function show(h){$("flow").hidden=true;$("done").hidden=false;$("done").innerHTML=h}
+async function wait(rid){show("<b>⏳ أُرسل طلب الحجز</b><span id='st'>ينتظر رد العيادة…</span>");for(let i=0;i<120;i++){try{const j=await (await fetch(U+"/req/"+rid)).json();
+if(j.status==="ok"){show("<b>✔ تم تأكيد الحجز</b><span>"+H(j.msg||"")+"</span><p class='muted'>احتفظ بهذه الصفحة أو بصورة منها.</p>");return}
+if(j.status==="no"){show("<b>⚠ لم يُؤكَّد الحجز</b><span>"+H(j.msg||"")+"</span><br><br><button class='go' type='button' onclick='location.reload()'>اختر موعدًا آخر</button>");return}
+if(j.status==="got")$("st").textContent=j.msg||"وصل طلبك — سيؤكده الاستقبال قريبًا"}catch(e){}await new Promise(r=>setTimeout(r,i<10?4000:15000))}
+$("st").textContent="لم يصل الرد بعد — افتح هذه الصفحة لاحقًا لمعرفة الرد"}
+try{const l=JSON.parse(localStorage.getItem("trio_book_last")||"{}");if(l.id&&Date.now()-l.at<3*864e5&&location.hash!=="#new"){wait(l.id);const b=document.createElement("p");b.innerHTML="<a href='#new' onclick='localStorage.removeItem(\\"trio_book_last\\");location.reload()'>حجز موعد جديد</a>";$("done").after(b)}}catch(e){}
+drawDocs();if(D.docs.length===1){S.doc=D.docs[0].i;drawDocs();drawSvcs()}</script>` + foot;
+}
+async function bookGet(env, id) {
+  if (!/^[0-9a-f]{20}$/.test(id)) return new Response("not found", { status: 404 });
+  const v = await env.ACC.get("cb:" + id);
+  if (!v) return new Response("<!doctype html><meta charset=utf-8><p style='font-family:sans-serif;text-align:center;margin-top:40px'>صفحة الحجز غير متاحة الآن</p>",
+    { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } });
+  let held = [];
+  try { held = await bookHeld(await cbdb(env), id, cairoNow().day); } catch (e) { held = []; }
+  return new Response(bookPage(JSON.parse(v), id, held), { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex" } });
 }
 
 // ======================================================================= the owner's phone: orders to the shop program
@@ -2007,7 +2259,7 @@ export default {
     if (url.pathname === "/list" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "m:"));
     if (url.pathname === "/sales" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "o:"));
     if (url.pathname === "/info") return json({ pay: !!(env.SALES_KEY && env.PAYMOB_SECRET), ai: !!env.ANTHROPIC_KEY, catalog: CAT,
-      mobile: true, db: !!env.DB, tg: env.TG_TOKEN ? await tgBot(env) : "", mail: !!(env.BREVO_KEY && env.MAIL_FROM) });
+      mobile: true, db: !!env.DB, tg: env.TG_TOKEN ? await tgBot(env) : "", mail: !!(env.BREVO_KEY && env.MAIL_FROM), wa: !!(env.WA_TOKEN && env.WA_PHONE_ID) });
     if (req.method === "POST" && url.pathname === "/snap") return snap(req, env);
     if (req.method === "POST" && url.pathname === "/menu") return menuPut(req, env);
     if (req.method === "POST" && url.pathname === "/menu/orders") return qrPull(req, env);
@@ -2015,7 +2267,15 @@ export default {
       if (mo && req.method === "POST" && !mo[2]) return qrOrder(req, env, mo[1]);
       if (mo && req.method === "GET" && mo[2]) return qrStatus(env, mo[1], mo[2]); }
     if (req.method === "GET" && url.pathname.startsWith("/menu/")) return menuGet(env, url.pathname.slice(6), q.get("t"));
+    if (req.method === "POST" && url.pathname === "/book") return bookPut(req, env); // 1.25 clinic online booking
+    if (req.method === "POST" && url.pathname === "/book/pull") return bookPull(req, env);
+    { const mb = /^\/book\/([0-9a-f]{20})(?:\/req(?:\/([A-Za-z0-9]{6,16}))?)?$/.exec(url.pathname);
+      if (mb && req.method === "POST" && url.pathname.endsWith("/req")) { try { return await bookReq(req, env, mb[1]); } catch (e) { return err("الخدمة غير متاحة الآن — حاول بعد قليل", 503); } }
+      if (mb && req.method === "GET" && mb[2]) { try { return await bookStatus(env, mb[1], mb[2]); } catch (e) { return err("الخدمة غير متاحة الآن", 503); } }
+      if (mb && req.method === "GET" && !url.pathname.includes("/req")) return bookGet(env, mb[1]); }
     if (req.method === "POST" && url.pathname === "/notify") return notify(req, env);
+    if (req.method === "POST" && url.pathname === "/wa/send") return waSend(req, env); // 1.25 WhatsApp alerts
+    if (url.pathname === "/wa/guide") return waGuide(env);
     if (req.method === "POST" && url.pathname === "/bk") return bkPut(req, env);
     if (req.method === "POST" && ["/m/q", "/m/pair", "/m/unpair", "/m/cat"].includes(url.pathname)) return ownProg(req, env, url);
     if (url.pathname === "/bk/get" && env.KEY && q.get("k") === env.KEY) return json({ list: await bkList(env, String(q.get("m") || "")) });
