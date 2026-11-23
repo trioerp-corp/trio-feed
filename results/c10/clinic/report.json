@@ -1,0 +1,2895 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.7s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.6s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales -22.00 expected 178.0 (server 178) counted 1000",
+    "✔ الكاشير والبيع (30.6s)",
+    "clinic: visit 1 600.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (4.3s)",
+    "purchase: 2 lines, 1242.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 16",
+    "✔ مرتجع مشتريات / هالك (0.5s)",
+    "day close: 578.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.642688274383545
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.9712276458740234
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.2583932876586914
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11807703971862793
+    ],
+    [
+     "/ui/clinic/reminders/",
+     0.11721229553222656
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 70,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1234.00 expected 1234.0 (server 1234) counted 0",
+    "✔ الكاشير والبيع (39.0s)",
+    "clinic: visit 1 400.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 3 lines, 203.25, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 4 → 11",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1656.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (11.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5125694274902344
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5977053642272949
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4563417434692383
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.20812559127807617
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10395264625549316
+    ]
+   ]
+  },
+  {
+   "run": 3,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 14130.00 expected 14130.0 (server 14130) counted 250",
+    "✔ الكاشير والبيع (33.6s)",
+    "clinic: visit 1 1000.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 4 lines, 40.75, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 25",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 13774.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5260450839996338
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5669994354248047
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4429326057434082
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.13999509811401367
+    ],
+    [
+     "/ui/shop/branches/",
+     0.12334990501403809
+    ]
+   ]
+  },
+  {
+   "run": 4,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 88,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1160.00 expected 1360.0 (server 1360) counted 0",
+    "✔ الكاشير والبيع (34.0s)",
+    "clinic: visit 1 350.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 3 lines, 94.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 10 → 12",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1683.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (34.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5618293285369873
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5745024681091309
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43017101287841797
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1422865390777588
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11083340644836426
+    ]
+   ]
+  },
+  {
+   "run": 5,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 67,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 3812.00 expected 4012.0 (server 4012) counted 0",
+    "✔ الكاشير والبيع (37.0s)",
+    "clinic: visit 1 450.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 28.75 — اختر «من صاحب المحل () — on credit",
+    "purchase: 3 lines, 28.75, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 3633.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5294790267944336
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5780308246612549
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45415711402893066
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14720463752746582
+    ],
+    [
+     "/ui/shop/reports/",
+     0.1467878818511963
+    ]
+   ]
+  },
+  {
+   "run": 6,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 81,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 16820.00 expected 16820.0 (server 16820) counted 0",
+    "✔ الكاشير والبيع (29.3s)",
+    "clinic: visit 1 1100.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 31.00 — اختر «من صاحب المحل () — on credit",
+    "purchase: 2 lines, 62.00, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 17920.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (32.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.604372262954712
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6636691093444824
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43762946128845215
+    ],
+    [
+     "/ui/staff/",
+     0.1486673355102539
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1480700969696045
+    ]
+   ]
+  },
+  {
+   "run": 7,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 87,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.2s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.9s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 850.00 expected 1350.0 (server 1350) counted 1000",
+    "✔ الكاشير والبيع (34.5s)",
+    "clinic: visit 1 600.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (9.0s)",
+    "purchase: 2 lines, 220.00, credit",
+    "✔ فاتورة مشتريات (2.3s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (2.6s)",
+    "returns: expired 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.5s)",
+    "day close: 1450.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (21.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.666548728942871
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8312041759490967
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4418017864227295
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.15991878509521484
+    ],
+    [
+     "/ui/shop/money/",
+     0.12204551696777344
+    ]
+   ]
+  },
+  {
+   "run": 8,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 64,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 3477.00 expected 3977.0 (server 3977) counted 250",
+    "✔ الكاشير والبيع (32.7s)",
+    "clinic: visit 1 650.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 4 lines, 249.50, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 5 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: -9073.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (10.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5090608596801758
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8059966564178467
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4364621639251709
+    ],
+    [
+     "تقفيل اليوم",
+     0.17251944541931152
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14508509635925293
+    ]
+   ]
+  },
+  {
+   "run": 9,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 70,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (4.1s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 958.00 expected 1458.0 (server 1458) counted 100",
+    "✔ الكاشير والبيع (37.2s)",
+    "clinic: visit 1 250.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 100.00 ولا يكفي لدفع 730.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 3 lines, 1460.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 15",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1648.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5442805290222168
+    ],
+    [
+     "/ui/shop/connect/",
+     1.0792925357818604
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.38930249214172363
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.1749114990234375
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.15429997444152832
+    ]
+   ]
+  },
+  {
+   "run": 10,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 322.00 expected 822.0 (server 822) counted 0",
+    "✔ الكاشير والبيع (37.7s)",
+    "clinic: visit 1 400.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (2.0s)",
+    "purchase: 3 lines, 315.50, owner",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 5",
+    "✔ الجرد والتسوية (0.6s)",
+    "returns: expired 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.6s)",
+    "day close: 2874.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5182843208312988
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5465633869171143
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.441478967666626
+    ],
+    [
+     "الرئيسية (بعد الشعار)",
+     0.15401768684387207
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.13953351974487305
+    ]
+   ]
+  },
+  {
+   "run": 11,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 70,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 17006.00 expected 17506.0 (server 17506) counted 100",
+    "✔ الكاشير والبيع (40.4s)",
+    "clinic: visit 1 1200.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 3 lines, 29.00, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 8",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 32656.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5122792720794678
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5306887626647949
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4538381099700928
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.16681337356567383
+    ],
+    [
+     "/ui/clinic/patients/",
+     0.16266942024230957
+    ]
+   ]
+  },
+  {
+   "run": 12,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 64,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 901.00 expected 1101.0 (server 1101) counted 0",
+    "✔ الكاشير والبيع (34.3s)",
+    "clinic: visit 1 400.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 452.50, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 17",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1156.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4931747913360596
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6828210353851318
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44612860679626465
+    ],
+    [
+     "/ui/vouchers/",
+     0.18614983558654785
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14286351203918457
+    ]
+   ]
+  },
+  {
+   "run": 13,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 892.00 expected 1092.0 (server 1092) counted 250",
+    "✔ الكاشير والبيع (42.3s)",
+    "clinic: visit 1 200.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 21.75, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 16",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1782.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5105030536651611
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6415956020355225
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4364743232727051
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.13962173461914062
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10421895980834961
+    ]
+   ]
+  },
+  {
+   "run": 14,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 2196.00 expected 2396.0 (server 2396) counted 100",
+    "✔ الكاشير والبيع (44.0s)",
+    "clinic: visit 1 450.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 4 lines, 1407.50, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 15",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 3489.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5187056064605713
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5598032474517822
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44035792350769043
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14767670631408691
+    ],
+    [
+     "/ui/shop/reports/",
+     0.12663912773132324
+    ]
+   ]
+  },
+  {
+   "run": 15,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 19031.00 expected 19031.0 (server 19031) counted 1000",
+    "✔ الكاشير والبيع (36.3s)",
+    "clinic: visit 1 850.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 60.00, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 24",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 22790.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.502077579498291
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45596885681152344
+    ],
+    [
+     "/ui/shop/connect/",
+     0.44847989082336426
+    ],
+    [
+     "/ui/shop/partners/",
+     0.1822364330291748
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14238595962524414
+    ]
+   ]
+  },
+  {
+   "run": 16,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 87,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 77.00 expected 277.0 (server 277) counted 250",
+    "✔ الكاشير والبيع (31.8s)",
+    "clinic: visit 1 400.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 900.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1021.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (36.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5110406875610352
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7077198028564453
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44559478759765625
+    ],
+    [
+     "/ui/staff/",
+     0.19448280334472656
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14179658889770508
+    ]
+   ]
+  },
+  {
+   "run": 17,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 90.00 expected 290.0 (server 290) counted 1000",
+    "✔ الكاشير والبيع (30.1s)",
+    "clinic: visit 1 100.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 2 lines, 24.50, cash",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 926.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5421316623687744
+    ],
+    [
+     "/ui/shop/connect/",
+     0.46555352210998535
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.439624547958374
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1502056121826172
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10488152503967285
+    ]
+   ]
+  },
+  {
+   "run": 18,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 12705.00 expected 12705.0 (server 12705) counted 1000",
+    "✔ الكاشير والبيع (38.1s)",
+    "clinic: visit 1 900.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 793.25, split",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 26810.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.522331714630127
+    ],
+    [
+     "/ui/shop/connect/",
+     0.49079036712646484
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4324159622192383
+    ],
+    [
+     "/ui/clinic/doctor/",
+     0.19227361679077148
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14230084419250488
+    ]
+   ]
+  },
+  {
+   "run": 19,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 83,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 261.00 expected 461.0 (server 461) counted 100",
+    "✔ الكاشير والبيع (32.5s)",
+    "clinic: visit 1 100.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 3 lines, 147.50, split",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 11",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1029.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (31.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.468353033065796
+    ],
+    [
+     "/ui/shop/connect/",
+     0.46542787551879883
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3786196708679199
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14131951332092285
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10589170455932617
+    ]
+   ]
+  },
+  {
+   "run": 20,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.2s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.9s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 8209.00 expected 8209.0 (server 8209) counted 100",
+    "✔ الكاشير والبيع (41.9s)",
+    "clinic: visit 1 750.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 4 lines, 24.25, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 22",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 12659.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (12.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.6726915836334229
+    ],
+    [
+     "/ui/shop/connect/",
+     0.582106351852417
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44721078872680664
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.16342878341674805
+    ],
+    [
+     "/ui/shop/branches/",
+     0.09571313858032227
+    ]
+   ]
+  },
+  {
+   "run": 21,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1111.00 expected 1111.0 (server 1111) counted 0",
+    "✔ الكاشير والبيع (35.6s)",
+    "clinic: visit 1 300.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 26.25 — اختر «من صاحب المحل () — on credit",
+    "purchase: 3 lines, 26.25, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2059.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (13.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.508467435836792
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5286126136779785
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4446861743927002
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.13698935508728027
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09498143196105957
+    ]
+   ]
+  },
+  {
+   "run": 22,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1529.00 expected 1529.0 (server 1529) counted 0",
+    "✔ الكاشير والبيع (35.7s)",
+    "clinic: visit 1 400.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 13.50, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 17",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1567.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (10.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5180058479309082
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5712070465087891
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4450387954711914
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1421375274658203
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10002589225769043
+    ]
+   ]
+  },
+  {
+   "run": 23,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 26242.00 expected 26442.0 (server 26442) counted 250",
+    "✔ الكاشير والبيع (42.3s)",
+    "clinic: visit 1 8800.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 3 lines, 60.50, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 38377.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (13.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5160062313079834
+    ],
+    [
+     "/ui/shop/connect/",
+     0.47663068771362305
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44392991065979004
+    ],
+    [
+     "/ui/staff/",
+     0.20027709007263184
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14680099487304688
+    ]
+   ]
+  },
+  {
+   "run": 24,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.3s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 15624.00 expected 16124.0 (server 16124) counted 250",
+    "✔ الكاشير والبيع (37.1s)",
+    "clinic: visit 1 1300.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 1816.50, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 10 → 17",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 22",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 22509.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5204541683197021
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6238775253295898
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45186781883239746
+    ],
+    [
+     "/ui/shop/money/",
+     0.15541553497314453
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14814209938049316
+    ]
+   ]
+  },
+  {
+   "run": 25,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 62,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1150.00 expected 1150.0 (server 1150) counted 0",
+    "✔ الكاشير والبيع (33.0s)",
+    "clinic: visit 1 250.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 3 lines, 120.75, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1750.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5325560569763184
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4642775058746338
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.37665390968322754
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14760422706604004
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10500407218933105
+    ]
+   ]
+  },
+  {
+   "run": 26,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 61,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 250.00 expected 250.0 (server 250) counted 250",
+    "✔ الكاشير والبيع (31.0s)",
+    "clinic: visit 1 1100.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 5 lines, 48.00, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 3027.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5441484451293945
+    ],
+    [
+     "/ui/shop/connect/",
+     0.465487003326416
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4569563865661621
+    ],
+    [
+     "/ui/tax/",
+     0.2422022819519043
+    ],
+    [
+     "/ui/clinic/insurance/",
+     0.15455007553100586
+    ]
+   ]
+  },
+  {
+   "run": 27,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 65,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 3994.00 expected 4194.0 (server 4194) counted 0",
+    "✔ الكاشير والبيع (36.1s)",
+    "clinic: visit 1 750.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 3 lines, 1264.50, owner",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 8",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 21",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 8341.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.539480447769165
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4932737350463867
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43477320671081543
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14289331436157227
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10359311103820801
+    ]
+   ]
+  },
+  {
+   "run": 28,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 59,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales -52.00 expected 448.0 (server 448) counted 100",
+    "✔ الكاشير والبيع (29.6s)",
+    "clinic: visit 1 450.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 3 lines, 137.25, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 12 → 19",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 398.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5042991638183594
+    ],
+    [
+     "/ui/shop/connect/",
+     0.47724127769470215
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4563925266265869
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14291882514953613
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09704780578613281
+    ]
+   ]
+  },
+  {
+   "run": 29,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 36148.00 expected 36648.0 (server 36648) counted 250",
+    "✔ الكاشير والبيع (38.9s)",
+    "clinic: visit 1 3300.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -250.00 ولا يكفي لدفع 53.50 — اختر «من صاحب المح) — on credit",
+    "purchase: 5 lines, 53.50, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 39448.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5221173763275146
+    ],
+    [
+     "/ui/shop/connect/",
+     1.324476718902588
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.434908390045166
+    ],
+    [
+     "/ui/shop/expiry/",
+     0.20939135551452637
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14634299278259277
+    ]
+   ]
+  },
+  {
+   "run": 30,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2496.00 expected 2496.0 (server 2496) counted 250",
+    "✔ الكاشير والبيع (37.4s)",
+    "clinic: visit 1 400.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 4 lines, 229.50, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2896.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5537781715393066
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4782233238220215
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43593311309814453
+    ],
+    [
+     "/ui/shop/reports/",
+     0.27529454231262207
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.16267681121826172
+    ]
+   ]
+  },
+  {
+   "run": 31,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 90,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1317.00 expected 1817.0 (server 1817) counted 0",
+    "✔ الكاشير والبيع (41.6s)",
+    "clinic: visit 1 100.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.8s)",
+    "purchase: 2 lines, 21.75, cash",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2059.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (29.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5196161270141602
+    ],
+    [
+     "/ui/shop/connect/",
+     0.627983570098877
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.436138391494751
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.13961124420166016
+    ],
+    [
+     "/ui/clinic/appointments/",
+     0.10443449020385742
+    ]
+   ]
+  },
+  {
+   "run": 32,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 11036.00 expected 11236.0 (server 11236) counted 250",
+    "✔ الكاشير والبيع (34.7s)",
+    "clinic: visit 1 200.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 4 lines, 156.50, split",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 23",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 7608.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5169737339019775
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5767138004302979
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45920610427856445
+    ],
+    [
+     "/ui/shop/money/",
+     0.20340704917907715
+    ],
+    [
+     "/ui/clinic/reception/",
+     0.16692090034484863
+    ]
+   ]
+  },
+  {
+   "run": 33,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 81,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 0.00 expected 200.0 (server 200) counted 0",
+    "✔ الكاشير والبيع (30.9s)",
+    "clinic: visit 1 3000.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 57.25, split",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 15845.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.528151035308838
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5542628765106201
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43956637382507324
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14704251289367676
+    ],
+    [
+     "/ui/clinic/appointments/",
+     0.10647153854370117
+    ]
+   ]
+  },
+  {
+   "run": 34,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 64,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 145.00 expected 145.0 (server 145) counted 250",
+    "✔ الكاشير والبيع (35.3s)",
+    "clinic: visit 1 600.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 3 lines, 653.50, owner",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 5 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 16",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1273.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4993970394134521
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4962491989135742
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4586446285247803
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14034628868103027
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10636448860168457
+    ]
+   ]
+  },
+  {
+   "run": 35,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 19845.00 expected 19845.0 (server 19845) counted 0",
+    "✔ الكاشير والبيع (38.0s)",
+    "clinic: visit 1 700.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.9s)",
+    "purchase: 3 lines, 1535.00, owner",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 16",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 17",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 20631.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.504366159439087
+    ],
+    [
+     "/ui/shop/connect/",
+     0.604539155960083
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43420910835266113
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.15212798118591309
+    ],
+    [
+     "/ui/shop/settings/",
+     0.1342921257019043
+    ]
+   ]
+  },
+  {
+   "run": 36,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 67,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 529.00 expected 1029.0 (server 1029) counted 100",
+    "✔ الكاشير والبيع (34.4s)",
+    "clinic: visit 1 400.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -400.00 ولا يكفي لدفع 90.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 3 lines, 180.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 15",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1309.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5322058200836182
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5122392177581787
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45931529998779297
+    ],
+    [
+     "/ui/shop/requests/",
+     0.18409466743469238
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14693450927734375
+    ]
+   ]
+  },
+  {
+   "run": 37,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 67,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 17917.00 expected 18117.0 (server 18117) counted 100",
+    "✔ الكاشير والبيع (38.6s)",
+    "clinic: visit 1 3000.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 63.50, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 25",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 17847.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5225472450256348
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4505293369293213
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4311048984527588
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14438152313232422
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09664320945739746
+    ]
+   ]
+  },
+  {
+   "run": 38,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 88,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 20558.00 expected 21058.0 (server 21058) counted 250",
+    "✔ الكاشير والبيع (36.6s)",
+    "clinic: visit 1 700.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 161.25, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 20",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 16958.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (32.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5263376235961914
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4756762981414795
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.46141600608825684
+    ],
+    [
+     "/ui/shop/expiry/",
+     0.23778843879699707
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14744091033935547
+    ]
+   ]
+  },
+  {
+   "run": 39,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 63,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales -30.00 expected 170.0 (server 170) counted 250",
+    "✔ الكاشير والبيع (28.9s)",
+    "clinic: visit 1 2750.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 591.50, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 23",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 3405.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (14.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5111606121063232
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5202438831329346
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42545247077941895
+    ],
+    [
+     "/ui/shop/close/",
+     0.29629993438720703
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.15570497512817383
+    ]
+   ]
+  },
+  {
+   "run": 40,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.2s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2640.00 expected 2840.0 (server 2840) counted 1000",
+    "✔ الكاشير والبيع (39.0s)",
+    "clinic: visit 1 2750.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 92.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 23",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 19520.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5202455520629883
+    ],
+    [
+     "/ui/shop/connect/",
+     0.45467376708984375
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45185112953186035
+    ],
+    [
+     "/ui/shop/sales/",
+     0.2784905433654785
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.16351699829101562
+    ]
+   ]
+  },
+  {
+   "run": 41,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2150.00 expected 2350.0 (server 2350) counted 1000",
+    "✔ الكاشير والبيع (40.6s)",
+    "clinic: visit 1 250.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 4 lines, 311.50, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2616.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5210685729980469
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4845442771911621
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45336103439331055
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.143204927444458
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10217571258544922
+    ]
+   ]
+  },
+  {
+   "run": 42,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 65,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 915.00 expected 1115.0 (server 1115) counted 0",
+    "✔ الكاشير والبيع (34.1s)",
+    "clinic: visit 1 350.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 99.50 — اختر «من صاحب المحل () — on credit",
+    "purchase: 3 lines, 199.00, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 17",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1846.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (12.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5073065757751465
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4996623992919922
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4397745132446289
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.15286827087402344
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10714983940124512
+    ]
+   ]
+  },
+  {
+   "run": 43,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 49075.00 expected 49075.0 (server 49075) counted 0",
+    "✔ الكاشير والبيع (44.4s)",
+    "clinic: visit 1 550.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 0.00 ولا يكفي لدفع 8.50 — اختر «من صاحب المحل (م) — on credit",
+    "purchase: 2 lines, 17.00, credit",
+    "✔ فاتورة مشتريات (1.0s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 19",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 38837.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5141990184783936
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5089678764343262
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44858360290527344
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14172840118408203
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09592008590698242
+    ]
+   ]
+  },
+  {
+   "run": 44,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 61,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 4371.00 expected 4371.0 (server 4371) counted 100",
+    "✔ الكاشير والبيع (32.4s)",
+    "clinic: visit 1 8500.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 2 lines, 24.50, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 371.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5099749565124512
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6601700782775879
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4370384216308594
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1461811065673828
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10500264167785645
+    ]
+   ]
+  },
+  {
+   "run": 45,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 2136.00 expected 2636.0 (server 2636) counted 0",
+    "✔ الكاشير والبيع (38.3s)",
+    "clinic: visit 1 200.00 card",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 267.50, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.6s)",
+    "day close: 4735.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "dialog: إزالة الخدمة من القائمة؟ تبقى الزيارات السابقة كما هي",
+    "✔ النماذج (11.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.525402307510376
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5180280208587646
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3876314163208008
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1395416259765625
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09655308723449707
+    ]
+   ]
+  },
+  {
+   "run": 46,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 67,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1814.00 expected 1814.0 (server 1814) counted 100",
+    "✔ الكاشير والبيع (36.2s)",
+    "clinic: visit 1 450.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 2 lines, 325.00, split",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 7",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.5s)",
+    "day close: 2614.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5278527736663818
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5592701435089111
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4255557060241699
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1477515697479248
+    ],
+    [
+     "/ui/shop/settings/",
+     0.1002509593963623
+    ]
+   ]
+  },
+  {
+   "run": 47,
+   "activity": "مركز طبي",
+   "business": "clinic",
+   "phone": false,
+   "secs": 90,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1705.00 expected 2205.0 (server 2205) counted 100",
+    "✔ الكاشير والبيع (36.7s)",
+    "clinic: visit 1 350.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.7s)",
+    "purchase: 4 lines, 79.25, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.7s)",
+    "returns: preturn 1 × 18",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2667.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (33.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5352940559387207
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6217052936553955
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43146753311157227
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.14378738403320312
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10285782814025879
+    ]
+   ]
+  },
+  {
+   "run": 48,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": true,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 4700.00 expected 4700.0 (server 4700) counted 1000",
+    "✔ الكاشير والبيع (38.7s)",
+    "clinic: visit 1 250.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (1.6s)",
+    "purchase: 5 lines, 176.50, owner",
+    "✔ فاتورة مشتريات (1.0s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 20",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 18933.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (14.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5471279621124268
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6415963172912598
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44168996810913086
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.18085646629333496
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10017824172973633
+    ]
+   ]
+  },
+  {
+   "run": 49,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 84,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 1800.00 expected 2000.0 (server 2000) counted 100",
+    "✔ الكاشير والبيع (33.9s)",
+    "clinic: visit 1 2400.00 cash",
+    "✔ العيادة: استقبال وكشف وحساب (2.0s)",
+    "purchase: 4 lines, 1395.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 24",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 14043.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (30.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.545943260192871
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5018138885498047
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4394958019256592
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.1462090015411377
+    ],
+    [
+     "/ui/shop/settings/",
+     0.14033150672912598
+    ]
+   ]
+  },
+  {
+   "run": 50,
+   "activity": "عيادة أسنان",
+   "business": "clinic",
+   "phone": false,
+   "secs": 79,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 33",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 67889.00 expected 68089.0 (server 68089) counted 0",
+    "✔ الكاشير والبيع (46.3s)",
+    "clinic: visit 1 1700.00 credit",
+    "✔ العيادة: استقبال وكشف وحساب (1.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -200.00 ولا يكفي لدفع 342.50 — اختر «من صاحب الم) — on credit",
+    "purchase: 3 lines, 685.00, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 16",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 57639.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.6s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.509889841079712
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5815746784210205
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.449796199798584
+    ],
+    [
+     "قيمة المخزون",
+     0.33974575996398926
+    ],
+    [
+     "/ui/clinic/setup/",
+     0.17340350151062012
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    12,
+    13,
+    14,
+    15,
+    17,
+    18,
+    20,
+    22,
+    24,
+    25,
+    26,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    37,
+    39,
+    40,
+    41,
+    42,
+    45,
+    46,
+    48,
+    49
+   ],
+   "shot": ""
+  }
+ ]
+}
