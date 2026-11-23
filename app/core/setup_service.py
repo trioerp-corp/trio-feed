@@ -254,7 +254,16 @@ def apply(data, logo=None, logo_name=""):
     if cfg["branches"]:
         from pos import branches as BR
 
-        for b in cfg["branches"]:
+        from pos.models import Branch
+
+        from . import license as LIC
+
+        room = max(0, LIC.allowed_branches() - Branch.objects.filter(active=True).count())
+        wish = cfg["branches"][room:]
+        if wish:  # 1.25.3: more branches than paid for — only note the wish; they open from «الفروع» once paid
+            s.menu_cfg = {**(s.menu_cfg or {}), "multi": True, "branch_wish": [b["name"] for b in wish]}
+            s.save(update_fields=["menu_cfg"])
+        for b in cfg["branches"][:room]:
             br = BR.create_branch(b["name"], b["address"], b["phone"], b["devices"])
             made[b["key"]] = br
             if b["m_username"]:

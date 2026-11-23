@@ -1,4 +1,4 @@
-"""The owner's «التحديثات» page (version, licence, update now — no plans or prices for now).
+"""The owner's «التحديثات» page (version, licence and the yearly subscription — renew / pay by card —, update now).
 Plus the update notices: «تحديث جاهز» (install now) and «تم التحديث لأحدث إصدار»."""
 import json
 
@@ -65,43 +65,16 @@ def page(request):
         return redirect("upgrade")
     from core.feed import newer_available
 
+    from core import pay
+
+    from .shop import renew_box
+
     mods = M.enabled(s)
-    return render(request, "ui/upgrade.html", dict(s=s, version=VERSION, lic=LIC.status(s), machine=LIC.machine_code(), st=U.state(),
+    lic = LIC.status(s)
+    br = int(lic.get("branches") or 0)
+    return render(request, "ui/upgrade.html", dict(s=s, version=VERSION, lic=lic, machine=LIC.machine_code(), st=U.state(), renew=renew_box(request, s),
+                                                  pay_on=pay.enabled(), year_price=f"{M.year_total(br):,}", branches=br,
                                                   nv=newer_available(), have=[M.MODULES[k][0] for k in M.MODULES if k in mods]))
-
-
-def _pay_ok(s):
-    from core import pay
-
-    return pay.enabled()
-
-
-def _pay(request, s, demo, plan, want, services, phone):
-    """«💳 ادفع بالفيزا»: the Worker prices it, Paymob takes the money, the licence comes back by itself."""
-    from core import pay
-
-    sel = dict(plan=plan if plan in M.PLANS and (demo or plan != s.plan) else "", extras=[k for k in want if k in M.ADDON_PRICES],
-               life=[k for k in services if k in ("lifetime", "lifetime_updates")], renew="renew" in services, phone=phone)
-    if not request.POST.get("agree"):
-        messages.error(request, "أكّد أنك قرأت الشروط والأحكام وسياسة الاسترجاع ووافقت عليها قبل الدفع")
-        return redirect("upgrade")
-    from core.legal import TERMS_VERSION
-
-    sel["agree"] = TERMS_VERSION
-    if demo and not sel["plan"]:
-        messages.error(request, "اختر الباقة أولًا")
-        return redirect("upgrade")
-    if not (sel["plan"] or sel["extras"] or sel["life"] or sel["renew"]):
-        messages.error(request, "اختر باقة أو إضافة تدفعها بالبطاقة (الخدمات والزيارات تُطلب عبر واتساب)")
-        return redirect("upgrade")
-    try:
-        res = pay.checkout(sel, s, request.build_absolute_uri("/ui/shop/pay/"))
-    except pay.PayError as e:
-        messages.error(request, str(e))
-        return redirect("upgrade")
-    if [k for k in services if k not in ("lifetime", "lifetime_updates", "renew")]:
-        messages.warning(request, "الخدمات (جهاز إضافي، زيارة، تعديل خاص…) ليست ضمن هذا الدفع — اطلبها عبر واتساب")
-    return redirect(res["url"])
 
 
 @login_required

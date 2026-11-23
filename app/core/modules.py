@@ -103,11 +103,17 @@ def module_for_path(path):
     return None
 
 
-# prices shown on the owner's «ترقية وطلبات» page (same as the quote) — EGP, once
-PLAN_PRICES = {"basic": 10000, "standard": 15000, "pro": 20000}
-ADDON_PRICES = {"production": 1500, "profit_yearly": 1000, "branches": 3000, "report_whatsapp": 500,
-                "report_telegram": 750, "report_email": 750, "drive_backup": 1000, "stores": 1000, "returns": 1000, "promos": 1000,
-                "units": 1000, "labels": 1000, "valuation": 1000, "mobile": 1500}
-SERVICES = [("cashier", "جهاز كاشير إضافي", 1500), ("custom", "تعديل أو ميزة خاصة", 2000),
-            ("support", "زيارة / دعم فني", 600), ("renew", "تجديد الاشتراك السنوي", 1500),
-            ("lifetime", "رخصة مدى الحياة (بدون تجديد سنوي)", 15000), ("lifetime_updates", "التحديثات مدى الحياة (يصلك أي إصدار جديد تلقائيًا)", 10000)]
+# 11/2026 — ONE price: a yearly subscription for the whole program (every part that fits the shop's business, branches
+# included), per shop copy (one licence). No plans, add-ons or lifetime for sale; licences issued for life before keep working.
+# The Worker sells it at this price (tools/sync_worker_catalog.py writes it into worker.js; tests/test_pay checks they match).
+YEAR_PRICE = 3000  # EGP a year, one branch included — new copy or renewal (a renewal extends from the current expiry)
+BRANCH_PRICE = 500  # EGP a year for each extra branch (a quantity; renewed with the subscription; licence field «br»)
+VISIT_PRICE = 1500  # optional on-site set-up and training visit, one-time
+CUSTOM_PRICE = 1500  # optional custom requests — up to 3 changes, one-time
+CUSTOM_CHANGES = 3
+# Lifetime is not sold online or on the site; Trio License can still issue one (kept as an option for the owner).
+
+
+def year_total(branches=0):
+    """What a year costs: the subscription + each extra branch."""
+    return YEAR_PRICE + BRANCH_PRICE * max(0, int(branches or 0))

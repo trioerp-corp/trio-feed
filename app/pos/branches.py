@@ -185,6 +185,9 @@ def create_branch(name, address="", phone="", devices=1, code=""):
         raise ValidationError("اكتب اسم الفرع")
     if Branch.objects.filter(name=name).exists():
         raise ValidationError(f"في فرع اسمه «{name}» بالفعل")
+    from core.license import branch_room
+
+    branch_room()  # 1.25.3: one branch comes with the program; more only when paid (licence «br»)
     main = Branch.objects.order_by("id").first()
     n = _next(Branch.objects.all(), "code", Branch.objects.count() + 1)
     code = (code or f"B{n:02d}")[:6]

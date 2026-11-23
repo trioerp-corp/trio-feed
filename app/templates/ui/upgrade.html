@@ -5,6 +5,18 @@
 <div class="card kpi hero"><span class="k">نسخة البرنامج</span><span class="v" dir="ltr">{{ version }}</span><span class="k">{% if st.ready %}تحديث {{ st.ready.v }} جاهز{% elif nv %}متاح {{ nv }}{% else %}أحدث إصدار ✔{% endif %}</span></div>
 <div class="card kpi {% if lic.state != 'active' %}gold{% endif %}"><span class="k">الرخصة</span><span class="v" style="font-size:18px">{{ lic.message }}</span><span class="k" dir="ltr">{{ machine }}</span></div>
 <div class="card kpi"><span class="k">الإمكانيات</span><span class="v" style="font-size:18px">كلها مفتوحة ✔</span><span class="k">{{ have|length }} جزء</span></div></section>
+{% if renew %}{% include "ui/_renew.html" %}{% endif %}
+<div class="card" id="sub" style="margin-bottom:16px"><h2 style="margin:0 0 6px">💳 اشتراكك</h2>
+<p style="margin:0">{% if lic.lifetime %}رخصة مدى الحياة ✔{% else %}اشتراك سنوي: <b>{{ year_price }} ج في السنة</b> — كل البرنامج{% if branches %} (فرع رئيسي + {{ branches }} فرع إضافي){% else %} (فرع واحد){% endif %}{% if lic.expires %} · ينتهي {{ lic.expires|date:"d/m/Y" }}{% endif %}{% endif %}</p>
+<p class="muted" style="margin:4px 0 10px">كل فرع إضافي 500 ج في السنة · زيارة تجهيز وتدريب 1,500 ج · طلبات خاصة حتى 3 تعديلات 1,500 ج (مرة واحدة). التجديد يبدأ من تاريخ الانتهاء الحالي.</p>
+{% if pay_on %}<form method="post" action="/license/" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">{% csrf_token %}<input type="hidden" name="action" value="renew"><input type="hidden" name="next" value="{% url 'upgrade' %}">
+{% if lic.client and not lic.lifetime %}<label class="field" style="margin:0">ماذا تدفع<select name="what"><option value="renew">تجديد سنة</option><option value="extra">فروع / خدمات فقط</option></select></label>{% elif lic.lifetime %}<input type="hidden" name="what" value="extra">{% endif %}
+{% if not lic.lifetime %}<label class="field" style="margin:0">عدد الفروع الإضافية<input name="branches" value="{{ branches }}" inputmode="numeric" dir="ltr" style="width:90px"></label>{% endif %}
+<label><input type="checkbox" name="visit" value="1"> زيارة تجهيز وتدريب</label><label><input type="checkbox" name="custom" value="1"> طلبات خاصة (حتى 3 تعديلات)</label>
+<label class="field" style="margin:0">هاتف صاحب المحل<input name="phone" value="{{ s.phone|default:s.owner_whatsapp }}" dir="ltr" inputmode="tel" required></label>
+<label style="font-size:13px"><input type="checkbox" name="agree" value="1" required> قرأت <a href="https://trioerp.pages.dev/terms/" target="_blank" rel="noopener">الشروط</a> و<a href="https://trioerp.pages.dev/refund/" target="_blank" rel="noopener">سياسة الاسترجاع</a></label>
+<button>💳 ادفع بالفيزا</button></form>
+{% else %}<a class="btn" href="https://wa.me/201228827915" target="_blank" rel="noopener">🔄 جدد أو اطلب فرعًا / خدمة عبر واتساب</a>{% endif %}</div>
 <div class="card" id="latest" style="margin-bottom:16px{% if st.ready or nv %};border:2px solid var(--accent,#3CC2B5){% endif %}">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
 {% if st.ready %}<div><h2 style="margin:0">⬇ التحديث {{ st.ready.v }} جاهز</h2><p class="muted" style="margin:4px 0 0">{% if st.failed %}لم تكتمل المحاولة السابقة وعاد البرنامج كما كان — حاول مرة أخرى أو تواصل مع Trio.{% else %}سيُثبَّت تلقائيًا الساعة 2 ليلًا، أو ثبّته الآن (يتوقف البرنامج ثوانيَ ثم يعود).{% endif %}</p>{% if st.ready.notes %}<p style="margin:6px 0 0"><b>الجديد:</b> {{ st.ready.notes|linebreaksbr }}</p>{% endif %}</div>

@@ -60,7 +60,8 @@ def _call(path, body=None, s=None, timeout=30):
 
 
 def checkout(sel, s, back):
-    """sel: plan, extras, life (lifetime / lifetime_updates), renew. Returns dict(id, url, amount)."""
+    """sel: renew (a year more, from the current expiry), branches (extra branches, a quantity), visit, custom (one-time
+    services), phone, agree. The Worker prices it (core.modules.YEAR_PRICE …). Returns dict(id, url, amount)."""
     body = dict(sel, m=LIC.machine_code(), business=s.business, name=(s.name or "")[:100], phone=(sel.get("phone") or s.phone or "")[:40],
                 lic=s.license_code or "", back=back)
     res = _call("/checkout", body, s)
@@ -110,7 +111,7 @@ def activate(code, s):
     if s.setup_done and lic.get("p"):
         plan = updates.apply_licence(lic, s)
         if plan:
-            out.append(("success", f"باقتك الآن «{plan}» بالمميزات التي اشتركت فيها ✔"))
+            out.append(("success", "اشتراكك مفعّل بكل أجزاء البرنامج ✔"))
         if lic.get("t") and str(lic["t"]) > (s.modules_stamp or ""):  # an older order from the channel must not undo it
             s.modules_stamp = str(lic["t"])
             s.save(update_fields=["modules_stamp"])

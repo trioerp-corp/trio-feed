@@ -154,6 +154,22 @@ def _cogs(orders):
     return out
 
 
+def renew_box(request, s=None):
+    """«جدد الاشتراك» for the owner: 30 / 7 / 1 days before the yearly subscription ends (None otherwise)."""
+    from core import license as LIC
+
+    try:
+        n = LIC.renew_notice(getattr(request, "license", None) or LIC.status(s or CompanySettings.get()))
+        if not n:
+            return None
+        from core import pay
+
+        s = s or CompanySettings.get()
+        return dict(n, pay=pay.enabled(), wa=LIC.renew_wa(s), phone=s.phone or s.owner_whatsapp or "")
+    except Exception:  # noqa: BLE001 — the home page never fails because of the notice
+        return None
+
+
 def home(request):
     from core.modules import enabled
 
@@ -188,7 +204,7 @@ def home(request):
     from pos.branches import branches_on
 
     tr_wait = __import__("pos.transfers", fromlist=["x"]).waiting(request.user) if branches_on() else 0
-    return render(request, "ui/shop_home.html", dict(tr_wait=tr_wait, multi_hint=not branches_on() and bool((s.menu_cfg or {}).get("multi")) and "branches" in enabled(s),
+    return render(request, "ui/shop_home.html", dict(tr_wait=tr_wait, renew=renew_box(request, s), multi_hint=not branches_on() and bool((s.menu_cfg or {}).get("multi")) and "branches" in enabled(s),
                                                      many_stores=Warehouse.objects.filter(active=True).count() > 1, no_expiry="expiry" in __import__("core.activities", fromlist=["x"]).unused(), no_production="production" in __import__("core.activities", fromlist=["x"]).unused(), has_partners=ShopPartner.objects.filter(active=True).exists(), db_problem=problem(), owner=owner_balance(), expiring_n=len(expiring(14)), settings_obj=CompanySettings.get(), open_shifts=Shift.objects.filter(closed_at__isnull=True, **({"device__branch": b} if b else {})).count(),
                                                      last_close=DayClose.objects.order_by("-date").first(),t=t, today=today, drawer=drawer, drawer_bal=T.cashbox_balance(drawer) if drawer else Z,
                                                      low=low[:15], low_n=len(low), stock_value=stock_value, devices=devices,

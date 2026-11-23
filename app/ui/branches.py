@@ -129,7 +129,16 @@ def dashboard(request):
                                                     templates=list(BR.templates_for(CompanySettings.get().business).items()), branches=Branch.objects.filter(active=True).order_by("id"),
                                                     head_office=Staff.objects.filter(branch__isnull=True).select_related("user"),
                                                     closed=Branch.objects.filter(active=False).order_by("id"), transit=BR.in_transit_value(),
-                                                    main_id=Branch.objects.order_by("id").values_list("id", flat=True).first()))
+                                                    main_id=Branch.objects.order_by("id").values_list("id", flat=True).first(), **_paid()))
+
+
+def _paid():
+    from core import license as LIC, pay
+
+    cap, n = LIC.allowed_branches(), Branch.objects.filter(active=True).count()
+    st = LIC.status()
+    return dict(br_cap=cap, br_used=n, br_full=n >= cap, br_pay=pay.enabled(), br_next=max(0, int(st.get("branches") or 0)) + 1,
+                br_wa=LIC.renew_wa(CompanySettings.get()), br_price=__import__("core.modules", fromlist=["x"]).BRANCH_PRICE)
 
 
 @login_required
@@ -203,6 +212,9 @@ def edit_branch(request, pk):
             request.session.pop("branch_view", None)
             messages.success(request, f"أُوقف «{b.name}» — بياناته وتقاريره القديمة باقية")
         elif P.get("op") == "open":
+            from core.license import branch_room
+
+            branch_room(exclude=b.pk)  # re-activating counts against the paid branches
             b.active = True
             b.save(update_fields=["active"])
             b.devices.update(active=True)

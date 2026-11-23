@@ -5,8 +5,58 @@ from . import license as LIC
 from .models import CompanySettings
 
 
+def _box(st, s, pay_on):
+    n = LIC.renew_notice(st)
+    return dict(n, pay=pay_on, wa=LIC.renew_wa(s), phone=s.phone or s.owner_whatsapp or "") if n else None
+
+
+def renew_pay(request, s):
+    """«جدد الاشتراك» / «اشترك»: pay the yearly subscription by card (Paymob, through Trio's Worker) when Trio turned card
+    payments on (TRIOP pay=true); otherwise ask on WhatsApp. The Worker prices it (3,000 + 500 per extra branch) and a
+    renewal continues from the current expiry. Works from the activation page too, so an expired copy can renew."""
+    from . import pay
+    from .middleware import safe_next
+
+    back = safe_next(request, "/license/")
+    if not pay.enabled():
+        messages.info(request, "الدفع بالبطاقة غير متاح الآن — تواصل مع Trio للتجديد: 01228827915")
+        return redirect(LIC.renew_wa(s))
+    if not request.POST.get("agree"):
+        messages.error(request, "أكّد أنك قرأت الشروط والأحكام وسياسة الاسترجاع ووافقت عليها قبل الدفع")
+        return redirect(back)
+    from .legal import TERMS_VERSION
+
+    def num(k, top=50):
+        try:
+            return max(0, min(top, int(request.POST.get(k) or 0)))
+        except ValueError:
+            return 0
+
+    st = LIC.status(s)
+    sel = dict(renew=bool(s.license_code) and request.POST.get("what") != "extra", branches=max(num("branches"), int(st.get("branches") or 0)), visit=bool(request.POST.get("visit")),
+               custom=bool(request.POST.get("custom")), phone=(request.POST.get("phone") or s.phone or s.owner_whatsapp or "").strip(), agree=TERMS_VERSION)
+    try:
+        res = pay.checkout(sel, s, request.build_absolute_uri("/ui/shop/pay/"))
+    except pay.PayError as e:
+        messages.error(request, str(e))
+        return redirect(back)
+    return redirect(res["url"])
+
+
 def page(request):
     s = CompanySettings.get()
+    if request.method == "POST" and request.POST.get("action") == "renew":
+        return renew_pay(request, s)
+    if request.method == "GET":
+        from . import feed, pay
+
+        if feed.state().get("pay_order"):  # back from Paymob while the copy is stopped: install the paid licence here
+            try:
+                if "تم التفعيل" in (pay.poll(s) or ""):
+                    messages.success(request, "تم الدفع ✔ — تم تجديد الاشتراك")
+                    return redirect("/")
+            except Exception:  # noqa: BLE001
+                pass
     if request.method == "POST" and request.POST.get("action") == "check":
         from . import feed
 
@@ -39,5 +89,10 @@ def page(request):
     from urllib.parse import quote
 
     wa = "https://wa.me/201228827915?text=" + quote(f"أرغب في الاشتراك في Trio\nالمحل: {s.name}\nكود الجهاز: {LIC.machine_code()}")
-    return render(request, "core/license.html", dict(st=LIC.status(s), support=LIC.SUPPORT, hide_nav=True, feed_url=feed.feed_url(s), wa=wa,
+    from . import pay
+    from .modules import year_total
+
+    st = LIC.status(s)
+    return render(request, "core/license.html", dict(st=st, renew=_box(st, s, pay.enabled()), pay_on=pay.enabled(), year_price=f"{year_total(st.get('branches') or 0):,}",
+                                                     renew_wa=LIC.renew_wa(s), support=LIC.SUPPORT, hide_nav=True, feed_url=feed.feed_url(s), wa=wa,
                                                      feed_ok=dt.datetime.fromisoformat(ok) if ok else None))

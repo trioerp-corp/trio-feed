@@ -36,6 +36,11 @@
 
 <div class="split">
 <div class="main">
+<div class="card" id="paid" style="margin-bottom:16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><h2 style="margin:0 0 4px">الفروع المدفوعة: {{ br_used }} من {{ br_cap }}</h2><p class="muted" style="margin:0">البرنامج يأتي بفرع واحد، وكل فرع إضافي {{ br_price }} ج سنويًا مع الاشتراك.</p></div></div>
+{% if br_full %}<div class="card" style="margin-bottom:16px"><h2 style="margin-top:0">فرع إضافي {{ br_price }} ج سنويًا</h2><p class="muted">وصلت لعدد الفروع المدفوعة. ادفع فرعًا إضافيًا ويفتح فور تركيب كود التفعيل الجديد.</p>
+{% if br_pay %}<form method="post" action="{% url 'license' %}">{% csrf_token %}<input type="hidden" name="action" value="renew"><input type="hidden" name="what" value="extra"><input type="hidden" name="branches" value="{{ br_next }}"><input type="hidden" name="next" value="/ui/shop/branches/">
+<label><input type="checkbox" name="agree" value="1" required> قرأت <a href="https://trioerp.pages.dev/terms/" target="_blank" rel="noopener">الشروط</a> و<a href="https://trioerp.pages.dev/refund/" target="_blank" rel="noopener">سياسة الاسترجاع</a> ووافقت عليها</label> <button>💳 ادفع الفرع الإضافي</button></form>
+{% else %}<a class="btn" href="{{ br_wa }}" target="_blank" rel="noopener">📲 اطلب فرعًا إضافيًا على واتساب 01228827915</a>{% endif %}</div>{% endif %}
 <form method="post" action="{% url 'branch_add' %}" class="card" id="add" style="margin-bottom:16px">{% csrf_token %}
 <h2>فتح فرع جديد</h2><ol class="steps-h"><li>بيانات الفرع</li><li>مدير الفرع</li><li>أجهزة الكاشير</li></ol>
 <div class="form-grid"><label class="field">اسم الفرع<input name="name" required placeholder="فرع المعادي"></label><label class="field">العنوان<input name="address"></label>

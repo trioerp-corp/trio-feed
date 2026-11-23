@@ -9,6 +9,14 @@
 {% if st.state == 'trial' or st.state == 'expired' and not st.client %}<div class="msg" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
 <span>{% if st.state == 'trial' %}هذه نسخة تجريبية. لتفعيل البرنامج: أرسل إلينا كود الجهاز وسيصلك كود التفعيل.{% else %}انتهت الفترة التجريبية — أرسل إلينا كود الجهاز، وسيصلك كود التفعيل.{% endif %}</span>
 <a class="btn" href="{{ wa }}" target="_blank" rel="noopener">اطلب الاشتراك واتساب</a></div>{% endif %}
+{% if renew %}{% include "ui/_renew.html" %}{% elif pay_on and st.state == 'trial' or pay_on and st.state == 'expired' and not st.client %}<form method="post" class="msg" style="display:flex;flex-direction:column;gap:6px">{% csrf_token %}<input type="hidden" name="action" value="renew">
+<b>اشترك الآن: {{ year_price }} ج في السنة — كل البرنامج (فرع واحد)</b><span class="muted">كل فرع إضافي 500 ج في السنة. بياناتك التجريبية تبقى كما هي.</span>
+<label class="field" style="margin:0">فروع إضافية<input name="branches" value="0" inputmode="numeric" dir="ltr"></label>
+<label class="field" style="margin:0">هاتف صاحب المحل<input name="phone" dir="ltr" inputmode="tel" required></label>
+<label style="font-size:13px"><input type="checkbox" name="visit" value="1"> زيارة تجهيز وتدريب في المحل — 1,500 ج (مرة واحدة)</label>
+<label style="font-size:13px"><input type="checkbox" name="custom" value="1"> طلبات خاصة — حتى 3 تعديلات — 1,500 ج (مرة واحدة)</label>
+<label style="font-size:13px"><input type="checkbox" name="agree" value="1" required> قرأت <a href="https://trioerp.pages.dev/terms/" target="_blank" rel="noopener">الشروط</a> و<a href="https://trioerp.pages.dev/refund/" target="_blank" rel="noopener">سياسة الاسترجاع</a> ووافقت عليها</label>
+<button>💳 اشترك وادفع بالفيزا</button></form>{% endif %}
 <form method="post">{% csrf_token %}<label class="field">كود التفعيل<textarea name="code" rows="4" dir="ltr" style="width:100%;font-family:monospace" placeholder="TRIO1...."></textarea></label>
 <p><button>تفعيل</button>{% if user.is_authenticated %} <a class="btn light" href="/">رجوع</a>{% endif %}</p></form>
 <details class="card" style="margin:12px 0;padding:12px 16px"{% if request.POST.action == 'claim' %} open{% endif %}><summary style="cursor:pointer;font-weight:700">💳 دفعت عبر الإنترنت من صفحة البيع؟ اكتب رقم الطلب</summary>
@@ -19,5 +27,5 @@
 {% if feed_url %}<form method="post" class="msg" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">{% csrf_token %}
 <span>{% if feed_ok %}متوصل بـ Trio ✔ — آخر اتصال {{ feed_ok|date:"d/m H:i" }}{% else %}لم يتصل بعد بـ Trio{% endif %}</span>
 <button class="light" name="action" value="check">اتصل الآن</button></form>{% endif %}
-<p class="muted">للتجديد أو المساعدة: {{ support }}</p></div>
+<p class="muted">السعر: اشتراك سنوي 3,000 ج — كل البرنامج، و500 ج لكل فرع إضافي في السنة. للتجديد أو المساعدة: {{ support }}</p></div>
 {% endblock %}

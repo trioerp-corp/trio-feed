@@ -147,6 +147,14 @@ def snapshot(now=None):
         exp=[dict(n=r["item"].name, d=r["days"]) for r in exp[:10]], exp_n=len(exp),
         recent=recent, shifts=shifts, sdiff=sdiff,
     )
+    try:  # the yearly subscription's «جدد الاشتراك» notice (30 / 7 / 1 days before the end) on the owner's phone too
+        from . import license as LIC
+
+        n = LIC.renew_notice(LIC.status(s))
+        if n:
+            data["lic"] = dict(t=n["text"], p=n["price"], lv=n["level"])
+    except Exception:  # noqa: BLE001
+        pass
     try:
         data["owner"] = _f(owner_balance())
     except Exception:  # noqa: BLE001

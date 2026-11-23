@@ -1,5 +1,5 @@
 """Trio version — raise it with every release published to clients (Trio License «نشر تحديث»)."""
-VERSION = "1.25.0"
+VERSION = "1.25.3"
 
 
 def parse(v):

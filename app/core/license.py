@@ -3,7 +3,8 @@
 - Every computer has a «كود الجهاز» derived from Windows' own machine id (it does not change with the program).
 - Trio issues an «كود التفعيل» with Trio-License.exe: client name + machine code + expiry date, signed with Trio's
   private key. The program only holds the public key below, so a code cannot be forged or moved to another computer.
-- No code yet: 14-day trial. 10 days before expiry a banner warns; after expiry a grace period (7 days by default) keeps
+- No code yet: 14-day trial. One price: a yearly subscription (core.modules.YEAR_PRICE); 30/7/1 days before its end the
+  owner sees «جدد الاشتراك» (renew_notice); 10 days before expiry a banner warns; after expiry a grace period (7 days by default) keeps
   everything working with a red banner; after that the program opens only the activation page until a new code is entered.
 """
 import base64
@@ -167,7 +168,8 @@ def status(settings_obj=None, today=None):
     if lic.get("m") != mc:
         return dict(state="invalid", days_left=-1, expires=None, client=lic.get("c", ""), machine=mc,
                     message="كود التفعيل هذا صادر لجهاز آخر — أرسل كود هذا الجهاز إلى Trio")
-    extra = dict(client=lic.get("c", ""), plan=lic.get("p", ""), machine=mc, lifetime=bool(lic.get("l")), lifetime_updates=bool(lic.get("u")))
+    extra = dict(client=lic.get("c", ""), plan=lic.get("p", ""), machine=mc, lifetime=bool(lic.get("l")), lifetime_updates=bool(lic.get("u")),
+                 branches=int(lic.get("br") or 0))
     if lic.get("l"):  # bought for life: never expires
         return _connected(dict(state="active", days_left=99999, expires=None, message="رخصة مدى الحياة ✔" + (" — والتحديثات مدى الحياة" if lic.get("u") else ""), **extra), s, today)
     exp = dt.date.fromisoformat(lic["e"])
@@ -203,5 +205,66 @@ def _connected(st, s, today=None):
                 message=f"الجهاز غير متصل بالإنترنت منذ {off['days']} يومًا — صِله بالإنترنت خلال {off['left']} يومًا حتى لا يتوقف البرنامج")
 
 
+RENEW_WA = "201228827915"
+RENEW_NOTICE = (30, 7, 1)  # the notice starts 30 days before the end, turns orange at 7 and red at 1 (and after)
+
+
+def renew_notice(st):
+    """The yearly subscription's «جدد الاشتراك» notice for the owner (home page and the phone), or None.
+    Only for a yearly licence 30 days or less from its end (or ended); never for the trial or an old lifetime licence."""
+    if not st or st.get("lifetime") or not st.get("expires") or st.get("state") in ("trial", "invalid"):
+        return None
+    left = st.get("days_left")
+    if left is None or left > RENEW_NOTICE[0]:
+        return None
+    exp = st["expires"]
+    day = exp.strftime("%d/%m/%Y") if hasattr(exp, "strftime") else str(exp)
+    if left < 0:
+        text = f"انتهى اشتراك Trio السنوي يوم {day} — جدّد الاشتراك ليستمر البرنامج (بياناتك كلها محفوظة)"
+    elif left == 0:
+        text = f"ينتهي اشتراك Trio السنوي اليوم ({day}) — جدّد الاشتراك الآن حتى لا يتوقف البرنامج"
+    else:
+        text = f"ينتهي اشتراك Trio السنوي بعد {left} يوم ({day}) — جدّد الاشتراك حتى لا يتوقف البرنامج"
+    level = "info" if left > RENEW_NOTICE[1] else "warn" if left > RENEW_NOTICE[2] else "urgent"
+    from .modules import year_total
+
+    br = int(st.get("branches") or 0)
+    price = f"{year_total(br):,} ج في السنة — كل البرنامج" + (f" (فرع رئيسي + {br} فرع إضافي)" if br else "")
+    return dict(level=level, days=left, expires=day, text=text, price=price, branches=br,
+                note="التجديد يبدأ من تاريخ الانتهاء الحالي — لا تخسر أي يوم لو جددت مبكرًا")
+
+
+def renew_wa(s=None):
+    from urllib.parse import quote
+
+    name = getattr(s, "name", "") if s else ""
+    return f"https://wa.me/{RENEW_WA}?text=" + quote(f"أرغب في تجديد اشتراك Trio السنوي\nالمحل: {name}\nكود الجهاز: {machine_code()}")
+
+
 def blocked(st):
     return st["state"] in ("expired", "invalid", "offline")
+
+
+def allowed_branches(st=None):
+    """1.25.3: the program comes with ONE branch; each paid extra branch (licence field «br») opens one more.
+    A trial or a copy without a valid licence: 1. Lifetime licences too: 1 + br (branches already open keep working)."""
+    try:
+        st = st or status()
+    except Exception:  # noqa: BLE001
+        return 1
+    if st.get("state") in ("trial", "invalid", "offline") or not st.get("client") and st.get("state") == "expired":
+        return 1
+    return 1 + max(0, int(st.get("branches") or 0))
+
+
+def branch_room(exclude=None):
+    """Raise ValidationError when opening (or re-activating) one more branch would pass the paid branches."""
+    from django.core.exceptions import ValidationError
+    from pos.models import Branch
+
+    qs = Branch.objects.filter(active=True)
+    if exclude is not None:
+        qs = qs.exclude(pk=exclude)
+    n, cap = qs.count(), allowed_branches()
+    if n >= cap:
+        raise ValidationError(f"الفروع المدفوعة {cap} من {cap} — كل فرع إضافي 500 ج سنويًا. ادفع الفرع الإضافي من صفحة «الفروع» أو تواصل مع Trio: 01228827915")

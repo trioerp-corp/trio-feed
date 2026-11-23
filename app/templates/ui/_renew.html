@@ -1,0 +1,11 @@
+{# «جدد الاشتراك»: 30 / 7 / 1 days before the yearly subscription ends (core.license.renew_notice) — home, updates and activation pages #}
+<div class="card" id="renew" style="margin-bottom:16px;border:2px solid {% if renew.level == 'urgent' %}#A13A2A{% elif renew.level == 'warn' %}#B45F06{% else %}#0C4A76{% endif %}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px">
+<h2 style="margin:0 0 4px">{% if renew.level == 'urgent' %}⛔{% elif renew.level == 'warn' %}⚠️{% else %}🔔{% endif %} {{ renew.text }}</h2>
+<p class="muted" style="margin:0">التجديد: <b>{{ renew.price }}</b> — {{ renew.note }}. لا تُحذف بياناتك أبدًا، حتى لو توقف البرنامج بعد الانتهاء.</p></div>
+{% if renew.pay %}<form method="post" action="/license/" style="display:flex;flex-direction:column;gap:6px;min-width:240px">{% csrf_token %}<input type="hidden" name="action" value="renew"><input type="hidden" name="next" value="{{ request.path }}">
+<label class="field" style="margin:0">هاتف صاحب المحل<input name="phone" value="{{ renew.phone }}" dir="ltr" inputmode="tel" required></label>
+<label style="font-size:13px"><input type="checkbox" name="agree" value="1" required> قرأت <a href="https://trioerp.pages.dev/terms/" target="_blank" rel="noopener">الشروط</a> و<a href="https://trioerp.pages.dev/refund/" target="_blank" rel="noopener">سياسة الاسترجاع</a> ووافقت عليها</label>
+<button>🔄 جدد الاشتراك — 💳 ادفع بالفيزا</button></form>
+{% else %}<div style="display:flex;flex-direction:column;gap:6px"><a class="btn" href="{{ renew.wa }}" target="_blank" rel="noopener">🔄 جدد الاشتراك</a><span class="muted">أو اتصل: <a href="tel:01228827915" dir="ltr">01228827915</a></span></div>{% endif %}
+</div></div>
