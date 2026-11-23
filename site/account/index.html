@@ -254,7 +254,8 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
         if (b.t === "qa") return b.items.map(function (q) { return "<details><summary>" + ESC(q.q) + "</summary><div>" + ESC(q.a) + "</div></details>"; }).join("");
         if (b.t === "calc") return '<div class="calc"><label>مبيعات المحل في اليوم (جنيه)<input type="number" id="cS" value="8000" min="0" inputmode="numeric"></label>' +
           '<label>نسبة الضائع المتوقعة %<input type="number" id="cP" value="2" min="0" max="30" step="0.5" inputmode="decimal"></label>' +
-          '<div class="res"><div><span>في اليوم</span><b id="cD"></b></div><div><span>في الشهر</span><b id="cM"></b></div><div><span>في السنة</span><b id="cY"></b></div></div></div>';
+          '<div class="res"><div><span>في اليوم</span><b id="cD"></b></div><div><span>في الشهر</span><b id="cM"></b></div><div><span>في السنة</span><b id="cY"></b></div></div>' +
+          '<p style="grid-column:1/-1;margin:0;font-size:14px">اشتراك Trio السنوي <b>' + money(b.price || 3000) + '</b> لكل البرنامج — يغطيه الضائع في <b id="cN"></b> فقط.</p></div>';
         if (b.t === "msgs") return b.items.map(function (m, i) { var t = m.x.replace("{link}", link);
           return '<div class="msgc"><b>' + ESC(m.h) + "</b><pre>" + ESC(t) + '</pre><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn soft" type="button" data-copy="' + i + '">📋 نسخ</button><a class="btn brand" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">إرسال عبر واتساب</a></div></div>'; }).join("");
         return "";
@@ -267,7 +268,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
           (i < K.sections.length - 1 ? '<button class="btn brand" type="button" data-go="' + (i + 1) + '">التالي: ' + ESC(K.sections[i + 1].title) + " ←</button>" : "") + "</div>";
         $("kitBody").querySelectorAll("[data-go]").forEach(function (b) { b.onclick = function () { show(+b.dataset.go); $("kit").scrollIntoView({ behavior: "smooth" }); }; });
         $("kitBody").querySelectorAll("[data-copy]").forEach(function (b) { b.onclick = function () { var t = b.closest(".msgc").querySelector("pre").textContent; navigator.clipboard.writeText(t).then(function () { b.textContent = "تم النسخ ✔"; }); }; });
-        if ($("cS")) { var calc = function () { var dd = (+$("cS").value || 0) * (+$("cP").value || 0) / 100; $("cD").textContent = money(Math.round(dd)); $("cM").textContent = money(Math.round(dd * 30)); $("cY").textContent = money(Math.round(dd * 365)); }; $("cS").oninput = $("cP").oninput = calc; calc(); }
+        if ($("cS")) { var calc = function () { var dd = (+$("cS").value || 0) * (+$("cP").value || 0) / 100; $("cD").textContent = money(Math.round(dd)); $("cM").textContent = money(Math.round(dd * 30)); $("cY").textContent = money(Math.round(dd * 365)); $("cN").textContent = dd > 0 ? Math.ceil((((K.price || {}).year) || 3000) / dd) + " يوم" : "—"; }; $("cS").oninput = $("cP").oninput = calc; calc(); }
       }
       $("kitNav").querySelectorAll("button").forEach(function (b) { b.onclick = function () { show(+b.dataset.i); }; });
       show(0);
@@ -310,7 +311,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
       var r = d.rep, link = "https://trioerp.pages.dev/?ref=" + r.code;
       $("repOn").classList.remove("hide");
       $("kC").textContent = r.customers.length; $("kL").textContent = r.leads.length; $("kD").textContent = money(r.due); $("kP").textContent = money(r.paid);
-      $("rate").textContent = r.rate + "%"; $("myLink").textContent = link;
+      $("rate").textContent = r.rate + "% — أي " + money(Math.round(3000 * r.rate) / 100) + " عن كل اشتراك سنوي (3,000 ج)، و" + money(Math.round(500 * r.rate) / 100) + " عن كل فرع إضافي"; $("myLink").textContent = link;
       $("share").href = "https://wa.me/?text=" + encodeURIComponent("برنامج Trio لإدارة المحلات (مبيعات ومخزن وحسابات) — جرّبه مجانًا 14 يومًا:\n" + link);
       var qr = qrcode(0, "M"); qr.addData(link); qr.make(); $("qrBox").innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
       $("copy").onclick = function () { navigator.clipboard.writeText(link).then(function () { $("copy").textContent = "تم النسخ ✔"; }); };

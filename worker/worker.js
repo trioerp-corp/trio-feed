@@ -7,8 +7,8 @@
 const PUB = "tM+bQlw/40oF17B+DvmHJ1TxQd1oIs0oMTOJ3LxDs4c=";   // Trio's public key: checks the licence a copy already has (upgrades / renewals)
 const FEED = "https://raw.githubusercontent.com/trioerp-corp/trio-feed/main/feed.txt"; // the command channel written into every licence
 const PAYMOB = "https://accept.paymob.com";
-// prices and plans — the same as the program (core/modules.py); the browser never decides the price
-const CAT = /*CATALOG*/{"plans": {"basic": 10000, "standard": 15000, "pro": 20000}, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "addons": {"production": 1500, "profit_yearly": 1000, "branches": 3000, "report_whatsapp": 500, "report_telegram": 750, "report_email": 750, "drive_backup": 1000, "stores": 1000, "returns": 1000, "promos": 1000, "units": 1000, "labels": 1000, "valuation": 1000, "mobile": 1500}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "life": {"renew": 1500, "lifetime": 15000, "lifetime_updates": 10000}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكثر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكثر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على البريد", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الهاتف"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}}
+// the price (one yearly subscription) and the parts — the same as the program (core/modules.py); the browser never decides the price
+const CAT = /*CATALOG*/{"year": 3000, "branch": 500, "visit": 1500, "custom": 1500, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكثر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكثر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على البريد", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الهاتف"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}}
 /*END*/;
 
 const enc = new TextEncoder();
@@ -23,7 +23,6 @@ const digits = (s) => String(s || "").replace(/\D/g, "");
 const MACHINE = /^[A-Z2-7]{4}(-[A-Z2-7]{4}){3}$/;
 const iso = () => new Date().toISOString().replace(/\.\d+Z$/, "Z");
 const today = () => new Date().toISOString().slice(0, 10);
-const plusYear = (d) => { const x = new Date((d > today() ? d : today()) + "T00:00:00Z"); x.setUTCFullYear(x.getUTCFullYear() + 1); return x.toISOString().slice(0, 10); };
 const fits = (k, b) => !CAT.for_business[k] || CAT.for_business[k].includes(b);
 
 async function verifyWith(pubB64, payload, sig) {
@@ -57,50 +56,53 @@ async function sign(env, lic) {
   return "TRIOS." + payload + "." + sig + "." + String(env.SALES_CERT).trim().replace(/^[A-Z0-9]+\./, "");
 }
 
-// what is bought and for how much (EGP), worked out here only
+// what is bought and for how much (EGP), worked out here only. One price: a yearly subscription for the whole program
+// (every part that fits the shop's business, one branch) — CAT.year; + CAT.branch a year for each extra branch (a quantity,
+// kept in the licence as «br» and renewed with it); + optional one-time services: the set-up visit and custom requests
+// (up to 3 changes). No plans, no add-ons; lifetime is never sold here (an old lifetime licence keeps working).
+const nBr = (v) => Math.max(0, Math.min(50, parseInt(v, 10) || 0));
 async function price(b) {
   const business = CAT.business[b.business] ? b.business : "market";
-  const lines = [];
-  let total = 0, cur = null;
+  let cur = null;
   if (b.lic) {
     cur = await readLicence(b.lic);
     if (!cur || cur.m !== b.m) return { error: "الرخصة على هذا الجهاز غير سليمة — اطلب عبر واتساب" };
   }
-  const plan = CAT.plans[b.plan] ? b.plan : "";
-  if (!cur) {
-    if (!plan) return { error: "اختر الباقة" };
-    lines.push(["باقة " + CAT.plan_names[plan], CAT.plans[plan]]); total += CAT.plans[plan];
-  } else if (plan && plan !== cur.p) {
-    if (!CAT.plans[cur.p]) return { error: "هذه الترقية تحتاج إلى Trio — اطلبها عبر واتساب" };
-    const diff = CAT.plans[plan] - CAT.plans[cur.p];
-    if (diff <= 0) return { error: "هذه ليست ترقية — اختر باقة أعلى" };
-    lines.push(["ترقية لباقة " + CAT.plan_names[plan], diff]); total += diff;
-  }
-  const newPlan = plan || (cur && cur.p) || "basic";
-  const inPlan = new Set([...(CAT.plan_mods[newPlan] || []), ...((CAT.business[business] || [])), ...((cur && cur.x) || [])]);
-  const extras = [];
-  for (const k of [...new Set(b.extras || [])]) {
-    if (!(k in CAT.addons) || !fits(k, business) || inPlan.has(k)) continue;
-    extras.push(k); lines.push([CAT.names[k], CAT.addons[k]]); total += CAT.addons[k];
-  }
-  const life = new Set((b.life || []).filter((k) => k === "lifetime" || k === "lifetime_updates"));
-  if (cur && cur.l) life.delete("lifetime");
-  if (cur && cur.u) life.delete("lifetime_updates");
-  for (const k of life) { lines.push([k === "lifetime" ? "رخصة مدى الحياة" : "التحديثات مدى الحياة", CAT.life[k]]); total += CAT.life[k]; }
-  const renew = !!(cur && b.renew && !cur.l && !life.has("lifetime"));
-  if (renew) { lines.push(["تجديد سنة", CAT.life.renew]); total += CAT.life.renew; }
-  if (total <= 0) return { error: "لا يوجد ما يُدفع" };
-  return { business, plan: newPlan, extras, life: [...life], renew, lines, total, cur };
+  const life = !!(cur && cur.l), lines = [], had = cur ? nBr(cur.br) : 0;
+  const branches = life ? had : Math.max(nBr(b.branches), had); // a renewal never drops branches paid for
+  const renew = !!cur && !life && b.renew !== false; // false: only services / more branches on a running subscription
+  if (!cur || renew) {
+    lines.push([cur ? "تجديد الاشتراك السنوي — كل البرنامج" : "اشتراك سنوي — كل البرنامج (فرع واحد)", CAT.year]);
+    if (branches) lines.push(["فرع إضافي × " + branches + " — سنة", branches * CAT.branch]);
+  } else if (!life && branches > had) lines.push(["فرع إضافي × " + (branches - had) + " — حتى نهاية الاشتراك", (branches - had) * CAT.branch]);
+  const visit = !!b.visit, custom = !!b.custom;
+  if (visit) lines.push(["زيارة تجهيز وتدريب في المحل", CAT.visit]);
+  if (custom) lines.push(["طلبات خاصة — حتى 3 تعديلات", CAT.custom]);
+  const total = lines.reduce((a, l) => a + l[1], 0);
+  if (!(total > 0)) return { error: life ? "رخصتك مدى الحياة — لا تحتاج إلى تجديد" : "لا يوجد ما يُدفع" };
+  return { business: (cur && cur.b) || business, plan: "pro", extras: [], life: [], renew, branches, visit, custom, lines, total, cur };
 }
+
+// a renewal extends from the current expiry (renewing early loses no day); one that ended more than its grace days ago
+// starts from today (the copy was stopped meanwhile)
+function renewFrom(cur) {
+  const e = cur && cur.e;
+  if (!e) return today();
+  const g = Number(cur.g || 7), late = (Date.parse(today()) - Date.parse(e)) / 86400000;
+  return late > g ? today() : e;
+}
+const addYear = (d) => { const x = new Date(d + "T00:00:00Z"); x.setUTCFullYear(x.getUTCFullYear() + 1); return x.toISOString().slice(0, 10); };
 
 function licence(o, m, selfSetup) {
   const cur = o.cur || {};
   const lic = { ...cur };
   delete lic._k;
-  Object.assign(lic, { c: cur.c || o.name || "عميل أونلاين", m, p: o.plan, b: o.business, x: [...new Set([...(cur.x || []), ...o.extras])], g: cur.g || 7, f: cur.f || FEED, t: iso(), o: o.id });
-  if (o.life.includes("lifetime") || cur.l) { lic.l = true; delete lic.e; }
-  else lic.e = o.cur ? (o.renew ? plusYear(cur.e || today()) : cur.e || plusYear(today())) : plusYear(today());
-  if (o.life.includes("lifetime_updates") || cur.u) lic.u = true;
+  Object.assign(lic, { c: cur.c || o.name || "عميل أونلاين", m, p: cur.p || o.plan || "pro", b: o.business, x: [...new Set([...(cur.x || []), ...(o.extras || [])])], g: cur.g || 7, f: cur.f || FEED, t: iso(), o: o.id });
+  if (cur.l) { lic.l = true; delete lic.e; } // a lifetime licence (Trio License only, never sold online) stays as it is
+  else if (!o.cur || o.renew) { delete lic.l; lic.e = addYear(o.cur ? renewFrom(cur) : today()); } // new or renewed: one year
+  // else: services / more branches only — the expiry stays
+  if (o.branches) lic.br = o.branches; // extra branches paid for (beyond the first)
+  if (cur.u) lic.u = true;
   if (selfSetup) lic.s = true;
   return lic;
 }
@@ -154,7 +156,7 @@ async function checkout(req, env, url) {
   const email = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(b.email || "") ? b.email : phone + "@trioerp.pages.dev";
   const back = /^http:\/\/[a-z0-9.\-]+(:\d+)?\/ui\/shop\/pay\/$/i.test(b.back || "") ? b.back : "";
   const o = { id, status: "pending", src: b.m ? "app" : "site", m: b.m || "", name, phone, email, business: pr.business, plan: pr.plan, extras: pr.extras,
-    life: pr.life, renew: pr.renew, lines: pr.lines, total: pr.total, cur: pr.cur, back, created: iso(),
+    life: pr.life, renew: pr.renew, branches: pr.branches, visit: pr.visit, custom: pr.custom, lines: pr.lines, total: pr.total, cur: pr.cur, back, created: iso(),
     terms: agree ? { v: agree, at: iso() } : null }; // the terms / refund policy version the customer ticked
   // where the owner wants his daily summary (filled on the order form; the program saves them when the order is claimed)
   const repMail = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(b.rep_email || "").trim()) ? String(b.rep_email).trim().slice(0, 120) : "";
@@ -535,7 +537,8 @@ function render(r){
   $("#shop").textContent=d.shop||"محلك";document.title="Trio — "+(d.shop||"");
   $("#st").className="st"+(old?" off":"");$("#stt").textContent=(old?"البرنامج مغلق أو لا يوجد إنترنت — آخر تحديث ":"المحل يعمل — آخر تحديث ")+ago(r.at);
   const t=d.today||{},wa=d.wa?"https://wa.me/"+d.wa+"?text="+encodeURIComponent(sumText(d)):"https://wa.me/?text="+encodeURIComponent(sumText(d));
-  let h='<div class="hero"><div class="k">مبيعات '+(today?"اليوم":d.day)+'</div><div class="v">'+N(t.net)+' <small>ج.م</small></div>'+
+  let h=d.lic?'<div style="margin:0 0 12px;padding:12px 14px;border-radius:14px;background:'+(d.lic.lv==="urgent"?"#FDE8E7":d.lic.lv==="warn"?"#FFF4E2":"#E6F0F8")+';color:#1b2430"><b>'+E(d.lic.t)+'</b><div style="font-size:13px;margin:4px 0 8px">التجديد: '+E(d.lic.p)+' — من البرنامج («🔄 التحديثات») بالبطاقة، أو عبر واتساب</div><a style="display:inline-block;background:#0C4A76;color:#fff;border-radius:10px;padding:8px 14px;text-decoration:none;font-weight:700" href="https://wa.me/201228827915?text='+encodeURIComponent("أرغب في تجديد اشتراك Trio — "+(d.shop||""))+'">🔄 جدد الاشتراك</a></div>':"";
+  h+='<div class="hero"><div class="k">مبيعات '+(today?"اليوم":d.day)+'</div><div class="v">'+N(t.net)+' <small>ج.م</small></div>'+
    '<div class="row"><div><b>'+(t.n||0)+'</b><span>فاتورة</span></div><div><b>'+N(t.cash)+'</b><span>نقدي</span></div><div><b>'+N(t.card)+'</b><span>بطاقات / محافظ</span></div></div></div>';
   h+='<div class="grid"><div class="tile"><div class="k">الربح التقريبي</div><div class="v">'+N(t.profit)+'</div></div><div class="tile"><div class="k">رصيد الدرج</div><div class="v">'+N(d.drawer)+'</div></div>'+
    '<div class="tile"><div class="k">مبيعات الشهر</div><div class="v">'+N((d.month||{}).net)+'</div></div><div class="tile'+(d.low_n?" warn":"")+'"><div class="k">نواقص</div><div class="v">'+(d.low_n||0)+' صنف</div></div>'+
@@ -1210,7 +1213,8 @@ async function repByCode(d, code) {
 // ---------------------------------------------------------------- the sales kit (1.22): what an approved rep reads before a visit
 // Block types: p, list, script, tip, warn, qa, cards, steps, calc, msgs. Only real features — nothing promised that the program does not do.
 const KIT = {
-  v: "1.0",
+  v: "1.1",
+  price: { year: 3000, branch: 500, visit: 1500, custom: 1500 },
   title: "حقيبة المندوب",
   lead: "كل ما تحتاجه لتدخل أي محل بثقة، وتفهم صاحبه، وتريه بنفسه لماذا يحتاج إلى Trio — وتخرج بخطوة تالية واضحة.",
   sections: [
@@ -1256,8 +1260,8 @@ const KIT = {
       id: "math", icon: "🧮", title: "الحساب الذي يقنع",
       blocks: [
         { t: "p", x: "صاحب المحل يقتنع بالأرقام أكثر من الكلام. لا تخترع أرقامًا عن محله؛ اسأله عن مبيعاته اليومية، ثم احسب أمامه كم يضيع لو تسرّبت نسبة صغيرة فقط بين خطأ في الفكة، وصنف بيع ولم يُسجَّل، وبضاعة انتهت صلاحيتها، وآجل نُسي." },
-        { t: "calc" },
-        { t: "script", h: "قلها هكذا", x: "هذا مثال فقط، والنسبة أنت أعلم بها. لكن لو كان الضائع عندك 2% فقط، فأنت تخسر هذا المبلغ كل شهر دون أن تراه. هل تعتقد أن النسبة في محلك أقل من ذلك أم أكثر؟" },
+        { t: "calc", price: 3000 },
+        { t: "script", h: "قلها هكذا", x: "هذا مثال فقط، والنسبة أنت أعلم بها. لكن لو كان الضائع عندك 2% فقط، فأنت تخسر هذا المبلغ كل شهر دون أن تراه — واشتراك Trio كله 3,000 جنيه في السنة. هل تعتقد أن النسبة في محلك أقل من ذلك أم أكثر؟" },
         { t: "warn", x: "الأرقام هنا مثال توضيحي يحسبه صاحب المحل بمبيعاته هو. لا تقل إن البرنامج «يوفّر لك كذا» برقم محدد، بل اسأله هو عن تقديره." }
       ]
     },
@@ -1310,7 +1314,7 @@ const KIT = {
         { t: "qa", items: [
           { q: "«عندي برنامج بالفعل»", a: "ممتاز، معنى ذلك أنك تعرف قيمة التنظيم. ما الشيء الذي تتمنى أن يفعله برنامجك ولا يفعله؟ (اسمع، ثم اربط بركيزة: الهاتف، أو الربح الحقيقي، أو الموافقة على الإلغاء). والتجربة مجانية بجانب برنامجك الحالي — قارن بنفسك، ويمكن نقل الأصناف والعملاء من إكسل." },
           { q: "«الدفتر ماشي معايا»", a: "الدفتر يخبرك بما بعته، لكنه لا يخبرك بما ضاع. كم يستغرق منك حساب ربح الشهر؟ ومن يراجع حين تغيب؟ (ثم احسب معه بالحاسبة)." },
-          { q: "«بكام؟» أو «غالي»", a: "السعر يحدده فريق Trio حسب نشاطك وعدد الأجهزة، وسيرسله لك مكتوبًا. لكن قبل السعر: كم قلنا إنه يضيع شهريًا؟ (ارجع لرقم الحاسبة). والتجربة 14 يومًا مجانًا، فلن تدفع شيئًا قبل أن ترى النتيجة في محلك." },
+          { q: "«بكام؟» أو «غالي»", a: "سعر واحد واضح: اشتراك سنوي 3,000 جنيه لكل البرنامج — يعني حوالي 250 جنيه في الشهر، أقل من 9 جنيه في اليوم. يشمل كل الأجزاء التي تناسب نشاطك وفرعًا واحدًا والتحديثات، وكل فرع إضافي 500 جنيه في السنة. وزيارة التجهيز والتدريب في المحل اختيارية بـ 1,500 جنيه مرة واحدة. والآن قارن: كم قلنا إنه يضيع شهريًا؟ (ارجع لرقم الحاسبة). والتجربة 14 يومًا مجانًا، فلن تدفع شيئًا قبل أن ترى النتيجة في محلك." },
           { q: "«مش بعرف في الكمبيوتر» / «العمال مش هيتعلموا»", a: "شاشة الكاشير بسيطة جدًا: امسح الباركود أو اضغط على الصنف ثم «ادفع». ونأتي إلى المحل لتركيبه وتدريب فريقك، ومعه دليل مصور لنشاطك، ودعم على واتساب لأي سؤال." },
           { q: "«النت عندي بيقطع»", a: "البرنامج يعمل بالكامل دون إنترنت، والكاشير يبيع والنت مقطوع. الإنترنت يُستخدم فقط لمتابعتك من الهاتف وللنسخة الاحتياطية والتحديثات، وتُرسل البيانات وحدها حين يعود." },
           { q: "«خايف على بياناتي» / «مين هيشوف حساباتي؟»", a: "بياناتك على كمبيوتر محلك أنت، ولا تُرسل حساباتك إلى Trio. النسخة الاحتياطية مشفرة على جوجل درايف الخاص بك. ونلتزم بقانون حماية البيانات الشخصية، والسياسة منشورة على الموقع." },
@@ -1352,7 +1356,8 @@ const KIT = {
           { h: "بعد الزيارة", x: "أهلًا أستاذ [الاسم]، سعدت بزيارتك اليوم. هذا رابط برنامج Trio — اكتب نشاطك في «شاهد برنامجك» لترى برنامجك، ومنه تنزّل التجربة المجانية 14 يومًا:\n{link}\nوأنا معك في أي خطوة. [اسمك]" },
           { h: "أول تواصل (بترشيح)", x: "مساء الخير أستاذ [الاسم]، أنا [اسمك] من Trio، رشّحك لي [فلان]. نعمل مع المحلات على برنامج يوضح الربح الحقيقي ويوقف ضياع البضاعة والدرج، وتتابع منه محلك من هاتفك. شاهد كيف سيبدو برنامجك لنشاطك:\n{link}\nهل يناسبك أن أمرّ عليك عشر دقائق هذا الأسبوع؟" },
           { h: "متابعة لم يُرد عليها", x: "أستاذ [الاسم]، أعرف أن وقتك مشغول. سؤال سريع: هل لا يزال تنظيم حسابات المحل والمخزن يهمك هذه الفترة؟ إن كان نعم فالتجربة مجانية من هنا:\n{link}" },
-          { h: "قبل نهاية التجربة", x: "أستاذ [الاسم]، تنتهي تجربتك لبرنامج Trio بعد يومين، وكل ما أدخلته محفوظ وسيبقى كما هو بعد التفعيل. هل نجهّز التفعيل وموعد التدريب؟" },
+          { h: "قبل نهاية التجربة", x: "أستاذ [الاسم]، تنتهي تجربتك لبرنامج Trio بعد يومين، وكل ما أدخلته محفوظ وسيبقى كما هو بعد التفعيل. الاشتراك 3,000 جنيه في السنة لكل البرنامج. هل نجهّز التفعيل وموعد التدريب؟\n{link}" },
+          { h: "تذكير بالتجديد", x: "أستاذ [الاسم]، اشتراك Trio في محلك ينتهي قريبًا. التجديد 3,000 جنيه للسنة (و500 لكل فرع إضافي)، ويبدأ من تاريخ الانتهاء فلا تخسر أي يوم، وتجدده من البرنامج بالفيزا من «🔄 التحديثات» أو عن طريقي. وبياناتك محفوظة دائمًا." },
           { h: "طلب ترشيح", x: "أستاذ [الاسم]، سعيد أن البرنامج أفاد محلك. لو تعرف صاحب محل آخر — صيدلية أو مطعم أو سوبر ماركت — يحتاج تنظيمًا مثلك، أرسل له هذا الرابط:\n{link}\nوشكرًا لثقتك." }
         ] }
       ]
@@ -1361,16 +1366,17 @@ const KIT = {
       id: "rules", icon: "📜", title: "قواعد العمل والعمولة",
       blocks: [
         { t: "list", items: [
-          "تُحسب لك العمولة على كل بيعة لعميل سجّل أو أرسل طلبه عن طريق رابطك أو كود QR الخاص بك، وتظهر في حسابك مع المستحق لك والمدفوع.",
+          "تُحسب لك العمولة بنسبتك على كل بيعة لعميل سجّل أو أرسل طلبه عن طريق رابطك أو كود QR الخاص بك، وتظهر في حسابك مع المستحق لك والمدفوع. مثال: نسبة 10% من اشتراك سنوي 3,000 ج = 300 ج لك.",
+          "التجديدات: تُحسب لك العمولة على التجديد إذا دفعه العميل من رابطك، أو سجّله فريق Trio باسمك؛ أما التجديد الذي يدفعه العميل من داخل البرنامج فلا يحمل رابطك إلا إذا سجّله الفريق لك.",
           "الرابط يُحفظ في هاتف العميل 90 يومًا: إن فتحه اليوم وسجّل بعد شهر، يُحسب لك.",
           "لا تحصّل أي مبلغ من العميل بنفسك أبدًا؛ الدفع لـ Trio مباشرة، وأي تحصيل بيدك ممنوع.",
-          "لا تعد بسعر أو خصم أو ميزة أو موعد لم يؤكده فريق Trio.",
+          "السعر ثابت للجميع: اشتراك سنوي 3,000 ج (فرع واحد) + 500 ج لكل فرع إضافي في السنة؛ وزيارة التجهيز 1,500 ج والطلبات الخاصة (حتى 3 تعديلات) 1,500 ج مرة واحدة. لا توجد باقات ولا «مدى الحياة» — لا تعد بخصم أو ميزة أو موعد لم يؤكده فريق Trio.",
           "يمكنك مساعدة العميل في تنزيل التجربة؛ أما التفعيل والتركيب والتدريب الرسمي فعن طريق فريق Trio.",
           "لا ترسل رسائل جماعية مزعجة، ولا تتواصل مع عميل طلب ألا تتواصل معه.",
           "مثّل Trio بأدب ومظهر لائق؛ سمعتك هي سمعتنا."
         ] },
         { t: "cards", items: [
-          { h: "معلومات سريعة", x: "• يعمل على كمبيوتر ويندوز 10 أو 11، مع طابعة حرارية وقارئ باركود إن أراد.\n• تجربة مجانية 14 يومًا بكل الإمكانيات، والبيانات تبقى بعد التفعيل.\n• تحميل التجربة من الموقع، والتفعيل عن طريق Trio.\n• فريق Trio: واتساب 01228827915 · 01121460640" }
+          { h: "معلومات سريعة", x: "• يعمل على كمبيوتر ويندوز 10 أو 11، مع طابعة حرارية وقارئ باركود إن أراد.\n• تجربة مجانية 14 يومًا بكل الإمكانيات، والبيانات تبقى بعد التفعيل.\n• السعر: اشتراك سنوي 3,000 ج لكل البرنامج (فرع واحد)، +500 ج لكل فرع إضافي في السنة، وزيارة التجهيز 1,500 ج اختيارية.\n• تحميل التجربة من الموقع، والتفعيل عن طريق Trio.\n• فريق Trio: واتساب 01228827915 · 01121460640" }
         ] }
       ]
     }
@@ -1651,6 +1657,7 @@ function licPayload(st, c, noName) {
   if (!noName) p.c = c.Name;
   if (c.Business) p.b = c.Business;
   if (c.Self) p.s = true;
+  if (c.Branches) p.br = c.Branches;
   if (c.Lifetime) p.l = true;
   if (c.LifetimeUpdates) p.u = true;
   p.f = st.feed || FEED;
@@ -1852,9 +1859,9 @@ ${code ? `<div class="card"><h2>${esc(code.title)}</h2>${codeBox("cx", code.text
 <dt>كود الجهاز</dt><dd dir="ltr" style="text-align:right">${esc(c.Machine)}</dd><dt>الهاتف</dt><dd>${c.Phone ? `<a href="tel:${esc(c.Phone)}">${esc(c.Phone)}</a>${wa ? ` · <a href="https://wa.me/${wa}">واتساب</a>` : ""}` : "—"}</dd>
 <dt>الباقة</dt><dd>${esc(CAT.plan_names[c.Plan] || c.Plan || "")} · ${esc(BIZ[c.Business] || "")}</dd><dt>الرخصة</dt><dd>${esc(licText(c))}${expired(c) ? ' <span class="tag warn">منتهية</span>' : ""}</dd>
 <dt>التحديثات</dt><dd>${c.LifetimeUpdates ? "مدى الحياة" : "مع الاشتراك"}</dd><dt>الإصدار عنده</dt><dd>${p ? `${esc(p.v)} · ${ago(p.at)}` : "لم يظهر بعد"}</dd></dl></div>
-<details class="card"><summary>🔑 الرخصة: تجديد / مدى الحياة</summary>${act("licence", `<label>نوعها</label>${sel("kind", { renew: "تجديد", lifetime: "مدى الحياة", same: "كما هي" }, "renew")}
-<label>مدة التجديد</label>${sel("months", { 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 12: "سنة", 24: "سنتان" }, "12")}
-<label><input type="checkbox" name="updates" value="1"${c.LifetimeUpdates ? " checked" : ""} style="width:auto"> التحديثات مدى الحياة</label>`, "أصدر الرخصة وأرسلها")}</details>
+<details class="card"><summary>🔑 الرخصة: تجديد الاشتراك السنوي (3,000 ج)</summary>${act("licence", `<label>نوعها</label>${sel("kind", { renew: "تجديد الاشتراك — " + (3000 + 500 * (c.Branches || 0)) + " ج (من تاريخ الانتهاء الحالي)", lifetime: "مدى الحياة (بسعر تتفق عليه)", same: "كما هي" }, "renew")}
+<label>فروع إضافية (500 ج للفرع في السنة)</label><input name="branches" inputmode="numeric" value="${esc(String(c.Branches || 0))}">
+<label>مدة التجديد</label>${sel("months", { 12: "سنة", 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 24: "سنتان" }, "12")}`, "أصدر الرخصة وأرسلها")}</details>
 <details class="card"><summary>⭐ الباقة والنشاط والمميزات</summary>${act("mods", `<label>الباقة</label>${sel("plan", CAT.plan_names, c.Plan)}<label>النشاط</label>${sel("biz", BIZ, c.Business)}
 <label><input type="checkbox" name="reset" value="1" style="width:auto"> أعد مميزات الباقة الافتراضية</label><label>المميزات</label>${modsBox(c)}`, "أرسل إلى العميل")}</details>
 <details class="card"><summary>${stopped !== undefined ? "▶️ تشغيل البرنامج مرة أخرى" : "⛔ إيقاف البرنامج"}</summary>${stopped !== undefined
@@ -1895,8 +1902,8 @@ function newPage(sid, tok, vals = {}, errText = "", code = null) {
 <label>اسم العميل / المحل</label><input name="name" required value="${esc(vals.name || "")}"><label>الهاتف</label><input name="phone" inputmode="tel" value="${esc(vals.phone || "")}">
 <label>كود الجهاز (16 حرفًا)</label><input name="m" dir="ltr" required value="${esc(vals.m || "")}" placeholder="ABCD-EFGH-IJKL-MNOP" style="text-transform:uppercase">
 <div class="row"><div><label>الباقة</label>${sel("plan", CAT.plan_names, vals.plan || "pro")}</div><div><label>النشاط</label>${sel("biz", BIZ, vals.biz || "market")}</div></div>
-<div class="row"><div><label>النوع</label>${sel("kind", { year: "اشتراك", lifetime: "مدى الحياة" }, vals.kind || "year")}</div><div><label>المدة</label>${sel("months", { 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 12: "سنة", 24: "سنتان" }, vals.months || "12")}</div></div>
-<label><input type="checkbox" name="updates" value="1" style="width:auto"${vals.updates ? " checked" : ""}> التحديثات مدى الحياة</label>
+<div class="row"><div><label>النوع</label>${sel("kind", { year: "اشتراك سنوي — 3,000 ج", lifetime: "مدى الحياة (بسعر تتفق عليه)" }, vals.kind || "year")}</div><div><label>المدة</label>${sel("months", { 12: "سنة", 1: "شهر", 3: "3 أشهر", 6: "6 أشهر", 24: "سنتان" }, vals.months || "12")}</div></div>
+<label>فروع إضافية (500 ج للفرع في السنة)</label><input name="branches" inputmode="numeric" value="${esc(String(vals.branches || 0))}">
 <label><input type="checkbox" name="self" value="1" style="width:auto"${vals.self ? " checked" : ""}> تثبيت ذاتي (يجهّز العميل محله بنفسه)</label>
 <button class="btn">أصدر كود التفعيل</button></form></div>`, "/more");
 }
@@ -2079,13 +2086,12 @@ async function clientAct(env, st, m, f) {
     ALWAYS.forEach((k) => set.add(k)); c.Mods = MODKEYS.filter((k) => set.has(k));
     what = "الباقة " + (CAT.plan_names[c.Plan] || c.Plan) + " — " + (BIZ[c.Business] || "") + " (موبايل)";
   } else if (f.a === "licence") {
+    if (f.branches !== undefined) c.Branches = nBr(f.branches);
     if (f.kind === "lifetime") { c.Lifetime = true; what = "رخصة مدى الحياة"; }
     else if (f.kind === "renew") {
       const months = Math.max(1, parseInt(f.months || "12", 10) || 12), start = new Date(((c.Expires || "") > today() ? c.Expires : today()) + "T00:00:00Z");
       start.setUTCMonth(start.getUTCMonth() + months); c.Lifetime = false; c.Expires = start.toISOString().slice(0, 10); what = "تجديد حتى " + c.Expires;
     } else what = "الرخصة كما هي";
-    c.LifetimeUpdates = f.updates === "1";
-    if (c.LifetimeUpdates) what += " + التحديثات مدى الحياة";
     lic = await asign(env, "TRIO1", licPayload(st, c));
     what += " (موبايل)";
   } else throw new Error("طلب غير معروف");
@@ -2108,7 +2114,8 @@ async function newLicence(env, st, f) {
   const c = st.clients[m] || (st.clients[m] = { Machine: m, Created: cairo(), Grace: 7, Log: [] });
   c.Name = name; if (f.phone) c.Phone = String(f.phone).trim();
   c.Plan = CAT.plan_names[f.plan] ? f.plan : "pro"; c.Business = BIZ[f.biz] ? f.biz : "market"; c.Self = f.self === "1";
-  c.Lifetime = f.kind === "lifetime"; c.LifetimeUpdates = f.updates === "1"; c.Grace = c.Grace || 7;
+  c.Lifetime = f.kind === "lifetime" || (!isNew && !!c.Lifetime); c.LifetimeUpdates = !isNew && !!c.LifetimeUpdates; c.Grace = c.Grace || 7; // yearly by default; an old lifetime one stays
+  c.Branches = nBr(f.branches);
   if (!c.Lifetime) { const d = new Date(today() + "T00:00:00Z"); d.setUTCMonth(d.getUTCMonth() + (parseInt(f.months || "12", 10) || 12)); c.Expires = d.toISOString().slice(0, 10); }
   if (isNew || c.Self || !(c.Mods || []).length) c.Mods = MODKEYS.filter((k) => defMods(c.Plan, c.Business).has(k));
   const code = await asign(env, "TRIO1", licPayload(st, c));
@@ -2124,7 +2131,7 @@ async function takeOrder(env, st, id) {
   const lic = fromB64u(o.code.split(".")[1]);
   st.clients = st.clients || {};
   const c = st.clients[o.m] || (st.clients[o.m] = { Machine: o.m, Name: o.name || lic.c || o.phone, Phone: o.phone, Grace: 7, Created: cairo(), Log: [] });
-  c.Phone = c.Phone || o.phone; c.Plan = lic.p; c.Business = lic.b; c.Lifetime = !!lic.l; c.LifetimeUpdates = !!lic.u; c.Self = c.Self || !!lic.s;
+  c.Phone = c.Phone || o.phone; c.Plan = lic.p; c.Business = lic.b; c.Lifetime = !!lic.l; c.LifetimeUpdates = !!lic.u; c.Self = c.Self || !!lic.s; if (lic.br) c.Branches = Math.max(c.Branches || 0, nBr(lic.br));
   if (!lic.l) c.Expires = lic.e;
   const set = defMods(lic.p, lic.b); (c.Mods || []).forEach((k) => set.add(k)); (lic.x || []).forEach((k) => set.add(k)); c.Mods = MODKEYS.filter((k) => set.has(k));
   note(c, `💳 اشترى أونلاين (${o.id})`);

@@ -193,7 +193,7 @@ footer .num{color:var(--band-ink)}
 .band .how .n,.band .plan li.plus svg{color:var(--gold)}
 .btn.gold:hover{filter:brightness(1.05)}
 .hero h1 em{background:linear-gradient(100deg,#8ce6dc,#3cc2b5 45%,#4aa3d6);-webkit-background-clip:text;background-clip:text;color:transparent}
-</style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://trioerp.pages.dev/#org", "name": "Trio", "alternateName": ["Trio ERP", "تريو"], "url": "https://trioerp.pages.dev/", "logo": "https://trioerp.pages.dev/logo.png", "telephone": ["+201228827915", "+201121460640"], "email": "trioerp.corp@gmail.com", "areaServed": "EG", "address": {"@type": "PostalAddress", "addressCountry": "EG"}, "contactPoint": [{"@type": "ContactPoint", "telephone": "+201228827915", "contactType": "sales", "areaServed": "EG", "availableLanguage": ["ar", "en"]}]}, {"@type": "SoftwareApplication", "name": "Trio", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows 10, Windows 11", "publisher": {"@id": "https://trioerp.pages.dev/#org"}, "url": "https://trioerp.pages.dev/", "inLanguage": "ar"}, {"@type": "WebSite", "name": "Trio", "url": "https://trioerp.pages.dev/", "publisher": {"@id": "https://trioerp.pages.dev/#org"}}]}</script><link rel="alternate" hreflang="ar" href="https://trioerp.pages.dev/"><link rel="alternate" hreflang="en" href="https://trioerp.pages.dev/en/"><link rel="alternate" hreflang="x-default" href="https://trioerp.pages.dev/"><style>#plans,#lifetime,.rec-plan,.receipt .tot,#payBtn,#payInfo,#agreeBox,.group.priced{display:none!important}</style></head><body>
+</style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://trioerp.pages.dev/#org", "name": "Trio", "alternateName": ["Trio ERP", "تريو"], "url": "https://trioerp.pages.dev/", "logo": "https://trioerp.pages.dev/logo.png", "telephone": ["+201228827915", "+201121460640"], "email": "trioerp.corp@gmail.com", "areaServed": "EG", "address": {"@type": "PostalAddress", "addressCountry": "EG"}, "contactPoint": [{"@type": "ContactPoint", "telephone": "+201228827915", "contactType": "sales", "areaServed": "EG", "availableLanguage": ["ar", "en"]}]}, {"@type": "SoftwareApplication", "name": "Trio", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows 10, Windows 11", "publisher": {"@id": "https://trioerp.pages.dev/#org"}, "url": "https://trioerp.pages.dev/", "inLanguage": "ar"}, {"@type": "WebSite", "name": "Trio", "url": "https://trioerp.pages.dev/", "publisher": {"@id": "https://trioerp.pages.dev/#org"}}]}</script><link rel="alternate" hreflang="ar" href="https://trioerp.pages.dev/"><link rel="alternate" hreflang="en" href="https://trioerp.pages.dev/en/"><link rel="alternate" hreflang="x-default" href="https://trioerp.pages.dev/"><style>#plans,#lifetime{display:none!important}.price-band{display:flex;flex-direction:column;gap:4px;margin:10px 0 0}.price-band b{font:800 clamp(20px,5vw,28px) var(--display);color:var(--gold)}.price-band small{opacity:.85;line-height:1.7}.qty{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.qty input{width:90px}</style></head><body>
 
 <div class="band">
  <div class="in">
@@ -270,7 +270,7 @@ footer .num{color:var(--band-ink)}
     <div class="rec-note" id="mNote" hidden></div>
     <h3>سيُجهَّز برنامجك بـ</h3>
     <ul id="mList"></ul>
-    <div class="rec-plan"><span>ننصحك بالباقة</span><b id="mPlan"></b><small>تشمل التثبيت والتدريب في محلك — ويظهر السعر عند اختيار «اشترك»</small></div>
+    <div class="rec-plan"><span>كل الأجزاء التي تناسب نشاطك، والتحديثات طوال الاشتراك</span><b>اشتراك سنوي 3,000 ج — كل البرنامج</b><b id="mPlan" hidden></b></div>
     <button type="button" class="btn gold" id="mGo" style="width:100%">اطلب هذا البرنامج</button>
     <a class="btn brand" href="#order" id="mTry" style="width:100%;margin-top:8px">أو جرّب 14 يومًا مجانًا</a>
    </aside>
@@ -278,7 +278,7 @@ footer .num{color:var(--band-ink)}
  </section>
 
  <section class="sec cta-buy" id="buyCta">
-  <div class="buy-band"><div><h2>جاهز؟</h2><p>أرسل إلينا طلبك وسنتواصل معك بكل التفاصيل — أو جرّب 14 يومًا مجانًا أولًا.</p></div>
+  <div class="buy-band"><div><h2>جاهز؟</h2><p>أرسل إلينا طلبك وسنتواصل معك بكل التفاصيل — أو جرّب 14 يومًا مجانًا أولًا.</p><p class="price-band"><b>اشتراك سنوي 3,000 جنيه — كل البرنامج</b><small>فرع واحد مشمول · كل فرع إضافي 500 ج في السنة · زيارة التجهيز والتدريب 1,500 ج (اختيارية) · طلبات خاصة حتى 3 تعديلات 1,500 ج</small></p></div>
    <div class="acts"><button type="button" class="btn gold" data-buy="#order">اطلب البرنامج</button><a class="btn line" href="#order" id="tryBtn2">جرّب 14 يومًا مجانًا</a></div></div>
  </section>
  <div id="buy" hidden>
@@ -307,25 +307,24 @@ footer .num{color:var(--band-ink)}
      <label class="field" for="city">المحافظة / المنطقة<input id="city" placeholder="لموعد زيارة التدريب"></label>
      <label class="field" for="email">البريد الإلكتروني (اختياري)<input id="email" type="email" dir="ltr" autocomplete="email" placeholder="name@mail.com"></label>
     </div>
-    <div class="group priced"><span>الباقة</span><div class="opts" id="plans-o"></div></div>
-    <div class="group priced"><span>مدى الحياة</span><div class="opts" id="life-o"></div></div>
-    <div class="group priced"><span>إضافات</span><div class="opts" id="extras-o"></div></div>
+    <div class="group priced"><span>الاشتراك</span><div class="opts"><label><input type="checkbox" checked disabled> اشتراك سنوي — كل البرنامج (فرع واحد)<small>3,000 ج / سنة</small></label></div></div>
+    <div class="group priced"><span>فروع إضافية</span><div class="qty"><input id="br" type="number" min="0" max="20" value="0" inputmode="numeric" aria-label="فروع إضافية"><small>+500 ج لكل فرع في السنة</small></div></div>
     <div class="group" id="repBox" hidden><span>يصلك ملخص اليوم والمتابعة على</span>
      <div class="g2" style="margin-top:6px">
       <label class="field" for="repWa">واتساب صاحب المحل<input id="repWa" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx"></label>
       <label class="field" for="repMail">بريد صاحب المحل<input id="repMail" type="email" dir="ltr" placeholder="name@gmail.com"></label>
      </div>
      <small style="color:var(--muted);display:block;margin-top:4px">يُربط تليجرام بضغطة من البرنامج بعد التثبيت، ويظهر لك رابط الهاتف هناك.</small></div>
-    <div class="group priced"><span>خدمات</span><div class="opts" id="svcs-o"></div></div>
+    <div class="group priced"><span>خدمات (مرة واحدة)</span><div class="opts"><label><input type="checkbox" id="visit"> زيارة تجهيز وتدريب في المحل<small>1,500</small></label><label><input type="checkbox" id="custom"> طلبات خاصة — حتى 3 تعديلات<small>1,500</small></label></div></div>
     <label class="field" for="note">ملاحظات<textarea id="note" rows="2" placeholder="عدد أجهزة الكاشير، طابعة، ميزان…"></textarea></label>
    </form>
    <aside class="card receipt" aria-live="polite">
-    <h3>طلبك</h3><p style="margin:0 0 10px;color:var(--muted)">اكتب بياناتك وأرسل الطلب — وسنتواصل معك بالتفاصيل والأسعار.</p>
+    <h3>طلبك</h3><p style="margin:0 0 10px;color:var(--muted)">اختر ما تحتاجه وادفع بالبطاقة، أو أرسل الطلب عبر واتساب.</p>
     <div class="rows" id="rows"></div>
     <div class="tot"><span>الإجمالي</span><b id="tot">0</b></div>
     <label class="agree" id="agreeBox" hidden><input type="checkbox" id="agree"> <span>قرأت ووافقت على <a href="terms/" target="_blank">الشروط والأحكام</a> و<a href="refund/" target="_blank">سياسة الاسترجاع والإلغاء</a> و<a href="privacy/" target="_blank">سياسة الخصوصية</a></span></label>
     <button class="btn gold paybtn" type="button" id="payBtn" hidden>💳 ادفع بالبطاقة الآن</button>
-    <p class="payinfo" id="payInfo" hidden>بطاقات فيزا / ميزة / المحافظ من خلال Paymob. بعد الدفع ستحصل على <b>رقم طلب</b> — نزّل البرنامج واكتبه في «اشتريت البرنامج عبر الإنترنت؟» فتُفعَّل نسختك تلقائيًا. والخدمات (جهاز إضافي، متابعة…) تُطلب عبر واتساب.</p>
+    <p class="payinfo" id="payInfo" hidden>بطاقات فيزا / ميزة / المحافظ من خلال Paymob. بعد الدفع ستحصل على <b>رقم طلب</b> — نزّل البرنامج واكتبه في «اشتريت البرنامج عبر الإنترنت؟» فتُفعَّل نسختك تلقائيًا. والأجهزة الإضافية تُطلب عبر واتساب.</p>
     <p class="copied" id="payErr" hidden></p>
     <a class="btn brand" id="wa" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.6-.3z"/></svg>أرسل الطلب عبر واتساب</a>
     <button class="btn ghost" type="button" id="cp" style="background:var(--brand-soft);color:var(--brand)">انسخ الطلب</button>
@@ -371,25 +370,12 @@ footer .num{color:var(--band-ink)}
   document.getElementById("pl-pro").innerHTML = li(["كل ما في المتقدم"]) + li(["الفروع ومدير لكل فرع","الأرباح السنوية","التصنيع","ملخص اليوم: واتساب وتليجرام والبريد","نسخة احتياطية على جوجل درايف"], true);
 
 
-  // order calculator
-  const PLANS = [["أساسي",0],["متقدم",0],["شامل",0]];
-  const LIFE = [["رخصة مدى الحياة",0],["التحديثات مدى الحياة",0]];
-  const EXTRAS = [["فرع إضافي",0],["التصنيع",0],["الأرباح السنوية",0],["أكثر من مخزن",0],
-    ["مرتجع للمورد",0],["العروض والخصومات",0],["الوحدات والكراتين",0],["ملصقات الباركود",0],["تقييم المخزون",0],
-    ["نسخة على جوجل درايف",0],["تابع محلك من الهاتف",0],["ملخص اليوم واتساب",0],["ملخص تليجرام",0],["ملخص البريد",0]];
-  const PLAN_K = ["basic","standard","pro"], LIFE_K = ["lifetime","lifetime_updates"];
-  const EXTRA_K = {"فرع إضافي":"branches","التصنيع":"production","الأرباح السنوية":"profit_yearly","أكثر من مخزن":"stores","مرتجع للمورد":"returns","العروض والخصومات":"promos",
-    "الوحدات والكراتين":"units","ملصقات الباركود":"labels","تقييم المخزون":"valuation","نسخة على جوجل درايف":"drive_backup","تابع محلك من الهاتف":"mobile","ملخص اليوم واتساب":"report_whatsapp","ملخص تليجرام":"report_telegram","ملخص البريد":"report_email"};
+  // order calculator — one price: the yearly subscription (+ extra branches a year, + optional one-time services)
+  const PRICE = { year: 3000, branch: 500, visit: 1500, custom: 1500 };
   const BUS_K = ["market","retail","cafe","gaming","clinic"];
-  const SVCS = [["جهاز كاشير إضافي",0],["تعديل أو ميزة خاصة",0]];
   const fmt = n => n.toLocaleString("en-US");
   const $ = id => document.getElementById(id);
-  const opt = (type, name, arr, sel) => arr.map(([n,p],i) => `<label><input type="${type}" name="${name}" id="${name}${i}" value="${i}" ${sel===i?"checked":""}> ${n}<small>${fmt(p)}</small></label>`).join("");
-  $("plans-o").innerHTML = opt("radio","plan",PLANS,1);
-  $("life-o").innerHTML = opt("checkbox","life",LIFE,-1);
-  $("extras-o").innerHTML = opt("checkbox","ex",EXTRAS,-1);
-  $("svcs-o").innerHTML = opt("checkbox","sv",SVCS,-1);
-  document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click", () => { $("plan"+a.dataset.plan).checked = true; build(); }));
+  const nBr = () => Math.max(0, Math.min(20, parseInt($("br").value, 10) || 0));
   if (DOWNLOAD) {
     const t = $("tryBtn"); t.href = DOWNLOAD; t.target = "_blank"; t.rel = "noopener";
     // the program is for the shop's Windows PC: on a phone, explain first instead of starting a 56 MB download
@@ -398,23 +384,18 @@ footer .num{color:var(--band-ink)}
     $("sendMe").href = "https://wa.me/?text=" + encodeURIComponent("تحميل Trio (افتحه من كمبيوتر المحل): " + DOWNLOAD);
     if (phone) t.addEventListener("click", e => { e.preventDefault(); $("pcNote").hidden = false; $("pcNote").scrollIntoView({behavior: "smooth", block: "center"}); });
   }
-  const picked = (name, arr) => [...document.querySelectorAll(`input[name=${name}]:checked`)].map(c => arr[+c.value]);
-  // parts already in the chosen plan are not sold again (the same rule the payment uses)
-  const IN_PLAN = { basic: [], standard: ["stores","returns","promos","units","labels","valuation"], pro: Object.values(EXTRA_K) };
   function build(){
-    const pk = PLAN_K[+((document.querySelector("input[name=plan]:checked") || {}).value || 0)];
-    document.querySelectorAll("input[name=ex]").forEach(c => { const k = EXTRA_K[EXTRAS[+c.value][0]], inc = IN_PLAN[pk].includes(k);
-      if (inc) c.checked = false; c.disabled = inc; c.parentElement.style.opacity = inc ? .45 : 1; c.parentElement.title = inc ? "موجودة في الباقة" : ""; });
-    const pl = picked("plan", PLANS)[0], lf = picked("life", LIFE), ex = picked("ex", EXTRAS), sv = picked("sv", SVCS);
-    const REP = ["mobile", "report_whatsapp", "report_telegram", "report_email"];
-    const wantsRep = pk === "pro" || ex.some(x => REP.includes(EXTRA_K[x[0]]));
-    $("repBox").hidden = !wantsRep;
-    if (wantsRep && !$("repWa").value && $("phone").value.trim()) $("repWa").placeholder = $("phone").value.trim();
-    const items = [];
+    $("repBox").hidden = false;
+    if (!$("repWa").value && $("phone").value.trim()) $("repWa").placeholder = $("phone").value.trim();
+    const wantsRep = true, br = nBr();
+    const items = [["اشتراك سنوي — كل البرنامج (فرع واحد)", PRICE.year]];
+    if (br) items.push(["فرع إضافي × " + br, br * PRICE.branch]);
+    if ($("visit").checked) items.push(["زيارة تجهيز وتدريب في المحل", PRICE.visit]);
+    if ($("custom").checked) items.push(["طلبات خاصة — حتى 3 تعديلات", PRICE.custom]);
     const total = items.reduce((a, x) => a + x[1], 0);
-    $("rows").innerHTML = items.map(([n,p]) => `<div class="r"><span>${n}</span><span>${fmt(p)}</span></div>`).join("")
-      + `<div class="r"><span>زيارة التشغيل والتدريب</span><span>مشمولة</span></div>`;
+    $("rows").innerHTML = items.map(([n,p]) => `<div class="r"><span>${n}</span><span>${fmt(p)}</span></div>`).join("");
     $("tot").textContent = fmt(total) + " ج";
+    $("rows").insertAdjacentHTML("beforeend", `<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">التجديد كل سنة بنفس السعر ويبدأ من تاريخ الانتهاء — ولا تُحذف بياناتك أبدًا.</p>`);
     const lines = ["طلب Trio", "المحل: " + ($("shop").value.trim() || "—"), "الهاتف: " + ($("phone").value.trim() || "—"),
       "النشاط: " + ($("act").value.trim() || $("bus").value), "المنطقة: " + ($("city").value.trim() || "—"), "", ...items.map(([n,p]) => `${n}: ${fmt(p)} ج`)];
     if (wantsRep && ($("repWa").value.trim() || $("repMail").value.trim())) lines.push("", "الملخص على: " + [$("repWa").value.trim(), $("repMail").value.trim()].filter(Boolean).join(" — "));
@@ -425,13 +406,13 @@ footer .num{color:var(--band-ink)}
   }
   // card payments: Trio's address and whether it is on come from the signed command channel (no rebuild needed)
   let API = "";
-  const TERMS_V = "1.0";
+  const TERMS_V = "1.1";
   $("agree").addEventListener("change", () => $("agreeBox").classList.remove("need"));
   fetch(FEED + "?t=" + Math.floor(Date.now() / 3e5)).then(r => r.text()).then(t => {
     const m = t.match(/TRIOP\.([A-Za-z0-9_-]+)\./);
     if (!m) return;
     const p = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/")))));
-    if (p.pay && /^https:\/\//.test(p.u || "")) { API = p.u.replace(/\/$/, ""); void 0; $("payInfo").hidden = false; $("agreeBox").hidden = false; }
+    if (p.pay && /^https:\/\//.test(p.u || "")) { API = p.u.replace(/\/$/, ""); $("payBtn").hidden = false; $("payInfo").hidden = false; $("agreeBox").hidden = false; }
   }).catch(() => {});
   $("payBtn").addEventListener("click", async () => {
     const err = (t) => { $("payErr").textContent = t; $("payErr").hidden = false; };
@@ -440,10 +421,8 @@ footer .num{color:var(--band-ink)}
     if (!shop) { $("shop").focus(); return err("اكتب اسم المحل"); }
     if (phone.replace(/\D/g, "").length < 10) { $("phone").focus(); return err("اكتب رقم هاتف صحيحًا"); }
     if (!$("agree").checked) { $("agreeBox").classList.add("need"); $("agree").focus(); return err("أكّد أولًا أنك قرأت الشروط وسياسة الاسترجاع ووافقت عليها"); }
-    const pi = [...document.querySelectorAll("input[name=plan]:checked")].map(c => PLAN_K[+c.value])[0];
-    const body = { plan: pi, business: BUS_K[$("bus").selectedIndex] || "market", name: shop, phone, email: $("email").value.trim(),
-      extras: [...document.querySelectorAll("input[name=ex]:checked")].map(c => EXTRA_K[EXTRAS[+c.value][0]]).filter(Boolean),
-      life: [...document.querySelectorAll("input[name=life]:checked")].map(c => LIFE_K[+c.value]),
+    const body = { business: BUS_K[$("bus").selectedIndex] || "market", name: shop, phone, email: $("email").value.trim(),
+      branches: nBr(), visit: $("visit").checked, custom: $("custom").checked,
       rep_wa: $("repWa").value.trim() || ($("repBox").hidden ? "" : phone), rep_email: $("repMail").value.trim(), agree: TERMS_V, ref: window.TrioAcct ? window.TrioAcct.ref() : "" };
     const b = $("payBtn"); b.disabled = true; b.textContent = "⏳ جارٍ تجهيز صفحة الدفع…";
     try {

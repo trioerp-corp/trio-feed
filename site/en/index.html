@@ -193,7 +193,7 @@ footer .num{color:var(--band-ink)}
 .band .how .n,.band .plan li.plus svg{color:var(--gold)}
 .btn.gold:hover{filter:brightness(1.05)}
 .hero h1 em{background:linear-gradient(100deg,#8ce6dc,#3cc2b5 45%,#4aa3d6);-webkit-background-clip:text;background-clip:text;color:transparent}
-</style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://trioerp.pages.dev/#org", "name": "Trio", "alternateName": ["Trio ERP", "تريو"], "url": "https://trioerp.pages.dev/", "logo": "https://trioerp.pages.dev/logo.png", "telephone": ["+201228827915", "+201121460640"], "email": "trioerp.corp@gmail.com", "areaServed": "EG", "address": {"@type": "PostalAddress", "addressCountry": "EG"}, "contactPoint": [{"@type": "ContactPoint", "telephone": "+201228827915", "contactType": "sales", "areaServed": "EG", "availableLanguage": ["ar", "en"]}]}, {"@type": "SoftwareApplication", "name": "Trio", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows 10, Windows 11", "publisher": {"@id": "https://trioerp.pages.dev/#org"}, "url": "https://trioerp.pages.dev/", "inLanguage": "en"}, {"@type": "WebSite", "name": "Trio", "url": "https://trioerp.pages.dev/", "publisher": {"@id": "https://trioerp.pages.dev/#org"}}]}</script><link rel="alternate" hreflang="ar" href="https://trioerp.pages.dev/"><link rel="alternate" hreflang="en" href="https://trioerp.pages.dev/en/"><link rel="alternate" hreflang="x-default" href="https://trioerp.pages.dev/"><style>#plans,#lifetime,.rec-plan,.receipt .tot,#payBtn,#payInfo,#agreeBox,.group.priced{display:none!important}</style></head><body>
+</style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://trioerp.pages.dev/#org", "name": "Trio", "alternateName": ["Trio ERP", "تريو"], "url": "https://trioerp.pages.dev/", "logo": "https://trioerp.pages.dev/logo.png", "telephone": ["+201228827915", "+201121460640"], "email": "trioerp.corp@gmail.com", "areaServed": "EG", "address": {"@type": "PostalAddress", "addressCountry": "EG"}, "contactPoint": [{"@type": "ContactPoint", "telephone": "+201228827915", "contactType": "sales", "areaServed": "EG", "availableLanguage": ["ar", "en"]}]}, {"@type": "SoftwareApplication", "name": "Trio", "applicationCategory": "BusinessApplication", "operatingSystem": "Windows 10, Windows 11", "publisher": {"@id": "https://trioerp.pages.dev/#org"}, "url": "https://trioerp.pages.dev/", "inLanguage": "en"}, {"@type": "WebSite", "name": "Trio", "url": "https://trioerp.pages.dev/", "publisher": {"@id": "https://trioerp.pages.dev/#org"}}]}</script><link rel="alternate" hreflang="ar" href="https://trioerp.pages.dev/"><link rel="alternate" hreflang="en" href="https://trioerp.pages.dev/en/"><link rel="alternate" hreflang="x-default" href="https://trioerp.pages.dev/"><style>#plans,#lifetime{display:none!important}.price-band{display:flex;flex-direction:column;gap:4px;margin:10px 0 0}.price-band b{font:800 clamp(20px,5vw,28px) var(--display);color:var(--gold)}.price-band small{opacity:.85;line-height:1.7}.qty{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.qty input{width:90px}</style></head><body>
 
 <div class="band">
  <div class="in">
@@ -270,7 +270,7 @@ footer .num{color:var(--band-ink)}
     <div class="rec-note" id="mNote" hidden></div>
     <h3>Your program comes with</h3>
     <ul id="mList"></ul>
-    <div class="rec-plan"><span>We recommend the plan</span><b id="mPlan"></b><small>Installation and training at your shop included — prices show when you choose “Subscribe”</small></div>
+    <div class="rec-plan"><span>Every part that fits your business, with updates while subscribed</span><b>Yearly subscription EGP 3,000 — the whole program</b><b id="mPlan" hidden></b></div>
     <button type="button" class="btn gold" id="mGo" style="width:100%">Order this program</button>
     <a class="btn brand" href="#order" id="mTry" style="width:100%;margin-top:8px">or try it free for 14 days</a>
    </aside>
@@ -278,7 +278,7 @@ footer .num{color:var(--band-ink)}
  </section>
 
  <section class="sec cta-buy" id="buyCta">
-  <div class="buy-band"><div><h2>Ready?</h2><p>Send us your order and we'll call you with all the details — or try it free for 14 days first.</p></div>
+  <div class="buy-band"><div><h2>Ready?</h2><p>Send us your order and we'll call you with all the details — or try it free for 14 days first.</p><p class="price-band"><b>Yearly subscription EGP 3,000 — the whole program</b><small>One branch included · each extra branch EGP 500 a year · set-up and training visit EGP 1,500 (optional) · custom requests up to 3 changes EGP 1,500</small></p></div>
    <div class="acts"><button type="button" class="btn gold" data-buy="#order">Order the program</button><a class="btn line" href="#order" id="tryBtn2">Try free for 14 days</a></div></div>
  </section>
  <div id="buy" hidden>
@@ -307,20 +307,19 @@ footer .num{color:var(--band-ink)}
      <label class="field" for="city">Governorate / area<input id="city" placeholder="For the training visit"></label>
      <label class="field" for="email">E-mail (optional)<input id="email" type="email" dir="ltr" autocomplete="email" placeholder="name@mail.com"></label>
     </div>
-    <div class="group priced"><span>Plan</span><div class="opts" id="plans-o"></div></div>
-    <div class="group priced"><span>Lifetime</span><div class="opts" id="life-o"></div></div>
-    <div class="group priced"><span>Add-ons</span><div class="opts" id="extras-o"></div></div>
+    <div class="group priced"><span>Subscription</span><div class="opts"><label><input type="checkbox" checked disabled> Yearly subscription — the whole program (one branch)<small>3,000 EGP / year</small></label></div></div>
+    <div class="group priced"><span>Extra branches</span><div class="qty"><input id="br" type="number" min="0" max="20" value="0" inputmode="numeric" aria-label="Extra branches"><small>+500 EGP per branch a year</small></div></div>
     <div class="group" id="repBox" hidden><span>Send the daily summary and phone follow-up to</span>
      <div class="g2" style="margin-top:6px">
       <label class="field" for="repWa">Owner's WhatsApp<input id="repWa" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx"></label>
       <label class="field" for="repMail">Owner's e-mail<input id="repMail" type="email" dir="ltr" placeholder="name@gmail.com"></label>
      </div>
      <small style="color:var(--muted);display:block;margin-top:4px">Telegram links with one tap from the program after installation, where your phone link appears too.</small></div>
-    <div class="group priced"><span>Services</span><div class="opts" id="svcs-o"></div></div>
+    <div class="group priced"><span>Extra devices are ordered on WhatsApp.</span><div class="opts"><label><input type="checkbox" id="visit"> Set-up and training visit at your shop<small>1,500</small></label><label><input type="checkbox" id="custom"> Custom requests — up to 3 changes<small>1,500</small></label></div></div>
     <label class="field" for="note">Notes<textarea id="note" rows="2" placeholder="Number of tills, printer, scale…"></textarea></label>
    </form>
    <aside class="card receipt" aria-live="polite">
-    <h3>Your order</h3><p style="margin:0 0 10px;color:var(--muted)">Send your details — we will call you with the details and prices.</p>
+    <h3>Your order</h3><p style="margin:0 0 10px;color:var(--muted)">Pick what you need and pay by card, or send the order on WhatsApp.</p>
     <div class="rows" id="rows"></div>
     <div class="tot"><span>Total</span><b id="tot">0</b></div>
     <label class="agree" id="agreeBox" hidden><input type="checkbox" id="agree"> <span>I have read and agree to the <a href="terms/" target="_blank">Terms &amp; Conditions</a>, the <a href="refund/" target="_blank">Refund &amp; Cancellation Policy</a> and the <a href="privacy/" target="_blank">Privacy Policy</a></span></label>
@@ -371,25 +370,12 @@ footer .num{color:var(--band-ink)}
   document.getElementById("pl-pro").innerHTML = li(["Everything in Advanced"]) + li(["Branches, each with a manager","Yearly profit","Production","Daily summary: WhatsApp, Telegram and e-mail","Backup to Google Drive"], true);
 
 
-  // order calculator
-  const PLANS = [["Basic",0],["Advanced",0],["Complete",0]];
-  const LIFE = [["Lifetime licence",0],["Lifetime updates",0]];
-  const EXTRAS = [["Extra branch",0],["Production",0],["Yearly profit",0],["Several stores",0],
-    ["Returns to suppliers",0],["Offers and discounts",0],["Units and cartons",0],["Barcode labels",0],["Stock valuation",0],
-    ["Google Drive backup",0],["Follow your shop from your phone",0],["Daily summary on WhatsApp",0],["Telegram summary",0],["E-mail summary",0]];
-  const PLAN_K = ["basic","standard","pro"], LIFE_K = ["lifetime","lifetime_updates"];
-  const EXTRA_K = {"Extra branch":"branches","Production":"production","Yearly profit":"profit_yearly","Several stores":"stores","Returns to suppliers":"returns","Offers and discounts":"promos",
-    "Units and cartons":"units","Barcode labels":"labels","Stock valuation":"valuation","Google Drive backup":"drive_backup","Follow your shop from your phone":"mobile","Daily summary on WhatsApp":"report_whatsapp","Telegram summary":"report_telegram","E-mail summary":"report_email"};
+  // order calculator — one price: the yearly subscription (+ extra branches a year, + optional one-time services)
+  const PRICE = { year: 3000, branch: 500, visit: 1500, custom: 1500 };
   const BUS_K = ["market","retail","cafe","gaming","clinic"];
-  const SVCS = [["Extra till",0],["Custom change or feature",0]];
   const fmt = n => n.toLocaleString("en-US");
   const $ = id => document.getElementById(id);
-  const opt = (type, name, arr, sel) => arr.map(([n,p],i) => `<label><input type="${type}" name="${name}" id="${name}${i}" value="${i}" ${sel===i?"checked":""}> ${n}<small>${fmt(p)}</small></label>`).join("");
-  $("plans-o").innerHTML = opt("radio","plan",PLANS,1);
-  $("life-o").innerHTML = opt("checkbox","life",LIFE,-1);
-  $("extras-o").innerHTML = opt("checkbox","ex",EXTRAS,-1);
-  $("svcs-o").innerHTML = opt("checkbox","sv",SVCS,-1);
-  document.querySelectorAll("[data-plan]").forEach(a => a.addEventListener("click", () => { $("plan"+a.dataset.plan).checked = true; build(); }));
+  const nBr = () => Math.max(0, Math.min(20, parseInt($("br").value, 10) || 0));
   if (DOWNLOAD) {
     const t = $("tryBtn"); t.href = DOWNLOAD; t.target = "_blank"; t.rel = "noopener";
     // the program is for the shop's Windows PC: on a phone, explain first instead of starting a 56 MB download
@@ -398,23 +384,18 @@ footer .num{color:var(--band-ink)}
     $("sendMe").href = "https://wa.me/?text=" + encodeURIComponent("Download Trio (open it on the shop's computer): " + DOWNLOAD);
     if (phone) t.addEventListener("click", e => { e.preventDefault(); $("pcNote").hidden = false; $("pcNote").scrollIntoView({behavior: "smooth", block: "center"}); });
   }
-  const picked = (name, arr) => [...document.querySelectorAll(`input[name=${name}]:checked`)].map(c => arr[+c.value]);
-  // parts already in the chosen plan are not sold again (the same rule the payment uses)
-  const IN_PLAN = { basic: [], standard: ["stores","returns","promos","units","labels","valuation"], pro: Object.values(EXTRA_K) };
   function build(){
-    const pk = PLAN_K[+((document.querySelector("input[name=plan]:checked") || {}).value || 0)];
-    document.querySelectorAll("input[name=ex]").forEach(c => { const k = EXTRA_K[EXTRAS[+c.value][0]], inc = IN_PLAN[pk].includes(k);
-      if (inc) c.checked = false; c.disabled = inc; c.parentElement.style.opacity = inc ? .45 : 1; c.parentElement.title = inc ? "Included in the plan" : ""; });
-    const pl = picked("plan", PLANS)[0], lf = picked("life", LIFE), ex = picked("ex", EXTRAS), sv = picked("sv", SVCS);
-    const REP = ["mobile", "report_whatsapp", "report_telegram", "report_email"];
-    const wantsRep = pk === "pro" || ex.some(x => REP.includes(EXTRA_K[x[0]]));
-    $("repBox").hidden = !wantsRep;
-    if (wantsRep && !$("repWa").value && $("phone").value.trim()) $("repWa").placeholder = $("phone").value.trim();
-    const items = [];
+    $("repBox").hidden = false;
+    if (!$("repWa").value && $("phone").value.trim()) $("repWa").placeholder = $("phone").value.trim();
+    const wantsRep = true, br = nBr();
+    const items = [["Yearly subscription — the whole program (one branch)", PRICE.year]];
+    if (br) items.push(["Extra branch × " + br, br * PRICE.branch]);
+    if ($("visit").checked) items.push(["Set-up and training visit at your shop", PRICE.visit]);
+    if ($("custom").checked) items.push(["Custom requests — up to 3 changes", PRICE.custom]);
     const total = items.reduce((a, x) => a + x[1], 0);
-    $("rows").innerHTML = items.map(([n,p]) => `<div class="r"><span>${n}</span><span>${fmt(p)}</span></div>`).join("")
-      + `<div class="r"><span>Set-up and training visit</span><span>Included</span></div>`;
+    $("rows").innerHTML = items.map(([n,p]) => `<div class="r"><span>${n}</span><span>${fmt(p)}</span></div>`).join("");
     $("tot").textContent = fmt(total) + " EGP";
+    $("rows").insertAdjacentHTML("beforeend", `<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Renewal is every year at the same price and starts from your expiry date — your data is never deleted.</p>`);
     const lines = ["Trio order", "Shop: " + ($("shop").value.trim() || "—"), "Phone: " + ($("phone").value.trim() || "—"),
       "Business: " + ($("act").value.trim() || $("bus").value), "Area: " + ($("city").value.trim() || "—"), "", ...items.map(([n,p]) => `${n}: EGP ${fmt(p)}`)];
     if (wantsRep && ($("repWa").value.trim() || $("repMail").value.trim())) lines.push("", "Summary to: " + [$("repWa").value.trim(), $("repMail").value.trim()].filter(Boolean).join(" — "));
@@ -425,13 +406,13 @@ footer .num{color:var(--band-ink)}
   }
   // card payments: Trio's address and whether it is on come from the signed command channel (no rebuild needed)
   let API = "";
-  const TERMS_V = "1.0";
+  const TERMS_V = "1.1";
   $("agree").addEventListener("change", () => $("agreeBox").classList.remove("need"));
   fetch(FEED + "?t=" + Math.floor(Date.now() / 3e5)).then(r => r.text()).then(t => {
     const m = t.match(/TRIOP\.([A-Za-z0-9_-]+)\./);
     if (!m) return;
     const p = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/")))));
-    if (p.pay && /^https:\/\//.test(p.u || "")) { API = p.u.replace(/\/$/, ""); void 0; $("payInfo").hidden = false; $("agreeBox").hidden = false; }
+    if (p.pay && /^https:\/\//.test(p.u || "")) { API = p.u.replace(/\/$/, ""); $("payBtn").hidden = false; $("payInfo").hidden = false; $("agreeBox").hidden = false; }
   }).catch(() => {});
   $("payBtn").addEventListener("click", async () => {
     const err = (t) => { $("payErr").textContent = t; $("payErr").hidden = false; };
@@ -440,10 +421,8 @@ footer .num{color:var(--band-ink)}
     if (!shop) { $("shop").focus(); return err("Enter the shop name"); }
     if (phone.replace(/\D/g, "").length < 10) { $("phone").focus(); return err("Enter a valid mobile number"); }
     if (!$("agree").checked) { $("agreeBox").classList.add("need"); $("agree").focus(); return err("Please tick that you have read and agree to the terms and refund policy first"); }
-    const pi = [...document.querySelectorAll("input[name=plan]:checked")].map(c => PLAN_K[+c.value])[0];
-    const body = { plan: pi, business: BUS_K[$("bus").selectedIndex] || "market", name: shop, phone, email: $("email").value.trim(),
-      extras: [...document.querySelectorAll("input[name=ex]:checked")].map(c => EXTRA_K[EXTRAS[+c.value][0]]).filter(Boolean),
-      life: [...document.querySelectorAll("input[name=life]:checked")].map(c => LIFE_K[+c.value]),
+    const body = { business: BUS_K[$("bus").selectedIndex] || "market", name: shop, phone, email: $("email").value.trim(),
+      branches: nBr(), visit: $("visit").checked, custom: $("custom").checked,
       rep_wa: $("repWa").value.trim() || ($("repBox").hidden ? "" : phone), rep_email: $("repMail").value.trim(), agree: TERMS_V, ref: window.TrioAcct ? window.TrioAcct.ref() : "" };
     const b = $("payBtn"); b.disabled = true; b.textContent = "⏳ Preparing the payment page…";
     try {
