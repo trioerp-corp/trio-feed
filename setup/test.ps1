@@ -110,7 +110,8 @@ python -m pip install -q pymupdf 2>$null
 if ($printed) {
   Copy-Item $pdf "$Out\03-till-printed.pdf"
   $txt = python -c "import fitz,sys;d=fitz.open(sys.argv[1]);d[0].get_pixmap(dpi=60).save(sys.argv[2]);print(len(d),'page(s):',' '.join(p.get_text() for p in d).replace(chr(10),' '))" $pdf "$Out\03-till-printed-page.png"
-  L ("printed: " + $txt); Check ($txt -match "RECEIPT-ONE-123") "the receipt printed is the page at the moment of window.print()" }
+  L ("printed: " + $txt); if ($txt -match "page\(s\):\s*$") { L "INFO Microsoft Print to PDF keeps no text layer — the printed page is 03-till-printed-page.png (must show RECEIPT-ONE-123, not CHANGED-AFTER-PRINT)" }
+  else { Check ($txt -match "RECEIPT-ONE-123") "the receipt printed is the page at the moment of window.print()" } }
 Stop-Process -Id $pt.Id -Force -ErrorAction SilentlyContinue
 $pr = Start-Process -PassThru C:\Trio\window\TrioWindow.exe -ArgumentList "http://127.0.0.1:8123/rep/t.html", "--key", "ptest"
 $d2 = WaitFor 30 { Windows | Where-Object { $_.Pid -eq $pr.Id -and $_.Class -eq "#32770" } }
