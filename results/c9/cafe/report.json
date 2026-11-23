@@ -1,0 +1,2778 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 83,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.3s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.1s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1080.00 expected 1280.0 (server 1280) counted 100",
+    "✔ الكاشير والبيع (42.8s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 1 lines, 25.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: nothing in stock — skipped (the till already sells a return)",
+    "✔ مرتجع مشتريات / هالك (0.0s)",
+    "day close: 1294.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.3605260848999023
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.7763910293579102
+    ],
+    [
+     "فاتورة مشتريات",
+     0.09116053581237793
+    ],
+    [
+     "/ui/shop/branches/",
+     0.08966374397277832
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08167386054992676
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.7s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1204.00 expected 1404.0 (server 1404) counted 0",
+    "✔ الكاشير والبيع (33.7s)",
+    "✔ الترابيزات (13.3s)",
+    "purchase: 2 lines, 54.00, owner",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 20",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 517.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1877174377441406
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7069745063781738
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3541841506958008
+    ],
+    [
+     "الرئيسية (بعد الشعار)",
+     0.09748506546020508
+    ],
+    [
+     "/ui/shop/tables/",
+     0.0888984203338623
+    ]
+   ]
+  },
+  {
+   "run": 3,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": true,
+   "secs": 78,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.6s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 682.00 expected 682.0 (server 682) counted 0",
+    "✔ الكاشير والبيع (39.7s)",
+    "✔ الترابيزات (13.4s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1101.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1960217952728271
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4154856204986572
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.37944841384887695
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08430242538452148
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08353424072265625
+    ]
+   ]
+  },
+  {
+   "run": 4,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 66,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 291.00 expected 291.0 (server 291) counted 100",
+    "✔ الكاشير والبيع (29.3s)",
+    "✔ الترابيزات (13.9s)",
+    "purchase: 1 lines, 12.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 560.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1359388828277588
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4089808464050293
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.34450459480285645
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0796666145324707
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06751322746276855
+    ]
+   ]
+  },
+  {
+   "run": 5,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 79,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1008.00 expected 1008.0 (server 1008) counted 1000",
+    "✔ الكاشير والبيع (41.4s)",
+    "✔ الترابيزات (13.5s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1964.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.119518518447876
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4192342758178711
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3821079730987549
+    ],
+    [
+     "فاتورة مشتريات",
+     0.10760259628295898
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07650065422058105
+    ]
+   ]
+  },
+  {
+   "run": 6,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": true,
+   "secs": 75,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 731.00 expected 731.0 (server 731) counted 100",
+    "✔ الكاشير والبيع (38.7s)",
+    "✔ الترابيزات (13.8s)",
+    "purchase: 1 lines, 125.00, split",
+    "✔ فاتورة مشتريات (0.4s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 9",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1191.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.160536289215088
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3534986972808838
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.346773624420166
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07910704612731934
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06844973564147949
+    ]
+   ]
+  },
+  {
+   "run": 7,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 88,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.6s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1030.00 expected 1530.0 (server 1530) counted 0",
+    "✔ الكاشير والبيع (34.4s)",
+    "✔ الترابيزات (15.2s)",
+    "purchase: 2 lines, 47.00, owner",
+    "✔ فاتورة مشتريات (6.1s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 10 → 13",
+    "✔ الجرد والتسوية (3.9s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (2.1s)",
+    "day close: 1716.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2373270988464355
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4245743751525879
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36559414863586426
+    ],
+    [
+     "/ui/staff/",
+     0.10957860946655273
+    ],
+    [
+     "/ui/shop/close/",
+     0.09586524963378906
+    ]
+   ]
+  },
+  {
+   "run": 8,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 167.00 expected 667.0 (server 667) counted 100",
+    "✔ الكاشير والبيع (37.3s)",
+    "✔ الترابيزات (13.8s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 558.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.161365032196045
+    ],
+    [
+     "/ui/shop/connect/",
+     0.38521313667297363
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3442530632019043
+    ],
+    [
+     "/ui/shop/branches/",
+     0.08915829658508301
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07953500747680664
+    ]
+   ]
+  },
+  {
+   "run": 9,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 78,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1351.00 expected 1851.0 (server 1851) counted 0",
+    "✔ الكاشير والبيع (39.9s)",
+    "✔ الترابيزات (14.1s)",
+    "purchase: 2 lines, 137.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 2986.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1893455982208252
+    ],
+    [
+     "/ui/shop/connect/",
+     0.36504149436950684
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35566115379333496
+    ],
+    [
+     "الجرد",
+     0.12726378440856934
+    ],
+    [
+     "فاتورة مشتريات",
+     0.0861063003540039
+    ]
+   ]
+  },
+  {
+   "run": 10,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 70,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 401.00 expected 401.0 (server 401) counted 250",
+    "✔ الكاشير والبيع (32.9s)",
+    "✔ الترابيزات (13.7s)",
+    "purchase: 2 lines, 22.00, cash",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 716.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1861751079559326
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4181647300720215
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.34749841690063477
+    ],
+    [
+     "/ui/shop/recipes/",
+     0.1179952621459961
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07763838768005371
+    ]
+   ]
+  },
+  {
+   "run": 11,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 28.00 expected 228.0 (server 228) counted 250",
+    "✔ الكاشير والبيع (29.6s)",
+    "✔ الترابيزات (13.5s)",
+    "purchase: 1 lines, 12.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 148.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1643176078796387
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4560716152191162
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35576939582824707
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08222031593322754
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07294559478759766
+    ]
+   ]
+  },
+  {
+   "run": 12,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 689.00 expected 689.0 (server 689) counted 0",
+    "✔ الكاشير والبيع (32.5s)",
+    "✔ الترابيزات (13.7s)",
+    "purchase: 1 lines, 20.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1039.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1918160915374756
+    ],
+    [
+     "/ui/shop/connect/",
+     0.38490772247314453
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3605959415435791
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.12681984901428223
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07793283462524414
+    ]
+   ]
+  },
+  {
+   "run": 13,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 65,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1020.00 expected 1220.0 (server 1220) counted 1000",
+    "✔ الكاشير والبيع (29.7s)",
+    "✔ الترابيزات (13.0s)",
+    "purchase: 2 lines, 22.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1552.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2499516010284424
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3931283950805664
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.306546688079834
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07769083976745605
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06853270530700684
+    ]
+   ]
+  },
+  {
+   "run": 14,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 79,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2592.00 expected 2592.0 (server 2592) counted 0",
+    "✔ الكاشير والبيع (42.5s)",
+    "✔ الترابيزات (14.3s)",
+    "purchase: 1 lines, 42.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 11 → 9",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 4488.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2083930969238281
+    ],
+    [
+     "/ui/shop/connect/",
+     0.35988712310791016
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35578489303588867
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09412264823913574
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08884239196777344
+    ]
+   ]
+  },
+  {
+   "run": 15,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 320.00 expected 320.0 (server 320) counted 250",
+    "✔ الكاشير والبيع (31.9s)",
+    "✔ الترابيزات (14.1s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 579.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1752026081085205
+    ],
+    [
+     "/ui/shop/connect/",
+     0.36295628547668457
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35926222801208496
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07650065422058105
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06903910636901855
+    ]
+   ]
+  },
+  {
+   "run": 16,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1097.00 expected 1597.0 (server 1597) counted 250",
+    "✔ الكاشير والبيع (39.1s)",
+    "✔ الترابيزات (13.2s)",
+    "purchase: 2 lines, 62.00, split",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 20",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 2139.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1793797016143799
+    ],
+    [
+     "/ui/shop/connect/",
+     0.39983129501342773
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3716275691986084
+    ],
+    [
+     "/ui/shop/menu/",
+     0.14999794960021973
+    ],
+    [
+     "/ui/start/",
+     0.07926535606384277
+    ]
+   ]
+  },
+  {
+   "run": 17,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 444.00 expected 944.0 (server 944) counted 0",
+    "✔ الكاشير والبيع (42.2s)",
+    "✔ الترابيزات (13.5s)",
+    "purchase: 1 lines, 12.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 967.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1521985530853271
+    ],
+    [
+     "/ui/shop/connect/",
+     0.37080979347229004
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3073079586029053
+    ],
+    [
+     "/ui/tax/",
+     0.09895634651184082
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08738303184509277
+    ]
+   ]
+  },
+  {
+   "run": 18,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1340.00 expected 1840.0 (server 1840) counted 250",
+    "✔ الكاشير والبيع (36.2s)",
+    "✔ الترابيزات (13.3s)",
+    "purchase: 1 lines, 7.00, owner",
+    "✔ فاتورة مشتريات (0.4s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 4",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1849.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.199713945388794
+    ],
+    [
+     "/ui/shop/connect/",
+     0.38671302795410156
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3436892032623291
+    ],
+    [
+     "الكاشير (ترابيزات)",
+     0.0727388858795166
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0724797248840332
+    ]
+   ]
+  },
+  {
+   "run": 19,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 636.00 expected 1136.0 (server 1136) counted 250",
+    "✔ الكاشير والبيع (35.6s)",
+    "✔ الترابيزات (12.9s)",
+    "purchase: 1 lines, 12.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1000.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1190574169158936
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4128882884979248
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3868114948272705
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0846707820892334
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07115316390991211
+    ]
+   ]
+  },
+  {
+   "run": 20,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 76,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 529.00 expected 529.0 (server 529) counted 100",
+    "✔ الكاشير والبيع (37.5s)",
+    "✔ الترابيزات (14.5s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 816.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1770927906036377
+    ],
+    [
+     "/ui/shop/connect/",
+     0.40894460678100586
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3445296287536621
+    ],
+    [
+     "/ui/shop/returns/",
+     0.13711762428283691
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07815885543823242
+    ]
+   ]
+  },
+  {
+   "run": 21,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": true,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 952.00 expected 1152.0 (server 1152) counted 100",
+    "✔ الكاشير والبيع (42.1s)",
+    "✔ الترابيزات (13.3s)",
+    "purchase: 1 lines, 17.50, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 4 → 11",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1182.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.202439785003662
+    ],
+    [
+     "/ui/shop/connect/",
+     0.48127245903015137
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35857534408569336
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08789587020874023
+    ],
+    [
+     "/ui/shop/branches/",
+     0.0773611068725586
+    ]
+   ]
+  },
+  {
+   "run": 22,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.6s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 728.00 expected 728.0 (server 728) counted 1000",
+    "✔ الكاشير والبيع (36.7s)",
+    "✔ الترابيزات (13.0s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.5s)",
+    "day close: 1163.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1409122943878174
+    ],
+    [
+     "/ui/shop/connect/",
+     0.454836368560791
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3614363670349121
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08231735229492188
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07030177116394043
+    ]
+   ]
+  },
+  {
+   "run": 23,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 445.00 expected 445.0 (server 445) counted 100",
+    "✔ الكاشير والبيع (31.0s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 1 lines, 12.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 351.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1939246654510498
+    ],
+    [
+     "/ui/shop/connect/",
+     0.40805983543395996
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3817284107208252
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08561921119689941
+    ],
+    [
+     "/ui/shop/dues/",
+     0.07878470420837402
+    ]
+   ]
+  },
+  {
+   "run": 24,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": true,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 233.00 expected 233.0 (server 233) counted 100",
+    "✔ الكاشير والبيع (34.1s)",
+    "✔ الترابيزات (13.8s)",
+    "purchase: 2 lines, 312.00, split",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 11 → 14",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 15",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 307.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.190657615661621
+    ],
+    [
+     "/ui/shop/connect/",
+     0.36092185974121094
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.32672572135925293
+    ],
+    [
+     "/ui/shop/recipes/",
+     0.15777921676635742
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07620000839233398
+    ]
+   ]
+  },
+  {
+   "run": 25,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 75,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 441.00 expected 641.0 (server 641) counted 0",
+    "✔ الكاشير والبيع (37.9s)",
+    "✔ الترابيزات (13.5s)",
+    "purchase: 1 lines, 12.00, split",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1121.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.15529203414917
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.37183547019958496
+    ],
+    [
+     "/ui/shop/connect/",
+     0.34833598136901855
+    ],
+    [
+     "الرئيسية (بعد الشعار)",
+     0.14748930931091309
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.11875772476196289
+    ]
+   ]
+  },
+  {
+   "run": 26,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 68,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 189.00 expected 689.0 (server 689) counted 1000",
+    "✔ الكاشير والبيع (29.2s)",
+    "✔ الترابيزات (13.4s)",
+    "purchase: 2 lines, 1212.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 691.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1938021183013916
+    ],
+    [
+     "/ui/shop/connect/",
+     0.41518402099609375
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3744373321533203
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07667708396911621
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07442665100097656
+    ]
+   ]
+  },
+  {
+   "run": 27,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 79,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2206.00 expected 2406.0 (server 2406) counted 100",
+    "✔ الكاشير والبيع (42.4s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 2 lines, 19.25, cash",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 20",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 2584.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2453594207763672
+    ],
+    [
+     "/ui/shop/connect/",
+     0.42102670669555664
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3199009895324707
+    ],
+    [
+     "فاتورة مشتريات",
+     0.09467625617980957
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07844352722167969
+    ]
+   ]
+  },
+  {
+   "run": 28,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 81,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 3671.00 expected 4171.0 (server 4171) counted 1000",
+    "✔ الكاشير والبيع (44.3s)",
+    "✔ الترابيزات (13.3s)",
+    "purchase: 1 lines, 100.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 6 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 4193.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2140929698944092
+    ],
+    [
+     "/ui/shop/connect/",
+     0.38082265853881836
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.30700206756591797
+    ],
+    [
+     "فاتورة مشتريات",
+     0.09275245666503906
+    ],
+    [
+     "/ui/shop/menu/",
+     0.08414864540100098
+    ]
+   ]
+  },
+  {
+   "run": 29,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 67,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 157.00 expected 157.0 (server 157) counted 0",
+    "✔ الكاشير والبيع (31.7s)",
+    "✔ الترابيزات (13.2s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 257.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.140444278717041
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35426831245422363
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3481771945953369
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07863688468933105
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06924939155578613
+    ]
+   ]
+  },
+  {
+   "run": 30,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 66,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 160.00 expected 660.0 (server 660) counted 1000",
+    "✔ الكاشير والبيع (30.1s)",
+    "✔ الترابيزات (13.1s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 5",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 384.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1659793853759766
+    ],
+    [
+     "/ui/shop/connect/",
+     0.37209200859069824
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3037400245666504
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0745542049407959
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06901049613952637
+    ]
+   ]
+  },
+  {
+   "run": 31,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 84,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 632.00 expected 632.0 (server 632) counted 250",
+    "✔ الكاشير والبيع (44.0s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1263.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1744709014892578
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3675196170806885
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3541097640991211
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08881306648254395
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07360172271728516
+    ]
+   ]
+  },
+  {
+   "run": 32,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 280.00 expected 280.0 (server 280) counted 250",
+    "✔ الكاشير والبيع (33.7s)",
+    "✔ الترابيزات (13.3s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 473.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1631429195404053
+    ],
+    [
+     "/ui/shop/connect/",
+     0.38890576362609863
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35978078842163086
+    ],
+    [
+     "/ui/shop/items/",
+     0.19263052940368652
+    ],
+    [
+     "الكاشير (ترابيزات)",
+     0.07771062850952148
+    ]
+   ]
+  },
+  {
+   "run": 33,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 767.00 expected 1267.0 (server 1267) counted 250",
+    "✔ الكاشير والبيع (32.3s)",
+    "✔ الترابيزات (13.8s)",
+    "purchase: 1 lines, 7.25, cash",
+    "✔ فاتورة مشتريات (0.4s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: nothing in stock — skipped (the till already sells a return)",
+    "✔ مرتجع مشتريات / هالك (0.0s)",
+    "day close: 1021.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1696693897247314
+    ],
+    [
+     "/ui/shop/connect/",
+     0.409426212310791
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.345949649810791
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07652544975280762
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07212495803833008
+    ]
+   ]
+  },
+  {
+   "run": 34,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 752.00 expected 952.0 (server 952) counted 0",
+    "✔ الكاشير والبيع (42.7s)",
+    "✔ الترابيزات (13.4s)",
+    "purchase: 1 lines, 35.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 8",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1072.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1939506530761719
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3833730220794678
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.38022541999816895
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.1730947494506836
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08338689804077148
+    ]
+   ]
+  },
+  {
+   "run": 35,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 70,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1351.00 expected 1551.0 (server 1551) counted 0",
+    "✔ الكاشير والبيع (33.9s)",
+    "✔ الترابيزات (14.1s)",
+    "purchase: 1 lines, 50.00, credit",
+    "✔ فاتورة مشتريات (0.4s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2021.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2167882919311523
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3692820072174072
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.351409912109375
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08067822456359863
+    ],
+    [
+     "/ui/shop/menu/",
+     0.07674908638000488
+    ]
+   ]
+  },
+  {
+   "run": 36,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": true,
+   "secs": 76,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 393.00 expected 393.0 (server 393) counted 0",
+    "✔ الكاشير والبيع (38.4s)",
+    "✔ الترابيزات (14.2s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 920.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1622025966644287
+    ],
+    [
+     "/ui/shop/connect/",
+     0.386671781539917
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36534619331359863
+    ],
+    [
+     "/ui/vouchers/",
+     0.16739964485168457
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07705354690551758
+    ]
+   ]
+  },
+  {
+   "run": 37,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.3s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 535.00 expected 535.0 (server 535) counted 250",
+    "✔ الكاشير والبيع (39.9s)",
+    "✔ الترابيزات (12.9s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 959.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1583178043365479
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4030582904815674
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35726261138916016
+    ],
+    [
+     "/ui/shop/recipes/",
+     0.19473648071289062
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07943129539489746
+    ]
+   ]
+  },
+  {
+   "run": 38,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 79,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 370.00 expected 570.0 (server 570) counted 250",
+    "✔ الكاشير والبيع (40.8s)",
+    "✔ الترابيزات (12.9s)",
+    "purchase: 1 lines, 7.25, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 805.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2235288619995117
+    ],
+    [
+     "/ui/shop/connect/",
+     0.49449872970581055
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36820363998413086
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09588384628295898
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08774781227111816
+    ]
+   ]
+  },
+  {
+   "run": 39,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": true,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 388.00 expected 888.0 (server 888) counted 0",
+    "✔ الكاشير والبيع (35.9s)",
+    "✔ الترابيزات (13.4s)",
+    "purchase: 1 lines, 120.00, split",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 548.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1962759494781494
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4048435688018799
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.30605173110961914
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07930564880371094
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07188606262207031
+    ]
+   ]
+  },
+  {
+   "run": 40,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 617.00 expected 1117.0 (server 1117) counted 0",
+    "✔ الكاشير والبيع (40.5s)",
+    "✔ الترابيزات (13.7s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1389.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1454572677612305
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3800361156463623
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3579368591308594
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08638119697570801
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07747387886047363
+    ]
+   ]
+  },
+  {
+   "run": 41,
+   "activity": "كافيه",
+   "business": "cafe",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 278.00 expected 278.0 (server 278) counted 100",
+    "✔ الكاشير والبيع (33.7s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 1 lines, 20.00, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 329.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1790657043457031
+    ],
+    [
+     "/ui/shop/connect/",
+     0.39005398750305176
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35856151580810547
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08004903793334961
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07327914237976074
+    ]
+   ]
+  },
+  {
+   "run": 42,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 706.00 expected 906.0 (server 906) counted 100",
+    "✔ الكاشير والبيع (38.0s)",
+    "✔ الترابيزات (12.9s)",
+    "purchase: 1 lines, 3.50, cash",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 2258.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1770811080932617
+    ],
+    [
+     "/ui/shop/connect/",
+     0.45082855224609375
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35523080825805664
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07546710968017578
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06889653205871582
+    ]
+   ]
+  },
+  {
+   "run": 43,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 67,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.5s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.4s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 513.00 expected 513.0 (server 513) counted 100",
+    "✔ الكاشير والبيع (29.6s)",
+    "✔ الترابيزات (13.8s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 700.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1524503231048584
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4851076602935791
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.35055088996887207
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07894229888916016
+    ],
+    [
+     "الكاشير (ترابيزات)",
+     0.07228755950927734
+    ]
+   ]
+  },
+  {
+   "run": 44,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.6s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 686.00 expected 686.0 (server 686) counted 250",
+    "✔ الكاشير والبيع (38.0s)",
+    "✔ الترابيزات (13.2s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 836.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1706860065460205
+    ],
+    [
+     "/ui/shop/connect/",
+     0.40912914276123047
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3773958683013916
+    ],
+    [
+     "/ui/shop/partners/",
+     0.1457364559173584
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07690763473510742
+    ]
+   ]
+  },
+  {
+   "run": 45,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": true,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.3s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 194.00 expected 694.0 (server 694) counted 1000",
+    "✔ الكاشير والبيع (31.5s)",
+    "✔ الترابيزات (12.8s)",
+    "purchase: 1 lines, 12.00, owner",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 319.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (8.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1634697914123535
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.38544201850891113
+    ],
+    [
+     "/ui/shop/connect/",
+     0.3606104850769043
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07477450370788574
+    ],
+    [
+     "/ui/shop/branches/",
+     0.06987237930297852
+    ]
+   ]
+  },
+  {
+   "run": 46,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.7s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.8s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 691.00 expected 691.0 (server 691) counted 250",
+    "✔ الكاشير والبيع (36.9s)",
+    "✔ الترابيزات (12.6s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1006.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2353298664093018
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4734652042388916
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36537718772888184
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08279895782470703
+    ],
+    [
+     "/ui/shop/branches/",
+     0.07389068603515625
+    ]
+   ]
+  },
+  {
+   "run": 47,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 87,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.5s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 1358.00 expected 1858.0 (server 1858) counted 100",
+    "✔ الكاشير والبيع (41.5s)",
+    "✔ الترابيزات (19.0s)",
+    "purchase: 1 lines, 17.50, split",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 9",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 2648.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.2088348865509033
+    ],
+    [
+     "/ui/shop/connect/",
+     0.4423651695251465
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3597579002380371
+    ],
+    [
+     "فاتورة مشتريات",
+     0.08479571342468262
+    ],
+    [
+     "/ui/shop/settings/",
+     0.08294296264648438
+    ]
+   ]
+  },
+  {
+   "run": 48,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": true,
+   "secs": 73,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.7s)",
+    "✔ إضافة منتجات بيد المالك (0.8s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 614.00 expected 614.0 (server 614) counted 100",
+    "✔ الكاشير والبيع (34.0s)",
+    "✔ الترابيزات (14.0s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 636.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.1557121276855469
+    ],
+    [
+     "/ui/shop/connect/",
+     0.515265941619873
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36917638778686523
+    ],
+    [
+     "/ui/start/",
+     0.07843875885009766
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07785582542419434
+    ]
+   ]
+  },
+  {
+   "run": 49,
+   "activity": "محل عصير",
+   "business": "cafe",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.8s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.8s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 429.00 expected 429.0 (server 429) counted 0",
+    "✔ الكاشير والبيع (34.8s)",
+    "✔ الترابيزات (14.1s)",
+    "purchase: 1 lines, 12.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 13",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 506.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.3226065635681152
+    ],
+    [
+     "/ui/shop/connect/",
+     0.46562671661376953
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.39386463165283203
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11813640594482422
+    ],
+    [
+     "تجهيز المحل",
+     0.0811619758605957
+    ]
+   ]
+  },
+  {
+   "run": 50,
+   "activity": "مطعم مشويات",
+   "business": "cafe",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.6s)",
+    "✔ إضافة منتجات بيد المالك (0.9s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1390.00 expected 1390.0 (server 1390) counted 1000",
+    "✔ الكاشير والبيع (33.5s)",
+    "✔ الترابيزات (13.4s)",
+    "purchase: 1 lines, 240.00, credit",
+    "✔ فاتورة مشتريات (0.5s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 14",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2102.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.2s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.203878402709961
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3727233409881592
+    ],
+    [
+     "/ui/shop/connect/",
+     0.36160707473754883
+    ],
+    [
+     "/ui/shop/requests/",
+     0.2537062168121338
+    ],
+    [
+     "/ui/shop/settings/",
+     0.07966136932373047
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    6,
+    7,
+    10,
+    13,
+    39,
+    50
+   ],
+   "shot": ""
+  }
+ ]
+}
