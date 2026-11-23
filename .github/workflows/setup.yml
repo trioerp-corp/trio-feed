@@ -1,0 +1,70 @@
+# Trio-Setup.exe + TrioWindow.exe: build and test on real Windows. Results → branch qa-results, folder setup/
+# (log.txt, screenshots, Trio-Setup.exe, TrioWindow/ build).
+name: Setup on Windows
+on: workflow_dispatch
+concurrency: { group: setup, cancel-in-progress: false }
+permissions: { contents: write }
+jobs:
+  setup:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-go@v5
+        with: { go-version: "1.22", cache: false }
+      - name: TrioWindow.exe (.NET Framework 4.8 + WebView2)
+        shell: pwsh
+        run: |
+          dotnet build setup\window\TrioWindow.csproj -c Release -o build\window -nologo -v minimal
+          if ($LASTEXITCODE) { exit 1 }
+          Get-ChildItem -Recurse build\window | Select-Object FullName, Length | Format-Table -AutoSize | Out-String -Width 200
+      - name: Trio.exe (launcher)
+        shell: pwsh
+        run: |
+          cd setup\launcher; go build -ldflags "-s -w -H windowsgui" -o ..\..\build\Trio.exe .; if ($LASTEXITCODE) { exit 1 }
+      - name: The package (public download + the code under test + new launcher + window)
+        shell: pwsh
+        run: |
+          gh release download v1.23.1 -R $env:GITHUB_REPOSITORY -p Trio-online.zip -D base
+          Expand-Archive base\Trio-online.zip -DestinationPath C:\pkg
+          robocopy app C:\pkg\Trio /E /NFL /NDL /NJH /NJS /NP | Out-Null
+          Copy-Item build\Trio.exe C:\pkg\Trio\Trio.exe -Force
+          Copy-Item build\Trio.exe "C:\pkg\Trio\Trio Cashier.exe" -Force
+          New-Item -ItemType Directory -Force C:\pkg\Trio\window | Out-Null
+          Copy-Item build\window\* C:\pkg\Trio\window\ -Recurse -Force -Exclude *.pdb,*.xml
+          Get-ChildItem C:\pkg\Trio | Select-Object Name | Format-Wide -Column 6 | Out-String -Width 200
+          Get-ChildItem C:\pkg\Trio\window -Recurse | ForEach-Object { $_.FullName }
+      - name: Trio-Setup.exe (Inno Setup)
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -UseBasicParsing "https://go.microsoft.com/fwlink/p/?LinkId=2124703" -OutFile setup\MicrosoftEdgeWebview2Setup.exe
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          $lang = "${env:ProgramFiles(x86)}\Inno Setup 6\Languages\Arabic.isl"
+          if (-not (Test-Path $lang)) { Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/Arabic.isl" -OutFile $lang }
+          $ver = (Select-String -Path C:\pkg\Trio\core\version.py -Pattern 'VERSION = "([^"]+)"').Matches[0].Groups[1].Value
+          & $iscc /Q "/DSrc=C:\pkg\Trio" "/DAppVer=$ver" "/DOut=$PWD\out" setup\trio.iss
+          if ($LASTEXITCODE) { exit 1 }
+          Get-Item out\Trio-Setup.exe | Select-Object Name, Length
+      - name: Test on Windows (install → window → print → close/stop → reopen → uninstall)
+        shell: pwsh
+        run: pwsh -NoProfile -File setup\test.ps1 -Setup out\Trio-Setup.exe -Out out
+      - name: Results → branch qa-results (setup/)
+        if: always()
+        shell: bash
+        run: |
+          set +e +o pipefail
+          git config --global user.name "Trio QA"; git config --global user.email "trioerp.corp@gmail.com"
+          git clone -q --depth 1 --branch qa-results "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" res
+          rm -rf res/setup; mkdir -p res/setup/TrioWindow
+          cp out/*.png out/*.txt out/*.log res/setup/ 2>/dev/null
+          cp out/Trio-Setup.exe res/setup/ 2>/dev/null
+          cp -r build/window/* res/setup/TrioWindow/ 2>/dev/null; rm -f res/setup/TrioWindow/*.pdb res/setup/TrioWindow/*.xml
+          echo "run ${{ github.run_id }} $(date -u)" > res/setup/RUN.txt
+          cd res && git add -A setup && git commit -q -m "setup test (run ${{ github.run_id }})"
+          for i in 1 2 3 4 5; do git push -q origin HEAD:qa-results && break; git pull -q --rebase origin qa-results || true; sleep 5; done
