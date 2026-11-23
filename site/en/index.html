@@ -210,7 +210,7 @@ footer .num{color:var(--band-ink)}
     <div class="acts">
      <a class="btn gold" href="#mine">See your program</a>
      <a class="btn line" href="../demo/" hreflang="ar">Try the live demo (Arabic)</a>
-     <a class="btn line" id="tryBtn" href="#order">Try it free for 14 days</a>
+     <a class="btn line" id="tryBtn" href="#order">Try it free for 14 days</a><small class="dlnote" style="display:block;width:100%;opacity:.75;font-size:12.5px;margin-top:6px">One Windows installer — open it and install. If «Windows protected your PC» appears, click More info, then Run anyway.</small>
     </div>
     <div id="pcNote" hidden style="margin-top:16px;background:rgba(255,255,255,.08);border:1px solid rgba(60,194,181,.55);border-radius:14px;padding:14px 16px;font-size:15px;color:var(--band-ink)">
      <b style="display:block;font-family:var(--display);font-size:17px;margin-bottom:4px">The program installs on the shop's computer (Windows)</b>
@@ -360,7 +360,7 @@ footer .num{color:var(--band-ink)}
 <script>
 (function(){
   // the program download for the free trial (Google Drive link). Empty = the trial link is sent on WhatsApp.
-  const DOWNLOAD = "https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-online.zip";
+  let DOWNLOAD = "https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-online.zip";
   const FEED = "https://raw.githubusercontent.com/trioerp-corp/trio-feed/main/feed.txt";
   const WA = "201228827915";
   const CK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -514,6 +514,13 @@ footer .num{color:var(--band-ink)}
   if (["#plans", "#order", "#lifetime", "#how"].includes(location.hash)) openBuy(location.hash);
   $("mGo").addEventListener("click", () => openBuy("#order"));
   if (DOWNLOAD) { const t2 = $("tryBtn2"); t2.href = DOWNLOAD; t2.target = "_blank"; t2.rel = "noopener"; } else $("tryBtn2").addEventListener("click", e => { e.preventDefault(); openBuy("#order"); });
+  // one-click install: use Trio-Setup.exe when the latest release has it (GitHub adds it after each release), else the zip
+  fetch("https://api.github.com/repos/trioerp-corp/trio-feed/releases/latest").then(r => r.json()).then(r => {
+    if (!(r.assets || []).some(a => a.name === "Trio-Setup.exe")) return;
+    DOWNLOAD = "https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-Setup.exe";
+    ["tryBtn", "tryBtn2", "dlAnyway"].forEach(i => { const e = document.getElementById(i); if (e && e.getAttribute("href") && e.getAttribute("href").indexOf("Trio-online.zip") > 0) e.href = DOWNLOAD; });
+    const s = document.getElementById("sendMe"); if (s) s.href = s.href.replace(encodeURIComponent("https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-online.zip"), encodeURIComponent(DOWNLOAD));
+  }).catch(() => {});
   $("f").addEventListener("input", build); $("f").addEventListener("change", build);
   $("f").addEventListener("submit", e => e.preventDefault());
   $("cp").addEventListener("click", () => {

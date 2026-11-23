@@ -1,0 +1,48 @@
+# Every published release gets Trio-Setup.exe: built from that release's Trio-online.zip (Inno Setup + WebView2
+# bootstrapper), tested on real Windows (install → window → close/stop → reopen → uninstall), then attached to the release.
+# The site downloads releases/latest/download/Trio-Setup.exe (falls back to Trio-online.zip until it is there).
+name: Setup for release
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag: { description: "release tag, e.g. v1.25.4", required: true }
+concurrency: { group: setup-release, cancel-in-progress: false }
+permissions: { contents: write }
+jobs:
+  setup:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: setup }
+      - name: The release package
+        shell: pwsh
+        run: |
+          gh release download $env:TAG -R $env:GITHUB_REPOSITORY -p Trio-online.zip -D base
+          if ($LASTEXITCODE) { exit 1 }
+          Expand-Archive base\Trio-online.zip -DestinationPath C:\pkg
+          if (-not (Test-Path C:\pkg\Trio\window\TrioWindow.exe)) { Write-Host "no window\ in this release — Setup.exe needs 1.25.4 or later"; exit 1 }
+      - name: Trio-Setup.exe (Inno Setup)
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -UseBasicParsing "https://go.microsoft.com/fwlink/p/?LinkId=2124703" -OutFile setup\MicrosoftEdgeWebview2Setup.exe
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          $lang = "${env:ProgramFiles(x86)}\Inno Setup 6\Languages\Arabic.isl"
+          if (-not (Test-Path $lang)) { Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/Arabic.isl" -OutFile $lang }
+          $ver = (Select-String -Path C:\pkg\Trio\core\version.py -Pattern 'VERSION = "([^"]+)"').Matches[0].Groups[1].Value
+          & $iscc /Q "/DSrc=C:\pkg\Trio" "/DAppVer=$ver" "/DOut=$PWD\out" setup\trio.iss
+          if ($LASTEXITCODE) { exit 1 }
+      - name: Test on Windows
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File setup\test.ps1 -Setup out\Trio-Setup.exe -Out out
+          if ($LASTEXITCODE) { Get-Content out\log.txt; exit 1 }
+      - name: Attach Trio-Setup.exe to the release
+        shell: pwsh
+        run: gh release upload $env:TAG out\Trio-Setup.exe --clobber -R $env:GITHUB_REPOSITORY
