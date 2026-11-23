@@ -51,7 +51,15 @@
     if (a && u) a.textContent = (a.dataset.me || "حسابي") + " — " + String(u.name || "").split(" ")[0];
     var box = document.getElementById("refNote"), c = ref();
     if (box && c) call("/ref?c=" + c).then(function (d) {
-      if (d.ok) { box.querySelector("b").textContent = d.name; box.hidden = false; box.classList.remove("hide"); }
+      if (d.ok) {
+        box.querySelector("b").textContent = d.name; box.hidden = false; box.classList.remove("hide");
+        if (!box.querySelector(".refx")) { // a visitor who did not come through this rep can remove him
+          var x = document.createElement("button"); x.type = "button"; x.className = "refx"; x.textContent = "✕ لست عن طريق مندوب";
+          x.style.cssText = "border:0;background:none;color:inherit;font:inherit;font-size:.85em;opacity:.75;cursor:pointer;margin-inline-start:6px;text-decoration:underline";
+          x.onclick = function () { LS.del("trio_ref"); box.hidden = true; };
+          box.appendChild(x);
+        }
+      }
     }).catch(function () {});
   });
 })();
