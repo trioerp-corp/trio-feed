@@ -1,0 +1,509 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>جرّب Trio — تجربة تفاعلية</title>
+<meta name="description" content="جرّب برنامج Trio على الموبايل: اكتب نشاطك، شوف برنامجك باسم محلك وأصنافك، واعمل فاتورة تجربة — قبل ما تنزّله وتجربه 14 يوم.">
+<link rel="canonical" href="https://trioerp.pages.dev/demo/"><meta name="robots" content="index,follow">
+<link rel="icon" type="image/png" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#F3F6FA;--card:#fff;--ink:#0B1F3A;--muted:#58697F;--line:#DFE6EF;--line-2:#EDF2F7;--brand:#17698F;--brand-d:#0C4A76;--brand-2:#E3F0F6;
+--gold:#8C5F12;--gold-ink:#4A320A;--gold-2:#F6EEDC;--bad:#A13A2A;--bad-2:#F8E1DD;--good:#0F7A5C;--good-2:#DDF2EA;--teal:#3cc2b5;--r:14px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#07111E;--card:#0F1C2E;--ink:#E6EEF8;--muted:#9FB2C8;--line:#1F3350;--line-2:#16263C;--brand:#5CC3D0;--brand-d:#8AD6E0;
+--brand-2:#11283F;--gold:#E2B864;--gold-ink:#F2D9A6;--gold-2:#2C2416;--bad:#F09A8A;--bad-2:#3A211D;--good:#5FD3A8;--good-2:#0F2E25;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#07111E;--card:#0F1C2E;--ink:#E6EEF8;--muted:#9FB2C8;--line:#1F3350;--line-2:#16263C;--brand:#5CC3D0;--brand-d:#8AD6E0;--brand-2:#11283F;--gold:#E2B864;--gold-ink:#F2D9A6;--gold-2:#2C2416;--bad:#F09A8A;--bad-2:#3A211D;--good:#5FD3A8;--good-2:#0F2E25;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;overflow-x:hidden}
+a{color:var(--brand)}button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;line-height:1.35}h2{font-size:18px}
+.muted{color:var(--muted)}.ok{color:var(--good)}.bad{color:var(--bad)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600;text-decoration:none;min-height:42px;text-align:center}
+.btn:hover{border-color:var(--brand)}.btn.p{background:#17698F;border-color:#17698F;color:#fff}.btn.g{background:var(--teal);border-color:var(--teal);color:#04213f}
+.btn.s{min-height:34px;padding:5px 10px;font-size:14px}.btn.w{width:100%}.btn[disabled]{opacity:.45;cursor:not-allowed}
+input,select,textarea{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 11px;min-height:42px}
+textarea{min-height:64px;resize:vertical}label{display:block;font-size:13.5px;color:var(--muted);margin-bottom:10px}label>input,label>select,label>textarea{margin-top:4px;color:var(--ink);font-size:15px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:0;border-color:var(--brand)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+/* start */
+.start{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px}
+.start .box{width:100%;max-width:640px}
+.mark{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;margin-bottom:14px}.mark img{width:40px;height:40px;border-radius:50%;background:#fff}
+.start h1{font-size:26px;margin-bottom:6px}.start .lead{color:var(--muted);margin:0 0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}.chips button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px}
+.chips button.on{background:#17698F;color:#fff;border-color:#17698F}
+.fine{font-size:13px;color:var(--muted);margin-top:12px}
+/* app shell */
+.top{background:#17698F;color:#fff;display:flex;align-items:center;gap:10px;padding:8px 14px;position:sticky;top:0;z-index:30}
+.top .brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1}.top .brand img{width:34px;height:34px;border-radius:50%;background:#fff;padding:2px;flex:none}
+.top .brand b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top .brand small{display:block;font-size:12px;color:#D9E7F5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .brand>div{min-width:0}
+.top .tb{background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:9px;min-height:36px;padding:4px 10px;cursor:pointer;font-weight:600;font-size:13.5px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center}
+.top .tb.g{background:var(--teal);color:#04213f}
+#menuBtn{display:none;font-size:20px;line-height:1}
+.hint{background:var(--gold-2);color:var(--gold-ink);border-bottom:1px solid var(--line);padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
+.hint b{font-weight:700}.hint .steps{display:flex;gap:4px}.hint .steps i{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:700;opacity:.55}
+.hint .steps i.d{background:var(--good);border-color:var(--good);color:#fff;opacity:1}.hint .steps i.c{opacity:1;background:var(--card)}
+.hint .txt{flex:1;min-width:0}
+.cta{background:var(--good-2);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cta p{margin:0;flex:1 1 220px;font-weight:600}
+.shell{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:calc(100vh - 96px)}
+.side{background:var(--card);border-inline-end:1px solid var(--line);padding:10px 8px}
+.side button{display:flex;width:100%;align-items:center;gap:8px;border:0;background:transparent;text-align:start;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:15px;color:var(--ink)}
+.side button:hover{background:var(--brand-2)}.side button.on{background:var(--brand-2);color:var(--brand);font-weight:700}
+.side button.lk{color:var(--muted)}.side button.lk::after{content:"🔒";font-size:11px;margin-inline-start:auto;opacity:.7}
+.side hr{border:0;border-top:1px solid var(--line);margin:8px 4px}
+main{padding:16px;min-width:0}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}.ph h1{font-size:21px}
+/* kpis */
+.kpis{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:14px}
+.kpi .k{font-size:13px;color:var(--muted)}.kpi .v{font-size:23px;font-weight:700}.kpi.h{background:#17698F;border-color:#17698F;color:#fff}.kpi.h .k{color:#D9E7F5}
+.up{font-size:12px;font-weight:700;color:var(--good);display:block}.kpi.h .up{color:#bff3e3}
+@keyframes fl{0%{box-shadow:0 0 0 0 rgba(60,194,181,.8)}100%{box-shadow:0 0 0 12px rgba(60,194,181,0)}}.flash{animation:fl 1.2s ease-out 2}
+.two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 60px;gap:8px;align-items:center;margin:6px 0;font-size:14px}.bar span{display:block}.bar .t{height:8px;border-radius:4px;background:var(--brand);margin-top:3px}
+.rows{list-style:none;margin:0;padding:0}.rows li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:14.5px}.rows li:last-child{border:0}
+.tag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12.5px;font-weight:600;background:var(--brand-2);color:var(--brand)}.tag.bad{background:var(--bad-2);color:var(--bad)}.tag.ok{background:var(--good-2);color:var(--good)}.tag.gd{background:var(--gold-2);color:var(--gold-ink)}
+/* pos */
+.pos{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;align-items:start}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.tabs button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:13.5px}.tabs button.on{background:#17698F;color:#fff;border-color:#17698F}
+.tiles{display:grid;gap:9px;grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+.tile{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:2px;min-height:88px}
+.tile:hover{border-color:var(--brand)}.tile b{font-size:14.5px;line-height:1.4}.tile .pr{color:var(--brand);font-weight:700;margin-top:auto}.tile small{color:var(--muted);font-size:12px}
+.tile.out{opacity:.75;border-style:dashed}.tile.out .pr::after{content:" · نفد";color:var(--bad)}
+.cart{position:sticky;top:120px}
+.cart h2{display:flex;justify-content:space-between;align-items:center;font-size:16px;margin-bottom:6px}
+.ln{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:14px}
+.ln .q{display:flex;align-items:center;gap:4px}.ln .q button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-weight:700}
+.ln .q b{min-width:22px;text-align:center}.ln small{color:var(--muted);display:block}
+.ln.new{background:linear-gradient(90deg,transparent,var(--gold-2))}
+.tot{display:flex;justify-content:space-between;font-size:19px;font-weight:700;padding:10px 0}
+.empty{color:var(--muted);text-align:center;padding:18px 6px;font-size:14px}
+.mbar{display:none}
+/* tables / devices / queue */
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.tbl{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px;cursor:pointer;text-align:start;min-height:96px;display:flex;flex-direction:column;gap:2px}
+.tbl b{font-size:16px}.tbl.busy{border-color:var(--gold);background:var(--gold-2);color:var(--gold-ink)}.tbl .v{font-weight:700;margin-top:auto}
+.dev{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.dev.busy{border-color:var(--good);background:var(--good-2)}.dev .clk{font-size:26px;font-weight:700;direction:ltr;text-align:right;letter-spacing:1px}
+.dev .acts{display:flex;gap:6px;flex-wrap:wrap}.dev .acts .btn{flex:1}
+.qrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-2);flex-wrap:wrap}.qrow .no{width:30px;height:30px;border-radius:50%;background:var(--brand-2);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.qrow .who{flex:1;min-width:140px}
+.rx{display:flex;gap:6px;align-items:center;margin-bottom:6px}.rx input{min-height:38px}
+/* items table */
+.tbx{width:100%;border-collapse:collapse;font-size:14px}.tbx th{text-align:start;color:var(--muted);font-weight:600;font-size:13px;padding:8px 6px;border-bottom:1px solid var(--line)}.tbx td{padding:8px 6px;border-bottom:1px solid var(--line-2)}
+.frm{display:grid;gap:0 10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(4,20,40,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:0}
+.md{background:var(--card);width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px}
+@media (min-width:640px){.ov{align-items:center;padding:20px}.md{border-radius:18px}}
+.md h2{margin-bottom:10px;display:flex;justify-content:space-between;gap:8px;align-items:center}.md .x{border:0;background:transparent;font-size:24px;cursor:pointer;line-height:1;padding:0 4px;color:var(--muted)}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));margin-bottom:12px}
+.opt{border:1.5px solid var(--line);background:var(--card);border-radius:11px;padding:10px 8px;cursor:pointer;text-align:center;font-weight:600;min-height:48px}
+.opt.on{border-color:var(--brand);background:var(--brand-2);color:var(--brand)}.opt small{display:block;font-weight:400;color:var(--muted);font-size:12px}.opt[disabled]{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.vg{display:grid;gap:5px;margin-bottom:12px}.vg button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 2px;cursor:pointer;font-size:13px;min-height:40px}
+.vg button.on{background:#17698F;color:#fff;border-color:#17698F}.vg button[disabled]{opacity:.35;cursor:not-allowed}.vg .h{font-size:12.5px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mrow{display:flex;justify-content:space-between;gap:10px;padding:5px 0}.mrow.big{font-size:20px;font-weight:700;border-top:1px solid var(--line);margin-top:4px;padding-top:9px}
+.mbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mbtns .btn{flex:1 1 140px}
+.note{background:var(--brand-2);border-radius:10px;padding:9px 11px;font-size:13.5px;margin:8px 0}
+/* paper (receipt / kitchen ticket) */
+.paper{background:#fff;color:#111;max-width:300px;margin:0 auto;padding:14px 14px 18px;font-size:13px;line-height:1.55;border:1px solid #ddd;box-shadow:0 8px 24px -14px rgba(0,0,0,.4);font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif}.paper .r span:last-child{direction:ltr;unicode-bidi:isolate}
+.paper .c{text-align:center}.paper h3{font-size:17px;text-align:center}.paper hr{border:0;border-top:1px dashed #999;margin:7px 0}
+.paper .r{display:flex;justify-content:space-between;gap:8px}.paper .r.b{font-weight:700;font-size:15px}.paper .pw{text-align:center;color:#666;font-size:11.5px;margin-top:8px}
+.paper.kt{background:#fffbea}.paper.kt .big{font-size:20px;font-weight:700;text-align:center}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#0B1F3A;color:#fff;padding:10px 16px;border-radius:10px;z-index:60;font-size:14px;max-width:calc(100% - 32px);text-align:center}
+@media (max-width:820px){
+ #menuBtn{display:inline-flex}.shell{display:block}
+ .side{position:fixed;top:0;bottom:0;right:0;width:250px;z-index:40;transform:translateX(105%);transition:transform .2s;box-shadow:-10px 0 30px -10px rgba(0,0,0,.3);padding-top:16px;overflow:auto}
+ .side.open{transform:none}.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:35}
+ main{padding:12px 12px 90px}.pos{display:block}.cart{position:static;margin-top:14px}
+ .mbar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:25;background:var(--card);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));gap:8px;align-items:center}
+ .mbar .i{flex:1;min-width:0;font-weight:700}.mbar .i small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+ .top .hide-s{display:none}.hint .steps{display:none}.tiles{grid-template-columns:repeat(auto-fill,minmax(118px,1fr))}
+ .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+@media print{body *{visibility:hidden}.paper,.paper *{visibility:visible}.paper{position:absolute;top:0;right:0;box-shadow:none;border:0}}
+</style></head><body>
+<div id="root"></div>
+<script>
+(function(){
+"use strict";
+const DOWNLOAD = "https://github.com/trioerp-corp/trio-feed/releases/latest/download/Trio-online.zip";
+const ORDER = "../#order";
+const KEY = "trio-demo-v1";
+const LIB = [{"k":"supermarket","n":"سوبر ماركت","b":"market","w":["سوبر ماركت","سوبر ماركت","سوبرماركت","هايبر","ماركت"],"c":["بقالة وتموين","ألبان وأجبان","مشروبات","حلويات وسناكس","خضار وفاكهة","لحوم ودواجن ومجمدات","منظفات","عناية شخصية","أدوات منزلية","أخرى"],"f":[["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["سكر 1 كيلو",38.0,{"brand":"الأسرة"},"بقالة وتموين"],["زيت عباد 1 لتر",95.0,{"brand":"كريستال"},"بقالة وتموين"],["أرز مصري 1 كيلو",42.0,{},"بقالة وتموين"],["لبن كامل 1 لتر",45.0,{"brand":"جهينة"},"ألبان وأجبان"],["مياه 1.5 لتر",9.0,{},"مشروبات"],["مسحوق غسيل 2.5 كيلو",210.0,{"brand":"أريال"},"منظفات"]]},{"k":"grocery","n":"بقالة","b":"market","w":["بقالة","بقالة","بقال","ميني ماركت","مينى ماركت","كشك","تموين"],"c":["بقالة وتموين","ألبان وأجبان","مشروبات","حلويات وسناكس","منظفات","سجاير","كروت شحن","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["سكر 1 كيلو",38.0,{},"بقالة وتموين"],["شاي 250 جرام",60.0,{},"بقالة وتموين"],["مكرونة 400 جرام",18.0,{},"بقالة وتموين"],["سجاير",90.0,{},"سجاير"],["كارت شحن 25",30.0,{},"كروت شحن"],["بيبسي كانز",15.0,{},"مشروبات"]]},{"k":"vegetables","n":"خضار وفاكهة","b":"market","w":["خضار وفاكهة","خضار","فاكهة","فكهاني","خضري","خضروات"],"c":["خضار","فاكهة","ورقيات","أعشاب","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["طماطم",20.0,{},"خضار"],["بطاطس",18.0,{},"خضار"],["خيار",22.0,{},"خضار"],["موز",35.0,{},"فاكهة"],["برتقال",25.0,{},"فاكهة"],["بقدونس حزمة",5.0,{},"ورقيات"]]},{"k":"butcher","n":"جزارة","b":"market","w":["جزارة","جزارة","جزار","لحوم","لحمة"],"c":["لحم بقري","لحم ضاني","مفروم","كبدة وممبار","مصنعات لحوم","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["لحم بقري كيلو",420.0,{},"لحم بقري"],["مفروم كيلو",380.0,{},"مفروم"],["كبدة كيلو",400.0,{},"كبدة وممبار"],["لحم ضاني كيلو",480.0,{},"لحم ضاني"],["سجق كيلو",300.0,{},"مصنعات لحوم"],["ممبار كيلو",150.0,{},"كبدة وممبار"]]},{"k":"poultry","n":"فراخ وطيور","b":"market","w":["فراخ وطيور","فراخ","دواجن","طيور","فرارجي","بانيه"],"c":["فراخ بلدي","فراخ بيضا","أجزاء","مصنعات","بيض","طيور","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["فراخ بيضا كيلو",95.0,{},"فراخ بيضا"],["صدور فراخ كيلو",210.0,{},"أجزاء"],["أوراك كيلو",140.0,{},"أجزاء"],["بانيه كيلو",240.0,{},"مصنعات"],["بيض طبق",165.0,{},"بيض"],["كبدة وقوانص",120.0,{},"أجزاء"]]},{"k":"fish","n":"أسماك","b":"market","w":["أسماك","سمك","أسماك","اسماك","سماك","جمبري"],"c":["سمك طازة","مجمدات","جمبري وكابوريا","مشويات","أخرى"],"f":[["origin","بلد المنشأ"]],"i":"صنف","is":"الأصناف","x":[["بلطي كيلو",85.0,{"origin":"مصر"},"سمك طازة"],["بوري كيلو",160.0,{},"سمك طازة"],["جمبري وسط كيلو",450.0,{},"جمبري وكابوريا"],["فيليه كيلو",220.0,{},"مجمدات"],["سبيط كيلو",380.0,{},"جمبري وكابوريا"],["كابوريا كيلو",250.0,{},"جمبري وكابوريا"]]},{"k":"spices","n":"عطارة","b":"market","w":["عطارة","عطارة","عطار","توابل","أعشاب"],"c":["توابل","أعشاب","حبوب وبقوليات","زيوت طبيعية","بخور","أخرى"],"f":[["origin","بلد المنشأ"]],"i":"صنف","is":"الأصناف","x":[["كمون 100 جرام",30.0,{},"توابل"],["فلفل أسود 100 جرام",45.0,{},"توابل"],["كركم 100 جرام",25.0,{},"توابل"],["ينسون 100 جرام",30.0,{},"أعشاب"],["عدس أصفر كيلو",70.0,{},"حبوب وبقوليات"],["بخور عود",60.0,{},"بخور"]]},{"k":"roastery","n":"محمصة ومكسرات","b":"market","w":["محمصة ومكسرات","محمصة","مكسرات","تسالي","بن","قهوة سادة"],"c":["مكسرات","لب وسوداني","بن وقهوة","شيكولاتة وحلويات","بذور","أخرى"],"f":[["origin","بلد المنشأ"]],"i":"صنف","is":"الأصناف","x":[["لب سوري كيلو",180.0,{},"لب وسوداني"],["سوداني كيلو",120.0,{},"لب وسوداني"],["كاجو كيلو",900.0,{"origin":"الهند"},"مكسرات"],["بن محوج 250 جرام",140.0,{},"بن وقهوة"],["لوز كيلو",700.0,{},"مكسرات"],["شيكولاتة كيلو",450.0,{},"شيكولاتة وحلويات"]]},{"k":"bakery","n":"حلواني ومخبز","b":"cafe","w":["حلواني ومخبز","حلواني","حلويات","مخبز","فرن","عيش","جاتوه","تورت","كيك"],"c":["جاتوه وتورت","حلويات شرقي","مخبوزات","بسكويت وكعك","خامات","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["تورتة شيكولاتة",350.0,{},"جاتوه وتورت"],["جاتوه قطعة",35.0,{},"جاتوه وتورت"],["بسبوسة كيلو",160.0,{},"حلويات شرقي"],["كرواسون",25.0,{},"مخبوزات"],["كحك كيلو",260.0,{},"بسكويت وكعك"],["عيش فينو 5 قطع",15.0,{},"مخبوزات"]]},{"k":"dairy","n":"ألبان","b":"market","w":["ألبان","ألبان","البان","لبن","جبن","جبنة","زبادي"],"c":["لبن","جبن","زبادي ورايب","زبدة وقشطة","بيض","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["لبن جاموسي لتر",50.0,{},"لبن"],["جبنة بيضا كيلو",140.0,{},"جبن"],["جبنة رومي كيلو",380.0,{},"جبن"],["زبادي",10.0,{},"زبادي ورايب"],["زبدة فلاحي كيلو",380.0,{},"زبدة وقشطة"],["قشطة",40.0,{},"زبدة وقشطة"]]},{"k":"pharmacy","n":"صيدلية","b":"retail","w":["صيدلية","صيدلية","صيدليه","أجزخانة","اجزخانة","فارمسي","ادوية","أدوية"],"c":["أدوية","مستلزمات طبية","عناية بالبشرة","أطفال ورضع","مكملات غذائية","تجميل","أخرى"],"f":[["generic","المادة الفعالة"],["company","الشركة"],["shelf","مكان الرف"]],"i":"صنف","is":"الأصناف","x":[["بانادول اكسترا",45.0,{"generic":"باراسيتامول","company":"GSK"},"أدوية"],["أوجمنتين 1 جم",120.0,{"generic":"أموكسيسيلين","company":"GSK"},"أدوية"],["كونجستال",30.0,{"generic":"باراسيتامول + كلورفينيرامين"},"أدوية"],["فيتامين سي فوار",65.0,{},"مكملات غذائية"],["شاش طبي",15.0,{},"مستلزمات طبية"],["بامبرز مقاس 4",320.0,{},"أطفال ورضع"]]},{"k":"medical","n":"مستلزمات طبية","b":"retail","w":["مستلزمات طبية","مستلزمات طبية","مستلزمات طبيه","أجهزة طبية","اجهزة طبية"],"c":["أجهزة قياس","مستهلكات","أدوات جراحية","كراسي وعكاكيز","أخرى"],"f":[["brand","الماركة"],["model","الموديل"],["warranty","الضمان"]],"i":"صنف","is":"الأصناف","x":[["جهاز ضغط ديجيتال",1200.0,{"brand":"أومرون","model":"M2"},"أجهزة قياس"],["جهاز سكر",650.0,{"brand":"أكيو تشك"},"أجهزة قياس"],["شرايط سكر 50",450.0,{},"مستهلكات"],["سرنجات 3 سم علبة",120.0,{},"مستهلكات"],["كرسي متحرك",4500.0,{},"كراسي وعكاكيز"],["ترمومتر ديجيتال",90.0,{},"أجهزة قياس"]]},{"k":"cosmetics","n":"مستحضرات تجميل وبرفانات","b":"retail","w":["مستحضرات تجميل وبرفانات","تجميل","كوزمتكس","ميكب","ميك اب","برفان","برفانات","عطور","بيوتي"],"c":["ميكب","عناية بالبشرة","عناية بالشعر","برفانات","إكسسوارات","أخرى"],"f":[["brand","الماركة"],["color","اللون"]],"i":"صنف","is":"الأصناف","x":[["برفان رجالي 100 مل",950.0,{"brand":"لطافة"},"برفانات"],["كريم مرطب",180.0,{"brand":"نيفيا"},"عناية بالبشرة"],["روج",220.0,{"color":"أحمر"},"ميكب"],["شامبو 400 مل",140.0,{},"عناية بالشعر"],["ماسكارا",260.0,{},"ميكب"],["صابونة طبية",55.0,{},"عناية بالبشرة"]]},{"k":"salon","n":"صالون وكوافير","b":"retail","w":["صالون وكوافير","صالون","كوافير","حلاق","باربر","سبا","بيوتي سنتر"],"c":["خدمات شعر","خدمات بشرة","حلاقة","منتجات للبيع","أخرى"],"f":[],"i":"خدمة / منتج","is":"الخدمات والمنتجات","x":[["قص شعر",100.0,{},"خدمات شعر"],["حلاقة دقن",50.0,{},"حلاقة"],["صبغة",350.0,{},"خدمات شعر"],["بروتين",900.0,{},"خدمات شعر"],["تنظيف بشرة",300.0,{},"خدمات بشرة"],["شامبو للبيع",140.0,{},"منتجات للبيع"]]},{"k":"auto_parts","n":"قطع غيار عربيات","b":"retail","w":["قطع غيار عربيات","قطع غيار","قطع الغيار","اسبير","سبير","سبيرز","عربيات","سيارات","اوتو","أوتو"],"c":["فلاتر","فرامل وتيل","عفشة وتعليق","كهربا وبطاريات","زيوت وشحوم","بوجيهات وإشعال","تكييف وتبريد","إكسسوارات","أخرى"],"f":[["part_no","رقم القطعة (OEM)"],["brand","الماركة"],["cars","بتركب على (الموديلات)"],["year","سنة الموديل"],["shelf","مكان الرف"]],"i":"قطعة","is":"القطع","x":[["تيل فرامل أمامي",650.0,{"part_no":"04465-0K240","brand":"تويوتا","cars":"كورولا 2014-2018"},"فرامل وتيل"],["فلتر زيت",120.0,{"part_no":"90915-YZZE1","cars":"تويوتا / كيا"},"فلاتر"],["بوجيه إيريديوم",280.0,{"brand":"NGK","cars":"هيونداي النترا"},"بوجيهات وإشعال"],["مساعدين أمامي",1800.0,{"brand":"KYB","cars":"لانسر 2008-2016"},"عفشة وتعليق"],["زيت موتور 4 لتر",1100.0,{"brand":"موبيل"},"زيوت وشحوم"],["سير كاتينة",750.0,{"cars":"شيفروليه أفيو"},"أخرى"]]},{"k":"moto_parts","n":"قطع غيار موتوسيكلات","b":"retail","w":["قطع غيار موتوسيكلات","موتوسيكل","موتوسيكلات","سكوتر","تكتك","توكتوك","تروسيكل"],"c":["كاوتش وجنوط","فرامل","كهربا","موتور","زيوت","إكسسوارات","أخرى"],"f":[["part_no","رقم القطعة"],["cars","بتركب على"],["shelf","مكان الرف"]],"i":"قطعة","is":"القطع","x":[["كاوتش أمامي",450.0,{"cars":"دايون"},"كاوتش وجنوط"],["تيل فرامل",90.0,{},"فرامل"],["بوجيه",60.0,{},"كهربا"],["زيت 1 لتر",160.0,{},"زيوت"],["سلسلة وترس",550.0,{},"موتور"],["فانوس",120.0,{},"كهربا"]]},{"k":"tires","n":"كاوتش وبطاريات","b":"retail","w":["كاوتش وبطاريات","كاوتش","كاوتشات","اطارات","إطارات","بطاريات","بطارية","جنوط"],"c":["كاوتش ملاكي","كاوتش نقل","بطاريات","جنوط","خدمات (ترصيص / ميزان)","أخرى"],"f":[["size","المقاس"],["brand","الماركة"],["year","سنة الإنتاج"],["warranty","الضمان"]],"i":"صنف","is":"الأصناف","x":[["كاوتش 185/65R15",3200.0,{"size":"185/65R15","brand":"بريدجستون","year":"2026"},"كاوتش ملاكي"],["كاوتش 205/55R16",4100.0,{"size":"205/55R16","brand":"ميشلان"},"كاوتش ملاكي"],["بطارية 70 أمبير",4200.0,{"brand":"شامبيون","warranty":"سنة"},"بطاريات"],["ترصيص 4 عجل",200.0,{},"خدمات (ترصيص / ميزان)"],["ميزان",150.0,{},"خدمات (ترصيص / ميزان)"],["جنط 15",2500.0,{},"جنوط"]]},{"k":"oils","n":"زيوت وتشحيم","b":"retail","w":["زيوت وتشحيم","زيوت","تشحيم","غيار زيت","مغسلة","محطة"],"c":["زيوت موتور","زيوت فتيس","فلاتر","مياه رادياتير","خدمات","أخرى"],"f":[["brand","الماركة"],["grade","اللزوجة / النوع"]],"i":"صنف","is":"الأصناف","x":[["زيت 5W30 4 لتر",1100.0,{"brand":"موبيل","grade":"5W30"},"زيوت موتور"],["زيت 10W40 4 لتر",800.0,{"grade":"10W40"},"زيوت موتور"],["فلتر زيت",120.0,{},"فلاتر"],["مياه رادياتير",90.0,{},"مياه رادياتير"],["غيار زيت (خدمة)",100.0,{},"خدمات"],["زيت فتيس",450.0,{},"زيوت فتيس"]]},{"k":"electric","n":"أدوات كهربا","b":"retail","w":["أدوات كهربا","كهربا","كهرباء","أدوات كهربائية","ادوات كهربائية","كهربائي","إضاءة","اضاءة","لمبات"],"c":["أسلاك وكابلات","مفاتيح وبرايز","لمبات وإضاءة","لوح وقواطع","مواسير وعلب","عدد","أخرى"],"f":[["brand","الماركة"],["spec","المواصفة (أمبير / وات / مقاس)"]],"i":"صنف","is":"الأصناف","x":[["سلك 2 مم لفة",1400.0,{"brand":"السويدي","spec":"2 مم"},"أسلاك وكابلات"],["مفتاح إضاءة",45.0,{"brand":"شنايدر"},"مفاتيح وبرايز"],["لمبة ليد 12 وات",55.0,{"spec":"12 وات"},"لمبات وإضاءة"],["قاطع 32 أمبير",180.0,{"spec":"32 أمبير"},"لوح وقواطع"],["بريزة",50.0,{},"مفاتيح وبرايز"],["لوحة 12 خط",650.0,{},"لوح وقواطع"]]},{"k":"plumbing","n":"سباكة وأدوات صحية","b":"retail","w":["سباكة وأدوات صحية","سباكة","سباك","أدوات صحية","ادوات صحية","خلاطات","مواسير"],"c":["مواسير ووصلات","خلاطات وحنفيات","أطقم حمامات","سخانات","محابس","عدد","أخرى"],"f":[["brand","الماركة"],["size","المقاس"]],"i":"صنف","is":"الأصناف","x":[["خلاط حوض",900.0,{"brand":"جروهي"},"خلاطات وحنفيات"],["ماسورة 1/2 بوصة",85.0,{"size":"1/2 بوصة"},"مواسير ووصلات"],["محبس",160.0,{},"محابس"],["سخان 50 لتر",4500.0,{"brand":"أوليمبيك"},"سخانات"],["طقم حمام",7500.0,{},"أطقم حمامات"],["كوع",10.0,{},"مواسير ووصلات"]]},{"k":"hardware","n":"حدايد وبويات","b":"retail","w":["حدايد وبويات","حدايد","بويات","دهانات","خردوات","عدد وأدوات","مسامير"],"c":["بويات ودهانات","مسامير ومسامير قلاووظ","عدد يدوية","عدد كهربائية","لحام","أخرى"],"f":[["brand","الماركة"],["color","اللون"],["size","المقاس"]],"i":"صنف","is":"الأصناف","x":[["بوية بلاستيك جالون",650.0,{"brand":"جوتن","color":"أبيض"},"بويات ودهانات"],["مسامير كيلو",60.0,{},"مسامير ومسامير قلاووظ"],["شنيور",1800.0,{"brand":"بوش"},"عدد كهربائية"],["مفك طقم",250.0,{},"عدد يدوية"],["فرشاة دهان",40.0,{},"بويات ودهانات"],["سيليكون",90.0,{},"بويات ودهانات"]]},{"k":"building","n":"مواد بناء","b":"retail","w":["مواد بناء","مواد بناء","اسمنت","أسمنت","حديد تسليح","رمل","طوب"],"c":["أسمنت","حديد","طوب","رمل وزلط","عوازل","أخرى"],"f":[["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["أسمنت شكارة",190.0,{"brand":"السويس"},"أسمنت"],["حديد تسليح طن",38000.0,{"brand":"عز"},"حديد"],["طوب أحمر ألف",2200.0,{},"طوب"],["رمل نقلة",2500.0,{},"رمل وزلط"],["زلط نقلة",3500.0,{},"رمل وزلط"],["عزل لفة",900.0,{},"عوازل"]]},{"k":"ceramic","n":"سيراميك وأدوات صحية","b":"retail","w":["سيراميك وأدوات صحية","سيراميك","بورسلين","رخام","جرانيت"],"c":["سيراميك أرضيات","سيراميك حوائط","بورسلين","رخام وجرانيت","لاصق وترويب","أخرى"],"f":[["brand","الماركة"],["size","المقاس"],["color","اللون"],["grade","الفرز"]],"i":"صنف","is":"الأصناف","x":[["سيراميك 60×60 متر",220.0,{"brand":"كليوباترا","size":"60×60","grade":"فرز أول"},"سيراميك أرضيات"],["بورسلين 60×120 متر",520.0,{"size":"60×120"},"بورسلين"],["سيراميك حوائط متر",180.0,{},"سيراميك حوائط"],["لاصق شكارة",120.0,{},"لاصق وترويب"],["ترويبة",45.0,{},"لاصق وترويب"],["رخام متر",900.0,{},"رخام وجرانيت"]]},{"k":"mobiles","n":"موبايلات وإكسسوارات","b":"retail","w":["موبايلات وإكسسوارات","موبايل","موبايلات","محمول","تليفونات","اكسسوارات موبايل","صيانة موبايل"],"c":["موبايلات","إكسسوارات","شواحن وكابلات","سماعات","كروت شحن","صيانة","أخرى"],"f":[["brand","الماركة"],["model","الموديل"],["serial","السيريال / IMEI"],["color","اللون"],["warranty","الضمان"]],"i":"صنف","is":"الأصناف","x":[["سامسونج A15",9500.0,{"brand":"سامسونج","model":"A15","warranty":"سنة"},"موبايلات"],["شاحن سريع 25 وات",350.0,{"brand":"سامسونج"},"شواحن وكابلات"],["سماعة بلوتوث",650.0,{},"سماعات"],["جراب",120.0,{},"إكسسوارات"],["اسكرينة",80.0,{},"إكسسوارات"],["تغيير شاشة (صيانة)",1200.0,{},"صيانة"]]},{"k":"computers","n":"كمبيوتر ولابتوب","b":"retail","w":["كمبيوتر ولابتوب","كمبيوتر","لابتوب","لاب توب","حاسبات","طابعات","أحبار"],"c":["لابتوب","كمبيوتر وشاشات","قطع غيار","طابعات وأحبار","إكسسوارات","صيانة","أخرى"],"f":[["brand","الماركة"],["model","الموديل"],["serial","السيريال / IMEI"],["spec","المواصفات"],["warranty","الضمان"]],"i":"صنف","is":"الأصناف","x":[["لابتوب ديل",32000.0,{"brand":"ديل","model":"Inspiron 15","spec":"i5 / 8GB / 512SSD"},"لابتوب"],["ماوس لاسلكي",250.0,{},"إكسسوارات"],["كيبورد",300.0,{},"إكسسوارات"],["هارد SSD 512",2200.0,{},"قطع غيار"],["حبر طابعة",900.0,{},"طابعات وأحبار"],["صيانة سوفت وير",300.0,{},"صيانة"]]},{"k":"appliances","n":"أجهزة كهربائية","b":"retail","w":["أجهزة كهربائية","أجهزة كهربائية","اجهزة كهربائية","أجهزة منزلية","ثلاجات","غسالات","تكييفات"],"c":["ثلاجات وديب فريزر","غسالات","بوتاجازات","تكييفات","أجهزة صغيرة","شاشات","أخرى"],"f":[["brand","الماركة"],["model","الموديل"],["serial","السيريال / IMEI"],["color","اللون"],["warranty","الضمان"]],"i":"صنف","is":"الأصناف","x":[["ثلاجة 16 قدم",28000.0,{"brand":"توشيبا","model":"GR-EF","warranty":"5 سنين"},"ثلاجات وديب فريزر"],["غسالة 8 كيلو",21000.0,{"brand":"زانوسي"},"غسالات"],["بوتاجاز 5 شعلة",14000.0,{},"بوتاجازات"],["تكييف 1.5 حصان",32000.0,{"brand":"شارب"},"تكييفات"],["خلاط",1800.0,{},"أجهزة صغيرة"],["شاشة 43 بوصة",15000.0,{},"شاشات"]]},{"k":"clothes","n":"ملابس","b":"retail","w":["ملابس","ملابس","هدوم","بوتيك","ملابس حريمي","ملابس رجالي","ملابس أطفال","لانجيري"],"c":["رجالي","حريمي","أطفال","داخلي","إكسسوارات","أخرى"],"f":[["size","المقاس"],["color","اللون"],["brand","الماركة"],["season","الموسم"]],"i":"صنف","is":"الأصناف","x":[["قميص رجالي",450.0,{"size":"L","color":"أبيض"},"رجالي"],["بنطلون جينز",650.0,{"size":"32","color":"أزرق"},"رجالي"],["بلوزة حريمي",380.0,{"size":"M"},"حريمي"],["طقم أطفال",420.0,{"size":"4 سنين"},"أطفال"],["تيشيرت",250.0,{"size":"XL"},"رجالي"],["جاكت",1200.0,{"size":"L"},"رجالي"]]},{"k":"shoes","n":"أحذية وشنط","b":"retail","w":["أحذية وشنط","أحذية","احذية","جزم","شوز","شنط","حقائب"],"c":["رجالي","حريمي","أطفال","رياضي","شنط","أخرى"],"f":[["size","المقاس"],["color","اللون"],["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["كوتشي رجالي",1200.0,{"size":"43","color":"أسود"},"رجالي"],["صندل حريمي",550.0,{"size":"38"},"حريمي"],["جزمة أطفال",450.0,{"size":"30"},"أطفال"],["شنطة يد",900.0,{"color":"بيج"},"شنط"],["شبشب",150.0,{"size":"42"},"رجالي"],["شنطة ظهر",650.0,{},"شنط"]]},{"k":"toys","n":"لعب أطفال","b":"retail","w":["لعب أطفال","لعب أطفال","لعب","ألعاب","العاب أطفال","هدايا أطفال"],"c":["لعب صغيرة","عرايس","عربيات وموتوسيكلات","تعليمية","مستلزمات أطفال","أخرى"],"f":[["age","السن المناسب"],["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["عربية ريموت",650.0,{"age":"5+ سنين"},"عربيات وموتوسيكلات"],["عروسة",350.0,{"age":"3+ سنين"},"عرايس"],["ليجو صغير",800.0,{},"تعليمية"],["بازل",180.0,{},"تعليمية"],["كورة",150.0,{},"لعب صغيرة"],["دبدوب",280.0,{},"لعب صغيرة"]]},{"k":"stationery","n":"مكتبة وأدوات مكتبية","b":"retail","w":["مكتبة وأدوات مكتبية","مكتبة","ادوات مكتبية","أدوات مكتبية","كشاكيل","تصوير","طباعة"],"c":["كشاكيل وكراسات","أقلام","أدوات هندسية","شنط مدرسية","تصوير وطباعة","كتب","أخرى"],"f":[["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["كشكول 100 ورقة",35.0,{},"كشاكيل وكراسات"],["قلم جاف علبة",120.0,{},"أقلام"],["أدوات هندسية",60.0,{},"أدوات هندسية"],["شنطة مدرسة",650.0,{},"شنط مدرسية"],["تصوير ورقة",1.0,{},"تصوير وطباعة"],["ورق A4 رزمة",250.0,{},"تصوير وطباعة"]]},{"k":"gifts","n":"هدايا وإكسسوارات","b":"retail","w":["هدايا وإكسسوارات","هدايا","اكسسوارات","إكسسوارات","انتيكات","تحف","فضة"],"c":["هدايا","إكسسوارات","تحف وأنتيكات","تغليف","أخرى"],"f":[["color","اللون"]],"i":"صنف","is":"الأصناف","x":[["ميدالية",60.0,{},"إكسسوارات"],["برواز",180.0,{},"تحف وأنتيكات"],["مج مطبوع",120.0,{},"هدايا"],["علبة هدايا",90.0,{},"تغليف"],["ساعة حائط",350.0,{},"تحف وأنتيكات"],["ورق تغليف",15.0,{},"تغليف"]]},{"k":"housewares","n":"أدوات منزلية","b":"retail","w":["أدوات منزلية","أدوات منزلية","ادوات منزلية","أدوات مطبخ","بلاستيك","صيني","زجاج"],"c":["مطبخ","بلاستيك","صيني وزجاج","مفروشات","منظفات","أخرى"],"f":[["brand","الماركة"],["color","اللون"]],"i":"صنف","is":"الأصناف","x":[["طقم حلل",2800.0,{"brand":"تيفال"},"مطبخ"],["طقم كوبايات",250.0,{},"صيني وزجاج"],["سلة بلاستيك",90.0,{},"بلاستيك"],["ترمس",220.0,{},"مطبخ"],["طقم أطباق",750.0,{},"صيني وزجاج"],["مفرش سفرة",300.0,{},"مفروشات"]]},{"k":"cleaning","n":"منظفات","b":"retail","w":["منظفات","منظفات","تنظيف","مطهرات","صابون"],"c":["مسحوق غسيل","منظفات أرضيات","مطهرات","صابون","أدوات تنظيف","أخرى"],"f":[["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["مسحوق 2.5 كيلو",210.0,{"brand":"بيرسيل"},"مسحوق غسيل"],["كلور جركن",70.0,{},"منظفات أرضيات"],["صابون سايل",45.0,{},"صابون"],["مطهر 1 لتر",85.0,{"brand":"ديتول"},"مطهرات"],["مساحة",60.0,{},"أدوات تنظيف"],["جوانتي",25.0,{},"أدوات تنظيف"]]},{"k":"furniture","n":"موبيليا ومفروشات","b":"retail","w":["موبيليا ومفروشات","موبيليا","أثاث","اثاث","مفروشات","سجاد","ستائر"],"c":["غرف نوم","صالونات وأنتريهات","سفرة","مكاتب","سجاد وستائر","أخرى"],"f":[["color","اللون"],["material","الخامة"],["size","المقاس"]],"i":"صنف","is":"الأصناف","x":[["غرفة نوم كاملة",65000.0,{"material":"زان"},"غرف نوم"],["أنتريه",28000.0,{},"صالونات وأنتريهات"],["سفرة 8 كراسي",42000.0,{},"سفرة"],["مكتب",6500.0,{},"مكاتب"],["سجادة 2×3",3500.0,{"size":"2×3"},"سجاد وستائر"],["ستارة متر",250.0,{},"سجاد وستائر"]]},{"k":"agri","n":"مستلزمات زراعية","b":"retail","w":["مستلزمات زراعية","زراعية","زراعي","بذور","تقاوي","أسمدة","اسمدة","مبيدات","مشتل"],"c":["بذور وتقاوي","أسمدة","مبيدات","أدوات ري","شتلات","أخرى"],"f":[["brand","الماركة"],["active","المادة الفعالة"]],"i":"صنف","is":"الأصناف","x":[["تقاوي طماطم",450.0,{"brand":"هازيرا"},"بذور وتقاوي"],["سماد يوريا شكارة",1150.0,{},"أسمدة"],["مبيد حشري لتر",650.0,{"active":"لامبادا سيهالوثرين"},"مبيدات"],["خرطوم ري",900.0,{},"أدوات ري"],["شتلة ليمون",120.0,{},"شتلات"],["بذور برسيم كيلو",140.0,{},"بذور وتقاوي"]]},{"k":"feed","n":"أعلاف وبيطري","b":"retail","w":["أعلاف وبيطري","أعلاف","اعلاف","علف","بيطري","بيطرية","مواشي","بيت شوب","حيوانات أليفة","pet"],"c":["أعلاف","أدوية بيطرية","مستلزمات حيوانات","أكل قطط وكلاب","أخرى"],"f":[["brand","الماركة"]],"i":"صنف","is":"الأصناف","x":[["علف تسمين شكارة",950.0,{},"أعلاف"],["علف دواجن شكارة",1050.0,{},"أعلاف"],["أكل قطط 1 كيلو",220.0,{"brand":"رويال كانين"},"أكل قطط وكلاب"],["فيتامينات بيطري",180.0,{},"أدوية بيطرية"],["رمل قطط",150.0,{},"مستلزمات حيوانات"],["طوق",90.0,{},"مستلزمات حيوانات"]]},{"k":"cafe","n":"كافيه","b":"cafe","w":["كافيه","كافيه","كافية","قهوة","كوفي","كوفي شوب","مقهى"],"c":["مشروبات ساخنة","مشروبات باردة وعصائر","مشروبات معلبة ومياه","أكل وسناكس","شيشة","خامات المطبخ والبار","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["قهوة تركي",35.0,{},"مشروبات ساخنة"],["شاي",15.0,{},"مشروبات ساخنة"],["نسكافيه",35.0,{},"مشروبات ساخنة"],["عصير مانجو",45.0,{},"مشروبات باردة وعصائر"],["شيشة",50.0,{},"شيشة"],["مياه صغيرة",10.0,{},"مشروبات معلبة ومياه"]]},{"k":"restaurant","n":"مطعم","b":"cafe","w":["مطعم","مطعم","مطاعم","كشري","فول وطعمية","شاورما","بيتزا","مشويات","أكل","فاست فود","سندوتشات"],"c":["وجبات","سندوتشات","مشويات","سلطات ومقبلات","مشروبات","خامات المطبخ","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["وجبة فراخ مشوية",220.0,{},"مشويات"],["ساندوتش شاورما",85.0,{},"سندوتشات"],["بيتزا وسط",180.0,{},"وجبات"],["كشري كبير",50.0,{},"وجبات"],["سلطة",25.0,{},"سلطات ومقبلات"],["بيبسي",20.0,{},"مشروبات"]]},{"k":"juice","n":"عصائر","b":"cafe","w":["عصائر","عصير","عصائر","كوكتيل","آيس كريم","ايس كريم"],"c":["عصائر فريش","كوكتيلات","آيس كريم","خامات","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["عصير قصب",15.0,{},"عصائر فريش"],["مانجو",40.0,{},"عصائر فريش"],["فراولة",35.0,{},"عصائر فريش"],["كوكتيل",50.0,{},"كوكتيلات"],["آيس كريم بولة",20.0,{},"آيس كريم"],["سموزي",55.0,{},"عصائر فريش"]]},{"k":"gaming","n":"بلايستيشن وبلياردو","b":"gaming","w":["بلايستيشن وبلياردو","بلايستيشن","بلاي ستيشن","بلياردو","بلي","سايبر","جيمنج","بينج بونج","playstation","ps5","ps4"],"c":["مشروبات ساخنة","مشروبات باردة وعصائر","مشروبات معلبة ومياه","أكل وسناكس","شيشة","خامات المطبخ والبار","أخرى"],"f":[],"i":"صنف","is":"الأصناف","x":[["شاي",15.0,{},"مشروبات ساخنة"],["قهوة تركي",30.0,{},"مشروبات ساخنة"],["نسكافيه",35.0,{},"مشروبات ساخنة"],["إندومي",35.0,{},"أكل وسناكس"],["بيبسي",20.0,{},"مشروبات معلبة ومياه"],["مياه صغيرة",10.0,{},"مشروبات معلبة ومياه"]]},{"k":"clinic","n":"عيادة","b":"clinic","w":["عيادة","عيادة","عياده","عيادات","مركز طبي","مجمع عيادات","دكتور","باطنة","باطنه","نسا وتوليد","نساء وتوليد","انف واذن"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"خدمة","is":"الخدمات والأصناف","x":[["جوانتي طبي (زوج)",5.0,{},"مستهلكات طبية"],["سرنجة 5 سم",4.0,{},"مستهلكات طبية"],["قطن طبي",25.0,{},"مستهلكات طبية"],["كحول 70%",40.0,{},"مستهلكات طبية"],["بلاستر",15.0,{},"مستهلكات طبية"],["خافض حرارة شراب",35.0,{},"أدوية ومستحضرات"]]},{"k":"dental","n":"عيادة أسنان","b":"clinic","w":["عيادة أسنان","أسنان","اسنان","سنان","تقويم","زراعة أسنان","dental"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"خدمة","is":"الخدمات والأصناف","x":[["جوانتي طبي (زوج)",5.0,{},"مستهلكات طبية"],["أمبول بنج",35.0,{},"مستهلكات طبية"],["حشو كومبوزيت",450.0,{},"مستهلكات طبية"],["سرنجة أسنان",6.0,{},"مستهلكات طبية"],["قطن رول",30.0,{},"مستهلكات طبية"],["فرشة أسنان",40.0,{},"أدوات ومستلزمات"]]},{"k":"derma","n":"عيادة جلدية وتجميل","b":"clinic","w":["عيادة جلدية وتجميل","دكتور جلدية","جلدية","جلديه","ليزر","تجميل بشرة","بوتوكس","فيلر","derma"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"خدمة","is":"الخدمات والأصناف","x":[["جوانتي طبي (زوج)",5.0,{},"مستهلكات طبية"],["كريم واقي شمس",350.0,{},"أدوية ومستحضرات"],["سيرم",420.0,{},"أدوية ومستحضرات"],["شاش معقم",15.0,{},"مستهلكات طبية"],["كحول 70%",40.0,{},"مستهلكات طبية"],["كريم مرطب",180.0,{},"أدوية ومستحضرات"]]},{"k":"pediatrics","n":"عيادة أطفال","b":"clinic","w":["عيادة أطفال","عيادة أطفال","اطفال وحديثي الولادة","طب أطفال","حديثي الولادة"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"خدمة","is":"الخدمات والأصناف","x":[["خافض حرارة شراب",35.0,{},"أدوية ومستحضرات"],["سرنجة 3 سم",4.0,{},"مستهلكات طبية"],["خافض لسان",2.0,{},"مستهلكات طبية"],["محلول جفاف",15.0,{},"أدوية ومستحضرات"],["قطن طبي",25.0,{},"مستهلكات طبية"],["جوانتي طبي (زوج)",5.0,{},"مستهلكات طبية"]]},{"k":"eyes","n":"عيادة رمد وعيون","b":"clinic","w":["عيادة رمد وعيون","رمد","عيون","بصريات","نظارات طبية"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"خدمة","is":"الخدمات والأصناف","x":[["قطرة مرطبة",60.0,{},"أدوية ومستحضرات"],["قطرة مضاد حيوي",75.0,{},"أدوية ومستحضرات"],["جوانتي طبي (زوج)",5.0,{},"مستهلكات طبية"],["قطن طبي",25.0,{},"مستهلكات طبية"],["شاش معقم",15.0,{},"مستهلكات طبية"],["نظارة طبية",900.0,{},"أدوات ومستلزمات"]]},{"k":"physio","n":"مركز علاج طبيعي","b":"clinic","w":["مركز علاج طبيعي","علاج طبيعي","علاج طبيعى","فيزيوثيرابي","تأهيل","physio"],"c":["خدمات طبية","مستهلكات طبية","أدوية ومستحضرات","أدوات ومستلزمات","أخرى"],"f":[],"i":"جلسة","is":"الجلسات والأصناف","x":[["جل موجات",80.0,{},"مستهلكات طبية"],["رباط ضاغط",60.0,{},"أدوات ومستلزمات"],["شريط كينزيو",150.0,{},"مستهلكات طبية"],["حزام ظهر",450.0,{},"أدوات ومستلزمات"],["كمادة",90.0,{},"أدوات ومستلزمات"],["كريم مسكن",70.0,{},"أدوية ومستحضرات"]]}];
+const GENERIC = { k:"custom", n:"", b:"retail", c:["منتجات","إكسسوارات","خدمات","أخرى"], u:["قطعة"], f:[["brand","الماركة"]], i:"صنف", is:"الأصناف", x:[["منتج 1",150,{},"منتجات"],["منتج 2",320,{},"منتجات"],["منتج 3",95,{},"منتجات"],["إكسسوار",75,{},"إكسسوارات"],["خدمة تركيب",100,{},"خدمات"]] };
+const POP = ["supermarket","pharmacy","clothes","cafe","restaurant","gaming","clinic","dental","auto_parts","mobiles","electric","shoes"];
+const $ = id => document.getElementById(id);
+const fmt = n => (Math.round(n * 100) / 100).toLocaleString("en-US");
+const E = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const nz = t => " " + String(t || "").toLowerCase().replace(/[ً-ْـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/[ىئ]/g, "ي").replace(/ؤ/g, "و").replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim() + " ";
+function matchAct(text){ const n = nz(text); if (n.trim().length < 2) return null; let best = null, sc = 0;
+  for (const p of LIB) for (const w of p.w) { const nw = nz(w).trim(); if (!nw) continue;
+    if (n.includes(" " + nw + " ") || (nw.length >= 4 && n.includes(nw))) { const v = nw.length + (n.includes(" " + nw + " ") ? 3 : 0); if (v > sc) { best = p; sc = v; } } }
+  return best; }
+const isPhone = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+const now = () => new Date();
+const hm = d => { d = new Date(d); let h = d.getHours(), m = d.getMinutes(); const ap = h < 12 ? "ص" : "م"; h = h % 12 || 12; return h + ":" + String(m).padStart(2, "0") + " " + ap; };
+const PAYN = { cash:"نقدي", card:"بطاقة", insta:"InstaPay" };
+
+/* ---------- state ---------- */
+let S = null;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+function load(){ try { const t = localStorage.getItem(KEY); if (t) { const o = JSON.parse(t); if (o && o.v === 1 && o.items) return o; } } catch (e) {} return null; }
+function modeOf(p){ if (p.k === "pharmacy") return "pharmacy"; if (p.k === "clothes" || p.k === "shoes") return "clothes";
+  if (p.b === "gaming") return "gaming"; if (p.b === "clinic") return "clinic"; if (p.b === "cafe" && p.k !== "bakery") return "cafe"; return "retail"; }
+const PH_EXTRA = [["ميجاموكس 1 جم",105,{generic:"أموكسيسيلين",company:"فاركو"},"أدوية"],["هاي بيوتك 1 جم",98,{generic:"أموكسيسيلين",company:"المهن الطبية"},"أدوية"],["أبيمول 500",24,{generic:"باراسيتامول",company:"جلوبال نابي"},"أدوية"],["سيتال 500",18,{generic:"باراسيتامول",company:"أمون"},"أدوية"]];
+const CL_SVC = { dental:[["كشف أسنان",300],["حشو عادي",600],["خلع",400],["تنظيف جير",500]], derma:[["كشف جلدية",400],["متابعة",200],["جلسة تقشير",900]], pediatrics:[["كشف أطفال",350],["متابعة",150],["تطعيم",250]],
+  eyes:[["كشف رمد",350],["قياس نظر",150],["متابعة",150]], physio:[["تقييم أول",300],["جلسة علاج طبيعي",250],["جلسة موجات",200]], clinic:[["كشف",350],["متابعة (استشارة)",150],["جلسة / إجراء",250]] };
+const INS = [["", "بدون تأمين", 0], ["misr", "مصر للتأمين", 80], ["allianz", "أليانز", 70], ["syndicate", "نقابة المهندسين", 50]];
+const DX = { dental:["تسوس","التهاب لثة","حساسية أسنان","ضرس عقل"], derma:["حب شباب","إكزيما","حساسية جلد"], pediatrics:["نزلة برد","التهاب لوز","نزلة معوية"], eyes:["التهاب ملتحمة","قصر نظر","جفاف العين"], physio:["خشونة ركبة","انزلاق غضروفي","شد عضلي"], clinic:["التهاب حلق","نزلة برد","ارتفاع ضغط","نزلة معوية"] };
+const RX = [["بانادول اكسترا","قرص كل 8 ساعات"],["أوجمنتين 1 جم","قرص كل 12 ساعة × 5 أيام"],["فيتامين سي فوار","فوار يوميًا"],["غسول فم","مضمضة 3 مرات"]];
+
+function newState(shop, text){
+  const m = matchAct(text), p = m || Object.assign({}, GENERIC, { n: text.trim() || "نشاط تجاري" });
+  const mode = modeOf(p);
+  let src = p.x.slice();
+  if (mode === "pharmacy") src = src.concat(PH_EXTRA);
+  const items = src.map((x, i) => ({ id: "i" + i, n: x[0], p: x[1], c: Math.round(x[1] * (mode === "clinic" ? .55 : .74)), cat: x[3], ex: x[2] || {}, st: [24, 9, 31, 4, 16, 12, 7, 20, 14, 11][i % 10], sold: [14, 9, 6, 11, 4, 7, 3, 5, 2, 2][i % 10] }));
+  if (mode === "pharmacy") items.forEach(it => { if (it.cat === "أدوية") { it.s = /أوجمنتين|ميجاموكس|هاي/.test(it.n) ? 2 : 3; it.st = it.st * it.s; } if (/أوجمنتين/.test(it.n)) it.st = 0; });
+  if (mode === "clothes") { const shoes = p.k === "shoes"; const COL = ["أسود","أبيض","كحلي","بيج"];
+    items.forEach((it, k) => { const sz = shoes ? ["39","40","41","42","43","44"] : /أطفال/.test(it.n) ? ["2 سنين","4 سنين","6 سنين","8 سنين"] : /بنطلون|جينز/.test(it.n) ? ["30","32","34","36"] : ["S","M","L","XL","XXL"];
+      it.sz = sz; it.col = COL; it.v = {}; let t = 0; sz.forEach((s, a) => COL.forEach((c, b) => { const q = (a * 7 + b * 3 + k) % 5; it.v[s + "|" + c] = q; t += q; })); it.st = t; }); }
+  if (mode === "clinic") { const sv = CL_SVC[p.k] || CL_SVC.clinic; sv.forEach((x, i) => items.unshift({ id: "s" + i, n: x[0], p: x[1], c: 0, cat: "خدمات طبية", ex: {}, st: null, svc: 1, sold: [9, 5, 3, 2][i] || 1 })); }
+  if (mode === "cafe" || mode === "gaming") items.forEach(it => it.st = it.st + 20);
+  const avg = items.reduce((a, x) => a + x.p, 0) / items.length;
+  const r5 = n => Math.round(n / 5) * 5;
+  const base = { cash: r5(avg * 21), card: r5(avg * 6), insta: r5(avg * 4), cnt: 19, ins: mode === "clinic" ? r5(avg * 5) : 0 };
+  base.profit = r5((base.cash + base.card + base.insta + base.ins) * .27);
+  const st = { v: 1, shop: shop.trim() || "محلك", k: p.k, an: p.n, mode, cats: p.c.filter(c => c !== "أخرى"), is: mode === "pharmacy" ? "الأدوية" : mode === "cafe" || mode === "gaming" ? "المنيو" : p.is, f: p.f || [],
+    items, sales: [], seq: 1000 + Math.floor(Math.random() * 800), done: {}, cart: [], view: { cafe: "tables", gaming: "hall", clinic: "recep" }[mode] || "pos", base, at: Date.now(), last: null };
+  if (mode === "cafe") st.tables = { "1": { lines: [{ k: "x", id: items[0].id, n: items[0].n, q: 2, p: items[0].p, c: items[0].c, sent: 1 }], t0: Date.now() - 25 * 60000 }, "4": { lines: [{ k: "y", id: items[1].id, n: items[1].n, q: 1, p: items[1].p, c: items[1].c, sent: 1 }], t0: Date.now() - 10 * 60000 } };
+  if (mode === "gaming") st.dev = [["PS5 — 1", 60, 80], ["PS5 — 2", 60, 80], ["PS5 — 3", 60, 80], ["PS4 — 1", 40, 55], ["PS4 — 2", 40, 55], ["بلياردو", 70, 70]].map((d, i) => ({ id: "d" + i, n: d[0], r1: d[1], r2: d[2], on: i === 2 ? { t0: Date.now() - 50000, multi: 1, buf: [] } : null }));
+  if (mode === "clinic") st.q = [{ id: "p1", n: "منى أحمد", ph: "0100 123 4567", svc: "s0", ins: "", stt: "doc", rx: [] }, { id: "p2", n: "حسن علي", ph: "0111 765 4321", svc: "s1", ins: "", stt: "wait", rx: [] }, { id: "p3", n: "سارة محمود", ph: "0122 555 8899", svc: "s0", ins: "misr", stt: "wait", rx: [] }, { id: "p4", n: "محجوز 7:30 م — كريم سامي", ph: "", svc: "s0", ins: "", stt: "book", rx: [] }];
+  return st;
+}
+const item = id => S.items.find(x => x.id === id);
+
+/* ---------- guide steps ---------- */
+const STEPS = {
+  retail: [["add", "اضغط على أي صنف — هيتضاف للفاتورة"], ["qty", "زوّد الكمية بـ «+» أو اعمل خصم"], ["pay", "اضغط «ادفع» واختار نقدي / بطاقة / InstaPay"], ["dash", "افتح «الرئيسية» — هتلاقي الأرقام اتحركت"]],
+  pharmacy: [["add", "اضغط على دوا واختار «علبة» أو «شريط»"], ["alt", "اضغط «أوجمنتين» (نفد) — هيقترح عليك البدائل"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — شوف المخزون والمبيعات"]],
+  clothes: [["add", "اضغط على صنف واختار المقاس واللون"], ["qty", "زوّد الكمية أو اعمل خصم"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — هتلاقي الأرقام اتحركت"]],
+  cafe: [["table", "من «الطاولات» افتح طاولة فاضية"], ["add", "ضيف مشروب واختار الحجم"], ["kitchen", "اضغط «ابعت للمطبخ» — شوف تذكرة المطبخ"], ["pay", "اضغط «الحساب» وادفع"]],
+  gaming: [["start", "من «الصالة» شغّل جهاز فاضي"], ["buffet", "ضيف طلب بوفيه على الجهاز"], ["pay", "اضغط «اقفل وحاسب» وادفع"], ["dash", "افتح «الرئيسية» — شوف إيراد الصالة"]],
+  clinic: [["walkin", "من «الاستقبال» ضيف مريض بدون حجز"], ["doctor", "من «شاشة الطبيب» اكتب التشخيص والروشتة"], ["pay", "ادفع الكشف — جرّب مريض عليه تأمين"], ["dash", "افتح «اليوم» — شوف الكشوفات والإيراد"]]
+};
+function did(k){ if (!S || S.done[k]) return; const st = STEPS[S.mode]; if (!st.some(x => x[0] === k)) return; S.done[k] = 1; save(); renderHint(); }
+
+/* ---------- nav ---------- */
+function nav(){ const m = S.mode;
+  if (m === "cafe") return [["home", "الرئيسية"], ["tables", "الطاولات"], ["pos", "تيك أواي"], ["items", "المنيو"], ["rep", "التقارير"], 0, ["المخزن والخامات"], ["المشتريات"], ["الموظفين والورديات"]];
+  if (m === "gaming") return [["home", "الرئيسية"], ["hall", "🎮 الصالة"], ["pos", "البوفيه"], ["items", "المنيو والأسعار"], ["rep", "التقارير"], 0, ["المخزن"], ["المشتريات"], ["الورديات"]];
+  if (m === "clinic") return [["home", "🩺 اليوم"], ["recep", "الاستقبال"], ["doc", "شاشة الطبيب"], ["items", "الخدمات والأسعار"], ["rep", "التقارير"], 0, ["ملفات المرضى"], ["الأطباء ونسبهم"], ["الخزينة والمصروفات"]];
+  return [["home", "الرئيسية"], ["pos", "الكاشير"], ["items", S.is], ["rep", "التقارير"], 0, ["المشتريات"], ["العملاء والموردون"], ["الأرباح ونصيب الشركاء"]];
+}
+
+/* ---------- shell ---------- */
+function shell(){
+  $("root").innerHTML = `<header class="top"><button class="tb" id="menuBtn" data-a="menu" aria-label="القائمة">☰</button>
+  <div class="brand"><img src="../logo.png" alt=""><div><b>${E(S.shop)}</b><small>${E(S.an)} · نسخة تجربة</small></div></div>
+  <button class="tb" data-a="reset">ابدأ من جديد</button><a class="tb g hide-s" href="${ORDER}">اطلب اشتراك</a></header>
+  <div class="hint" id="hint"></div><div id="cta"></div>
+  <div class="shell"><nav class="side" id="side"></nav><main id="main"></main></div><div id="mbar"></div><div id="ov"></div>`;
+  renderHint(); go(S.view);
+}
+function renderSide(){ $("side").innerHTML = nav().map(x => x === 0 ? "<hr>" : x.length === 1 ? `<button class="lk" data-a="locked">${E(x[0])}</button>` : `<button class="${S.view === x[0] ? "on" : ""}" data-a="go" data-v="${x[0]}">${E(x[1])}</button>`).join("")
+  + `<hr><button data-a="dl">⬇ نزّل البرنامج</button><a class="btn g w" style="margin-top:6px" href="${ORDER}">اطلب اشتراك</a>`; }
+function renderHint(){
+  const st = STEPS[S.mode], n = st.filter(x => S.done[x[0]]).length, cur = st.find(x => !S.done[x[0]]);
+  $("hint").innerHTML = `<span class="steps">${st.map((x, i) => `<i class="${S.done[x[0]] ? "d" : x === cur ? "c" : ""}">${S.done[x[0]] ? "✓" : i + 1}</i>`).join("")}</span>
+   <span class="txt">${cur ? `<b>جرّب (${n + 1}/${st.length}):</b> ${E(cur[1])}` : "<b>خلّصت التجربة 👏</b> — كده شفت أهم حاجة. البرنامج الكامل فيه المخزن والمشتريات والحسابات كمان."}</span>`;
+  $("cta").innerHTML = (S.sales.length || !cur) ? `<div class="cta"><p>عجبك؟ نزّله على كمبيوتر المحل وجرّبه 14 يوم مجانًا — أو اطلب الاشتراك.</p><button class="btn p s" data-a="dl">نزّل البرنامج وجرّبه 14 يوم</button><a class="btn g s" href="${ORDER}">اطلب اشتراك</a></div>` : "";
+}
+function go(v){ S.view = v; save(); closeMenu(); renderSide(); $("mbar").innerHTML = "";
+  const f = V[v] || V.home; $("main").innerHTML = f(); window.scrollTo(0, 0);
+  if (v === "home" && S.sales.length) did("dash"); if (v === "hall") tick(); }
+function refresh(){ $("mbar").innerHTML = ""; const f = V[S.view] || V.home; const y = window.scrollY; $("main").innerHTML = f(); window.scrollTo(0, y); }
+function closeMenu(){ const s = $("side"); if (s) s.classList.remove("open"); const c = document.querySelector(".scrim"); if (c) c.remove(); }
+function toast(t){ const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function modal(h){ $("ov").innerHTML = `<div class="ov" data-a="ovx"><div class="md" role="dialog" aria-modal="true">${h}</div></div>`; const i = $("ov").querySelector("input:not([type=hidden])"); if (i && !isPhone) i.focus(); }
+const mclose = () => { $("ov").innerHTML = ""; };
+const mh = t => `<h2><span>${t}</span><button class="x" data-a="close" aria-label="إغلاق">×</button></h2>`;
+
+/* ---------- money ---------- */
+function totals(){ const t = { cash: S.base.cash, card: S.base.card, insta: S.base.insta, ins: S.base.ins, cnt: S.base.cnt, disc: 0, profit: S.base.profit };
+  S.sales.forEach(s => { t[s.pay] += s.paid0; t.ins += s.ins || 0; t.cnt++; t.disc += s.disc; t.profit += s.tot + (s.ins || 0) - s.cost; });
+  t.sum = t.cash + t.card + t.insta + t.ins; return t; }
+const recent = () => S.last && Date.now() - S.last.at < 120000 ? S.last : null;
+
+/* ---------- views ---------- */
+const V = {};
+V.home = () => { const t = totals(), r = recent(), cl = S.mode === "clinic";
+  const top = S.items.slice().sort((a, b) => b.sold - a.sold).slice(0, 5), mx = top[0] ? top[0].sold : 1;
+  const low = S.items.filter(x => x.st != null && unitSt(x) <= 5);
+  const k = (lab, v, cls, up) => `<div class="card kpi ${cls || ""} ${up ? "flash" : ""}"><span class="k">${lab}</span><span class="v">${v}</span>${up ? `<span class="up">↑ ${up}</span>` : ""}</div>`;
+  let extra = "";
+  if (S.mode === "cafe") extra = k("طاولات مفتوحة", Object.keys(S.tables).length + " / 8");
+  if (S.mode === "gaming") extra = k("أجهزة شغالة", S.dev.filter(d => d.on).length + " / " + S.dev.length);
+  if (cl) extra = k("في الانتظار", S.q.filter(p => p.stt === "wait" || p.stt === "doc").length + " مريض") + k("مستحق على التأمين", fmt(t.ins) + " ج");
+  return `<div class="ph"><div><h1>${cl ? "اليوم في العيادة" : "الرئيسية"}</h1><span class="muted">${now().toLocaleDateString("ar-EG", { weekday: "long", day: "numeric", month: "long" })} · بيانات تجريبية</span></div>
+  <button class="btn p" data-a="go" data-v="${{ cafe: "tables", gaming: "hall", clinic: "recep" }[S.mode] || "pos"}">${{ cafe: "افتح طاولة", gaming: "الصالة", clinic: "الاستقبال" }[S.mode] || "فاتورة جديدة"}</button></div>
+  <div class="kpis">${k(cl ? "إيراد اليوم" : "مبيعات اليوم", fmt(t.sum) + " ج", "h", r ? "+" + fmt(r.tot) + " من فاتورتك" : "")}${k(cl ? "كشوفات وفواتير" : "عدد الفواتير", t.cnt, "", r ? "+1" : "")}${k("ربح اليوم", fmt(t.profit) + " ج", "", r ? "+" + fmt(r.prof) : "")}${extra}</div>
+  <div class="two"><div class="card"><h2>${cl ? "أكثر الخدمات اليوم" : "الأكثر مبيعًا اليوم"}</h2>${top.map(x => `<div class="bar"><span>${E(x.n)}<span class="t" style="width:${Math.max(6, x.sold / mx * 100)}%"></span></span><b>${x.sold}</b></div>`).join("")}</div>
+  <div class="card"><h2>${cl ? "مستهلكات قربت تخلص" : "أصناف قربت تخلص"}</h2>${low.length ? `<ul class="rows">${low.map(x => `<li><span>${E(x.n)}</span><span class="tag ${unitSt(x) <= 0 ? "bad" : "gd"}">${unitSt(x) <= 0 ? "نفد" : "باقي " + stTxt(x)}</span></li>`).join("")}</ul>` : `<p class="muted">مفيش أصناف تحت حد الطلب.</p>`}
+  <p class="muted" style="font-size:13px;margin-top:8px">في البرنامج الكامل: تنبيه بالنواقص وطلب شراء بضغطة.</p></div></div>`; };
+
+const unitSt = x => x.s ? Math.floor(x.st / x.s) : x.st;
+const stTxt = x => x.st == null ? "—" : x.s ? `${Math.floor(x.st / x.s)} علبة${x.st % x.s ? " + " + (x.st % x.s) + " شريط" : ""}` : fmt(x.st);
+
+let tab = "الكل", qry = "";
+function tilesHtml(list){ return `<input id="srch" type="search" placeholder="ابحث باسم الصنف${S.f.length ? " أو " + E(S.f.map(f => f[1]).join(" / ")) : ""}…" value="${E(qry)}" data-in="srch">
+  <div class="tabs">${["الكل"].concat(S.cats.filter(c => S.items.some(x => x.cat === c && !x.svc))).map(c => `<button class="${c === tab ? "on" : ""}" data-a="tab" data-v="${E(c)}">${E(c)}</button>`).join("")}</div>
+  <div class="tiles" id="tiles">${tilesOnly(list)}</div>`; }
+function tilesOnly(list){ const q = nz(qry).trim();
+  const l = (list || S.items.filter(x => !x.svc)).filter(x => (tab === "الكل" || x.cat === tab) && (!q || nz(x.n + " " + Object.values(x.ex).join(" ")).includes(q)));
+  return l.map(x => { const ex = Object.values(x.ex).filter(Boolean).slice(0, 1).join(""); const out = x.st != null && unitSt(x) <= 0 && x.st <= 0;
+    return `<button class="tile ${out ? "out" : ""}" data-a="pick" data-v="${x.id}"><b>${E(x.n)}</b>${ex ? `<small>${E(ex)}</small>` : ""}${x.s ? `<small>${x.s} شريط في العلبة</small>` : ""}${x.sz ? `<small>${x.sz.length} مقاس · ${x.col.length} ألوان</small>` : ""}<span class="pr">${fmt(x.p)} ج</span></button>`; }).join("") || `<p class="empty">مفيش نتيجة — جرّب كلمة تانية.</p>`; }
+
+/* order context: "pos" | "t:<n>" | "d:<id>" */
+let ctx = "pos";
+function lines(c){ c = c || ctx; if (c === "pos") return S.cart; if (c[0] === "t") return (S.tables[c.slice(2)] || { lines: [] }).lines; const d = S.dev.find(x => x.id === c.slice(2)); return d && d.on ? d.on.buf : []; }
+const sub = l => l.reduce((a, x) => a + x.q * x.p, 0);
+function cartHtml(title, foot){ const l = lines();
+  return `<div class="card cart" id="cart"><h2><span>${title}</span><span class="muted" style="font-size:13px;font-weight:400">${l.reduce((a, x) => a + x.q, 0)} صنف</span></h2>
+  ${l.length ? l.map((x, i) => `<div class="ln ${ctx[0] === "t" && !x.sent ? "new" : ""}"><span>${E(x.n)}<small>${fmt(x.p)} ج${x.sent ? " · اتبعت للمطبخ" : ctx[0] === "t" ? " · جديد" : ""}</small></span><b>${fmt(x.q * x.p)}</b>
+   <span class="q"><button data-a="qty" data-v="${i}" data-d="-1" aria-label="أقل">−</button><b>${x.q}</b><button data-a="qty" data-v="${i}" data-d="1" aria-label="أكتر">+</button></span></div>`).join("") : `<p class="empty">الفاتورة فاضية — اضغط على صنف.</p>`}
+  <div class="tot"><span>الإجمالي</span><span>${fmt(sub(l))} ج</span></div>${foot}</div>`; }
+function mbar(label, btn){ const l = lines(); $("mbar").innerHTML = `<div class="mbar"><div class="i">${fmt(sub(l))} ج<small>${label} · ${l.reduce((a, x) => a + x.q, 0)} صنف</small></div><button class="btn s" data-a="tocart">الفاتورة</button>${btn}</div>`; }
+
+V.pos = () => { ctx = "pos"; const lab = S.mode === "gaming" ? "البوفيه (بيع مباشر)" : S.mode === "cafe" ? "تيك أواي" : "الكاشير";
+  setTimeout(() => mbar(lab, `<button class="btn p s" data-a="pay" ${S.cart.length ? "" : "disabled"}>ادفع</button>`));
+  return `<div class="ph"><h1>${lab}</h1><span class="muted">فاتورة رقم ${S.seq + 1}</span></div>
+  <div class="pos"><div>${tilesHtml()}</div>${cartHtml("الفاتورة", `<button class="btn p w" data-a="pay" ${S.cart.length ? "" : "disabled"}>ادفع</button><button class="btn w s" style="margin-top:6px" data-a="clear" ${S.cart.length ? "" : "disabled"}>إلغاء الفاتورة</button>`)}</div>`; };
+
+/* item pick → options by business */
+function pick(id){ const x = item(id); if (!x) return;
+  if (S.mode === "pharmacy" && x.st != null && x.st <= 0) return altModal(x);
+  if (S.mode === "pharmacy" && x.s) { const sp = Math.ceil(x.p / x.s);
+    return modal(mh(E(x.n)) + `<p class="muted" style="margin-top:-6px">${E(x.ex.generic || "")} · المخزون: ${stTxt(x)}</p><div class="opts">
+     <button class="opt" data-a="addv" data-v="${id}" data-o="box">علبة<small>${fmt(x.p)} ج</small></button>
+     <button class="opt" data-a="addv" data-v="${id}" data-o="strip">شريط<small>${fmt(sp)} ج</small></button></div><p class="note">البرنامج بيخصم من المخزون بالشريط ويحسب العلب لوحده.</p>`); }
+  if (x.sz) return varModal(x);
+  const sz = sizes(x); if (sz) return modal(mh(E(x.n)) + `<p class="muted" style="margin-top:-6px">اختار الحجم</p><div class="opts">${sz.map((s, i) => `<button class="opt" data-a="addv" data-v="${id}" data-o="${i}">${s[0]}<small>${fmt(x.p + s[1])} ج</small></button>`).join("")}</div>`);
+  addLine(x, x.n, x.p, 1); }
+function sizes(x){ if (S.mode !== "cafe" && S.mode !== "gaming") return null; if (S.mode === "gaming") return null;
+  if (/بيتزا/.test(x.n)) return [["صغير", -40], ["وسط", 0], ["كبير", 60]]; if (/سندوتش|ساندوتش/.test(x.n)) return [["عادي", 0], ["سوبر", 25]];
+  if (/مشروبات ساخنة|باردة|عصائر|كوكتيل/.test(x.cat)) return [["صغير", 0], ["وسط", 10], ["كبير", 20]]; return null; }
+function addLine(x, name, price, per, vk){ const l = lines(); const key = x.id + "|" + name; const f = l.find(a => a.k === key && !a.sent);
+  if (f) f.q++; else l.push({ k: key, id: x.id, n: name, q: 1, p: price, c: Math.round(x.c * price / x.p), per: per, vk: vk || null });
+  did("add"); save(); refresh(); toast("اتضاف: " + name); }
+function altModal(x){ const g = x.ex.generic; const alts = S.items.filter(a => a.id !== x.id && a.ex.generic && g && a.ex.generic === g && a.st > 0);
+  did("alt");
+  modal(mh("«" + E(x.n) + "» نفد من المخزن") + `<p class="note">البدائل اللي عندك بنفس المادة الفعالة: <b>${E(g || "")}</b></p>${alts.length ? `<div class="opts">${alts.map(a => `<button class="opt" data-a="altpick" data-v="${a.id}">${E(a.n)}<small>${E(a.ex.company || "")} · ${fmt(a.p)} ج · ${stTxt(a)}</small></button>`).join("")}</div>` : "<p>مفيش بديل في المخزن.</p>"}
+  <p class="muted" style="font-size:13px">وفي البرنامج: الصنف الناقص يتسجل في «النواقص» علشان تطلبه من المورد.</p>`); }
+let vSel = {};
+function varModal(x){ vSel = { id: x.id, s: vSel.id === x.id ? vSel.s : null, c: vSel.id === x.id ? vSel.c : null };
+  const cols = x.col.length + 1;
+  modal(mh(E(x.n) + " — " + fmt(x.p) + " ج") + `<p class="muted" style="margin-top:-6px">اختار المقاس واللون — الرقم = المتاح في المخزن</p>
+  <div class="vg" style="grid-template-columns:repeat(${cols},minmax(0,1fr))"><span></span>${x.col.map(c => `<span class="h">${E(c)}</span>`).join("")}
+  ${x.sz.map(s => `<span class="h">${E(s)}</span>` + x.col.map(c => { const q = x.v[s + "|" + c]; return `<button class="${vSel.s === s && vSel.c === c ? "on" : ""}" data-a="vsel" data-v="${E(s)}" data-o="${E(c)}" ${q ? "" : "disabled"}>${q || "—"}</button>`; }).join("")).join("")}</div>
+  <button class="btn p w" data-a="vadd" ${vSel.s ? "" : "disabled"}>${vSel.s ? `ضيف ${E(vSel.s)} / ${E(vSel.c)}` : "اختار مقاس ولون"}</button>`); }
+
+/* payment */
+let pay = null;
+function payModal(kind, extra){ // kind: pos | table | dev | clinic
+  const l = kind === "clinic" ? [] : lines(); const s0 = kind === "clinic" ? extra.price : sub(l) + (extra && extra.time || 0);
+  pay = pay && pay.kind === kind && pay.s0 === s0 ? pay : { kind, s0, disc: 0, m: "cash", paid: null, extra, ins: extra && extra.ins || "" };
+  const insR = INS.find(i => i[0] === pay.ins) || INS[0];
+  const afterDisc = Math.max(0, s0 - pay.disc), insAmt = kind === "clinic" ? Math.round(afterDisc * insR[2] / 100) : 0, tot = afterDisc - insAmt;
+  const sug = [tot, Math.ceil(tot / 50) * 50, Math.ceil(tot / 100) * 100, Math.ceil(tot / 200) * 200].filter((v, i, a) => v >= tot && a.indexOf(v) === i).slice(0, 3);
+  const paid = pay.paid == null ? sug[sug.length > 1 ? 1 : 0] : pay.paid; pay.tot = tot; pay.insAmt = insAmt; pay.paidV = paid;
+  modal(mh("الدفع") + `${kind === "clinic" ? `<div class="mrow"><span>${E(extra.svcN)} — ${E(extra.pn)}</span><b>${fmt(s0)} ج</b></div>
+   <label>التأمين<select data-in="ins">${INS.map(i => `<option value="${i[0]}" ${i[0] === pay.ins ? "selected" : ""}>${i[1]}${i[2] ? " — الشركة تدفع " + i[2] + "%" : ""}</option>`).join("")}</select></label>` : `<div class="mrow"><span>الإجمالي قبل الخصم</span><b>${fmt(s0)} ج</b></div>`}
+  <label>خصم (جنيه)<input type="number" inputmode="decimal" min="0" value="${pay.disc || ""}" placeholder="0" data-in="disc"></label>
+  ${insAmt ? `<div class="mrow"><span>نصيب شركة التأمين (${insR[2]}%) — آجل على ${E(insR[1])}</span><b>${fmt(insAmt)} ج</b></div>` : ""}
+  <div class="mrow big"><span>${insAmt ? "يدفع المريض" : "المطلوب"}</span><span id="ptot">${fmt(tot)} ج</span></div>
+  <div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px">${Object.keys(PAYN).map(m => `<button class="opt ${pay.m === m ? "on" : ""}" data-a="pm" data-v="${m}">${m === "cash" ? "💵 " : m === "card" ? "💳 " : "📲 "}${PAYN[m]}</button>`).join("")}</div>
+  ${pay.m === "cash" ? `<label>المبلغ اللي استلمته<input type="number" inputmode="decimal" value="${paid}" data-in="paid"></label><div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr))">${sug.map(v => `<button class="opt" data-a="paidq" data-v="${v}">${fmt(v)}</button>`).join("")}</div>
+   <div class="mrow big"><span>الباقي للزبون</span><span id="chg" class="ok">${fmt(Math.max(0, paid - tot))} ج</span></div>`
+   : pay.m === "insta" ? `<p class="note">الزبون يحوّل على عنوان InstaPay بتاع المحل، والكاشير يكتب رقم العملية.</p><label>رقم العملية (اختياري)<input data-in="ref" placeholder="مثلًا 123456"></label>` : `<p class="note">ادفع بالماكينة وبعدين أكّد. البرنامج بيفصل فلوس البطاقة عن الكاش في الخزينة.</p>`}
+  <div class="mbtns"><button class="btn p" data-a="confirm" id="cfm" ${pay.m === "cash" && paid < tot ? "disabled" : ""}>تأكيد الدفع${pay.m === "cash" ? "" : " — " + fmt(tot) + " ج"}</button><button class="btn" data-a="close">رجوع</button></div>`); }
+function confirmPay(){ const p = pay; if (!p) return; const kind = p.kind; let l, label = "", rx = null, pn = "";
+  if (kind === "clinic") { const pt = S.q.find(x => x.id === p.extra.pid); const sv = item(pt.svc); l = [{ n: sv.n, q: 1, p: sv.p, c: 0, id: sv.id }]; rx = pt; pn = pt.n; label = "مريض: " + pt.n; pt.stt = "done"; pt.ins = p.ins; }
+  else { l = lines().slice(); if (p.extra && p.extra.time) l.unshift({ n: p.extra.timeN, q: 1, p: p.extra.time, c: 0 }); label = p.extra && p.extra.label || ""; }
+  const cost = l.reduce((a, x) => a + x.q * (x.c || 0), 0);
+  l.forEach(x => { const it = x.id && item(x.id); if (!it) return; it.sold += x.q; if (it.st == null) return;
+    if (it.v && x.vk) { it.v[x.vk] = Math.max(0, it.v[x.vk] - x.q); it.st -= x.q; } else it.st = Math.max(0, it.st - x.q * (x.per || 1)); });
+  const s = { no: ++S.seq, at: Date.now(), lines: l.map(x => ({ n: x.n, q: x.q, p: x.p })), sub: p.s0, disc: p.disc, ins: p.insAmt || 0, insN: (INS.find(i => i[0] === p.ins) || INS[0])[1], tot: p.tot, paid0: p.tot, pay: p.m, paid: p.m === "cash" ? p.paidV : p.tot, cost, label, rx: rx ? { dx: rx.dx || "", rx: rx.rx || [] } : null };
+  S.sales.push(s); S.last = { at: Date.now(), tot: s.tot + s.ins, prof: s.tot + s.ins - cost };
+  if (kind === "pos") S.cart = []; if (kind === "table") delete S.tables[ctx.slice(2)]; if (kind === "dev") { S.dev.find(d => d.id === ctx.slice(2)).on = null; }
+  if (p.disc) did("qty"); did("pay"); pay = null; save(); receipt(s); refresh(); renderHint(); }
+function receipt(s){ const d = new Date(s.at);
+  modal(mh("الإيصال") + `<div class="paper"><h3>${E(S.shop)}</h3><div class="c">${E(S.an)}</div><div class="c">فاتورة ${s.no} · ${d.toLocaleDateString("en-GB")} ${hm(d)}</div>${s.label ? `<div class="c">${E(s.label)}</div>` : ""}<hr>
+  ${s.lines.map(x => `<div class="r"><span>${x.q > 1 ? x.q + " × " : ""}${E(x.n)}</span><span>${fmt(x.q * x.p)}</span></div>`).join("")}<hr>
+  <div class="r"><span>الإجمالي</span><span>${fmt(s.sub)}</span></div>${s.disc ? `<div class="r"><span>خصم</span><span>−${fmt(s.disc)}</span></div>` : ""}${s.ins ? `<div class="r"><span>على ${E(s.insN)}</span><span>−${fmt(s.ins)}</span></div>` : ""}
+  <div class="r b"><span>${s.ins ? "يدفع المريض" : "المطلوب"}</span><span>${fmt(s.tot)} ج</span></div><div class="r"><span>${PAYN[s.pay]}</span><span>${fmt(s.paid)}</span></div>${s.pay === "cash" && s.paid > s.tot ? `<div class="r"><span>الباقي</span><span>${fmt(s.paid - s.tot)}</span></div>` : ""}
+  ${s.rx && (s.rx.dx || s.rx.rx.length) ? `<hr><b>الروشتة</b>${s.rx.dx ? `<div>التشخيص: ${E(s.rx.dx)}</div>` : ""}${s.rx.rx.map(r => `<div>℞ ${E(r[0])} — ${E(r[1])}</div>`).join("")}` : ""}
+  <hr><div class="c">شكرًا لزيارتكم</div><div class="pw">بواسطة تريو · 01228827915</div></div>
+  <p class="note" style="margin-top:12px">ده شكل الإيصال على الطابعة الحرارية. ${S.mode === "clinic" ? "" : "والمخزون اتخصم لوحده."}</p>
+  <div class="mbtns"><button class="btn" data-a="print">طباعة</button><button class="btn p" data-a="close">تمام</button></div>
+  <div class="mbtns" style="margin-top:6px"><button class="btn g" data-a="dl">نزّل البرنامج وجرّبه 14 يوم</button><a class="btn" href="${ORDER}">اطلب اشتراك</a></div>`); }
+
+/* café */
+V.tables = () => { const T = S.tables;
+  return `<div class="ph"><div><h1>الطاولات</h1><span class="muted">اضغط على طاولة تفتحها أو تكمّل طلبها</span></div><button class="btn" data-a="go" data-v="pos">تيك أواي</button></div>
+  <div class="grid">${[1, 2, 3, 4, 5, 6, 7, 8].map(n => { const t = T[n]; return `<button class="tbl ${t ? "busy" : ""}" data-a="table" data-v="${n}"><b>طاولة ${n}</b><span>${t ? "مفتوحة من " + Math.max(1, Math.round((Date.now() - t.t0) / 60000)) + " د" : "فاضية"}</span><span class="v">${t ? fmt(sub(t.lines)) + " ج" : ""}</span></button>`; }).join("")}</div>`; };
+V.table = () => { const n = ctx.slice(2), t = S.tables[n]; if (!t) { S.view = "tables"; return V.tables(); } const nw = t.lines.filter(x => !x.sent).length;
+  const foot = `<button class="btn w" data-a="kitchen" ${nw ? "" : "disabled"}>🍳 ابعت للمطبخ${nw ? " (" + nw + ")" : ""}</button><button class="btn p w" style="margin-top:6px" data-a="bill" ${t.lines.length ? "" : "disabled"}>الحساب</button>`;
+  setTimeout(() => mbar("طاولة " + n, `<button class="btn s" data-a="kitchen" ${nw ? "" : "disabled"}>للمطبخ</button><button class="btn p s" data-a="bill" ${t.lines.length ? "" : "disabled"}>الحساب</button>`));
+  return `<div class="ph"><div><h1>طاولة ${n}</h1><span class="muted">${nw ? nw + " طلب جديد لسه ما اتبعتش للمطبخ" : "كل الطلبات اتبعتت"}</span></div><button class="btn" data-a="go" data-v="tables">← الطاولات</button></div>
+  <div class="pos"><div>${tilesHtml()}</div>${cartHtml("طلبات الطاولة", foot)}</div>`; };
+function kitchen(){ const n = ctx.slice(2), t = S.tables[n]; const nw = t.lines.filter(x => !x.sent); if (!nw.length) return;
+  nw.forEach(x => x.sent = 1); did("kitchen"); save(); refresh();
+  modal(mh("تذكرة المطبخ") + `<div class="paper kt"><div class="big">طاولة ${n}</div><div class="c">${hm(new Date())} · الكابتن: أحمد</div><hr>${nw.map(x => `<div class="r b"><span>${x.q} × ${E(x.n)}</span></div>`).join("")}<hr><div class="c">بتطلع على طابعة المطبخ / البار</div></div>
+  <p class="note" style="margin-top:12px">كل قسم ليه طابعته: المشروبات للبار، والأكل للمطبخ. والطلبات الجديدة بس هي اللي بتتطبع.</p><div class="mbtns"><button class="btn p" data-a="close">تمام</button></div>`); }
+function bill(){ const n = ctx.slice(2), t = S.tables[n];
+  modal(mh("حساب طاولة " + n) + `<div class="paper"><h3>${E(S.shop)}</h3><div class="c">شيك طاولة ${n} · ${hm(new Date())}</div><hr>${t.lines.map(x => `<div class="r"><span>${x.q} × ${E(x.n)}</span><span>${fmt(x.q * x.p)}</span></div>`).join("")}<hr><div class="r b"><span>الإجمالي</span><span>${fmt(sub(t.lines))} ج</span></div><div class="pw">بواسطة تريو</div></div>
+  <div class="mbtns"><button class="btn p" data-a="paytbl">ادفع</button><button class="btn" data-a="close">رجوع</button></div>`); }
+
+/* gaming */
+const dmin = d => d.on ? Math.floor((Date.now() - d.on.t0) / 1000) : 0; // ×60: 1 sec = 1 min
+const dcost = d => d.on ? Math.ceil(dmin(d) * (d.on.multi ? d.r2 : d.r1) / 60) : 0;
+const clk = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+V.hall = () => `<div class="ph"><div><h1>🎮 الصالة</h1><span class="muted">الوقت هنا مُسرّع ×60 للتجربة: كل ثانية = دقيقة (يعني دقيقة = ساعة)</span></div></div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${S.dev.map(d => `<div class="dev ${d.on ? "busy" : ""}"><b>${E(d.n)}</b>
+  ${d.on ? `<span class="clk" data-clk="${d.id}">${clk(dmin(d))}</span><span>${d.on.multi ? "مالتي" : "فردي"} · ${d.on.multi ? d.r2 : d.r1} ج/ساعة</span><span>الوقت: <b data-cost="${d.id}">${fmt(dcost(d))}</b> ج${d.on.buf.length ? " + بوفيه " + fmt(sub(d.on.buf)) + " ج" : ""}</span>
+   <div class="acts"><button class="btn s" data-a="buf" data-v="${d.id}">+ بوفيه</button><button class="btn p s" data-a="dclose" data-v="${d.id}">اقفل وحاسب</button></div>`
+  : `<span class="muted">فاضي · فردي ${d.r1} / مالتي ${d.r2} ج للساعة</span><div class="acts"><button class="btn s" data-a="dstart" data-v="${d.id}" data-o="0">ابدأ فردي</button><button class="btn s" data-a="dstart" data-v="${d.id}" data-o="1">ابدأ مالتي</button></div>`}</div>`).join("")}</div>`;
+let tk = null;
+function tick(){ clearInterval(tk); tk = setInterval(() => { if (S.view !== "hall") return clearInterval(tk);
+  S.dev.forEach(d => { if (!d.on) return; const a = document.querySelector(`[data-clk="${d.id}"]`), b = document.querySelector(`[data-cost="${d.id}"]`); if (a) a.textContent = clk(dmin(d)); if (b) b.textContent = fmt(dcost(d)); }); }, 1000); }
+function bufModal(id){ ctx = "d:" + id; const d = S.dev.find(x => x.id === id);
+  modal(mh("بوفيه — " + E(d.n)) + `<div class="opts">${S.items.map(x => `<button class="opt" data-a="bufadd" data-v="${x.id}">${E(x.n)}<small>${fmt(x.p)} ج</small></button>`).join("")}</div>
+  ${d.on.buf.length ? `<div class="note">على الجهاز: ${d.on.buf.map(x => x.q + " × " + E(x.n)).join("، ")} — ${fmt(sub(d.on.buf))} ج</div>` : ""}<div class="mbtns"><button class="btn p" data-a="close">تمام</button></div>`); }
+function dclose(id){ ctx = "d:" + id; const d = S.dev.find(x => x.id === id), m = dmin(d), c = dcost(d), rate = d.on.multi ? d.r2 : d.r1;
+  const extra = { time: c, timeN: `${d.n} — ${clk(m)} ساعة (${rate} ج/س)`, label: d.n + (d.on.multi ? " · مالتي" : " · فردي") };
+  modal(mh("حساب " + E(d.n)) + `<div class="mrow"><span>الوقت ${clk(m)} × ${rate} ج/ساعة</span><b>${fmt(c)} ج</b></div>${d.on.buf.map(x => `<div class="mrow"><span>${x.q} × ${E(x.n)}</span><b>${fmt(x.q * x.p)} ج</b></div>`).join("")}
+  <div class="mrow big"><span>الإجمالي</span><span>${fmt(c + sub(d.on.buf))} ج</span></div><p class="note">الجهاز بيقفل لوحده لما الوقت المدفوع يخلص (في البرنامج الكامل).</p>
+  <div class="mbtns"><button class="btn p" data-a="paydev">ادفع</button><button class="btn" data-a="close">رجوع</button></div>`); devExtra = extra; }
+let devExtra = null;
+
+/* clinic */
+const svcOf = p => item(p.svc) || S.items.find(x => x.svc);
+V.recep = () => { const Q = S.q; const lab = { doc: ["عند الطبيب", "ok"], wait: ["ينتظر", "gd"], book: ["حجز", ""], pay: ["للدفع", "bad"], done: ["خلص", "ok"] };
+  return `<div class="ph"><div><h1>الاستقبال</h1><span class="muted">دور اليوم — ${Q.filter(p => p.stt === "wait").length} ينتظر</span></div><button class="btn p" data-a="walkin">+ مريض بدون حجز</button></div>
+  <div class="card">${Q.map((p, i) => { const sv = svcOf(p), ins = INS.find(x => x[0] === p.ins); return `<div class="qrow"><span class="no">${i + 1}</span><span class="who"><b>${E(p.n)}</b><br><span class="muted" style="font-size:13px">${E(sv.n)} · ${fmt(sv.p)} ج${p.ins ? " · تأمين " + E(ins[1]) : ""}</span></span>
+  <span class="tag ${lab[p.stt][1]}">${lab[p.stt][0]}</span>${p.stt === "pay" ? `<button class="btn p s" data-a="cpay" data-v="${p.id}">ادفع</button>` : p.stt === "wait" && !Q.some(x => x.stt === "doc") ? `<button class="btn s" data-a="call" data-v="${p.id}">دخّله للدكتور</button>` : p.stt === "doc" ? `<button class="btn s" data-a="go" data-v="doc">شاشة الطبيب</button>` : ""}</div>`; }).join("")}</div>`; };
+function walkin(){ modal(mh("مريض بدون حجز") + `<label>اسم المريض<input id="wn" placeholder="مثلًا: أحمد محمد"></label><label>الموبايل<input id="wp" inputmode="tel" placeholder="01xxxxxxxxx"></label>
+  <label>الخدمة<select id="ws">${S.items.filter(x => x.svc).map(x => `<option value="${x.id}">${E(x.n)} — ${fmt(x.p)} ج</option>`).join("")}</select></label>
+  <label>التأمين<select id="wi">${INS.map(i => `<option value="${i[0]}">${i[1]}${i[2] ? " (" + i[2] + "%)" : ""}</option>`).join("")}</select></label>
+  <div class="mbtns"><button class="btn p" data-a="wsave">ضيف للدور</button><button class="btn" data-a="close">رجوع</button></div>`); }
+let rxDraft = null;
+V.doc = () => { const p = S.q.find(x => x.stt === "doc"); const nx = S.q.find(x => x.stt === "wait");
+  if (!p) return `<div class="ph"><h1>شاشة الطبيب</h1></div><div class="card"><p>مفيش مريض جوه دلوقتي.</p>${nx ? `<button class="btn p" data-a="call" data-v="${nx.id}">دخّل التالي: ${E(nx.n)}</button>` : `<button class="btn p" data-a="go" data-v="recep">الاستقبال</button>`}</div>`;
+  if (!rxDraft || rxDraft.id !== p.id) rxDraft = { id: p.id, cc: "", dx: "", rx: [] };
+  const dx = DX[S.k] || DX.clinic, sv = svcOf(p);
+  return `<div class="ph"><div><h1>شاشة الطبيب</h1><span class="muted">${E(p.n)} · ${E(sv.n)}${p.ph ? " · " + E(p.ph) : ""}</span></div><span class="tag ok">زيارة سابقة: لا يوجد</span></div>
+  <div class="two"><div class="card"><label>الشكوى<textarea data-in="cc" placeholder="مثلًا: كحة وسخونية من يومين">${E(rxDraft.cc)}</textarea></label>
+  <label>التشخيص<input data-in="dx" value="${E(rxDraft.dx)}" placeholder="اكتب أو اختار"></label><div class="chips">${dx.map(d => `<button data-a="dxq" data-v="${E(d)}">${E(d)}</button>`).join("")}</div></div>
+  <div class="card"><h2>الروشتة</h2>${rxDraft.rx.map((r, i) => `<div class="rx"><input value="${E(r[0])}" data-in="rxn" data-i="${i}"><input value="${E(r[1])}" data-in="rxd" data-i="${i}"><button class="btn s" data-a="rxdel" data-v="${i}" aria-label="حذف">×</button></div>`).join("") || `<p class="muted">اضغط على دوا يضاف للروشتة:</p>`}
+  <div class="chips">${RX.map((r, i) => `<button data-a="rxq" data-v="${i}">+ ${E(r[0])}</button>`).join("")}</div>
+  <button class="btn p w" data-a="dfinish">إنهاء الكشف وتحويله للخزينة</button><p class="muted" style="font-size:13px;margin-top:6px">في البرنامج: ملف المريض بكل زياراته، وطباعة الروشتة، ونسبة الطبيب.</p></div></div>`; };
+
+/* items */
+V.items = () => { const cl = S.mode === "clinic";
+  return `<div class="ph"><div><h1>${E(S.is)}</h1><span class="muted">${S.items.length} ${cl ? "خدمة وصنف" : "صنف"} · ${S.cats.length} تصنيف</span></div><button class="btn p" data-a="newitem">+ إضافة ${cl ? "خدمة / صنف" : "صنف"}</button></div>
+  <div class="card" style="padding:6px 10px"><table class="tbx"><thead><tr><th>الاسم</th><th>السعر</th><th>${cl ? "النوع" : "المخزون"}</th></tr></thead><tbody>
+  ${S.items.map(x => `<tr><td><b>${E(x.n)}</b><br><span class="muted" style="font-size:12.5px">${E(x.cat)}${Object.values(x.ex).filter(Boolean).length ? " · " + E(Object.values(x.ex).filter(Boolean).join(" · ")) : ""}</span></td><td>${fmt(x.p)}</td><td>${x.svc ? "خدمة" : `<span class="${unitSt(x) <= 5 ? "bad" : ""}">${stTxt(x)}</span>`}</td></tr>`).join("")}</tbody></table></div>`; };
+function newItem(){ modal(mh("إضافة صنف") + `<div class="frm"><label>الاسم<input id="nn" placeholder="اسم الصنف"></label><label>التصنيف<select id="nc">${S.cats.map(c => `<option>${E(c)}</option>`).join("")}</select></label>
+  <label>سعر البيع<input id="np" type="number" inputmode="decimal" placeholder="0"></label><label>التكلفة<input id="nk" type="number" inputmode="decimal" placeholder="0"></label><label>الكمية في المخزن<input id="ns" type="number" inputmode="numeric" value="10"></label>
+  ${S.f.filter(f => f[0] !== "size" && f[0] !== "color").map(f => `<label>${E(f[1])}<input data-f="${E(f[0])}"></label>`).join("")}</div><p class="muted" style="font-size:13px">في البرنامج كمان: الباركود، والوحدات، والصلاحية، والرفع من إكسل.</p>
+  <div class="mbtns"><button class="btn p" data-a="isave">حفظ</button><button class="btn" data-a="close">رجوع</button></div>`); }
+
+/* report */
+V.rep = () => { const t = totals(), cl = S.mode === "clinic", cost = t.sum - t.profit;
+  return `<div class="ph"><div><h1>تقرير اليوم</h1><span class="muted">${now().toLocaleDateString("ar-EG")} · يشمل بيانات تجريبية + فواتيرك</span></div><button class="btn" data-a="print2">طباعة</button></div>
+  <div class="two"><div class="card"><h2>المبيعات حسب طريقة الدفع</h2><ul class="rows"><li><span>💵 نقدي (في الدرج)</span><b>${fmt(t.cash)} ج</b></li><li><span>💳 بطاقة</span><b>${fmt(t.card)} ج</b></li><li><span>📲 InstaPay</span><b>${fmt(t.insta)} ج</b></li>${cl ? `<li><span>🏥 آجل على شركات التأمين</span><b>${fmt(t.ins)} ج</b></li>` : ""}<li><b>الإجمالي</b><b>${fmt(t.sum)} ج</b></li></ul></div>
+  <div class="card"><h2>الربح</h2><ul class="rows"><li><span>المبيعات</span><b>${fmt(t.sum)} ج</b></li><li><span>تكلفة البضاعة${cl ? " والمستهلكات" : ""}</span><b>${fmt(cost)} ج</b></li><li><span>الخصومات</span><b>${fmt(t.disc)} ج</b></li><li><b>ربح اليوم</b><b class="ok">${fmt(t.profit)} ج</b></li></ul></div></div>
+  <div class="card" style="margin-top:14px"><h2>فواتيرك في التجربة</h2>${S.sales.length ? `<ul class="rows">${S.sales.slice().reverse().map(s => `<li><span>#${s.no} · ${hm(s.at)} · ${PAYN[s.pay]}${s.label ? " · " + E(s.label) : ""}</span><b>${fmt(s.tot + s.ins)} ج</b></li>`).join("")}</ul>` : `<p class="muted">لسه ما عملتش فاتورة.</p>`}</div>`; };
+
+/* ---------- start screen ---------- */
+function startScreen(pre){
+  const P = POP.map(k => LIB.find(p => p.k === k)).filter(Boolean);
+  $("root").innerHTML = `<div class="start"><div class="box"><div class="mark"><img src="../logo.png" alt=""><span>Trio</span><a href="../" style="margin-inline-start:auto;font-size:14px;font-weight:500">← الموقع</a></div>
+  <h1>جرّب برنامجك قبل ما تنزّله</h1><p class="lead">اكتب اسم محلك ونشاطك، وهتلاقي برنامجك جاهز بأصنافك وأسعار تقريبية — اضغط واعمل فاتورة تجربة.</p>
+  <div class="card"><label>اسم المحل<input id="sShop" maxlength="40" placeholder="مثلًا: صيدلية الشفاء" value="${E(pre.s || "")}"></label>
+  <label>نشاطك<input id="sAct" list="sList" autocomplete="off" placeholder="مثلًا: كافيه، صيدلية، قطع غيار…" value="${E(pre.a || "")}"></label><datalist id="sList">${LIB.map(p => `<option value="${E(p.n)}">`).join("")}</datalist>
+  <div class="chips">${P.map(p => `<button type="button" data-a="spop" data-v="${E(p.n)}">${E(p.n)}</button>`).join("")}</div>
+  <button class="btn p w" data-a="sgo">افتح برنامجي</button></div>
+  <p class="fine">تجربة مبسطة بتشتغل على المتصفح بس — مفيش حاجة بتتبعت لأي حد، والبيانات بتفضل على جهازك. البرنامج الحقيقي بيتثبت على كمبيوتر المحل ويشتغل من غير إنترنت.</p></div></div>`;
+  $("sAct").addEventListener("keydown", e => { if (e.key === "Enter") A.sgo(); }); }
+
+/* ---------- actions ---------- */
+function dl(){ if (!isPhone) { window.open(DOWNLOAD, "_blank", "noopener"); return; }
+  modal(mh("البرنامج بيتثبت على كمبيوتر المحل") + `<p>Trio بيشتغل على كمبيوتر ويندوز في المحل (من غير إنترنت). افتح الرابط من الكمبيوتر ونزّله من هناك — التجربة 14 يوم مجانًا.</p>
+  <div class="mbtns"><a class="btn p" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("تحميل Trio (افتحه من كمبيوتر المحل): " + DOWNLOAD)}">ابعت الرابط لنفسي على واتساب</a><a class="btn" target="_blank" rel="noopener" href="${DOWNLOAD}">نزّله على الموبايل برضه</a></div>`); }
+const A = {
+  menu(){ const s = $("side"); s.classList.add("open"); const c = document.createElement("div"); c.className = "scrim"; c.dataset.a = "scrim"; document.body.appendChild(c); },
+  scrim: closeMenu,
+  go(v){ go(v); },
+  locked(){ toast("القسم ده موجود في البرنامج الكامل — نزّله وجرّبه 14 يوم"); },
+  reset(){ if (!confirm("نمسح التجربة ونبدأ من الأول؟")) return; try { localStorage.removeItem(KEY); } catch (e) {} S = null; clearInterval(tk); startScreen({}); },
+  dl, close: mclose,
+  ovx(v, el, e){ if (e.target === el) mclose(); },
+  spop(v){ $("sAct").value = v; document.querySelectorAll(".chips button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); },
+  sgo(){ const a = $("sAct").value.trim(); if (a.length < 2) { $("sAct").focus(); toast("اكتب نشاطك أو اختار من اللي تحت"); return; }
+    S = newState($("sShop").value, a); tab = "الكل"; qry = ""; save(); shell(); },
+  tab(v){ tab = v; refresh(); },
+  pick(v){ pick(v); },
+  addv(v, el){ const x = item(v), o = el.dataset.o; mclose();
+    if (o === "box") return addLine(x, x.n + " (علبة)", x.p, x.s); if (o === "strip") return addLine(x, x.n + " (شريط)", Math.ceil(x.p / x.s), 1);
+    const s = sizes(x)[+o]; addLine(x, x.n + " — " + s[0], x.p + s[1], 1); },
+  altpick(v){ mclose(); pick(v); },
+  vsel(v, el){ vSel.s = v; vSel.c = el.dataset.o; varModal(item(vSel.id)); },
+  vadd(){ const x = item(vSel.id); const vk = vSel.s + "|" + vSel.c; const inCart = lines().filter(l => l.vk === vk && l.id === x.id).reduce((a, l) => a + l.q, 0);
+    if (inCart >= x.v[vk]) { toast("مفيش أكتر من كده في المخزن"); return; } mclose(); addLine(x, `${x.n} — ${vSel.s} / ${vSel.c}`, x.p, 1, vk); vSel = {}; },
+  qty(v, el){ const l = lines(), i = +v, d = +el.dataset.d; if (!l[i]) return; l[i].q += d; if (l[i].q <= 0) l.splice(i, 1); else if (d > 0) did("qty"); save(); refresh(); if (ctx[0] === "d") bufModal(ctx.slice(2)); },
+  clear(){ S.cart = []; save(); refresh(); },
+  tocart(){ const c = $("cart"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); },
+  pay(){ if (!S.cart.length) return; pay = null; payModal("pos"); },
+  pm(v){ pay.m = v; payModal(pay.kind, pay.extra); },
+  paidq(v){ pay.paid = +v; payModal(pay.kind, pay.extra); },
+  confirm: confirmPay,
+  print(){ window.print(); }, print2(){ toast("في البرنامج: التقرير بيتطبع على الطابعة أو يتبعت واتساب"); },
+  table(v){ ctx = "t:" + v; if (!S.tables[v]) { S.tables[v] = { lines: [], t0: Date.now() }; did("table"); } S.view = "table"; save(); closeMenu(); renderSide(); $("main").innerHTML = V.table(); window.scrollTo(0, 0); },
+  kitchen, bill, paytbl(){ pay = null; payModal("table", { label: "طاولة " + ctx.slice(2) }); },
+  dstart(v, el){ const d = S.dev.find(x => x.id === v); d.on = { t0: Date.now(), multi: +el.dataset.o, buf: [] }; did("start"); save(); refresh(); toast("بدأ " + d.n + " — العداد شغال"); },
+  buf(v){ bufModal(v); },
+  bufadd(v){ const x = item(v); const l = lines(); const f = l.find(a => a.id === v); if (f) f.q++; else l.push({ k: v, id: v, n: x.n, q: 1, p: x.p, c: x.c }); did("buffet"); save(); refresh(); bufModal(ctx.slice(2)); toast("اتضاف: " + x.n); },
+  dclose(v){ dclose(v); }, paydev(){ pay = null; payModal("dev", devExtra); },
+  walkin, wsave(){ const n = $("wn").value.trim() || "مريض جديد"; S.q.splice(S.q.findIndex(p => p.stt === "book") >= 0 ? S.q.findIndex(p => p.stt === "book") : S.q.length, 0, { id: "p" + Date.now(), n, ph: $("wp").value.trim(), svc: $("ws").value, ins: $("wi").value, stt: "wait", rx: [] });
+    did("walkin"); save(); mclose(); refresh(); toast("اتضاف " + n + " للدور"); },
+  call(v){ S.q.forEach(p => { if (p.stt === "doc") p.stt = "wait"; }); S.q.find(p => p.id === v).stt = "doc"; save(); go("doc"); },
+  dxq(v){ rxDraft.dx = rxDraft.dx ? rxDraft.dx + "، " + v : v; refresh(); },
+  rxq(v){ rxDraft.rx.push(RX[+v].slice()); refresh(); }, rxdel(v){ rxDraft.rx.splice(+v, 1); refresh(); },
+  dfinish(){ const p = S.q.find(x => x.stt === "doc"); if (!rxDraft.dx.trim()) { toast("اكتب التشخيص الأول"); return; } p.dx = rxDraft.dx; p.cc = rxDraft.cc; p.rx = rxDraft.rx; p.stt = "pay"; rxDraft = null; did("doctor"); save(); go("recep"); toast("اتحوّل للخزينة — اضغط «ادفع»"); },
+  cpay(v){ const p = S.q.find(x => x.id === v), sv = svcOf(p); pay = null; payModal("clinic", { pid: p.id, price: sv.p, svcN: sv.n, pn: p.n, ins: p.ins }); },
+  newitem: newItem,
+  isave(){ const n = $("nn").value.trim(), p = parseFloat($("np").value); if (!n || !(p > 0)) { toast("اكتب الاسم والسعر"); return; } const ex = {};
+    document.querySelectorAll("[data-f]").forEach(i => { if (i.value.trim()) ex[i.dataset.f] = i.value.trim(); });
+    const k = parseFloat($("nk").value); S.items.push({ id: "n" + Date.now(), n, p, c: k > 0 ? k : Math.round(p * .74), cat: $("nc").value, ex, st: parseInt($("ns").value, 10) || 0, sold: 0 });
+    save(); mclose(); refresh(); toast("اتحفظ «" + n + "» — وبقى ظاهر في الكاشير"); }
+};
+document.addEventListener("click", e => { const el = e.target.closest("[data-a]"); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (!f) return; if (el.tagName === "A") return; f(el.dataset.v, el, e); });
+document.addEventListener("input", e => { const el = e.target, k = el.dataset && el.dataset.in; if (!k) return;
+  if (k === "srch") { qry = el.value; const t = $("tiles"); if (t) t.innerHTML = tilesOnly(); return; }
+  if (k === "disc" || k === "paid") { const v = parseFloat(el.value) || 0; if (k === "disc") { pay.disc = Math.max(0, Math.min(pay.s0, v)); const ins = INS.find(i => i[0] === pay.ins) || INS[0]; const ad = pay.s0 - pay.disc; pay.insAmt = pay.kind === "clinic" ? Math.round(ad * ins[2] / 100) : 0; pay.tot = ad - pay.insAmt; } else { pay.paid = v; pay.paidV = v; }
+    const pt = $("ptot"); if (pt) pt.textContent = fmt(pay.tot) + " ج"; const ch = $("chg"); if (ch) ch.textContent = fmt(Math.max(0, (pay.paid == null ? pay.paidV : pay.paid) - pay.tot)) + " ج";
+    const b = $("cfm"); if (b) b.disabled = pay.m === "cash" && (pay.paid == null ? pay.paidV : pay.paid) < pay.tot; return; }
+  if (k === "cc" || k === "dx") { rxDraft[k] = el.value; return; }
+  if (k === "rxn" || k === "rxd") { rxDraft.rx[+el.dataset.i][k === "rxn" ? 0 : 1] = el.value; } });
+document.addEventListener("change", e => { const el = e.target; if (el.dataset && el.dataset.in === "ins") { pay.ins = el.value; pay.paid = null; payModal(pay.kind, pay.extra); }
+  if (el.dataset && el.dataset.in === "disc") { pay.paid = null; payModal(pay.kind, pay.extra); } });
+document.addEventListener("keydown", e => { if (e.key === "Escape") mclose(); });
+
+/* ---------- boot ---------- */
+const qs = new URLSearchParams(location.search), qa = (qs.get("a") || "").trim(), qsh = (qs.get("s") || "").trim();
+S = load();
+if (qa && (!S || S.an !== qa)) { const m = LIB.find(p => p.k === qa); S = newState(qsh, m ? m.n : qa); save(); history.replaceState(null, "", location.pathname); }
+if (S) { if (S.view === "table") S.view = "tables"; shell(); } else startScreen({ s: qsh });
+})();
+</script></body></html>
