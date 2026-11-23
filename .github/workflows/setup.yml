@@ -42,7 +42,9 @@ jobs:
           New-Item -ItemType Directory -Force C:\pkg\Trio\window | Out-Null
           Copy-Item build\window\* C:\pkg\Trio\window\ -Recurse -Force -Exclude *.pdb,*.xml
           Get-ChildItem C:\pkg\Trio | Select-Object Name | Format-Wide -Column 6 | Out-String -Width 200
+          Remove-Item -Recurse -Force C:\pkg\Trio\window\runtimes, C:\pkg\Trio\window\Microsoft.Web.WebView2.Wpf.dll -ErrorAction SilentlyContinue
           Get-ChildItem C:\pkg\Trio\window -Recurse | ForEach-Object { $_.FullName }
+          exit 0
       - name: Trio-Setup.exe (Inno Setup)
         shell: pwsh
         run: |
@@ -68,7 +70,7 @@ jobs:
           rm -rf res/setup; mkdir -p res/setup/TrioWindow
           cp out/*.png out/*.txt out/*.log res/setup/ 2>/dev/null
           cp out/Trio-Setup.exe res/setup/ 2>/dev/null
-          cp -r build/window/* res/setup/TrioWindow/ 2>/dev/null; rm -f res/setup/TrioWindow/*.pdb res/setup/TrioWindow/*.xml
+          cp -r build/window/* res/setup/TrioWindow/ 2>/dev/null; rm -rf res/setup/TrioWindow/*.pdb res/setup/TrioWindow/*.xml res/setup/TrioWindow/runtimes res/setup/TrioWindow/Microsoft.Web.WebView2.Wpf.dll
           echo "run ${{ github.run_id }} $(date -u)" > res/setup/RUN.txt
           cd res && git add -A setup && git commit -q -m "setup test (run ${{ github.run_id }})"
           for i in 1 2 3 4 5; do git push -q origin HEAD:qa-results && break; git pull -q --rebase origin qa-results || true; sleep 5; done
