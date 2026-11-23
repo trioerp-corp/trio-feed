@@ -1,7 +1,11 @@
 # Trio-Setup.exe + TrioWindow.exe: build and test on real Windows. Results → branch qa-results, folder setup/
 # (log.txt, screenshots, Trio-Setup.exe, TrioWindow/ build).
 name: Setup on Windows
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [qa]
+    paths: ["setup/**", ".github/workflows/setup.yml"]
 concurrency: { group: setup, cancel-in-progress: false }
 permissions: { contents: write }
 jobs:
