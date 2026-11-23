@@ -1,0 +1,2875 @@
+{
+ "runs": [
+  {
+   "run": 1,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 90,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.6s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.8s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.6s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 335.00 expected 535.0 (server 535) counted 1000",
+    "✔ الكاشير والبيع (34.3s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 327.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 733.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (30.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5508499145507812
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.8820569515228271
+    ],
+    [
+     "/ui/start/",
+     0.1314558982849121
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12432193756103516
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11167216300964355
+    ]
+   ]
+  },
+  {
+   "run": 2,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 76,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (2.7s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1424.00 expected 1424.0 (server 1424) counted 0",
+    "✔ الكاشير والبيع (38.9s)",
+    "gaming: session 1 closed, buffet 20, total 30",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 30.00 ولا يكفي لدفع 875.00 — اختر «من صاحب المحل) — on credit",
+    "purchase: 3 lines, 1750.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 2",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1454.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4773728847503662
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43056154251098633
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12013864517211914
+    ],
+    [
+     "الرئيسية",
+     0.0998544692993164
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09849739074707031
+    ]
+   ]
+  },
+  {
+   "run": 3,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 67,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.9s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1120.00 expected 1120.0 (server 1120) counted 250",
+    "✔ الكاشير والبيع (30.5s)",
+    "gaming: session 1 closed, buffet 305, total 315",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 2 lines, 400.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 12 → 10",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 906.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4563000202178955
+    ],
+    [
+     "/ui/shop/connect/",
+     1.1772348880767822
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42780399322509766
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12763738632202148
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11026406288146973
+    ]
+   ]
+  },
+  {
+   "run": 4,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 210.00 expected 410.0 (server 410) counted 0",
+    "✔ الكاشير والبيع (33.9s)",
+    "gaming: session 1 closed, buffet 303, total 313",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 161.50, split",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: -101.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.424530029296875
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8503670692443848
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.3693382740020752
+    ],
+    [
+     "/ui/shop/requests/",
+     0.14901232719421387
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13587713241577148
+    ]
+   ]
+  },
+  {
+   "run": 5,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 97,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 5288.00 expected 5488.0 (server 5488) counted 0",
+    "✔ الكاشير والبيع (37.3s)",
+    "gaming: session 1 closed, buffet 329, total 339",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 227.25, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 5 → 12",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 3",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 4064.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (35.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4691412448883057
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7153370380401611
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.41234517097473145
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12505054473876953
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10047388076782227
+    ]
+   ]
+  },
+  {
+   "run": 6,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1188.00 expected 1188.0 (server 1188) counted 1000",
+    "✔ الكاشير والبيع (29.5s)",
+    "gaming: session 1 closed, buffet 432, total 442",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 4 lines, 392.00, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 6",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 367.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4575951099395752
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7017173767089844
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.459822416305542
+    ],
+    [
+     "قيمة المخزون",
+     0.15551066398620605
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12367892265319824
+    ]
+   ]
+  },
+  {
+   "run": 7,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 76,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.4s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (4.0s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 193.00 expected 693.0 (server 693) counted 1000",
+    "✔ الكاشير والبيع (37.8s)",
+    "gaming: session 1 closed, buffet 20, total 30",
+    "✔ صالة البلايستيشن (7.4s)",
+    "purchase: 5 lines, 127.00, credit",
+    "✔ فاتورة مشتريات (1.1s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 10",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 618.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.7889928817749023
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8751602172851562
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.48041510581970215
+    ],
+    [
+     "/ui/play/devices/",
+     0.18836045265197754
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13907361030578613
+    ]
+   ]
+  },
+  {
+   "run": 8,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 70,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 748.00 expected 1248.0 (server 1248) counted 0",
+    "✔ الكاشير والبيع (33.4s)",
+    "gaming: session 1 closed, buffet 96, total 106",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 1700.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 3",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 854.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4666142463684082
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7426478862762451
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4247465133666992
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12553095817565918
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09897613525390625
+    ]
+   ]
+  },
+  {
+   "run": 9,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 170.00 expected 670.0 (server 670) counted 100",
+    "✔ الكاشير والبيع (37.1s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 140.00 ولا يكفي لدفع 161.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 4 lines, 322.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 7 → 6",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 8",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 210.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4379816055297852
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7363824844360352
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42581629753112793
+    ],
+    [
+     "/ui/shop/expiry/",
+     0.1627962589263916
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12256669998168945
+    ]
+   ]
+  },
+  {
+   "run": 10,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 369.00 expected 869.0 (server 869) counted 0",
+    "✔ الكاشير والبيع (37.7s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 45.00 ولا يكفي لدفع 816.00 — اختر «من صاحب المحل) — on credit",
+    "purchase: 4 lines, 1632.00, credit",
+    "✔ فاتورة مشتريات (1.0s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 11",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 601.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4338500499725342
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7583527565002441
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43346452713012695
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12584304809570312
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10173916816711426
+    ]
+   ]
+  },
+  {
+   "run": 11,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 95,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1847.00 expected 2347.0 (server 2347) counted 100",
+    "✔ الكاشير والبيع (40.4s)",
+    "gaming: session 1 closed, buffet 159, total 169",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 138.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: nothing in stock — skipped (the till already sells a return)",
+    "✔ مرتجع مشتريات / هالك (0.0s)",
+    "day close: 2804.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4340620040893555
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8293454647064209
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4186980724334717
+    ],
+    [
+     "/ui/shop/items/",
+     0.16737055778503418
+    ],
+    [
+     "/ui/shop/settings/",
+     0.12690019607543945
+    ]
+   ]
+  },
+  {
+   "run": 12,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.1s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 270.00 expected 470.0 (server 470) counted 100",
+    "✔ الكاشير والبيع (33.9s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 145.00 ولا يكفي لدفع 210.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 2 lines, 420.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.5s)",
+    "day close: 897.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.447058916091919
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6100184917449951
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43126773834228516
+    ],
+    [
+     "/ui/shop/branches/",
+     0.18035197257995605
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1279003620147705
+    ]
+   ]
+  },
+  {
+   "run": 13,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 97,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 2954.00 expected 3154.0 (server 3154) counted 250",
+    "✔ الكاشير والبيع (42.5s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 721.50, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 3561.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4336869716644287
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5917303562164307
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.41565752029418945
+    ],
+    [
+     "/ui/shop/upgrade/",
+     0.16841483116149902
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12361931800842285
+    ]
+   ]
+  },
+  {
+   "run": 14,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 102,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 1726.00 expected 1926.0 (server 1926) counted 0",
+    "✔ الكاشير والبيع (44.6s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 2 lines, 1207.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1796.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (33.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4582078456878662
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6463205814361572
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4278604984283447
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12037277221679688
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09764313697814941
+    ]
+   ]
+  },
+  {
+   "run": 15,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 79,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.1s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1356.00 expected 1356.0 (server 1356) counted 0",
+    "✔ الكاشير والبيع (40.0s)",
+    "gaming: session 1 closed, buffet 20, total 30",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 30.00 ولا يكفي لدفع 788.50 — اختر «من صاحب المحل) — on credit",
+    "purchase: 3 lines, 1577.00, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2121.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (14.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4467759132385254
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5859310626983643
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42788267135620117
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1198887825012207
+    ],
+    [
+     "/ui/shop/branches/",
+     0.09568619728088379
+    ]
+   ]
+  },
+  {
+   "run": 16,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 69,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 630.00 expected 830.0 (server 830) counted 100",
+    "✔ الكاشير والبيع (32.5s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 2 lines, 175.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.3s)",
+    "day close: 1375.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.440704107284546
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6020283699035645
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43998026847839355
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12163329124450684
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09583210945129395
+    ]
+   ]
+  },
+  {
+   "run": 17,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 66,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 0.00 expected 200.0 (server 200) counted 1000",
+    "✔ الكاشير والبيع (29.9s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 37.00, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 306.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4374935626983643
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7177450656890869
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4148540496826172
+    ],
+    [
+     "/ui/shop/purchases/",
+     0.19259428977966309
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1247243881225586
+    ]
+   ]
+  },
+  {
+   "run": 18,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 94,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 855.00 expected 855.0 (server 855) counted 250",
+    "✔ الكاشير والبيع (38.8s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 1355.00, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1515.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (32.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4554686546325684
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6750626564025879
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4192318916320801
+    ],
+    [
+     "/ui/shop/dues/",
+     0.20367741584777832
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12325024604797363
+    ]
+   ]
+  },
+  {
+   "run": 19,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 88,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales -69.00 expected 131.0 (server 131) counted 100",
+    "✔ الكاشير والبيع (32.6s)",
+    "gaming: session 1 closed, buffet 411, total 421",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 2 lines, 635.00, split",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 5 → 8",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 4",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2029.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4125497341156006
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7174224853515625
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44466638565063477
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12012743949890137
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10191917419433594
+    ]
+   ]
+  },
+  {
+   "run": 20,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 548.00 expected 548.0 (server 548) counted 100",
+    "✔ الكاشير والبيع (38.2s)",
+    "gaming: session 1 closed, buffet 20, total 30",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 130.00 ولا يكفي لدفع 136.62 — اختر «من صاحب المح) — on credit",
+    "purchase: 4 lines, 273.25, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 578.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4812514781951904
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5934596061706543
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4144434928894043
+    ],
+    [
+     "/ui/play/devices/",
+     0.17889976501464844
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13232946395874023
+    ]
+   ]
+  },
+  {
+   "run": 21,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 78,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 622.00 expected 622.0 (server 622) counted 1000",
+    "✔ الكاشير والبيع (40.2s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 2 lines, 10.75, cash",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -4 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 10",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 878.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4380371570587158
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6458816528320312
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4225189685821533
+    ],
+    [
+     "/ui/play/customers/",
+     0.20000123977661133
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12728619575500488
+    ]
+   ]
+  },
+  {
+   "run": 22,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1300.00 expected 1300.0 (server 1300) counted 0",
+    "✔ الكاشير والبيع (36.1s)",
+    "gaming: session 1 closed, buffet 182, total 192",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 1219.00, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 3 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2660.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4808204174041748
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6454246044158936
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4164743423461914
+    ],
+    [
+     "/ui/shop/money/",
+     0.21022653579711914
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12395262718200684
+    ]
+   ]
+  },
+  {
+   "run": 23,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 336.00 expected 536.0 (server 536) counted 250",
+    "✔ الكاشير والبيع (42.1s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 224.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 8 → 6",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 32.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4732165336608887
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7116119861602783
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44371581077575684
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12838149070739746
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09796667098999023
+    ]
+   ]
+  },
+  {
+   "run": 24,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1611.00 expected 2111.0 (server 2111) counted 1000",
+    "✔ الكاشير والبيع (36.9s)",
+    "gaming: session 1 closed, buffet 334, total 344",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 3 lines, 1292.00, split",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2723.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.476273536682129
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6843931674957275
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43045759201049805
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12226343154907227
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09868717193603516
+    ]
+   ]
+  },
+  {
+   "run": 25,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 90,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 258.00 expected 258.0 (server 258) counted 1000",
+    "✔ الكاشير والبيع (33.3s)",
+    "gaming: session 1 closed, buffet 5, total 15",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 715.50, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 403.0 (5 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)",
+    "orders in the books: 5",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (32.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.450000286102295
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7209620475769043
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4283890724182129
+    ],
+    [
+     "تقفيل اليوم",
+     0.217818021774292
+    ],
+    [
+     "/ui/shop/settings/",
+     0.1716766357421875
+    ]
+   ]
+  },
+  {
+   "run": 26,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 94,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1658.00 expected 1658.0 (server 1658) counted 100",
+    "✔ الكاشير والبيع (35.2s)",
+    "gaming: session 1 closed, buffet 412, total 422",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 2 lines, 350.00, split",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2584.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (34.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.442716121673584
+    ],
+    [
+     "/ui/shop/connect/",
+     0.8094744682312012
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4621305465698242
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12325239181518555
+    ],
+    [
+     "/ui/shop/settings/",
+     0.0992269515991211
+    ]
+   ]
+  },
+  {
+   "run": 27,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 460.00 expected 660.0 (server 660) counted 1000",
+    "✔ الكاشير والبيع (36.5s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 2 lines, 122.50, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 8 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1001.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.4s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4443659782409668
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7075021266937256
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36894655227661133
+    ],
+    [
+     "أرباح الشهر",
+     0.21857237815856934
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13217639923095703
+    ]
+   ]
+  },
+  {
+   "run": 28,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 64,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales -295.00 expected 205.0 (server 205) counted 100",
+    "✔ الكاشير والبيع (29.7s)",
+    "gaming: session 1 closed, buffet 481, total 491",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 67.00, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 2 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 196.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4537861347198486
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6449911594390869
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4210178852081299
+    ],
+    [
+     "/ui/shop/requests/",
+     0.23538708686828613
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12564444541931152
+    ]
+   ]
+  },
+  {
+   "run": 29,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 573.00 expected 1073.0 (server 1073) counted 100",
+    "✔ الكاشير والبيع (36.6s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -375.00 ولا يكفي لدفع 30.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 2 lines, 30.00, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 1",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1333.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.443317174911499
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6400113105773926
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42553234100341797
+    ],
+    [
+     "/ui/shop/settings/",
+     0.2564728260040283
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1274423599243164
+    ]
+   ]
+  },
+  {
+   "run": 30,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 79,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2456.00 expected 2456.0 (server 2456) counted 100",
+    "✔ الكاشير والبيع (41.6s)",
+    "gaming: session 1 closed, buffet 10, total 20",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 5 lines, 43.25, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 5",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2471.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4789767265319824
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6426217555999756
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4312460422515869
+    ],
+    [
+     "/ui/staff/",
+     0.22785520553588867
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12169814109802246
+    ]
+   ]
+  },
+  {
+   "run": 31,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 98,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.1s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.7s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 821.00 expected 1321.0 (server 1321) counted 100",
+    "✔ الكاشير والبيع (41.5s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 33.50, cash",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -2 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1571.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.9s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5705018043518066
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6973659992218018
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4395580291748047
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13221502304077148
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11002182960510254
+    ]
+   ]
+  },
+  {
+   "run": 32,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 458.00 expected 658.0 (server 658) counted 1000",
+    "✔ الكاشير والبيع (34.4s)",
+    "gaming: session 1 closed, buffet 20, total 30",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 5 lines, 1322.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 10 → 13",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 8",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 488.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (13.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4435136318206787
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6310756206512451
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4469125270843506
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12957382202148438
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10445499420166016
+    ]
+   ]
+  },
+  {
+   "run": 33,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 65,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1793.00 expected 1993.0 (server 1993) counted 0",
+    "✔ الكاشير والبيع (30.1s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 25.00 ولا يكفي لدفع 39.00 — اختر «من صاحب المحل ) — on credit",
+    "purchase: 4 lines, 39.00, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 3",
+    "✔ الجرد والتسوية (0.7s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1773.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4505267143249512
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6019699573516846
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4458353519439697
+    ],
+    [
+     "الجرد",
+     0.2514970302581787
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12578654289245605
+    ]
+   ]
+  },
+  {
+   "run": 34,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 73,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 624.00 expected 624.0 (server 624) counted 250",
+    "✔ الكاشير والبيع (35.2s)",
+    "gaming: session 1 closed, buffet 221, total 231",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 437.00, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 8",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1562.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4547817707061768
+    ],
+    [
+     "/ui/shop/connect/",
+     0.656761884689331
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.45629143714904785
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12779688835144043
+    ],
+    [
+     "/ui/shop/settings/",
+     0.11191916465759277
+    ]
+   ]
+  },
+  {
+   "run": 35,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 3617.00 expected 3617.0 (server 3617) counted 0",
+    "✔ الكاشير والبيع (41.1s)",
+    "gaming: session 1 closed, buffet 331, total 341",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 1370.00, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -5 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 5",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 5242.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4609007835388184
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6370515823364258
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43522000312805176
+    ],
+    [
+     "/ui/shop/partners/",
+     0.2753441333770752
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1274421215057373
+    ]
+   ]
+  },
+  {
+   "run": 36,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 78,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 1010.00 expected 1510.0 (server 1510) counted 0",
+    "✔ الكاشير والبيع (38.4s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -455.00 ولا يكفي لدفع 92.25 — اختر «من صاحب المح) — on credit",
+    "purchase: 4 lines, 184.50, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 1 → 4",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 840.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (15.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4547927379608154
+    ],
+    [
+     "/ui/shop/connect/",
+     0.5927152633666992
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4400627613067627
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12309455871582031
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10180473327636719
+    ]
+   ]
+  },
+  {
+   "run": 37,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 74,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 571.00 expected 771.0 (server 771) counted 0",
+    "✔ الكاشير والبيع (38.5s)",
+    "gaming: session 1 closed, buffet 10, total 20",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -180.00 ولا يكفي لدفع 46.50 — اختر «من صاحب المح) — on credit",
+    "purchase: 3 lines, 46.50, credit",
+    "✔ فاتورة مشتريات (1.1s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 7",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 400.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4898276329040527
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7571530342102051
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44748854637145996
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12443947792053223
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09795665740966797
+    ]
+   ]
+  },
+  {
+   "run": 38,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 71,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1299.00 expected 1799.0 (server 1799) counted 250",
+    "✔ الكاشير والبيع (35.9s)",
+    "gaming: session 1 closed, buffet 472, total 482",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 154.50, split",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1781.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (10.8s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.465132713317871
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7837121486663818
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4355900287628174
+    ],
+    [
+     "/ui/shop/returns/",
+     0.24495434761047363
+    ],
+    [
+     "فاتورة مشتريات",
+     0.1295180320739746
+    ]
+   ]
+  },
+  {
+   "run": 39,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 85,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales -35.00 expected 165.0 (server 165) counted 250",
+    "✔ الكاشير والبيع (29.1s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 1485.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 0 → 3",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 397.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.3s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4765992164611816
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6985518932342529
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4572296142578125
+    ],
+    [
+     "/ui/shop/branches/",
+     0.2978072166442871
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12970256805419922
+    ]
+   ]
+  },
+  {
+   "run": 40,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 76,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1342.00 expected 1542.0 (server 1542) counted 1000",
+    "✔ الكاشير والبيع (39.0s)",
+    "gaming: session 1 closed, buffet 369, total 379",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 324.00, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 4",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 9",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1731.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (12.5s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4521830081939697
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6072268486022949
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4269745349884033
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12356758117675781
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09976553916931152
+    ]
+   ]
+  },
+  {
+   "run": 41,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 100,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1107.00 expected 1307.0 (server 1307) counted 100",
+    "✔ الكاشير والبيع (40.3s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 1577.00, owner",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 9 → 11",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 11",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1725.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (34.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4712865352630615
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6713531017303467
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.461824893951416
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12723159790039062
+    ],
+    [
+     "/ui/shop/branches/",
+     0.10334157943725586
+    ]
+   ]
+  },
+  {
+   "run": 42,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 92,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 833.00 expected 1033.0 (server 1033) counted 250",
+    "✔ الكاشير والبيع (34.7s)",
+    "gaming: session 1 closed, buffet 30, total 40",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 4 lines, 271.50, split",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 7",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 546.0 (6 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 6",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (32.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4763646125793457
+    ],
+    [
+     "/ui/shop/connect/",
+     0.664278507232666
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.47101593017578125
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13041210174560547
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10499382019042969
+    ]
+   ]
+  },
+  {
+   "run": 43,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 96,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1309.00 expected 1309.0 (server 1309) counted 250",
+    "✔ الكاشير والبيع (43.4s)",
+    "gaming: session 1 closed, buffet 164, total 174",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 166.25, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 4",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 8",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1568.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (28.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4621844291687012
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6359262466430664
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4222261905670166
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13420724868774414
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10212922096252441
+    ]
+   ]
+  },
+  {
+   "run": 44,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 84,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.2s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 378.00 expected 378.0 (server 378) counted 250",
+    "✔ الكاشير والبيع (28.6s)",
+    "gaming: session 1 closed, buffet 117, total 127",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 4 lines, 109.50, owner",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 11 → 10",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 3",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 505.0 (4 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 4",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (31.0s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4196910858154297
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6112074851989746
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4269864559173584
+    ],
+    [
+     "فاتورة مشتريات",
+     0.11974763870239258
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09753036499023438
+    ]
+   ]
+  },
+  {
+   "run": 45,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 75,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.4s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 500.00 cash sales 4565.00 expected 5065.0 (server 5065) counted 250",
+    "✔ الكاشير والبيع (38.7s)",
+    "gaming: session 1 closed, buffet 79, total 89",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن -161.00 ولا يكفي لدفع 126.00 — اختر «من صاحب الم) — on credit",
+    "purchase: 3 lines, 252.00, credit",
+    "✔ فاتورة مشتريات (1.0s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -8 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 3",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 5227.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.2s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.436298131942749
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6211442947387695
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.36483216285705566
+    ],
+    [
+     "فاتورة مشتريات",
+     0.16414952278137207
+    ],
+    [
+     "/ui/shop/settings/",
+     0.10418057441711426
+    ]
+   ]
+  },
+  {
+   "run": 46,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 92,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (3.2s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.9s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: cash refund above the drawer refused — refunded by card",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 1679.00 expected 1679.0 (server 1679) counted 1000",
+    "✔ الكاشير والبيع (36.2s)",
+    "gaming: session 1 closed, buffet 294, total 304",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 3 lines, 160.00, credit",
+    "✔ فاتورة مشتريات (0.6s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 3",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 1689.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (30.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.5986714363098145
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7049763202667236
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.44792819023132324
+    ],
+    [
+     "/ui/shop/count/",
+     0.28638768196105957
+    ],
+    [
+     "/ui/shop/settings/",
+     0.12982630729675293
+    ]
+   ]
+  },
+  {
+   "run": 47,
+   "activity": "بلياردو وبلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 77,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.3s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2207.00 expected 2707.0 (server 2707) counted 100",
+    "✔ الكاشير والبيع (41.4s)",
+    "gaming: session 1 closed, buffet 15, total 25",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 4 lines, 330.00, credit",
+    "✔ فاتورة مشتريات (0.7s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 4 → 2",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2232.0 (8 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 8",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (11.1s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4528701305389404
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6861696243286133
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.43550992012023926
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12463593482971191
+    ],
+    [
+     "/ui/shop/settings/",
+     0.09732413291931152
+    ]
+   ]
+  },
+  {
+   "run": 48,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": true,
+   "secs": 80,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.6s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 0.00 cash sales 2279.00 expected 2279.0 (server 2279) counted 250",
+    "✔ الكاشير والبيع (39.8s)",
+    "gaming: session 1 closed, buffet 462, total 472",
+    "✔ صالة البلايستيشن (6.9s)",
+    "purchase: 4 lines, 61.00, cash",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -1 → 0",
+    "✔ الجرد والتسوية (0.5s)",
+    "returns: expired 1 × 12",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 2751.0 (9 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 9",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (15.4s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4539992809295654
+    ],
+    [
+     "/ui/shop/connect/",
+     0.7696352005004883
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.418654203414917
+    ],
+    [
+     "/ui/shop/purchases/",
+     0.39841294288635254
+    ],
+    [
+     "فاتورة مشتريات",
+     0.13245058059692383
+    ]
+   ]
+  },
+  {
+   "run": 49,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 72,
+   "steps": [
+    "wizard: samples on",
+    "✔ أول تشغيل (معالج التجربة) (3.0s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.1s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.4s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 892.00 expected 1092.0 (server 1092) counted 1000",
+    "✔ الكاشير والبيع (37.4s)",
+    "gaming: session 1 closed, buffet 35, total 45",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: 5 lines, 206.00, credit",
+    "✔ فاتورة مشتريات (0.8s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: 12 → 10",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: expired 1 × 8",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 952.0 (7 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 7",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.7s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4708166122436523
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6026396751403809
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.4519374370574951
+    ],
+    [
+     "/ui/shop/items/",
+     0.29437971115112305
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12861323356628418
+    ]
+   ]
+  },
+  {
+   "run": 50,
+   "activity": "صالة بلايستيشن",
+   "business": "gaming",
+   "phone": false,
+   "secs": 79,
+   "steps": [
+    "wizard: samples off",
+    "✔ أول تشغيل (معالج التجربة) (2.9s)",
+    "pages in the menu: 30",
+    "✔ كل الصفحات (3.5s)",
+    "✔ إضافة منتجات بيد المالك (1.0s)",
+    "logo: uploaded and shown in the top bar",
+    "✔ تجهيز المحل: الشعار (0.5s)",
+    "till: return refused with a wrong password, approved with the owner's",
+    "till: forged return refused by the server",
+    "till: blind close, float 200.00 cash sales 3894.00 expected 4094.0 (server 4094) counted 250",
+    "✔ الكاشير والبيع (44.7s)",
+    "gaming: session 1 closed, buffet 331, total 341",
+    "✔ صالة البلايستيشن (6.8s)",
+    "purchase: cash refused (رصيد الخزينة (درج الكاشير) الآن 391.00 ولا يكفي لدفع 456.00 — اختر «من صاحب المح) — on credit",
+    "purchase: 3 lines, 912.00, credit",
+    "✔ فاتورة مشتريات (0.9s)",
+    "dialog: تسوية صنف واحد؟ سيُسجَّل العجز خسائر مخزون.",
+    "stocktake: -3 → 0",
+    "✔ الجرد والتسوية (0.4s)",
+    "returns: preturn 1 × 6",
+    "✔ مرتجع مشتريات / هالك (0.4s)",
+    "day close: 6639.0 (10 orders)",
+    "✔ التقارير (تقفيل اليوم، الأرباح، قيمة المخزون) (0.3s)",
+    "orders in the books: 10",
+    "✔ الحسابات متوازنة (0.0s)",
+    "✔ النماذج (9.6s)"
+   ],
+   "slowest": [
+    [
+     "setup",
+     1.4280309677124023
+    ],
+    [
+     "/ui/shop/connect/",
+     0.6852881908416748
+    ],
+    [
+     "/ (أول تشغيل)",
+     0.42496228218078613
+    ],
+    [
+     "/ui/shop/reports/",
+     0.2950906753540039
+    ],
+    [
+     "فاتورة مشتريات",
+     0.12370491027832031
+    ]
+   ]
+  }
+ ],
+ "issues": [
+  {
+   "kind": "ux-popup",
+   "where": "الكاشير",
+   "msg": "نافذة «أصناف وصلت لحد الطلب» تظهر بعد البيع وتوقف الكاشير حتى يضغط «تمام»",
+   "sev": "low",
+   "runs": [
+    1,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22,
+    23,
+    24,
+    25,
+    27,
+    28,
+    29,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    41,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50
+   ],
+   "shot": ""
+  }
+ ]
+}
