@@ -230,3 +230,53 @@ class RecipeLine(models.Model):
     class Meta:
         verbose_name = "خامة في وصفة"
         verbose_name_plural = "خامات الوصفة"
+
+
+class Transfer(models.Model):
+    """1.25 goods between branches: the receiving branch asks (or the owner sends), the sending branch approves and ships — the
+    goods sit in «بضاعة في الطريق» — then the receiving branch counts what arrived. A shortfall is booked as a loss on the sending
+    branch, or goes back to it. Stock is valued company-wide, so moving it never touches the ledger; only a loss does."""
+
+    STATES = [("requested", "طلب بانتظار الموافقة"), ("sent", "في الطريق"), ("partial", "استُلم جزء منه"), ("received", "تم الاستلام"),
+              ("rejected", "مرفوض"), ("cancelled", "ملغي")]
+    number = models.CharField("الرقم", max_length=20, blank=True, db_index=True)
+    from_warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT, related_name="transfers_out", verbose_name="من مخزن")
+    to_warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT, related_name="transfers_in", verbose_name="إلى مخزن")
+    state = models.CharField("الحالة", max_length=10, choices=STATES, default="requested")
+    note = models.CharField("ملاحظة الطلب", max_length=300, blank=True)
+    reply = models.CharField("رد / ملاحظة الاستلام", max_length=300, blank=True)
+    driver = models.CharField("المندوب / السائق", max_length=100, blank=True)
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    sent_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    received_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    created_at = models.DateTimeField("تاريخ الطلب", auto_now_add=True)
+    sent_at = models.DateTimeField("تاريخ الإرسال", null=True, blank=True)
+    received_at = models.DateTimeField("تاريخ الاستلام", null=True, blank=True)
+    moves = models.ManyToManyField(StockMove, blank=True, related_name="+", verbose_name="حركات المخزن")
+
+    class Meta:
+        verbose_name = "تحويل بين الفروع"
+        verbose_name_plural = "التحويلات بين الفروع"
+        ordering = ["-id"]
+
+    def __str__(self):
+        return f"تحويل {self.number or self.pk}"
+
+
+class TransferLine(models.Model):
+    transfer = models.ForeignKey(Transfer, on_delete=models.CASCADE, related_name="lines")
+    item = models.ForeignKey(Item, on_delete=models.PROTECT, verbose_name="الصنف")
+    qty_req = models.DecimalField("المطلوب", max_digits=14, decimal_places=3, default=0)
+    qty_sent = models.DecimalField("المرسل", max_digits=14, decimal_places=3, default=0)
+    qty_recv = models.DecimalField("المستلم", max_digits=14, decimal_places=3, default=0)
+    qty_lost = models.DecimalField("عجز", max_digits=14, decimal_places=3, default=0)
+    qty_back = models.DecimalField("رجع للمرسل", max_digits=14, decimal_places=3, default=0)
+    unit_cost = models.DecimalField("التكلفة عند الإرسال", max_digits=18, decimal_places=4, default=0)
+
+    class Meta:
+        verbose_name = "صنف في تحويل"
+        verbose_name_plural = "أصناف التحويل"
+
+    @property
+    def pending(self):
+        return self.qty_sent - self.qty_recv - self.qty_lost - self.qty_back

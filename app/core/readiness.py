@@ -48,6 +48,11 @@ def checklist(s=None):
     else:
         sellable = Item.objects.filter(active=True, sale_price__isnull=False).exclude(code="0")
         add("items", "المستلزمات وأسعارها" if cl else "الأصناف وأسعار البيع", sellable.exists(), "أضفهم واحدًا تلو الآخر أو ارفع ملف إكسل مرة واحدة")
+    if stock_step(s):  # 1.25 the goods already on the shelves, with their purchase price — one opening move
+        from inventory.models import StockMove
+
+        add("stock", "رصيد البضاعة الموجودة عندك الآن", ob.get("stock") or StockMove.objects.filter(kind="opening", state="posted").exists(),
+            "الكمية وسعر الشراء لكل صنف — مرة واحدة")
     no_limit = Item.objects.filter(active=True, item_type="stock", reorder_level__isnull=True).exclude(code="0").count()
     if s.business != "cafe" or no_limit:  # a menu holds no stock; only the café's stock items (cans) need it
         from .templatetags.ar import count_ar
@@ -62,6 +67,16 @@ def checklist(s=None):
     return rows
 
 
+def stock_step(s):
+    """Shops that keep goods: every market / retail shop, and any other business once it has stock items (a hall's buffet,
+    a café's cans, a clinic's consumables)."""
+    from inventory.models import Item
+
+    if s.business in ("market", "retail"):
+        return True
+    return Item.objects.filter(active=True, item_type="stock").exclude(code="0").exists()
+
+
 def _employees_done():
     from django.apps import apps
 
@@ -74,9 +89,9 @@ def missing(s=None):
 
 def card(request):
     """For the owner's home page: what is left, or None when all is ready."""
-    from pos.voids import is_owner
+    from pos.voids import is_head
 
-    if not is_owner(request.user):
+    if not is_head(request.user):  # a branch manager does not set up the shop
         return None
     left = missing()
     if not left:

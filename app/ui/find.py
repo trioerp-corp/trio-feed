@@ -39,7 +39,7 @@ def _pages(request, q):
 @login_required
 def find(request):
     from core.context import company
-    from pos.voids import is_owner
+    from pos.voids import is_head
 
     q = request.GET.get("q", "").strip()[:80]
     groups = []
@@ -89,4 +89,4 @@ def find(request):
             from django.shortcuts import redirect
 
             return redirect(groups[0][1][0]["url"])
-    return render(request, "ui/find.html", dict(q=q, groups=groups, owner=is_owner(request.user)))
+    return render(request, "ui/find.html", dict(q=q, groups=groups, owner=is_head(request.user)))

@@ -12,7 +12,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 from core.models import CompanySettings
-from inventory.models import StockMove
+from inventory.models import StockMove, StockMoveLine
 from ledger.models import JournalLine
 from pos import branches as BR
 from pos.models import Branch, Device, Order, OrderLine, Shift
@@ -56,6 +56,10 @@ def report(b, d1, d2):
         top[ln.item.name][1] += sg * (ln.qty * ln.price - ln.discount)
     damage = sum((ln.value or Z for m in StockMove.objects.filter(kind__in=["expired", "adjust_out"], warehouse=b.warehouse, state="posted",
                                                                    date__range=(d1, d2)) for ln in m.lines.all()), Z)
+    from pos.transfers import TRANSIT_CODE  # 1.25: goods lost on the road count on the branch that sent them
+
+    damage += sum((ln.value or Z for ln in StockMoveLine.objects.filter(move__kind="adjust_out", move__warehouse__code=TRANSIT_CODE, move__state="posted",
+                                                                       move__date__range=(d1, d2), dim1__in=ccs)), Z)
     bought = sum((ln.value or Z for m in StockMove.objects.filter(kind="receipt", warehouse=b.warehouse, state="posted", date__range=(d1, d2))
                   for ln in m.lines.all()), Z)
     return dict(branch=b, t=t, cogs=cogs, gross=gross, expenses=sorted(exp.items(), key=lambda x: -x[1]), exp_total=exp_total, net=gross - exp_total,
@@ -112,15 +116,20 @@ def dashboard(request):
     kind = request.GET.get("p") if request.GET.get("p") in ("day", "month", "year") else "day"
     d1, d2, title = period(kind, day)
     rows, tot, best = all_report(d1, d2)
+    if best and (best["net"] <= 0 or sum(1 for r in rows if r["net"] == best["net"]) > 1):  # «الأعلى ربح» only when one really leads
+        best = None
     top = max([r["t"]["net"] for r in rows] + [Decimal(1)])
     for r in rows:
         r["bar"] = float(r["t"]["net"] / top * 100) if top else 0
         r["staff"] = list(r["branch"].staff.select_related("user").order_by("role"))
+        r["devices"] = list(r["branch"].devices.filter(active=True).exclude(code__in=["CL", "GM"]).order_by("code"))
     from pos.models import Staff
 
     return render(request, "ui/branches.html", dict(rows=rows, tot=tot, best=best, title=title, kind=kind, day=day, caps=BR.CAPS,
                                                     templates=list(BR.templates_for(CompanySettings.get().business).items()), branches=Branch.objects.filter(active=True).order_by("id"),
-                                                    head_office=Staff.objects.filter(branch__isnull=True).select_related("user")))
+                                                    head_office=Staff.objects.filter(branch__isnull=True).select_related("user"),
+                                                    closed=Branch.objects.filter(active=False).order_by("id"), transit=BR.in_transit_value(),
+                                                    main_id=Branch.objects.order_by("id").values_list("id", flat=True).first()))
 
 
 @login_required
@@ -138,7 +147,8 @@ def branch_report(request, pk):
     d1, d2, title = period(kind, day)
     r = report(b, d1, d2)
     return render(request, "ui/branch_report.html", dict(r=r, title=title, kind=kind, day=day, b=b,
-                                                         staff=b.staff.select_related("user").order_by("role")))
+                                                         staff=b.staff.select_related("user").order_by("role"),
+                                                         devices=b.devices.filter(active=True).exclude(code__in=["CL", "GM"]).order_by("code")))
 
 
 @login_required
@@ -171,6 +181,38 @@ def add_branch(request):
     except (ValidationError, ValueError) as e:
         messages.error(request, e.messages[0] if hasattr(e, "messages") else str(e))
     return redirect("branches")
+
+
+@login_required
+def edit_branch(request, pk):
+    """1.25: the owner corrects a branch's name / address / phone / receipt line, adds a till, or closes the branch."""
+    _owner(request)
+    b = Branch.objects.get(pk=pk)
+    if request.method != "POST":
+        return redirect(f"/ui/shop/branches/#b{b.pk}")
+    P = request.POST
+    try:
+        if P.get("op") == "device":
+            n = Device.objects.filter(branch=b).count() + 1
+            while Device.objects.filter(branch=b, code=f"{n:02d}").exists():
+                n += 1
+            Device.objects.create(branch=b, code=f"{n:02d}", name=(P.get("dname") or "").strip()[:60] or f"كاشير {n}")
+            messages.success(request, f"أُضيف جهاز كاشير في «{b.name}» — افتح لوحة البيع على الجهاز وأنت داخل بحسابك واختر «اربط هذا الجهاز»")
+        elif P.get("op") == "close":
+            BR.close_branch(b)
+            request.session.pop("branch_view", None)
+            messages.success(request, f"أُوقف «{b.name}» — بياناته وتقاريره القديمة باقية")
+        elif P.get("op") == "open":
+            b.active = True
+            b.save(update_fields=["active"])
+            b.devices.update(active=True)
+            messages.success(request, f"أُعيد تشغيل «{b.name}»")
+        else:
+            BR.update_branch(b, P.get("name", ""), P.get("address", ""), P.get("phone", ""), P.get("footer", ""))
+            messages.success(request, f"حُفظت بيانات «{b.name}» ✔")
+    except ValidationError as e:
+        messages.error(request, e.messages[0])
+    return redirect(f"/ui/shop/branches/#b{b.pk}")
 
 
 @login_required

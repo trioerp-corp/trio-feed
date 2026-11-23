@@ -6,6 +6,7 @@ urlpatterns = [
     path("api/cashier/", views.api_cashier, name="pos_api_cashier"),
     path("", views.app, name="pos_app"),
     path("sw.js", views.sw, name="pos_sw"),
+    path("display/", views.display, name="pos_display"),
     path("api/catalog/", views.api_catalog),
     path("api/nos/", views.api_nos),
     path("api/link/", views.api_link),

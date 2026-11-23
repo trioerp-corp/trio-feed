@@ -114,6 +114,10 @@ def _save(request, s, op):
             box = CashBox(name=new[:100], kind=P.get("new_kind") if P.get("new_kind") in ("wallet", "bank") else "wallet", order=20)
             _new_cashbox(box)
             box.save()
+        if "insta" in P:  # 1.25 InstaPay link → QR on the receipt + «InstaPay» at the till (turns the InstaPay wallet on)
+            from pos import instapay as IP
+
+            IP.save(P.get("insta", ""), rc=P.get("rc") == "1", s=s)
         cash = _dec(P.get("opening_cash"), Decimal(0))
         if cash and cash > 0 and not (s.onboarding or {}).get("opening_cash"):
             from pos import money
@@ -181,9 +185,9 @@ def _save(request, s, op):
 
 @login_required
 def page(request):
-    from pos.voids import is_owner
+    from pos.voids import is_head
 
-    if not (is_owner(request.user) or request.user.is_superuser):
+    if not is_head(request.user):  # 1.25: never a branch manager — the setup is the whole shop's
         raise PermissionDenied
     s = CompanySettings.get()
     if request.method == "POST":
@@ -209,7 +213,12 @@ def page(request):
                no_limit=Item.objects.filter(active=True, item_type="stock", reorder_level__isnull=True).exclude(code="0").count(),
                suppliers=list(Partner.objects.filter(kind="supplier", active=True).values_list("name", flat=True)[:30]),
                customers=list(Partner.objects.filter(kind="customer", active=True).values_list("name", flat=True)[:30]),
-               opening_cash=(s.onboarding or {}).get("opening_cash"), staff_url="/ui/staff/")
+               opening_cash=(s.onboarding or {}).get("opening_cash"), staff_url="/ui/staff/",
+               insta=__import__("pos.instapay", fromlist=["x"]).cfg(s))
+    from inventory import opening as OP
+
+    first = OP.done()
+    ctx["opening"] = OP.summary(first) if first else None
     if not (s.onboarding or {}).get("guide"):  # the first time: the guide of his business downloads by itself
         from ui.guide import _pdf
         from core.guide import key_for

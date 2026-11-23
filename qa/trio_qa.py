@@ -209,6 +209,7 @@ class Run:
         self.samples = self.rnd.random() >= 0.2
         if not self.samples:
             p.check("[name=samples][value='0']")
+        self.steps.append(f"wizard: samples {'on' if self.samples else 'off'}")
         p.click("#wzNext")
         p.fill("[name=owner]", "مالك تجريبي")
         p.fill("[name=username]", "owner")
@@ -340,7 +341,7 @@ class Run:
         for k in range(3):
             self.goto(p, "/ui/shop/items/", "الأصناف")
             d = p.locator("details.card").first
-            if not d.get_attribute("open"):
+            if not d.evaluate("d=>d.open"):  # open="" (no items yet) is falsy for get_attribute
                 d.locator("summary").click()
             f = d.locator("form")
             f.locator("[name=name]").fill(r.choice(["منتج", "صنف", "سلعة"]) + f" يدوي {self.n}-{k + 1}")
@@ -399,17 +400,35 @@ class Run:
         finally:
             c.close()
 
+    def pair(self, p):
+        """an unpaired till: the owner's one-click «🔗 اربط هذا الجهاز» (#linkBox) — else the key under «لصق مفتاح الجهاز يدويًا»."""
+        with contextlib.suppress(Exception):
+            p.wait_for_function("()=>getComputedStyle(document.getElementById('linkBox')).display!='none'"
+                                " || document.getElementById('setup').style.display!='block'", timeout=4000)
+        if p.is_visible("#linkBtn"):
+            p.click("#linkBtn")
+        elif p.locator("#setup").is_visible():
+            with contextlib.suppress(Exception):
+                p.evaluate("()=>document.querySelectorAll('#setup details').forEach(d=>d.open=true)")
+            p.fill("#tok", self.device_token())
+            p.click("#saveTok")
+
     def till(self):
         p = self.page
         self.goto(p, "/pos/", "الكاشير")
-        if p.is_visible("#tok"):
-            p.fill("#tok", self.device_token())
-            p.click("#saveTok")
+        self.pair(p)
         p.wait_for_timeout(2500)
         self.page_checks(p, "الكاشير")
         if p.is_visible("#tview") and p.is_visible("#takeaway"):
             p.click("#takeaway")
-        items = p.locator("#items .it").filter(has_not_text="بدون كود")
+        items = p.locator("#items .it:not(.open):not(.out)")
+        if items.count() == 0 and p.locator("#items .it.out").count():
+            # a pharmacy sells only what it bought (never-bought drugs are «نفد الرصيد», no selling below zero): buy first
+            self.steps.append("till: every item is out of stock — a purchase invoice first")
+            self.purchase()
+            self.goto(p, "/pos/", "الكاشير")
+            p.wait_for_timeout(2500)
+            items = p.locator("#items .it:not(.open):not(.out)")
         if items.count() == 0:
             self.I.add("till-empty", "الكاشير", "لا توجد أصناف في الكاشير بعد التجهيز (لا يمكن البيع فورًا)", self.n, p, "medium")
             return
@@ -571,12 +590,27 @@ class Run:
                 p.fill("#mFloat", str(self.rnd.choice([0, 200, 500])))
             p.click("#mOk")
             p.wait_for_timeout(1500)
+            if p.is_visible("#dlgModal"):  # «رصيد الدرج عند الفتح»: the float differs from the books → record it (or not)
+                p.click("#dlgOk" if self.rnd.random() < 0.7 else "#dlgCancel")
+                p.wait_for_timeout(800)
 
     def add_item(self):
         p = self.page
-        items = p.locator("#items .it").filter(has_not_text="بدون كود")
-        items.nth(self.rnd.randrange(items.count())).click()
-        p.wait_for_timeout(150)
+        items = p.locator("#items .it:not(.open):not(.out)")
+        for _ in range(6):
+            items.nth(self.rnd.randrange(items.count())).click()
+            p.wait_for_timeout(150)
+            if not p.is_visible("#varModal"):
+                break
+            # clothes: the size × colour grid; a size not in stock is disabled (no selling below zero)
+            cells = p.locator("#vrGrid button:not([disabled])")
+            if cells.count():
+                cells.nth(self.rnd.randrange(cells.count())).click()
+                p.wait_for_timeout(300)
+                if p.is_visible("#dlgModal"):  # «نفد الرصيد … هل تبيعه مع ذلك؟» (selling below zero allowed)
+                    p.click("#dlgOk")
+                break
+            p.click("#vrCancel")  # every size sold out: another item
         if p.is_visible("#szList"):
             b = p.locator("#szList button")
             b.nth(self.rnd.randrange(b.count())).click()
@@ -616,6 +650,13 @@ class Run:
         t = time.time()
         p.click("#pay")
         if ret:
+            p.wait_for_timeout(400)
+            if p.is_visible("#dlgModal") and "الدرج" in p.inner_text("#dlgM"):
+                # a cash refund larger than the drawer is refused (1.24): the robot refunds it by card instead
+                self.steps.append("till: cash refund above the drawer refused — refunded by card")
+                p.click("#dlgOk")
+                p.click("#payKinds button[data-k=card]", timeout=2000)
+                p.click("#pay")
             if not self.till_return():
                 return
             t = time.time()
@@ -639,6 +680,7 @@ class Run:
         p.click("form:has([name=op][value=add]) button")
         p.wait_for_load_state("load")
         self.goto(p, "/pos/", "الكاشير (ترابيزات)")
+        self.pair(p)  # the till step may have stopped before pairing
         p.wait_for_timeout(2500)
         if not p.is_visible("#tview"):
             p.click("#tablesBtn")
@@ -806,7 +848,7 @@ class Run:
             self.I.add("purchase", "فاتورة مشتريات", f"الإجمالي على الشاشة {grand} والصحيح {total:.2f}", self.n, p, "medium")
         last = self.q1("SELECT MAX(id) FROM inventory_stockmove") or 0
         with p.expect_navigation(timeout=30000):
-            p.click("#pf .actions button")
+            p.click("#pf .actions button:not([type=button])")
         self.page_checks(p, "فاتورة مشتريات ← حفظ")
         errs = self.errors_on(p)
         if "/purchases/new" in p.url or errs:
@@ -815,7 +857,7 @@ class Run:
                 p.locator("#pf .paysel label").filter(has=p.locator("input[value=credit]")).click()
                 pay = "credit"
                 with p.expect_navigation(timeout=30000) as nav:
-                    p.click("#pf .actions button")
+                    p.click("#pf .actions button:not([type=button])")
                 errs = self.errors_on(p)
                 st = nav.value.status if nav.value else "?"
                 if "/purchases/new" in p.url and not errs:

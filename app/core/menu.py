@@ -52,6 +52,15 @@ def _plus(s):
     return cfg(s)
 
 
+def _transfers_waiting(u):
+    try:
+        from pos.transfers import waiting
+
+        return waiting(u) or None
+    except Exception:  # noqa: BLE001 — the menu never breaks a page
+        return None
+
+
 def build(request, ctx):
     """[(group title, [dict(label, url, on, icon, badge, new_tab)])] for the logged-in user."""
     from .models import CompanySettings
@@ -114,7 +123,9 @@ def build(request, ctx):
               link("تقرير الصالة", _url("play_report") if hall and (owner or cash) else None, "📊", ("/ui/play/report",)),
               # a hall sells its buffet from the hall screen (its own drawer): no second drawer on the till
               link("لوحة البيع (الكاشير)", "/pos/" if not hall else None, "🧾", new_tab=True),
-              link("الدليفري", _url("shop_delivery") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🛵", ("/ui/shop/delivery",)))
+              link("الدليفري", _url("shop_delivery") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🛵", ("/ui/shop/delivery",)),
+              link("منصات التوصيل", _url("shop_platforms") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🟠",
+                   ("/ui/shop/platforms",)))
 
     # ---- stock (the clinic's reception / doctor: no purchases, stores or counts — those are the owner's and the store keeper's)
     front_desk = clinic and not owner and not (u.has_perm("inventory.add_stockmove") or u.has_perm("inventory.change_item"))
@@ -132,7 +143,9 @@ def build(request, ctx):
               link("طلبات الشراء من الموردين", _url("supply_orders") if "purchases" in mods and u.has_perm("inventory.view_stockmove") and business != "gaming" else None,
                    "📝", ("/ui/shop/supply/orders",)),
               link(w["returns"], _url("shop_returns") if "returns" in mods else None, "↩", ("/ui/shop/returns",)),
-              link("المخازن والتحويلات", _url("move_list") if "stores" in mods else None, "🏬", ("/ui/moves",)),
+              link("التحويلات بين الفروع", _url("transfers") if ctx.get("branch_on") and (owner or u.has_perm("inventory.add_stockmove")) else None, "🔁",
+                   ("/ui/shop/transfers",), badge=_transfers_waiting(u) if ctx.get("branch_on") else None),
+              link("المخازن والتحويلات", _url("move_list") if "stores" in mods and not ctx.get("branch_locked") else None, "🏬", ("/ui/moves",)),
               link("التصنيع", _url("shop_production") if "production" in mods and "production" not in off else None, "🏭", ("/ui/shop/production",)),
               link("الوحدات (كرتونة / علبة)", _url("shop_units") if "units" in mods and shelf and "units" not in off else None, "📐", ("/ui/shop/units",)),
               link("ملصقات الباركود", _url("shop_labels") if "labels" in mods and shelf else None, "🏷", ("/ui/shop/labels",)),
@@ -147,6 +160,7 @@ def build(request, ctx):
         group("الأموال",
               link(w["sales"], _url("shop_sales"), "💵", ("/ui/shop/sales",)),
               link(w["partners"], _url("shop_partners") if "partners" in mods else None, "👥", ("/ui/shop/partners", "/ui/shop/statement")),
+              link("الأقساط والمستحقات", _url("credit_dues") if "partners" in mods else None, "📆", ("/ui/shop/dues",)),
               link(w["money"], _url("shop_money") if "money" in mods else None, "💸", ("/ui/shop/money",)),
               link(w["treasury"], _url("voucher_list") if "treasury" in mods else None, "🏦", ("/ui/vouchers",)),
               link(w["close"], _url("shop_close"), "🔒", ("/ui/shop/close",)))
@@ -158,7 +172,7 @@ def build(request, ctx):
               link("عمولات البائعين", _url("plus_commission") if owner and _plus(s)["sp"]["on"] else None, "🧑‍💼", ("/ui/shop/commission",)),
               link("نقاط الولاء", _url("plus_loyalty") if owner and _plus(s)["loy"]["on"] else None, "⭐", ("/ui/shop/loyalty",)),
               link("الأرباح والشركاء", _url("shop_profit") if "profit_monthly" in mods else None, "💰", ("/ui/shop/profit",)),
-              link("الفروع", _url("branches") if ctx.get("branch_on") and not ctx.get("branch_locked") else None, "🏬",
+              link("الفروع", _url("branches") if (ctx.get("branch_on") or (owner and "branches" in mods)) and not ctx.get("branch_locked") else None, "🏬",
                    ("/ui/shop/branches",)),
               link("تقرير فرعي", _url("branch_report", ctx["branch_view"].pk) if ctx.get("branch_locked") and ctx.get("branch_view") else None,
                    "🏬", ("/ui/shop/branches",)))
@@ -170,7 +184,7 @@ def build(request, ctx):
           link("الإعدادات", _url("shop_settings") if cash else None, "⚙", ("/ui/shop/settings", "/ui/shop/activity")),
           link("📱 الموبايل والتقارير", _url("connect") if cash else None, "", ("/ui/shop/connect",)),
           link("الطلبات", _url("shop_requests"), "📨", ("/ui/shop/requests",), badge=ctx.get("pending_requests") or None),
-          link("دليل البرنامج (PDF)", _url("guide"), "📘", ("/ui/guide",)),
+          link("دليل الاستخدام", _url("guide"), "📘", ("/ui/guide",)),
           link("التحديثات", _url("upgrade") if ctx.get("app_version") else None, "🔄", ("/ui/shop/upgrade",)))
     if u.is_superuser:
         group("المطور",

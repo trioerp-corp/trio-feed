@@ -288,6 +288,12 @@ def demo_start(request, ctx):
     LIC.status()  # the 14 days start now
     if P.get("samples") == "1":
         A.add_samples(cfg["activity"])
+    if P.get("multi") == "1":  # 1.25: «أكثر من فرع؟ نعم» — the home page points him to «الفروع» until he opens one
+        from .models import CompanySettings as _CS
+
+        s = _CS.get()
+        s.menu_cfg = {**(s.menu_cfg or {}), "multi": True}
+        s.save(update_fields=["menu_cfg"])
     messages.success(request, f"أهلًا بك في Trio 👋 — هذه نسخة تجريبية لمدة 14 يومًا بكل الإمكانيات. أكمل تجهيز محلك مرة واحدة هنا.")
     return redirect("/ui/start/")
 

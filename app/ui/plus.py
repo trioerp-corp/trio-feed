@@ -12,7 +12,7 @@ from pos import plus as PL
 
 
 def _owner(request):
-    if not V.is_owner(request.user):
+    if not V.is_head(request.user):
         raise PermissionDenied
 
 

@@ -17,9 +17,9 @@
   <a class="gg-brand" href="{% url 'home' %}">{% if company.logo_svg %}<span style="width:42px;height:42px;display:inline-flex" aria-hidden="true">{{ company.logo_svg|safe }}</span>{% else %}<span class="gg-user" style="background:#fff;color:#0C4A76" aria-hidden="true">{{ company.name|slice:":1" }}</span>{% endif %}<span class="gg-name" title="{{ company.name }}">{{ company.name }}<small>{{ business_label|default:"نظام المبيعات والمخزن" }}</small></span></a>
   <div class="gg-tools">
     {% if branch_on %}{% if branch_locked %}<span class="brchip" title="فرعك">🏬 {{ branch_view.name }}</span>{% else %}
-    <form method="post" action="{% url 'branch_switch' %}" class="brsel">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <form method="post" action="{% url 'branch_switch' %}" class="brsel{% if branch_view %} one{% endif %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
     <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden" for="brs">الفرع</label>
-    <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk|unlocalize }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>{{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
+    <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk|unlocalize }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>🏬 {{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
     <form class="gg-search" action="{% url 'find' %}" role="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D9E7F5" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden">بحث</label><input name="q" type="search" placeholder="ابحث: صنف، عميل، فاتورة، صفحة…"></form>
     <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn light" title="تسجيل الخروج">خروج</button></form>

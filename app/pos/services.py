@@ -92,10 +92,13 @@ def customer_balance(partner):
 def customers():
     from ledger.models import Partner
 
+    from pos.credit.services import late_amount
+
     out = []
     for p in Partner.objects.filter(kind="customer", active=True, merged_into__isnull=True).order_by("name"):
         out.append({"id": p.pk, "name": p.name, "phone": p.phone, "balance": str(customer_balance(p)),
-                    "limit": str(p.credit_limit) if p.credit_limit is not None else None})
+                    "limit": str(p.credit_limit) if p.credit_limit is not None else None,
+                    "late": str(late_amount(p))})  # 1.25: instalments / credit sales past their due date
     return out
 
 
@@ -119,6 +122,13 @@ def catalog(device):
         "id", "code", "name", "barcode", "sale_price", "vat_rate", "unit", "category__name", "extra", "aliases", "item_type", "qty_on_hand", "reorder_level")
 
     items = list(items)
+    from pos.branches import branches_on
+
+    many = branches_on()
+    if many:  # 1.25 several branches: the till's «حد الطلب» counts this branch's own shelf (its store), not the company's total
+        _here = dict(StockQuant.objects.filter(warehouse=device.branch.warehouse).values_list("item_id", "qty"))
+        for i in items:
+            i["qty_on_hand"] = _here.get(i["id"], Decimal(0))
     _fresh = __import__("inventory.reorder", fromlist=["x"]).never_stocked(
         [i["id"] for i in items if i["item_type"] == "stock" and (i["reorder_level"] or 0) > 0 and (i["qty_on_hand"] or 0) <= 0])
 
@@ -148,12 +158,16 @@ def catalog(device):
         units.setdefault(u.item_id, []).append({"name": u.name, "factor": str(u.factor), "barcode": u.barcode,
                                                 "price": str(u.sale_price) if u.sale_price is not None else None})
     cashiers = get_user_model().objects.filter(is_active=True).filter(groups__name__in=TILL_GROUPS).distinct()
+    if many:  # 1.25: a branch's till lists its own cashiers (+ head office), not every branch's staff
+        cashiers = cashiers.filter(Q(staff__isnull=True) | Q(staff__branch__isnull=True) | Q(staff__branch=device.branch))
     return __import__("pos.plus", fromlist=["x"]).decorate({
         "branch": {"code": device.branch.code, "name": device.branch.name, "footer": device.branch.receipt_footer, "policy": receipt_policy(s)},
-        "device": device.code, "next_seq": next_seq(device), "company": s.name, "phone": s.phone, "address": s.address, "tax_id": s.tax_registration,
+        "device": device.code, "next_seq": next_seq(device), "company": s.name, "phone": device.branch.phone or s.phone, "address": device.branch.address or s.address,
+        "tax_id": s.tax_registration,
         "prices_include_vat": s.pos_prices_include_vat, "neg": s.allow_negative_stock,
         "default_vat": str(s.default_vat_rate),
         "logo": s.logo_svg,
+        "insta": __import__("pos.instapay", fromlist=["x"]).till(s),  # 1.25 InstaPay QR + pay kind
         "kitchen": s.kitchen_ticket if s.business in ("cafe", "gaming") else "off", "biz": s.business,
         "tables": __import__("pos.tables", fromlist=["x"]).cfg(s), "can_edit": s.cashier_can_edit, "disc_max": str(till_cfg(s)["disc_max"]),
         **_extras(s),
@@ -191,7 +205,11 @@ def _extras(s):
         D.fee_item()
     if svc["on"]:
         R.svc_item()
+    from pos.credit import platforms as PF
+    from pos.credit.services import cfg as credit_cfg
+
     return {"delivery": d, "dbook": D.book() if d["on"] else [], "svc": svc,
+            "plats": PF.till(s), "credit": credit_cfg(s),  # 1.25 delivery platforms as ways to pay; credit rules (late customers)
             "stations": [dict(name=x["name"], cats=x["cats"]) for x in R.stations(s)] if s.business in R.BIZ else []}
 
 
@@ -272,12 +290,23 @@ def ingest_order(device, data, renumber=False):
                                  total=0, paid_cash=Decimal(str(data.get("paid_cash", 0))), paid_card=Decimal(str(data.get("paid_card", 0))),
                                  paid_credit=Decimal(str(data.get("paid_credit", 0) or 0)), is_return=is_return, raw=data,
                                  paid_rider=Decimal(str(data.get("paid_rider", 0) or 0)),
+                                 paid_insta=Decimal(str(data.get("paid_insta", 0) or 0)),
                                  shift_seq=data.get("shift_seq") or None)
-    if min(order.paid_cash, order.paid_card, order.paid_credit, order.paid_rider) < 0:
+    if min(order.paid_cash, order.paid_card, order.paid_credit, order.paid_rider, order.paid_insta) < 0:
         raise ValidationError("مبلغ مدفوع بالسالب — لم يُسجَّل")
     if order.paid_rider and (is_return or not isinstance(data.get("delivery"), dict) or order.paid_rider < 0):
         raise ValidationError("«مع الطيار» لطلبات الدليفري فقط")
-    if order.paid_credit:
+    plat = None
+    if data.get("platform"):  # 1.25 «طلبات» / «المنيوز»: the platform owes the money (its own receivable, not a customer's)
+        from pos.credit import platforms as PF
+
+        plat = PF.for_order(data, s)
+        if not order.paid_credit:
+            raise ValidationError(f"طلب {plat['name']} بدون مبلغ على المنصة")
+    if order.paid_credit and plat:
+        order.customer = plat["partner"]
+        flags_pre = f"منصة {plat['name']} متوقفة في الإعدادات" if plat["off"] else ""
+    elif order.paid_credit:
         from ledger.models import Partner
 
         cid = str(data.get("customer_id") or "")
@@ -364,7 +393,7 @@ def ingest_order(device, data, renumber=False):
 
     if DayClose.objects.filter(date__gte=order.created_at_device.date()).exists():
         flags.append("وصلت بعد التقفيل النهائي لليوم")
-    paid = order.paid_cash + order.paid_card + order.paid_credit + order.paid_rider
+    paid = order.paid_cash + order.paid_card + order.paid_credit + order.paid_rider + order.paid_insta
     from . import restaurant
 
     svc_flag = restaurant.check_svc(data)
@@ -386,7 +415,13 @@ def ingest_order(device, data, renumber=False):
         lines.append({"account": branch.cashbox.account, sign_cash: order.paid_cash, "description": f"بيع {uid}"})
     if order.paid_card:
         lines.append({"account": card_clearing(), sign_cash: order.paid_card, "description": f"بيع {uid}"})
-    if order.paid_credit:
+    if order.paid_insta:  # 1.25 InstaPay: a transfer into the shop's InstaPay account — never the drawer
+        from .instapay import account as insta_account
+
+        lines.append({"account": insta_account(), sign_cash: order.paid_insta, "description": f"InstaPay {uid}"})
+    if order.paid_credit and plat:
+        lines.append({"account": PF.receivable(), "partner": order.customer, sign_cash: order.paid_credit, "description": f"طلب {plat['name']} {uid}"})
+    elif order.paid_credit:
         lines.append({"account": Account.objects.get(code="1203010101"), "partner": order.customer, sign_cash: order.paid_credit,
                       "description": f"بيع آجل {uid}"})
     if order.paid_rider:  # 1.24 delivery: the money is with the rider until «تم التحصيل» at a till
@@ -409,6 +444,12 @@ def ingest_order(device, data, renumber=False):
         lines.append({"account": sales_acc, sign_sale: rest, "dim1": branch.cost_center, "description": f"مبيعات {uid}"})
     if vat:
         lines.append({"account": Account.objects.get(code=VAT_OUT), sign_sale: vat, "description": f"ق.م {uid}"})
+    if plat:  # the platform's commission is known at the sale: its receivable is what it will really transfer
+        comm = L.q2(total * plat["pct"] / 100)
+        data["plat_pct"], data["plat_comm"] = str(plat["pct"]), str(comm)
+        if comm:
+            lines += [{"account": PF.commission_account(), sign_cash: comm, "dim1": branch.cost_center, "description": f"عمولة {plat['name']} {uid}"},
+                      {"account": PF.receivable(), "partner": order.customer, sign_sale: comm, "description": f"عمولة {plat['name']} {uid}"}]
     if lines or not (data.get("zero_ok") and device.code == "CL"):  # zero_ok: a clinic's free follow-up — no money, no revenue; only its stock move posts
         order.entry = L.create_entry("SI", order.created_at_device.date(), f"نقطة بيع {branch.name} {uid}", lines, source=f"pos.order:{order.pk}",
                                      legacy_ref=uid)
@@ -425,6 +466,10 @@ def ingest_order(device, data, renumber=False):
         from .delivery import record
 
         record(order, data)
+    if data.get("plan") and order.paid_credit and not plat and not is_return:  # 1.25 «تقسيط» chosen at the till
+        from pos.credit.services import plan_from_till
+
+        plan_from_till(order, dict(data["plan"], by=shift.cashier if shift else "") if isinstance(data["plan"], dict) else None)
     return order, True
 
 
@@ -663,6 +708,10 @@ def ingest_shift(device, data):
                      else [dict(account=other, debit=-diff, dim1=device.branch.cost_center), dict(account=box, credit=-diff)])
             sh.difference_entry = L.create_entry("JV", sh.closed_at.date(), f"فرق جرد وردية {sh.cashier}", lines, source=f"pos.shift:{sh.pk}")
         sh.save()
+        if diff < 0:  # 1.25: a big shortage reaches the owner's WhatsApp
+            from core.alerts import on_shift_close
+
+            on_shift_close(sh)
     return sh
 
 
@@ -705,7 +754,7 @@ def check_return(device, data):
     if CompanySettings.get().cashier_can_edit:
         return f"مرتجع — السبب: {reason or 'لم يُكتب'}"
     tok = str(data.get("ret_ok") or "")
-    paid = sum((Decimal(str(data.get(k) or 0)) for k in ("paid_cash", "paid_card", "paid_credit")), Decimal(0))
+    paid = sum((Decimal(str(data.get(k) or 0)) for k in ("paid_cash", "paid_card", "paid_credit", "paid_insta")), Decimal(0))
     if not tok and data.get("exch_to"):  # an exchange where no money goes back: its new invoice (synced first) pays the whole return
         sale = Order.objects.filter(device=device, is_return=False, cancelled=False, raw__exch_of=str(data.get("uid"))).first()
         if sale and sale.total >= L.q2(paid) - Decimal("0.01"):

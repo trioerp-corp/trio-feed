@@ -65,7 +65,7 @@ def info(refresh=False):
     try:
         with urllib.request.urlopen(urllib.request.Request(base + "/info", headers={"User-Agent": "Trio"}), timeout=15) as r:
             d = json.loads(r.read(1 << 20).decode() or "{}")
-        cached = dict(tg=d.get("tg", ""), mail=bool(d.get("mail")), mobile=bool(d.get("mobile")), at=timezone.now().isoformat())
+        cached = dict(tg=d.get("tg", ""), mail=bool(d.get("mail")), mobile=bool(d.get("mobile")), wa=bool(d.get("wa")), at=timezone.now().isoformat())
         feed._save(w_info=cached)
     except Exception:  # noqa: BLE001 — offline: keep what we knew
         pass
@@ -117,7 +117,7 @@ def snapshot(now=None):
     orders = list(Order.objects.filter(created_at_device__date=today).select_related("device__branch"))
     t = _sales(orders)
     month = _sales(Order.objects.filter(created_at_device__date__gte=today.replace(day=1), created_at_device__date__lte=today).only(
-        "total", "vat", "paid_cash", "paid_card", "paid_credit", "is_return", "cancelled"))
+        "total", "vat", "paid_cash", "paid_card", "paid_credit", "paid_insta", "is_return", "cancelled"))
     drawer = CashBox.objects.filter(active=True, kind="cash").first()
     top = {}
     for ln in OrderLine.objects.filter(order__in=[o for o in orders if not o.cancelled and not o.is_return]).select_related("item"):
@@ -127,7 +127,7 @@ def snapshot(now=None):
     low = [i for i in Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name") if i.qty_on_hand <= i.reorder_level]
     exp = expiring(14)
     recent = [dict(n=(o.shift_seq or o.pk), t=timezone.localtime(o.created_at_device).strftime("%H:%M"), v=_f(o.total),
-                   pay="آجل" if o.paid_credit else "مع الطيار" if o.paid_rider else ("بطاقة" if o.paid_card and not o.paid_cash else "نقدي"), r=o.is_return, x=o.cancelled,
+                   pay="آجل" if o.paid_credit else "مع الطيار" if o.paid_rider else ("InstaPay" if o.paid_insta and not o.paid_cash else "بطاقة" if o.paid_card and not o.paid_cash else "نقدي"), r=o.is_return, x=o.cancelled,
                    d=o.device.name if o.device_id else "")
               for o in sorted(orders, key=lambda o: o.created_at_device, reverse=True)[:12]]
     shifts = [dict(c=sh.cashier, at=timezone.localtime(sh.opened_at).strftime("%H:%M"), d=sh.device.name)
@@ -155,6 +155,12 @@ def snapshot(now=None):
     if len(branches) > 1:
         data["branches"] = [dict(n=b.name, v=_f(_sales([o for o in orders if o.device.branch_id == b.pk])["net"]),
                                  cash=_f(T.cashbox_balance(b.cashbox))) for b in branches]
+    try:  # 1.25 comparisons: today vs last week's same day, month vs last month, best / most profitable items, cashier shortages
+        from .compare import comparisons
+
+        data["cmp"] = comparisons(now)
+    except Exception:  # noqa: BLE001 — the phone summary never fails because of one part
+        pass
     if s.business == "gaming":
         from gaming.models import PlaySession
 

@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}تحويل {{ t.number }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>تحويل <span dir="ltr">{{ t.number }}</span> — {{ src.name|default:t.from_warehouse.name }} ← {{ dst.name|default:t.to_warehouse.name }}</h1>
+<p class="muted" style="margin:0"><span class="badge {% if t.state in 'rejected cancelled' %}red{% elif t.state != 'received' %}gold{% endif %}">{{ t.get_state_display }}</span>
+ طُلب {{ t.created_at|date:"d/m/Y H:i" }}{% if t.requested_by %} بواسطة {{ t.requested_by.first_name|default:t.requested_by.username }}{% endif %}{% if t.sent_at %} · أُرسل {{ t.sent_at|date:"d/m H:i" }}{% if t.sent_by %} ({{ t.sent_by.first_name|default:t.sent_by.username }}){% endif %}{% endif %}{% if t.received_at %} · استُلم {{ t.received_at|date:"d/m H:i" }}{% if t.received_by %} ({{ t.received_by.first_name|default:t.received_by.username }}){% endif %}{% endif %}</p></div>
+<div class="actions"><a class="btn light" href="{% url 'transfers' %}">كل التحويلات</a>{% if t.state != 'requested' and t.state != 'rejected' %}<a class="btn light" href="{% url 'transfer_print' t.pk %}" target="_blank" rel="noopener">🖨 إذن التحويل</a>{% endif %}</div></div>
+{% if t.note %}<div class="attn" style="margin-bottom:10px"><span>ملاحظة الطلب</span><b>{{ t.note }}</b></div>{% endif %}
+{% if t.reply %}<div class="attn {% if t.state == 'rejected' %}gold{% endif %}" style="margin-bottom:10px"><span>{% if t.state == 'rejected' %}سبب الرفض{% else %}ملاحظة{% endif %}</span><b>{{ t.reply }}</b></div>{% endif %}
+{% if t.driver %}<div class="attn" style="margin-bottom:10px"><span>المندوب / السائق</span><b>{{ t.driver }}</b></div>{% endif %}
+
+<form method="post" class="card" id="act">{% csrf_token %}
+<div class="table-wrap" style="box-shadow:none;border:0"><table class="lines-table"><thead><tr><th>الصنف</th><th class="n">المطلوب</th>
+{% if can_send %}<th class="n">عند {{ src.name }}</th><th style="width:130px">يُرسل</th>{% else %}<th class="n">المرسل</th>{% endif %}
+{% if t.state != 'requested' %}<th class="n">المستلم</th>{% if can_receive %}<th style="width:130px">وصل الآن</th>{% else %}<th class="n">الفرق</th>{% endif %}{% endif %}</tr></thead><tbody>
+{% for ln in lines %}<tr><td>{{ ln.item.name }} <small class="muted">{{ ln.item.unit }}</small></td><td class="n">{{ ln.qty_req|floatformat:"-3" }}</td>
+{% if can_send %}<td class="n {% if ln.src_has < ln.qty_req %}bad{% endif %}">{{ ln.src_has|floatformat:"-3" }}</td><td><input name="q{{ ln.pk|unlocalize }}" value="{{ ln.qty_req|unlocalize|floatformat:'-3' }}" inputmode="decimal" style="width:100%"></td>{% else %}<td class="n">{{ ln.qty_sent|floatformat:"-3" }}</td>{% endif %}
+{% if t.state != 'requested' %}<td class="n">{{ ln.qty_recv|floatformat:"-3" }}</td>{% if can_receive %}<td><input name="q{{ ln.pk|unlocalize }}" value="{{ ln.pending|unlocalize|floatformat:'-3' }}" inputmode="decimal" style="width:100%" data-left="{{ ln.pending|unlocalize }}"></td>{% else %}<td class="n">{% if ln.qty_lost %}<span class="bad">عجز {{ ln.qty_lost|floatformat:"-3" }}</span>{% endif %}{% if ln.qty_back %} رجع {{ ln.qty_back|floatformat:"-3" }}{% endif %}{% if ln.pending > 0 and t.state == 'partial' %} في الطريق {{ ln.pending|floatformat:"-3" }}{% endif %}{% if not ln.qty_lost and not ln.qty_back and ln.pending <= 0 %}—{% endif %}</td>{% endif %}{% endif %}</tr>{% endfor %}
+</tbody></table></div>
+{% if val %}<p class="muted" style="margin:8px 0">قيمة المرسل بالتكلفة: <b>{{ val|money }}</b></p>{% endif %}
+{% if can_send %}<div class="form-grid" style="margin-top:10px"><label class="field">المندوب / السائق (اختياري)<input name="driver"></label><label class="field">سبب الرفض (عند الرفض)<input name="reason" placeholder="مثلًا: غير متوفر عندنا"></label></div>
+<div class="actions" style="margin-top:10px"><button name="op" value="send">✔ موافقة وإرسال</button><button class="light" name="op" value="reject" formnovalidate>رفض الطلب</button></div>
+<p class="muted" style="font-size:13px">عند الإرسال تخرج الكميات من مخزن {{ src.name }} وتبقى «في الطريق» حتى يؤكد {{ dst.name }} الاستلام. عدّل الكمية إن كان المتوفر أقل.</p>
+{% elif can_receive %}<p class="muted" style="font-size:13px;margin:10px 0 4px">عُدّ البضاعة التي وصلت فعلًا واكتب الكمية. إن وصل أقل:</p>
+<div class="form-grid"><label class="field">الباقي (غير الواصل)<select name="close" id="close"><option value="1">أُغلق التحويل الآن</option><option value="0">ما زال في الطريق — أستلمه لاحقًا</option></select></label>
+<label class="field" id="diffw">الفرق يُسجَّل<select name="diff"><option value="loss">عجز (خسارة على {{ src.name }})</option><option value="back">يرجع لمخزن {{ src.name }} (لم يُحمَّل)</option></select></label>
+<label class="field">ملاحظة الاستلام<input name="reply" placeholder="مثلًا: كرتونة مكسورة"></label></div>
+<div class="actions" style="margin-top:10px"><button name="op" value="receive">✔ تأكيد الاستلام</button></div>
+<script>const c=document.getElementById('close');c.onchange=()=>document.getElementById('diffw').style.display=c.value==='1'?'':'none';</script>{% endif %}
+{% if can_cancel %}<details style="margin-top:12px"><summary class="muted">إلغاء التحويل</summary><div class="actions" style="margin-top:8px"><input name="reason" placeholder="السبب" aria-label="سبب الإلغاء"><button class="light" name="op" value="cancel" formnovalidate onclick="return confirm('إلغاء التحويل؟{% if t.state == 'sent' %} ستعود البضاعة لمخزن {{ src.name }}.{% endif %}')">إلغاء التحويل</button></div></details>{% endif %}
+</form>
+{% if moves and is_owner %}<p class="muted" style="font-size:13px;margin-top:10px">حركات المخزن: {% for m in moves %}<a href="{% url 'move_detail' m.pk %}" dir="ltr">{{ m.number }}</a>{% if not forloop.last %}، {% endif %}{% endfor %}</p>{% endif %}
+{% endblock %}

@@ -2,16 +2,17 @@
 {% block content %}
 <div class="page-head"><div><h1>الفروع — {{ title }}</h1><p class="muted" style="margin:0">كل الفروع أمامك: المبيعات والربح والأموال والمخزون. اختر فرعًا من الأعلى لتعرضه كل الشاشات وحده.</p></div>
 <div class="actions"><div class="seg"><a href="?p=day" class="{% if kind == 'day' %}on{% endif %}">اليوم</a><a href="?p=month" class="{% if kind == 'month' %}on{% endif %}">الشهر</a><a href="?p=year" class="{% if kind == 'year' %}on{% endif %}">السنة</a></div>
-<a class="btn" href="#add">+ فرع جديد</a><button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
+<a class="btn" href="#add">+ فرع جديد</a>{% if rows|length > 1 %}<a class="btn light" href="{% url 'transfers' %}">🔁 التحويلات</a>{% endif %}<button class="light" onclick="window.print()">🖨 طباعة</button></div></div>
 
 <section class="grid" style="margin-bottom:18px">
 <div class="card kpi hero"><span class="k">مبيعات كل الفروع</span><span class="v">{{ tot.sales|money:0 }}</span><span class="k">{{ tot.n|count:"فاتورة" }}</span></div>
 <div class="card kpi"><span class="k">مجمل الربح</span><span class="v">{{ tot.gross|money:0 }}</span></div>
 <div class="card kpi"><span class="k">صافي الربح</span><span class="v">{{ tot.net|money:0 }}</span><span class="k">بعد المصروفات {{ tot.exp_total|money:0 }}</span></div>
-<div class="card kpi gold"><span class="k">النقدية في الأدراج</span><span class="v">{{ tot.drawer|money:0 }}</span><span class="k">المخزون {{ tot.stock|money:0 }}</span></div></section>
+<div class="card kpi gold"><span class="k">النقدية في الأدراج</span><span class="v">{{ tot.drawer|money:0 }}</span><span class="k">المخزون {{ tot.stock|money:0 }}{% if transit %} + في الطريق {{ transit|money:0 }}{% endif %}</span></div></section>
+{% if rows|length < 2 %}<div class="card" style="margin-bottom:18px"><h2 style="margin-top:0">لديك فرع واحد الآن</h2><p class="muted" style="margin:0">افتح فرعك الثاني من «فتح فرع جديد» بالأسفل: يُنشئ البرنامج له مخزنًا وخزينة وأجهزة كاشير ومديرًا يرى فرعه فقط. بعدها يظهر في أعلى الشاشة اختيار الفرع، وتظهر «التحويلات بين الفروع».</p></div>{% endif %}
 
 <div class="brgrid" style="margin-bottom:22px">{% for r in rows %}
-<div class="brcard {% if best and r.branch.pk == best.branch.pk and rows|length > 1 %}best{% endif %}">
+<div id="b{{ r.branch.pk|unlocalize }}" class="brcard {% if best and r.branch.pk == best.branch.pk and rows|length > 1 %}best{% endif %}">
 <h3>🏬 {{ r.branch.name }} {% if best and r.branch.pk == best.branch.pk and rows|length > 1 %}<span class="badge gold">الأعلى ربح</span>{% endif %}</h3>
 <div class="brbar" aria-hidden="true"><i style="width:{{ r.bar|stringformat:'.1f' }}%"></i></div>
 <div class="brkpis"><div><span>المبيعات</span><b>{{ r.t.net|money:0 }}</b></div><div><span>الفواتير</span><b>{{ r.t.n }}</b></div><div><span>صافي الربح</span><b>{{ r.net|money:0 }}</b></div>
@@ -20,7 +21,18 @@
 {% for st in r.staff %}{% if forloop.first %} — {% endif %}{{ st.user.first_name|default:st.user.username }} ({{ st.title }}){% if not forloop.last %}، {% endif %}{% endfor %}</p>
 <div class="actions"><a class="btn light" href="{% url 'branch_report' r.branch.pk %}?p={{ kind }}">التقرير المفصل</a>
 <form method="post" action="{% url 'branch_switch' %}">{% csrf_token %}<input type="hidden" name="b" value="{{ r.branch.pk|unlocalize }}"><input type="hidden" name="next" value="/"><button class="light">اعرض هذا الفرع</button></form></div>
+<details class="bredit"><summary>⚙ بيانات الفرع وأجهزته ({{ r.devices|length }} جهاز)</summary>
+<form method="post" action="{% url 'branch_edit' r.branch.pk %}" class="form-grid" style="margin-top:8px">{% csrf_token %}
+<label class="field">اسم الفرع<input name="name" value="{{ r.branch.name }}" required></label><label class="field">العنوان (يظهر على إيصال الفرع)<input name="address" value="{{ r.branch.address }}"></label>
+<label class="field">التليفون<input name="phone" value="{{ r.branch.phone }}" dir="ltr"></label><label class="field">آخر سطر في الإيصال<input name="footer" value="{{ r.branch.receipt_footer }}"></label>
+<div class="actions"><button class="light">حفظ البيانات</button></div></form>
+<div style="margin-top:8px">{% for d in r.devices %}<div class="attn" style="margin-bottom:4px"><span>🖥 {{ d.name }}</span><b>{% if d.last_sync %}آخر مزامنة {{ d.last_sync|date:"d/m H:i" }}{% else %}لم يُربط بعد{% endif %}</b></div>{% endfor %}</div>
+<form method="post" action="{% url 'branch_edit' r.branch.pk %}" class="actions" style="margin-top:6px">{% csrf_token %}<input type="hidden" name="op" value="device"><input name="dname" placeholder="اسم الجهاز (اختياري)" aria-label="اسم الجهاز"><button class="light">+ جهاز كاشير</button></form>
+<p class="muted" style="font-size:12.5px;margin:6px 0">ربط جهاز: على كمبيوتر الفرع افتح البرنامج وادخل بحسابك (أو حساب مدير الفرع)، ثم «لوحة البيع» ← «اربط هذا الجهاز» واختره.</p>
+{% if r.branch.pk != main_id %}<form method="post" action="{% url 'branch_edit' r.branch.pk %}" style="margin-top:6px" onsubmit="return confirm('إيقاف الفرع؟ تتوقف أجهزته وحسابات موظفيه، وتبقى تقاريره القديمة.')">{% csrf_token %}<input type="hidden" name="op" value="close"><button class="light" style="color:var(--bad)">إيقاف الفرع</button></form>{% endif %}
+</details>
 </div>{% endfor %}</div>
+{% if closed %}<p class="muted" style="margin:-12px 0 18px">فروع موقوفة: {% for b in closed %}<form method="post" action="{% url 'branch_edit' b.pk %}" style="display:inline">{% csrf_token %}<input type="hidden" name="op" value="open">{{ b.name }} <button class="light" style="padding:2px 10px">إعادة تشغيل</button></form>{% if not forloop.last %}، {% endif %}{% endfor %}</p>{% endif %}
 
 <div class="split">
 <div class="main">

@@ -15,13 +15,13 @@
 <td class="n lt"></td>
 {% if editable %}<td><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="drop_{{ forloop.counter0 }}" value="1" class="calc"> إلغاء</label></td>{% endif %}
 </tr>{% endfor %}</tbody></table></div>
-<p style="margin:10px 0"><b>الإجمالي: <span id="tot">{{ o.total|money }}</span></b> <span class="muted">— مدفوع: نقدي {{ o.paid_cash|money }} · بطاقة {{ o.paid_card|money }} · آجل {{ o.paid_credit|money }}</span></p>
+<p style="margin:10px 0"><b>الإجمالي: <span id="tot">{{ o.total|money }}</span></b> <span class="muted">— مدفوع: نقدي {{ o.paid_cash|money }} · بطاقة {{ o.paid_card|money }} ·{% if o.paid_insta %} InstaPay {{ o.paid_insta|money }} ·{% endif %} آجل {{ o.paid_credit|money }}</span></p>
 {% if editable %}
 <datalist id="itemlist">{% for i in items %}<option value="{{ i.code }}" label="{{ i.name }} — {{ i.sale_price }}">{% endfor %}</datalist>
 <p style="margin:0 0 12px"><button type="button" class="light" id="add">+ صنف</button></p>
 <input type="hidden" name="rows" id="rows" value="{{ lines|length }}">
 <div class="grid">
-<label class="field">الدفع بعد التعديل<select name="pay"><option value="">كما كانت</option><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option>{% if o.customer %}<option value="credit">آجل على {{ o.customer.name }}</option>{% endif %}</select></label>
+<label class="field">الدفع بعد التعديل<select name="pay"><option value="">كما كانت</option><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option>{% if o.paid_insta or insta_on %}<option value="insta">InstaPay</option>{% endif %}{% if o.customer %}<option value="credit">آجل على {{ o.customer.name }}</option>{% endif %}</select></label>
 <label class="field">السبب *<input name="reason" required placeholder="مثلًا: أرجع العميل صنفًا / الكمية خاطئة"></label></div>
 <div class="actions" style="margin-top:12px"><button>حفظ التعديل</button>
 <button class="danger" name="action" value="void" onclick="return confirm('إلغاء الفاتورة كلها؟ ستعود البضاعة إلى المخزن')">إلغاء الفاتورة كلها</button></div>

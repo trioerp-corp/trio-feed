@@ -1,0 +1,82 @@
+{% load static %}<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شاشة العميل</title>
+<link rel="stylesheet" href="{% static 'ui/fonts.css' %}">
+<style>
+/* 1.25 customer display — a second screen the customer sees, fed by the till on the same computer (BroadcastChannel) */
+:root{--bg:#0B1F3A;--panel:#10294B;--ink:#fff;--muted:#A9BDD6;--line:#24436B;--gold:#E2B864;--good:#7BE0BC}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);overflow:hidden;font-variant-numeric:tabular-nums}
+.v{display:none;height:100vh;padding:3vh 4vw 6vh}.v.on{display:flex}
+.top{display:flex;align-items:center;gap:16px}.logo{width:9vh;height:9vh;flex:none;background:#fff;border-radius:16px;padding:6px;display:none}.logo svg,.logo img{width:100%;height:100%;object-fit:contain}
+.co{font-size:4.2vh;font-weight:800}.muted{color:var(--muted)}
+/* the bill */
+#cart{flex-direction:column;gap:2vh}
+#cart .body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3vw;flex:1;min-height:0}
+.lines{background:var(--panel);border-radius:22px;padding:2vh 2vw;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.ln{display:flex;justify-content:space-between;gap:16px;align-items:baseline;border-bottom:1px solid var(--line);padding:1.2vh 0;font-size:3vh}
+.ln:last-child{border-bottom:0;color:var(--gold)}.ln .q{color:var(--muted);font-size:2.4vh;margin-inline-start:8px;white-space:nowrap}.ln .t{white-space:nowrap;font-weight:700}
+.ln .a{display:block;color:var(--muted);font-size:2vh}.ln .d{display:block;color:var(--good);font-size:2vh}
+.side{width:min(34vw,520px);display:flex;flex-direction:column;gap:2vh}
+.box{background:var(--panel);border-radius:22px;padding:2.4vh 2vw;text-align:center}
+.box .k{font-size:2.6vh;color:var(--muted)}.box .big{font-size:9vh;font-weight:800;line-height:1.1;white-space:nowrap}.box .big small{font-size:3.4vh;font-weight:600;margin-inline-start:8px}
+.box.disc .big{font-size:4vh;color:var(--good)}
+.qr{background:#fff;border-radius:22px;padding:2vh;text-align:center;color:#0B1F3A;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh}
+.qr .code{height:min(30vh,26vw);aspect-ratio:1}.qr .code svg{width:100%;height:100%}.qr b{font-size:2.8vh}.qr span{font-size:2vh;direction:ltr}
+/* paid / InstaPay / idle: one big centred card */
+.c{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2vh}
+.c .big{font-size:12vh;font-weight:800;line-height:1.05}.c .big small{font-size:4.4vh;font-weight:600;margin-inline-start:10px}
+.c .k{font-size:3.6vh;color:var(--muted)}.c .chg{background:var(--good);color:#06281E;border-radius:26px;padding:2vh 5vw}.c .chg .k{color:#06281E}
+.c .qr{flex:none;padding:2.4vh}.c .qr .code{height:38vh}
+.thx{font-size:5vh;font-weight:800}
+#idle .logo{width:26vh;height:26vh;border-radius:30px;padding:14px}#idle .co{font-size:7vh}
+.offers{display:flex;flex-wrap:wrap;gap:1.4vh;justify-content:center;max-width:80vw}.offers span{background:var(--gold);color:#3A2706;border-radius:99px;padding:1vh 2.4vw;font-size:3vh;font-weight:700}
+.pay-in{display:flex;align-items:center;gap:2vw;background:var(--panel);border-radius:22px;padding:1.6vh 2vw}.pay-in .code{height:14vh;aspect-ratio:1;background:#fff;border-radius:12px;padding:6px}.pay-in .code svg{width:100%;height:100%}
+.pay-in b{font-size:3vh}
+.foot{position:fixed;bottom:1vh;left:0;right:0;text-align:center;color:var(--muted);font-size:1.7vh}
+#hint{position:fixed;top:1.4vh;left:1.4vw;color:var(--muted);font-size:1.7vh}
+@media (max-aspect-ratio:1/1){#cart .body{grid-template-columns:1fr}.side{width:auto}.qr .code{height:22vh}}
+</style>
+</head>
+<body>
+<div id="hint">اضغط F11 لملء الشاشة</div>
+<section class="v c on" id="idle"><div class="logo" id="iLogo"></div><div class="co" id="iCo">أهلًا بكم</div><div class="k" id="iSub">مرحبًا بكم</div>
+<div class="offers" id="iOff"></div><div class="pay-in" id="iPay" style="display:none"><div class="code" id="iQr"></div><div><b>نقبل الدفع بـ InstaPay</b><div class="muted" id="iLbl" dir="ltr"></div></div></div></section>
+<section class="v" id="cart"><div class="top"><div class="logo" id="cLogo"></div><div><div class="co" id="cCo"></div><div class="muted" id="cSub" style="font-size:2.4vh">فاتورتك</div></div></div>
+<div class="body"><div class="lines" id="cLines"></div><div class="side"><div class="box"><div class="k" id="cTotK">الإجمالي</div><div class="big"><span id="cTot">0.00</span><small>ج.م</small></div></div>
+<div class="box disc" id="cDisc" style="display:none"><div class="k">خصم على الفاتورة</div><div class="big" id="cDiscV"></div></div>
+<div class="qr" id="cQr" style="display:none"><b>ادفع بـ InstaPay</b><div class="code" id="cQrC"></div><span id="cQrL"></span></div></div></div></section>
+<section class="v c" id="insta"><div class="k">ادفع بـ InstaPay</div><div class="qr"><div class="code" id="qC"></div><span id="qL"></span></div><div class="k">المبلغ المطلوب</div><div class="big"><span id="qA"></span><small>ج.م</small></div>
+<div class="k" style="font-size:2.6vh">امسح الرمز من تطبيق InstaPay واكتب المبلغ ثم أكّد التحويل</div></section>
+<section class="v c" id="paid"><div class="thx" id="pT">شكرًا لكم</div><div class="k" id="pK">الإجمالي</div><div class="big"><span id="pTot"></span><small>ج.م</small></div>
+<div class="k" id="pPaid"></div><div class="chg" id="pChg" style="display:none"><div class="k">الباقي لك</div><div class="big"><span id="pChgV"></span><small>ج.م</small></div></div></section>
+<div class="foot">بواسطة تريو</div>
+<script>
+const $=id=>document.getElementById(id),fmt=n=>(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const H=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+// the logo / QR come from the program (CompanySettings.logo_svg is cleaned when uploaded; the QR is made by the program)
+function show(id){document.querySelectorAll('.v').forEach(v=>v.classList.toggle('on',v.id===id))}
+function head(m){for(const p of ['i','c']){const l=$(p+'Logo');if(m.logo){if(l.dataset.v!==m.logo){l.innerHTML=m.logo;l.dataset.v=m.logo}l.style.display='block'}else l.style.display='none';$(p+'Co').textContent=m.co||''}document.title='شاشة العميل — '+(m.co||'')}
+function qr(el,m){if(m.insta&&m.insta.qr){if(el.dataset.v!==m.insta.qr){el.innerHTML=m.insta.qr;el.dataset.v=m.insta.qr}return true}return false}
+function idle(m){$('iSub').textContent=m.footer||'مرحبًا بكم';$('iOff').innerHTML=(m.promos||[]).map(p=>'<span>🏷 '+H(p)+'</span>').join('');
+const q=qr($('iQr'),m);$('iPay').style.display=q?'':'none';$('iLbl').textContent=q?m.insta.label:'';show('idle')}
+function cart(m){const L=m.lines||[],box=$('cLines');box.innerHTML=L.slice(-9).map(l=>'<div class="ln"><span>'+H(l.n)+(l.q&&l.q!=='1'?'<span class="q">× '+H(l.q)+'</span>':'')+(l.a?'<span class="a">+ '+H(l.a)+'</span>':'')+(l.d?'<span class="d">وفّرت '+fmt(l.d)+'</span>':'')+'</span><span class="t">'+fmt(l.t)+'</span></div>').join('');
+if(L.length>9)box.insertAdjacentHTML('afterbegin','<div class="muted" style="font-size:2vh">… و'+(L.length-9)+' أصناف أخرى</div>');
+$('cTot').textContent=fmt(m.total);$('cTotK').textContent=m.ret?'إجمالي المرتجع':m.exch?'الأصناف الجديدة (وقيمة المرتجع '+fmt(m.exch)+')':'الإجمالي';
+$('cSub').textContent=m.ret?'مرتجع':'فاتورتك';$('cDisc').style.display=m.disc?'':'none';$('cDiscV').textContent=m.disc?'−'+fmt(m.disc):'';
+const q=!m.ret&&qr($('cQrC'),m);$('cQr').style.display=q?'':'none';$('cQrL').textContent=q?m.insta.label:'';show('cart')}
+function insta(m){qr($('qC'),m);$('qL').textContent=m.insta?m.insta.label:'';$('qA').textContent=fmt(m.amount);show('insta')}
+function paid(m){$('pT').textContent=m.ret?'تم ردّ المبلغ':'شكرًا لكم — نتشرّف بزيارتكم';$('pK').textContent=m.ret?'المبلغ المردود':'الإجمالي';$('pTot').textContent=fmt(m.total);
+const how={insta:'مدفوع بـ InstaPay ✔',card:'مدفوع بالبطاقة / المحفظة ✔',credit:'على حسابك',cash:m.paid&&+m.paid>0&&!m.ret?'المدفوع نقدًا '+fmt(m.paid):''}[m.how]||'';$('pPaid').textContent=how;
+$('pChg').style.display=m.chg?'':'none';$('pChgV').textContent=m.chg?fmt(m.chg):'';show('paid')}
+function on(m){if(!m||m.k!=='state')return;head(m);try{localStorage.setItem('trio_disp_last',JSON.stringify({...m,mode:'idle'}))}catch(e){}
+if(m.mode==='cart')cart(m);else if(m.mode==='insta')insta(m);else if(m.mode==='paid')paid(m);else idle(m)}
+try{const last=JSON.parse(localStorage.getItem('trio_disp_last')||'null');if(last)on(last)}catch(e){}
+let bc=null;try{bc=new BroadcastChannel('trio-display');bc.onmessage=e=>on(e.data);bc.postMessage({k:'want'})}catch(e){$('iSub').textContent='هذا المتصفح لا يدعم شاشة العميل — استخدم Google Chrome أو Microsoft Edge'}
+setTimeout(()=>{$('hint').style.display='none'},8000);
+document.addEventListener('dblclick',()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});else document.exitFullscreen().catch(()=>{})});
+</script>
+</body>
+</html>

@@ -35,6 +35,21 @@
 <section class="card" style="margin-bottom:16px" id="disc"><h2>خصم الاستقبال</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="disc_cap">
 <label class="field">أقصى خصم يمنحه الاستقبال دون موافقتك (% من الحساب)<input name="max_discount_pct" inputmode="decimal" dir="ltr" value="{{ cs.max_discount_pct|floatformat:-2|unlocalize }}"></label>
 <p class="muted" style="font-size:12px;margin:0 0 8px">0 = لا خصم إلا بموافقتك (تكتب اسم المستخدم وكلمة السر على شاشة الاستقبال). كل خصم يظهر في «لوحة صاحب العيادة» وعلى الموبايل باسم من منحه.</p><button>حفظ</button></form></section>
+<section class="card" style="margin-bottom:16px" id="online"><h2>🌐 الحجز أونلاين</h2>
+<p class="muted" style="font-size:12.5px;margin:0 0 8px">صفحة للعيادة على الإنترنت: يختار المريض الطبيب والخدمة واليوم وموعدًا متاحًا من مواعيد الطبيب، فيصل الطلب إلى الاستقبال «حجز أونلاين» ليؤكده أو يعتذر، ويظهر الرد للمريض على الصفحة نفسها.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="online">
+<label class="field check"><input type="checkbox" name="online_on" value="1"{% if cs.online_on %} checked{% endif %}> الحجز أونلاين يعمل</label>
+<label class="field check"><input type="checkbox" name="online_auto" value="1"{% if cs.online_auto %} checked{% endif %}> تأكيد تلقائي للمواعيد المتاحة (دون مراجعة الاستقبال)</label>
+<label class="field">يُسمح بالحجز حتى (يوم مقدمًا)<input name="online_days" inputmode="numeric" dir="ltr" value="{{ cs.online_days }}"></label>
+<label class="field">ملاحظة تظهر للمريض (اختياري)<input name="online_note" maxlength="200" placeholder="مثال: يُرجى الحضور قبل الموعد بربع ساعة" value="{{ cs.online_note }}"></label>
+<button>حفظ ونشر</button></form>
+{% if cs.online_on %}{% if book_link %}<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px;text-align:center"><div style="max-width:180px;margin:0 auto">{{ book_qr|safe }}</div>
+<p style="margin:6px 0;word-break:break-all"><a href="{{ book_link }}" target="_blank" rel="noopener" dir="ltr">{{ book_link }}</a></p>
+<button type="button" class="light" onclick="navigator.clipboard&&navigator.clipboard.writeText('{{ book_link }}').then(function(){alert('نُسخ الرابط ✔')})">📋 نسخ الرابط</button> <button type="button" class="light" onclick="window.print()">🖨 طباعة الـ QR</button>
+<p class="muted" style="font-size:12px;margin:8px 0 0">ضع الرابط على صفحة العيادة في فيسبوك وواتساب وخرائط جوجل، والـ QR على باب العيادة وفي الاستقبال.</p></div>
+{% else %}<p class="muted" style="font-size:12.5px">يظهر الرابط بعد اتصال الجهاز بالإنترنت أول مرة.</p>{% endif %}
+<p class="muted" style="font-size:12px;margin:8px 0 0">الأطباء في الصفحة: {% for d in online_docs %}{{ d }}{% if not forloop.last %}، {% endif %}{% empty %}<b style="color:var(--bad)">لا أحد — حدّد أيام عمل الطبيب وساعاته من «تعديل»</b>{% endfor %}.
+حماية من الإزعاج: 4 طلبات في الساعة من الجهاز الواحد، وطلبان معلّقان لكل رقم، وحجز واحد في اليوم لكل رقم.</p>{% endif %}</section>
 <section class="card"><h2>الأطباء</h2>
 {% for d in all_doctors %}<p style="margin:0 0 8px;{% if not d.active %}opacity:.5{% endif %}"><b>{{ d }}</b>{% if d.specialty %} — {{ d.specialty }}{% endif %} · {{ d.share_pct|floatformat:-2 }}%{% with t=sched_text|get:d.pk %}{% if t %}<br><span class="muted" style="font-size:12px">🗓 {{ t }}{% if d.max_per_day %} · حتى {{ d.max_per_day }} كشف{% endif %}</span>{% endif %}{% endwith %} <a href="?doc={{ d.pk|unlocalize }}">تعديل</a></p>{% empty %}<p class="muted">لا يوجد بعد</p>{% endfor %}
 <form method="post" style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px">{% csrf_token %}<input type="hidden" name="action" value="doctor"><input type="hidden" name="pk" value="{{ edit_doc.pk|default:''|unlocalize }}">

@@ -226,6 +226,17 @@ def home(request, reception=False):
             elif a == "drawer_close":
                 sh = C.end_shift(request.user, request.POST.get("counted"))
                 messages.success(request, f"أُغلق الدرج — المبلغ المعدود {sh.counted_cash:.2f} ج. يراجع صاحب العيادة الفرق عند تقفيل اليوم ✔")
+            elif a in ("online_ok", "online_no"):  # 1.25 a booking request from the clinic's page
+                from . import online as ON
+                from .models import OnlineBooking
+
+                ob = get_object_or_404(OnlineBooking, pk=request.POST.get("ob") or 0)
+                if a == "online_ok":
+                    ON.approve(ob, request.user, allow_overlap=request.POST.get("force") == "1")
+                    messages.success(request, f"تأكّد حجز {ob.name} ✔ — وصل الرد على صفحته، ويمكنك إرسال التأكيد على واتساب")
+                    return redirect(reverse("clinic_reception" if reception else "clinic_home") + f"?wa={ob.pk}")
+                ON.deny(ob, request.user, request.POST.get("reason", ""))
+                messages.success(request, f"رُفض طلب {ob.name} — وصله الرد على صفحته")
             elif a in ("inside", "noshow", "cancelled", "waiting"):
                 appt = get_object_or_404(Appointment, pk=request.POST["appt"])
                 C.set_state(appt, a, request.user, request.POST.get("reason", ""))
@@ -239,13 +250,23 @@ def home(request, reception=False):
     lanes = {k: [a for a in appts if a.state == k] for k in ("booked", "waiting", "inside", "done")}
     owner = V.is_owner(request.user) and not reception
     from . import followup as FU
+    from . import online as ON
+
+    online = [dict(ob=ob, known=ON.known_patient(ob)) for ob in ON.waiting(day)]
+    wa_ob = None
+    if request.GET.get("wa", "").isdigit():
+        from .models import OnlineBooking
+
+        ob = OnlineBooking.objects.filter(pk=int(request.GET["wa"]), state="ok").select_related("appointment", "doctor").first()
+        if ob:
+            wa_ob = dict(ob=ob, wa=FU.wa_link(ob.phone, ON.confirm_text(ob)))
 
     return render(request, "clinic/home.html", _ctx(docs_today=FU.doctors_today(day),lanes=lanes, sum=C.today_summary(day) if owner else None, owner=owner,
                                                     cash_ok=_cash_ok(request.user), drawer=C.open_shift(),
                                                     others=[a for a in appts if a.state in ("cancelled", "noshow")],
                                                     upcoming=Appointment.objects.filter(date__gt=day, state="booked").count(),
                                                     follow=Visit.objects.filter(next_visit=day).exclude(state="cancelled").select_related("patient")[:20],
-                                                    reception=reception, walk=request.GET.get("walk") == "1",
+                                                    reception=reception, walk=request.GET.get("walk") == "1", online=online, wa_ob=wa_ob,
                                                     rcpt=int(request.GET["rcpt"]) if request.GET.get("rcpt", "").isdigit() else None,
                                                     unpaid=[v for v in Visit.objects.filter(state="open", opened_at__date=day).select_related("patient", "doctor")
                                                             .prefetch_related("lines") if v.unbilled > 0]))
@@ -708,6 +729,25 @@ def setup(request):
                 cs.max_discount_pct = pct
                 cs.save(update_fields=["max_discount_pct"])
                 messages.success(request, "حُفظ حد خصم الاستقبال ✔")
+            elif a == "online":  # 1.25 the clinic's online booking page
+                from . import online as ON
+                from .models import ClinicSettings
+
+                cs = ClinicSettings.get()
+                nd = request.POST.get("online_days", "14").strip() or "14"
+                if not nd.isdigit() or not 1 <= int(nd) <= 60:
+                    raise ValidationError("مدة الحجز مقدمًا من 1 إلى 60 يومًا")
+                cs.online_on, cs.online_auto = request.POST.get("online_on") == "1", request.POST.get("online_auto") == "1"
+                cs.online_days, cs.online_note = int(nd), request.POST.get("online_note", "").strip()[:200]
+                cs.save(update_fields=["online_on", "online_auto", "online_days", "online_note"])
+                try:
+                    ON.push(force=True)
+                    messages.success(request, "حُفظ ونُشرت صفحة الحجز ✔" if cs.online_on else "حُفظ — أُوقفت صفحة الحجز أونلاين")
+                except Exception as e:  # noqa: BLE001
+                    messages.warning(request, f"حُفظ، وستُنشر الصفحة فور اتصال الجهاز بالإنترنت ({e})")
+                if cs.online_on and not ON.online_doctors():
+                    messages.warning(request, "لا يظهر في صفحة الحجز إلا الطبيب الذي له أيام عمل وساعات — حدّدها من «تعديل» الطبيب")
+                return redirect(reverse("clinic_setup") + "#online")
             elif a == "service_off":
                 svc = _service(request.POST.get("pk"))
                 if svc:
@@ -725,7 +765,13 @@ def setup(request):
     have = {s.weekday: s for s in edit_doc.shifts.all()} if edit_doc else {}
     sched = [dict(wd=wd, name=name, on=wd in have, a=have[wd].start.strftime("%H:%M") if wd in have else "17:00",
                   b=have[wd].end.strftime("%H:%M") if wd in have else "22:00") for wd, name in DoctorShift.DAYS]
+    from ui.connect import _qr_svg
+
+    from . import online as ON
+
+    book_link = ON.link()
     return render(request, "clinic/setup.html", _ctx(
+        book_link=book_link, book_qr=_qr_svg(book_link) if book_link else "", online_docs=ON.online_doctors(),
         cs=ClinicSettings.get(), sched=sched, sched_text={d.pk: FU.schedule_text(d) for d in Doctor.objects.prefetch_related("shifts")},
         all_doctors=Doctor.objects.all(), edit_doc=edit_doc, edit_svc=edit_svc,
         edit_cons=list(edit_svc.item.recipe.lines.select_related("ingredient")) if edit_svc and hasattr(edit_svc.item, "recipe") else [],

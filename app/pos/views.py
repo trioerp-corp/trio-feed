@@ -31,6 +31,13 @@ def app(request):
     return render(request, "pos/app.html")
 
 
+def display(request):
+    """1.25 customer display: a second window of the till on the same computer — it shows only what the till sends it (no data here)."""
+    if not CompanySettings.get().pos_enabled:
+        raise Http404("نقاط البيع غير مفعلة")
+    return render(request, "pos/display.html")
+
+
 def sw(request):
     js = """const C='gg-pos-v1';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['/pos/']))));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.pathname.startsWith('/pos/api/'))return;
@@ -152,16 +159,19 @@ def api_nos(request):
 
 def api_link(request):
     """«اربط هذا الجهاز»: the owner / manager signed in on this browser picks a cashier device — no key to copy."""
-    from pos.branches import home_branch
+    from pos.branches import home_branch, staff_of
 
     u = request.user
-    if not (u.is_authenticated and (u.is_superuser or u.groups.filter(name="مدير المحل").exists())) or not CompanySettings.get().pos_enabled:
+    hb = home_branch(u) if u.is_authenticated else None
+    st = staff_of(u) if hb else None  # 1.25: a branch manager links his own branch's tills too (he runs the branch)
+    if not (u.is_authenticated and (u.is_superuser or u.groups.filter(name="مدير المحل").exists() or (st and st.role == "branch_manager"))) \
+            or not CompanySettings.get().pos_enabled:
         return JsonResponse({"devices": []})
     qs = Device.objects.filter(active=True, branch__active=True).exclude(code__in=["CL", "GM"]).select_related("branch").order_by("branch__id", "code")
-    hb = home_branch(u)
     if hb:
         qs = qs.filter(branch=hb)
-    return JsonResponse({"devices": [dict(name=f"{d.name} — {d.branch.name}", token=d.token, used=bool(d.last_sync)) for d in qs[:40]]})
+    return JsonResponse({"devices": [dict(name=d.name if d.branch.name in d.name else f"{d.name} — {d.branch.name}", token=d.token, used=bool(d.last_sync))
+                                     for d in qs[:40]]})
 
 
 @csrf_exempt

@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}كشف حساب {{ p.name }}{% endblock %}
+{% block content %}
+<style>.st-ok{color:var(--ok,#1B7F4B)}.st-late{color:var(--bad,#C62828);font-weight:800}.st-today{color:#B45F06;font-weight:800}.st-soon{color:var(--muted)}
+tr.late td{background:rgba(198,40,40,.06)}.cc-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));align-items:start;margin-bottom:16px}
+.cc-act{display:flex;gap:8px;flex-wrap:wrap}.cc-act form{display:inline}.wa{background:#25D366!important;border-color:#25D366!important;color:#fff!important}
+.ph{display:none}
+@media print{.noprint,.sidebar,nav,header .actions,.page-head .actions,.cc-forms,.messages{display:none!important}.ph{display:block}body{background:#fff}.card{box-shadow:none;border:1px solid #ccc}
+.table-wrap{overflow:visible}main,.main,.content{margin:0!important;padding:0!important}}</style>
+<div class="ph" style="text-align:center;margin-bottom:10px">{% if s.logo_svg %}<div style="max-width:90px;margin:0 auto">{{ s.logo_svg|safe }}</div>{% endif %}<h2 style="margin:4px 0">{{ s.name }}</h2>
+<p style="margin:0">{{ s.address }}{% if s.phone %} · {{ s.phone }}{% endif %}</p><h3 style="margin:10px 0 0">كشف حساب العميل — {{ today|date:"d/m/Y" }}</h3></div>
+<div class="page-head"><div><h1>👤 {{ p.name }}</h1><p class="muted" style="margin:0">{% if p.phone %}<span dir="ltr">{{ p.phone }}</span> · {% endif %}مدة السداد {{ d.days }} يوم{% if limit is not None %} · حد المديونية {{ limit|money:0 }}{% endif %}{% if terms.reminded_at %} · آخر تذكير {{ terms.reminded_at|date:"d/m H:i" }}{% if terms.reminded_by %} ({{ terms.reminded_by }}){% endif %}{% endif %}</p></div>
+<div class="actions cc-act">
+<a class="btn wa" href="{{ wa }}" target="_blank" rel="noopener" title="{% if not has_phone %}لا يوجد رقم موبايل صحيح للعميل — اختر جهة الاتصال في واتساب{% endif %}">💬 إرسال كشف الحساب واتساب</a>
+<button class="light" type="button" onclick="window.print()">🖨 طباعة / حفظ PDF</button>
+<a class="btn light" href="{% url 'voucher_new' %}?kind=receipt">💵 تحصيل</a>
+<a class="btn light" href="{% url 'credit_dues' %}">الأقساط المستحقة</a><a class="btn light" href="{% url 'shop_partners' %}?kind=customer">رجوع</a></div></div>
+{% if not has_phone %}<p class="muted noprint" style="margin:-6px 0 10px">لا يوجد رقم موبايل مصري صحيح للعميل — أضفه من «✏ تعديل» في قائمة العملاء ليفتح واتساب على محادثته مباشرة.</p>{% endif %}
+
+<section class="grid" style="margin-bottom:16px">
+<div class="card kpi hero"><span class="k">إجمالي المستحق عليه</span><span class="v">{% if d.owed < 0 %}{{ d.owed|neg|money }}{% else %}{{ d.owed|money }}{% endif %}</span><span class="k">{% if d.owed < 0 %}رصيد له لدينا{% elif not d.owed %}مسدَّد بالكامل ✔{% else %}جنيه{% endif %}</span></div>
+<div class="card kpi{% if d.late %} red{% endif %}"><span class="k">متأخر السداد</span><span class="v"{% if d.late %} style="color:var(--bad,#C62828)"{% endif %}>{{ d.late|money }}</span><span class="k">{% if d.late %}أقدمه منذ {{ d.late_days }} يوم{% else %}لا توجد متأخرات{% endif %}</span></div>
+<div class="card kpi"><span class="k">المستحق القادم</span><span class="v">{% if d.next %}{{ d.next.remaining|money }}{% else %}—{% endif %}</span><span class="k">{% if d.next %}يوم {{ d.next.due|date:"d/m/Y" }}{% else %}لا يوجد{% endif %}</span></div>
+</section>
+
+<div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 10px">🧾 الفواتير والأقساط ومواعيد السداد</h2>
+<p class="muted" style="margin:0 0 8px;font-size:13px">ما يدفعه العميل يُخصم من أقدم مستحق أولًا؛ المتبقي عليه يظهر على أحدث المستحقات.</p>
+<div class="table-wrap"><table><thead><tr><th>المستحق</th><th>التاريخ</th><th>موعد السداد</th><th class="n">القيمة</th><th class="n">المدفوع</th><th class="n">المتبقي</th><th>الحالة</th></tr></thead><tbody>
+{% for r in d.rows %}<tr class="{% if r.cls == 'late' %}late{% endif %}"><td>{% if r.kind == 'inst' %}<b>القسط {{ r.no }} من {{ r.count }}</b><br><span class="muted" style="font-size:12px">{{ r.ref }}</span>{% else %}{{ r.ref }}{% endif %}</td>
+<td>{{ r.date|date:"d/m/Y" }}</td><td><b>{{ r.due|date:"d/m/Y" }}</b></td><td class="n">{{ r.amount|money }}</td><td class="n">{% if r.paid %}{{ r.paid|money }}{% else %}—{% endif %}</td>
+<td class="n"><b>{{ r.remaining|money }}</b></td><td class="st-{{ r.cls }}">{{ r.status }}</td></tr>
+{% empty %}<tr><td colspan="7" class="muted">لا توجد مبيعات آجلة لهذا العميل</td></tr>{% endfor %}</tbody></table></div></div>
+
+{% if can_plan %}<div class="cc-grid cc-forms noprint">
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="plan"><h2 style="margin:0 0 10px">📆 تقسيط</h2>
+<label class="field">ماذا يُقسَّط؟<select name="target">{% if d.owed > 0 %}<option value="all">الرصيد كله المستحق الآن ({{ d.owed|money }})</option>{% endif %}
+{% for r in open_rows %}{% if r.order %}<option value="order:{{ r.order.pk|unlocalize }}">{{ r.ref }} — المتبقي {{ r.remaining|money }}</option>{% elif r.entry %}<option value="entry:{{ r.entry.pk|unlocalize }}">{{ r.ref }} — المتبقي {{ r.remaining|money }}</option>{% endif %}{% endfor %}</select></label>
+<div class="form-grid"><label class="field">عدد الأقساط<input name="count" inputmode="numeric" dir="ltr" value="3" required></label>
+<label class="field">الدورية<select name="every"><option value="month">شهريًا</option><option value="2weeks">كل أسبوعين</option><option value="week">أسبوعيًا</option></select></label>
+<label class="field">أول قسط يوم<input type="date" name="first" value="{{ first_default|date:'Y-m-d' }}"></label>
+<label class="field">المبلغ (فارغ = المتبقي)<input name="amount" inputmode="decimal" dir="ltr" placeholder="المتبقي"></label></div>
+<label class="field">ملاحظة<input name="note" maxlength="200" placeholder="اختياري"></label>
+{% if d.owed > 0 %}<button>حفظ خطة التقسيط</button>{% else %}<p class="muted">لا يوجد مبلغ مستحق للتقسيط.</p>{% endif %}</form>
+<div class="card"><h2 style="margin:0 0 10px">⚙️ مدة السداد</h2><form method="post" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">{% csrf_token %}<input type="hidden" name="op" value="terms">
+<label class="field" style="margin:0;flex:1">يدفع كل فاتورة آجلة خلال (يوم)<input name="days" inputmode="numeric" dir="ltr" value="{{ terms.days|default_if_none:'' }}" placeholder="العامة: {{ default_days }} يوم"></label><button class="light">حفظ</button></form>
+<p class="muted" style="font-size:12.5px">فارغ = المدة العامة للمحل ({{ default_days }} يوم، من «الأقساط المستحقة»). 0 = تستحق يوم البيع.</p>
+{% if d.plans %}<h3 style="margin:12px 0 6px">خطط التقسيط</h3>{% for pl in d.plans %}<p style="margin:0 0 6px">{{ pl.ref }} — {{ pl.amount|money }} على {{ pl.count }} أقساط {{ pl.get_every_display }} من {{ pl.first_due|date:"d/m/Y" }}{% if pl.by %} <span class="muted">({{ pl.by }})</span>{% endif %}
+<form method="post" style="display:inline" onsubmit="return confirm('إلغاء خطة التقسيط؟ يعود المبلغ إلى موعد سداده العادي')">{% csrf_token %}<input type="hidden" name="op" value="cancel_plan"><input type="hidden" name="plan" value="{{ pl.pk|unlocalize }}"><button class="light" style="padding:2px 8px;font-size:12px">إلغاء</button></form></p>{% endfor %}{% endif %}
+{% if remind_wa %}<form method="post" target="_blank" style="margin-top:10px">{% csrf_token %}<input type="hidden" name="op" value="remind"><input type="hidden" name="wa" value="{{ remind_wa }}"><button class="wa">💬 تذكير بالمستحق على واتساب</button></form>{% endif %}</div></div>{% endif %}
+
+<div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 10px">📒 حركة الحساب</h2><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>القيد</th><th>البيان</th><th class="n">مدين (عليه)</th><th class="n">دائن (سدّد / مرتجع)</th><th class="n">الرصيد</th></tr></thead><tbody>
+{% for m in moves %}<tr><td>{{ m.date|date:"d/m/Y" }}</td><td>{{ m.number }}</td><td>{{ m.desc }}</td><td class="n">{% if m.debit %}{{ m.debit|money }}{% endif %}</td><td class="n">{% if m.credit %}{{ m.credit|money }}{% endif %}</td><td class="n"><b>{{ m.bal|money }}</b></td></tr>
+{% empty %}<tr><td colspan="6" class="muted">لا توجد حركات</td></tr>{% endfor %}</tbody></table></div></div>
+<details class="card noprint"><summary>نص رسالة كشف الحساب</summary><pre style="white-space:pre-wrap;font-family:inherit;margin:8px 0 0">{{ text }}</pre></details>
+{% endblock %}

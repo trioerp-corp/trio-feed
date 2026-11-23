@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "gaming",
     "pos.clinic",
     "pos.staff",
+    "pos.credit",
     "ui",
     "reports",
 ]

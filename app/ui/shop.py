@@ -55,6 +55,18 @@ def _branch_stock_value(b):
     return sum((q.qty * q.item.avg_cost for q in StockQuant.objects.filter(warehouse=b.warehouse).select_related("item")), Z).quantize(Decimal("0.01"))
 
 
+def _low(b=None):
+    """Items at or under their reorder level — 1.25: for one branch, on that branch's own shelf (its store), not the company's total.
+    Each item carries `here` (the quantity shown next to it)."""
+    from inventory.models import StockQuant
+
+    qs = Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name")
+    if not b:
+        return [setattr(i, "here", i.qty_on_hand) or i for i in qs if i.qty_on_hand <= i.reorder_level]
+    have = dict(StockQuant.objects.filter(warehouse=b.warehouse).values_list("item_id", "qty"))
+    return [setattr(i, "here", have.get(i.pk, Z)) or i for i in qs.filter(item_type="stock") if have.get(i.pk, Z) <= i.reorder_level]
+
+
 def num(v):
     """Numbers typed or shown with an Arabic decimal comma («36,50») or Arabic digits."""
     v = str(v or "").strip().replace("٫", ".").replace(",", ".").translate(str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789"))
@@ -81,7 +93,7 @@ def _range(request, default_days=0):
 
 
 def _sales(orders):
-    t = dict(n=0, gross=Z, returns=Z, vat=Z, cash=Z, card=Z, credit=Z, rider=Z, disc=Z)
+    t = dict(n=0, gross=Z, returns=Z, vat=Z, cash=Z, card=Z, credit=Z, rider=Z, disc=Z, insta=Z)
     for o in orders:
         if o.cancelled:
             continue
@@ -94,6 +106,7 @@ def _sales(orders):
         t["vat"] += sign * o.vat
         t["cash"] += sign * o.paid_cash
         t["card"] += sign * o.paid_card
+        t["insta"] += sign * (o.paid_insta or Z)  # 1.25 InstaPay transfers: their own column, never cash
         t["credit"] += sign * o.paid_credit
         t["rider"] += sign * (o.paid_rider or Z)  # 1.24 delivery: money still with / handed in by the rider
         if not o.is_return:  # 1.25 manual discounts (lines + invoice), kept on the receipt's raw data
@@ -159,7 +172,7 @@ def home(request):
     orders = list(oq)
     t = _sales(orders)
     drawer = b.cashbox if b else CashBox.objects.filter(active=True, kind="cash").first()
-    low = [i for i in Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name") if i.qty_on_hand <= i.reorder_level]
+    low = _low(b)
     stock_value = _branch_stock_value(b) if b else (Item.objects.aggregate(s=Sum("stock_value"))["s"] or Z)
     devices = Device.objects.filter(active=True).select_related("branch")
     if b:
@@ -172,7 +185,11 @@ def home(request):
 
     from pos.models import ShopPartner
 
-    return render(request, "ui/shop_home.html", dict(many_stores=Warehouse.objects.filter(active=True).count() > 1, no_expiry="expiry" in __import__("core.activities", fromlist=["x"]).unused(), no_production="production" in __import__("core.activities", fromlist=["x"]).unused(), has_partners=ShopPartner.objects.filter(active=True).exists(), db_problem=problem(), owner=owner_balance(), expiring_n=len(expiring(14)), settings_obj=CompanySettings.get(), open_shifts=Shift.objects.filter(closed_at__isnull=True).count(),
+    from pos.branches import branches_on
+
+    tr_wait = __import__("pos.transfers", fromlist=["x"]).waiting(request.user) if branches_on() else 0
+    return render(request, "ui/shop_home.html", dict(tr_wait=tr_wait, multi_hint=not branches_on() and bool((s.menu_cfg or {}).get("multi")) and "branches" in enabled(s),
+                                                     many_stores=Warehouse.objects.filter(active=True).count() > 1, no_expiry="expiry" in __import__("core.activities", fromlist=["x"]).unused(), no_production="production" in __import__("core.activities", fromlist=["x"]).unused(), has_partners=ShopPartner.objects.filter(active=True).exists(), db_problem=problem(), owner=owner_balance(), expiring_n=len(expiring(14)), settings_obj=CompanySettings.get(), open_shifts=Shift.objects.filter(closed_at__isnull=True, **({"device__branch": b} if b else {})).count(),
                                                      last_close=DayClose.objects.order_by("-date").first(),t=t, today=today, drawer=drawer, drawer_bal=T.cashbox_balance(drawer) if drawer else Z,
                                                      low=low[:15], low_n=len(low), stock_value=stock_value, devices=devices,
                                                      recent=(Order.objects.filter(device__branch=b) if b else Order.objects).select_related("device").order_by("-created_at_device")[:10],
@@ -370,7 +387,7 @@ def reports(request):
     shifts = Shift.objects.filter(opened_at__date__range=(d1, d2)).order_by("-opened_at")
     if b:
         shifts = shifts.filter(device__branch=b)
-    low = [i for i in Item.objects.filter(active=True, reorder_level__isnull=False).order_by("name") if i.qty_on_hand <= i.reorder_level]
+    low = _low(b)
     from pos.delivery import cfg as _dcfg
 
     return render(request, "ui/shop_reports.html", dict(
@@ -629,7 +646,13 @@ def partners(request):
     bal = {r["partner"]: (r["d"] or Z) - (r["c"] or Z) for r in JournalLine.objects.filter(account__code=code, entry__state__in=["posted", "reversed"])
            .values("partner").annotate(d=Sum("debit"), c=Sum("credit"))}
     rows = [(p, bal.get(p.pk, Z) * (-1 if kind == "supplier" else 1)) for p in Partner.objects.filter(kind=kind, active=True).order_by("name")]
-    return render(request, "ui/shop_partners.html", dict(rows=rows, kind=kind, total=sum((b for _, b in rows), Z), code=code))
+    late = {}
+    if kind == "customer":  # 1.25 instalments / credit sales past their due date
+        from pos.credit.services import late_amount
+
+        late = {p.pk: late_amount(p) for p, b in rows if b > 0}
+    return render(request, "ui/shop_partners.html", dict(rows=rows, kind=kind, total=sum((b for _, b in rows), Z), code=code, late=late,
+                                                         late_total=sum(late.values(), Z)))
 
 
 # ------------------------------------------------------------------ production (kitchen)
@@ -644,6 +667,9 @@ def production(request):
     if request.method == "POST" and "new" in request.POST:
         try:
             with transaction.atomic():
+                lb = _b(request) if _locked(request) else None
+                if lb and {str(request.POST.get("from_wh")), str(request.POST.get("to_wh"))} != {str(lb.warehouse_id)}:
+                    raise ValidationError("التصنيع من مخزن فرعك وإليه فقط")
                 po = ProductionOrder.objects.create(name=request.POST.get("name") or "تصنيع", date_out=dt.date.fromisoformat(request.POST["date"]),
                                                     from_warehouse_id=request.POST["from_wh"], to_warehouse_id=request.POST["to_wh"])
                 for side in ("in", "out"):
@@ -680,8 +706,9 @@ def production(request):
             _errs(request, e)
         return redirect("shop_production")
     redo = ProductionOrder.objects.filter(pk=request.GET.get("redo") or 0).prefetch_related("lines").first()
-    orders = ProductionOrder.objects.select_related("from_warehouse", "to_warehouse").prefetch_related("lines__item")[:100]
-    return render(request, "ui/shop_production.html", dict(orders=orders, whs=Warehouse.objects.filter(active=True), redo=redo, can_edit=V.can_edit(request.user),
+    pb = _b(request) if _locked(request) else None  # a branch's kitchen works from its own store
+    orders = ProductionOrder.objects.filter(**({"from_warehouse": pb.warehouse} if pb else {})).select_related("from_warehouse", "to_warehouse").prefetch_related("lines__item")[:100]
+    return render(request, "ui/shop_production.html", dict(orders=orders, whs=Warehouse.objects.filter(active=True, **({"pk": pb.warehouse_id} if pb else {})), redo=redo, can_edit=V.can_edit(request.user),
                                                           items=Item.objects.filter(active=True).exclude(code="0").order_by("name"),
                                                           today=timezone.localdate().isoformat()))
 
@@ -795,7 +822,12 @@ def returns(request):
         try:
             with transaction.atomic():
                 kind = request.POST["kind"]
+                if kind not in ("preturn", "expired"):
+                    raise ValidationError("نوع غير معروف")
                 sup = Partner.objects.filter(pk=request.POST.get("supplier") or 0).first() if kind == "preturn" else None
+                rb = _b(request)
+                if rb and str(request.POST.get("warehouse")) != str(rb.warehouse_id):  # 1.25: a branch returns from its own store
+                    raise ValidationError("المرتجع من مخزن فرعك فقط")
                 mv = StockMove.objects.create(kind=kind, date=dt.date.fromisoformat(request.POST["date"]), warehouse_id=request.POST["warehouse"],
                                               partner=sup, created_by=request.user, description=request.POST.get("note", "")[:300])
                 cc = None
@@ -827,7 +859,8 @@ def returns(request):
         except (ValidationError, ValueError, KeyError) as e:
             _errs(request, e)
         return redirect("shop_returns")
-    qs = StockMove.objects.filter(kind__in=["preturn", "expired"]).select_related("partner", "warehouse").order_by("-date", "-id")[:200]
+    rb = _b(request)
+    qs = StockMove.objects.filter(kind__in=["preturn", "expired"], **({"warehouse": rb.warehouse} if rb else {})).select_related("partner", "warehouse").order_by("-date", "-id")[:200]
     items = list(Item.objects.filter(active=True).exclude(code="0").order_by("name"))
     G = request.GET  # from the expiry page: «مرتجع للمورد» on a batch → this page filled in
     pre = None
@@ -841,7 +874,7 @@ def returns(request):
             if src:  # the batch's own cost and supplier, shown before saving
                 pre.update(src_txt=f"من فاتورة {src.move.number} بسعر شراء {SUP.batch_cost(src):,.2f} ج للوحدة")
     return render(request, "ui/shop_returns.html", dict(
-        rows=[(m, sum((l.value or Z for l in m.lines.all()), Z)) for m in qs], whs=Warehouse.objects.filter(active=True),
+        rows=[(m, sum((l.value or Z for l in m.lines.all()), Z)) for m in qs], whs=Warehouse.objects.filter(active=True, **({"pk": rb.warehouse_id} if rb else {})),
         suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"), item_units=_purchase_units(items),
         items=items, today=timezone.localdate().isoformat(), pre=pre, pre_supplier=G.get("supplier", ""),
         pre_kind="expired" if G.get("kind") == "expired" else "preturn"))
@@ -853,7 +886,9 @@ def valuation(request):
     _need_cash(request)
     from inventory.models import StockQuant
 
-    wh = Warehouse.objects.filter(pk=request.GET.get("warehouse") or 0).first()
+    b = _b(request)
+    whs = Warehouse.objects.filter(active=True, **({"pk": b.warehouse_id} if b else {}))
+    wh = b.warehouse if b else whs.filter(pk=request.GET.get("warehouse") or 0).first()  # 1.25: a branch sees its own store
     rows, tot = [], dict(cost=Z, sale=Z, qty_items=0)
     by_cat = defaultdict(lambda: dict(cost=Z, sale=Z))
     for it in Item.objects.filter(active=True).exclude(code="0").select_related("category").order_by("category__name", "name"):
@@ -868,7 +903,7 @@ def valuation(request):
         by_cat[it.category.name]["cost"] += cost
         by_cat[it.category.name]["sale"] += sale
     tot["profit"] = tot["sale"] - tot["cost"]
-    return render(request, "ui/shop_valuation.html", dict(rows=rows, tot=tot, cats=sorted(by_cat.items()), whs=Warehouse.objects.filter(active=True), wh=wh))
+    return render(request, "ui/shop_valuation.html", dict(rows=rows, tot=tot, cats=sorted(by_cat.items()), whs=whs, wh=wh))
 
 
 def _bkey(request):
@@ -902,14 +937,15 @@ def shop_settings(request):
     U = get_user_model()
     if request.method == "POST":
         a = request.POST.get("action")
-        if a == "device":
-            br = _b(request) or Branch.objects.order_by("id").first()
+        if a == "device":  # 1.25: the owner picks the branch the new till belongs to
+            br = (Branch.objects.filter(pk=request.POST.get("branch") or 0, active=True).first() if not _locked(request) else None) or _b(request) \
+                or Branch.objects.order_by("id").first()
             n = Device.objects.filter(branch=br).count() + 1
             while Device.objects.filter(branch=br, code=f"{n:02d}").exists():
                 n += 1
             code = f"{n:02d}"
-            Device.objects.create(branch=br, code=code, name=request.POST.get("name") or f"كاشير {int(code)}")
-            messages.success(request, "أُضيف جهاز — انسخ مفتاحه والصقه في لوحة البيع على الجهاز الجديد")
+            Device.objects.create(branch=br, code=code, name=(request.POST.get("name") or "").strip()[:60] or f"كاشير {int(code)}")
+            messages.success(request, f"أُضيف جهاز في «{br.name}» — افتح لوحة البيع على الجهاز الجديد وأنت داخل بحسابك واختر «اربط هذا الجهاز»")
         elif a == "toggle_device":
             d = Device.objects.get(pk=request.POST["id"])
             d.active = not d.active
@@ -925,7 +961,8 @@ def shop_settings(request):
 
                 offered = BR.templates_for(CompanySettings.get().business)
                 role = request.POST.get("role") if request.POST.get("role") in offered and request.POST.get("role") != "owner" else "cashier"
-                BR.apply_staff(u, role, None, _b(request), request.POST.get("title", "") or offered[role][0], "", "")
+                ub = (Branch.objects.filter(pk=request.POST.get("branch") or 0, active=True).first() if not _locked(request) else None) or _b(request)
+                BR.apply_staff(u, role, None, ub, request.POST.get("title", "") or offered[role][0], "", "")  # 1.25: the branch he works in
                 if role == "doctor":  # his login opens his own «شاشة الدكتور»
                     from django.apps import apps
 
@@ -964,6 +1001,15 @@ def shop_settings(request):
                 messages.success(request, "تم حفظ إعدادات الكاشير ✔ — تُطبّق على شاشة الكاشير خلال دقائق أو عند إعادة فتحها")
             except ValidationError as e:
                 messages.error(request, "؛ ".join(e.messages))
+        elif a == "insta" and V.is_owner(request.user):  # 1.25 InstaPay link → QR on receipts + «InstaPay» at the till
+            from pos import instapay as IP
+
+            try:
+                link = IP.save(request.POST.get("insta", ""), rc=request.POST.get("rc") == "1")
+                messages.success(request, "تم حفظ InstaPay ✔ — يظهر الـQR على الإيصال وزر «InstaPay» في الكاشير" if link else "تم الحفظ — لا يوجد رابط InstaPay")
+            except ValidationError as e:
+                messages.error(request, e.messages[0])
+            return redirect("/ui/shop/settings/#insta")
         elif a == "plus" and V.is_owner(request.user):  # 1.26 optional till features (switches; details on their pages)
             from . import plus as PP
 
@@ -986,6 +1032,29 @@ def shop_settings(request):
                     messages.error(request, f"النسخة الاحتياطية فشلت: {e}")
             else:
                 messages.success(request, "تم الحفظ")
+        elif a == "alerts" and V.is_head(request.user):  # 1.25 the owner's WhatsApp alerts: his number + a switch per alert
+            from core import alerts as AL
+
+            s = CompanySettings.get()
+            s.owner_whatsapp = request.POST.get("whatsapp", "").strip()[:40]
+            s.save(update_fields=["owner_whatsapp"])
+            try:
+                AL.save_cfg(request.POST.getlist("on"), request.POST.get("short_min"), s)
+                if "test" in request.POST:
+                    if not AL.owner_number(s):
+                        messages.error(request, "اكتب رقم واتساب صاحب المحل أولًا")
+                    else:
+                        res = AL.deliver("void", "هذا تنبيه تجربة من الإعدادات — إن وصلك فالتنبيهات تعمل ✔", s)
+                        if res.get("wa") == "ok":
+                            messages.success(request, "أُرسل تنبيه التجربة على واتساب ✔")
+                        else:
+                            fb = "، ".join(f"{'تليجرام' if k == 'tg' else 'البريد'}: {'وصل ✔' if v == 'ok' else v}" for k, v in res.items() if k in ("tg", "mail"))
+                            msg = "واتساب التلقائي غير مفعّل على خادم Trio بعد" if res.get("wa") == "off" else f"واتساب: {res.get('wa')}"
+                            (messages.success if "ok" in res.values() else messages.error)(request, msg + (f" — {fb}" if fb else ""))
+                else:
+                    messages.success(request, "حُفظت التنبيهات ✔")
+            except ValidationError as e:
+                messages.error(request, "؛ ".join(e.messages))
         elif a == "report" and request.user.is_superuser:
             s = CompanySettings.get()
             for f in ("telegram_token", "telegram_chat", "email_to", "smtp_host", "smtp_user"):
@@ -1019,26 +1088,14 @@ def shop_settings(request):
                     (messages.success if ok else messages.error)(request, f"{ch}: {msg}")
             else:
                 messages.success(request, "تم حفظ إعدادات ملخص اليوم")
-        elif a == "branch":
-            from inventory.models import Warehouse
-            from ledger.models import DimensionValue
+        elif a == "branch" and not _locked(request):  # older forms / scripts: now the same proper branch as «الفروع» makes
+            from pos import branches as BR
 
-            name = request.POST.get("name", "").strip()
-            if name:
-                n = Branch.objects.count() + 1
-                while (Account.objects.filter(code=f"12010301{80 + n:02d}").exists() or Branch.objects.filter(code=f"B{n:02d}").exists()
-                       or DimensionValue.objects.filter(dimension__number=1, code=f"BR{n:02d}").exists()):
-                    n += 1
-                parent = Account.objects.get(code="12010301")
-                acc = Account.objects.create(code=f"12010301{80 + n:02d}", name=f"خزينة {name}", parent=parent, level=6, is_postable=True,
-                                             account_type="asset", normal_balance="debit", report="balance_sheet", cash_flow_category="cash")
-                box = CashBox.objects.create(account=acc, name=f"خزينة {name}", kind="cash", currency="EGP", order=10 + n)
-                store = DimensionValue.objects.get(dimension__number=1, code="1")
-                cc = DimensionValue.objects.create(dimension=store.dimension, code=f"BR{n:02d}", name=name, level=2, is_postable=True, parent=store)
-                wh = Warehouse.objects.create(code=f"BR{n:02d}", name=f"مخزن {name}", project=store)
-                br = Branch.objects.create(code=f"B{n:02d}", name=name, warehouse=wh, cashbox=box, cost_center=cc, receipt_footer="شكرًا لزيارتكم")
-                Device.objects.create(branch=br, code="01", name=f"كاشير {name}")
-                messages.success(request, f"أُنشئ فرع «{name}» بمخزنه وخزينته وجهاز كاشير")
+            try:
+                br = BR.create_branch(request.POST.get("name", ""))
+                messages.success(request, f"أُنشئ فرع «{br.name}» بمخزنه وخزينته وجهاز كاشير")
+            except ValidationError as e:
+                messages.error(request, e.messages[0])
         elif a == "receipt":
             s = CompanySettings.get()
             s.phone, s.address = request.POST.get("phone", ""), request.POST.get("address", "")
@@ -1095,9 +1152,22 @@ def shop_settings(request):
                                                           users=U.objects.filter(is_superuser=False).order_by("username"),
                                                           s=CompanySettings.get(), br=Branch.objects.first(), bkey=_bkey(request),
                                                           printers=__import__("pos.kitchen", fromlist=["x"]).printers(),
-                                                          till=__import__("pos.services", fromlist=["x"]).till_cfg(), policy=__import__("pos.services", fromlist=["x"]).receipt_policy(), plus=__import__("pos.plus", fromlist=["x"]).cfg(), scale_presets=[
+                                                          insta=__import__("pos.instapay", fromlist=["x"]).cfg(), till=__import__("pos.services", fromlist=["x"]).till_cfg(), policy=__import__("pos.services", fromlist=["x"]).receipt_policy(), plus=__import__("pos.plus", fromlist=["x"]).cfg(), scale_presets=[
                                                               (k, v[0]) for k, v in SCALE_PRESETS.items()], scale_now=_scale_now(), off=__import__("core.activities", fromlist=["x"]).unused(),
-                                                          **_user_roles()))
+                                                          **_alerts_ctx(), **_user_roles()))
+
+
+def _alerts_ctx():
+    """1.25: «تنبيهات صاحب المحل» in the settings — what is on, and whether Trio's server sends WhatsApp yet."""
+    from core import alerts as AL
+    from core import mobile as MB
+
+    try:
+        wa_on, base = bool(MB.info().get("wa")), MB.api()
+    except Exception:  # noqa: BLE001 — offline
+        wa_on, base = False, ""
+    c = AL.cfg()
+    return dict(alerts=c, alert_kinds=[(k, v, c["on"][k]) for k, v, _, _ in AL.KINDS], wa_on=wa_on, wa_guide=f"{base}/wa/guide" if base else "")
 
 
 # 1.25 scale label presets: (label, prefix, item digits, mode) — 13 digits with the check digit
@@ -1220,6 +1290,7 @@ def order_edit(request, pk):
 
     pkg = refund_info(order) if editable and V.is_owner(request.user) else None
     return render(request, "ui/order_edit.html", dict(o=order, lines=list(order.lines.select_related("item")), editable=editable, items=items,
+                                                      insta_on=__import__("pos.instapay", fromlist=["x"]).on(),
                                                       later=later, can_cash=can_see_cash(request.user), pkg=pkg))
 
 
@@ -1256,7 +1327,7 @@ from pos.models import Promotion  # noqa: E402
 
 @login_required
 def promos(request):
-    if not V.is_owner(request.user):
+    if not V.is_head(request.user):
         raise PermissionDenied
     if request.method == "POST":
         try:
@@ -1387,7 +1458,7 @@ def whatsapp_text(day):
 
     drawer = CashBox.objects.filter(active=True, kind="cash").first()
     lines = [f"ملخص {CompanySettings.get().name} — {day:%d/%m/%Y}",
-             f"المبيعات: {t['net']:,.2f} ج ({t['n']} فاتورة)", f"نقدي {t['cash']:,.2f} — فيزا/محافظ {t['card']:,.2f} — آجل {t['credit']:,.2f}",
+             f"المبيعات: {t['net']:,.2f} ج ({t['n']} فاتورة)", f"نقدي {t['cash']:,.2f} — فيزا/محافظ {t['card']:,.2f}" + (f" — InstaPay {t['insta']:,.2f}" if t['insta'] else "") + f" — آجل {t['credit']:,.2f}",
              f"مجمل الربح التقريبي: {t['net_ex_vat'] - cogs:,.2f}", f"رصيد الدرج: {T.cashbox_balance(drawer, upto=day) if drawer else 0:,.2f}",
              f"رصيد صاحب المحل: {owner_balance():,.2f}", "بواسطة برنامج Trio"]
     return "\n".join(lines)

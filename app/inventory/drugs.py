@@ -113,6 +113,18 @@ def library():
     return rows
 
 
+@lru_cache(maxsize=1)
+def count():
+    """How many drugs the library holds — for the pharmacy page's heading without building the whole search index
+    (library() normalises every row: seconds on a slow PC, so the page opens before anything is searched)."""
+    if library.cache_info().currsize:
+        return len(library())
+    if not FILE.exists():
+        return 0
+    with gzip.open(FILE, "rt", encoding="utf-8") as f:
+        return sum(1 for r in csv.DictReader(f) if "N/A" not in r["en"].upper())
+
+
 def _skel(t):
     """Spelling-tolerant form: Arabic long vowels and «ه» dropped (كونجستال = كونجيستال), doubled letters single."""
     t = re.sub(r"[اويه]", "", t)

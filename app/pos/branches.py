@@ -211,7 +211,7 @@ def create_branch(name, address="", phone="", devices=1, code=""):
     br = Branch.objects.create(code=code, name=name[:100], warehouse=wh, cashbox=box, cost_center=cc, address=address[:200], phone=phone[:40],
                                receipt_footer=main.receipt_footer if main else "شكرًا لزيارتكم")
     for k in range(max(1, min(int(devices or 1), 20))):
-        Device.objects.create(branch=br, code=f"{k + 1:02d}", name=f"كاشير {k + 1} — {name}"[:60])
+        Device.objects.create(branch=br, code=f"{k + 1:02d}", name=f"كاشير {k + 1}")  # the branch shows next to it everywhere
     return br
 
 
@@ -226,3 +226,52 @@ def create_user(username, name, password, role, branch=None, title="", caps=None
     u.save()
     apply_staff(u, role, caps, branch, title, email, phone)
     return u
+
+
+def update_branch(b, name, address="", phone="", footer=""):
+    """1.25: the owner corrects a branch's details (its receipt shows its own address and phone)."""
+    from .models import Branch
+
+    name = (name or "").strip()
+    if len(name) < 2:
+        raise ValidationError("اكتب اسم الفرع")
+    if Branch.objects.filter(name=name).exclude(pk=b.pk).exists():
+        raise ValidationError(f"يوجد فرع اسمه «{name}» بالفعل")
+    b.name, b.address, b.phone = name[:100], (address or "").strip()[:200], (phone or "").strip()[:40]
+    b.receipt_footer = (footer or "").strip()[:200]
+    b.save(update_fields=["name", "address", "phone", "receipt_footer"])
+    return b
+
+
+def close_branch(b):
+    """1.25: stop a branch — only when nothing is left in it (no open shift, no goods, no cash, no goods on the road to it)."""
+    from inventory.models import StockQuant, Transfer
+    from treasury import services as T
+
+    from .models import Branch, Shift
+
+    if b.pk == Branch.objects.order_by("id").values_list("id", flat=True).first():
+        raise ValidationError("الفرع الرئيسي لا يُوقف")
+    if Shift.objects.filter(device__branch=b, closed_at__isnull=True).exists():
+        raise ValidationError("في الفرع وردية مفتوحة — أغلقها أولًا")
+    if StockQuant.objects.filter(warehouse=b.warehouse).exclude(qty=0).exists():
+        raise ValidationError("في مخزن الفرع بضاعة — حوّلها إلى فرع آخر أولًا («التحويلات بين الفروع»)")
+    if T.cashbox_balance(b.cashbox):
+        raise ValidationError("في خزينة الفرع نقدية — حوّلها أو وَرِّدها أولًا")
+    from django.db.models import Q
+
+    if Transfer.objects.filter(Q(from_warehouse=b.warehouse) | Q(to_warehouse=b.warehouse), state__in=["requested", "sent", "partial"]).exists():
+        raise ValidationError("للفرع تحويلات لم تكتمل — أنهِها أولًا")
+    b.active = False
+    b.save(update_fields=["active"])
+    b.devices.update(active=False)
+    for st in b.staff.select_related("user"):
+        st.user.is_active = False
+        st.user.save(update_fields=["is_active"])
+    return b
+
+
+def in_transit_value():
+    from .transfers import in_transit_value as v
+
+    return v()

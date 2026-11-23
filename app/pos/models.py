@@ -81,6 +81,7 @@ class Order(models.Model):
     paid_card = models.DecimalField("فيزا/محفظة", max_digits=14, decimal_places=2, default=0)
     paid_credit = models.DecimalField("آجل", max_digits=14, decimal_places=2, default=0)
     paid_rider = models.DecimalField("مع الطيار (دليفري)", max_digits=14, decimal_places=2, default=0)
+    paid_insta = models.DecimalField("إنستاباي", max_digits=14, decimal_places=2, default=0)  # 1.25: a transfer to the shop's InstaPay — not cash
     customer = models.ForeignKey("ledger.Partner", null=True, blank=True, on_delete=models.PROTECT, related_name="+", verbose_name="العميل (آجل)")
     is_return = models.BooleanField("مرتجع", default=False)
     flags = models.CharField("تنبيهات للمراجعة", max_length=300, blank=True)

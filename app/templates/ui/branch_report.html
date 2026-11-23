@@ -18,7 +18,9 @@
 <tr class="total"><td>الإجمالي</td><td class="n">{{ r.exp_total|money }}</td></tr></tbody></table></div></div>
 </div><div class="side">
 <div class="card"><h2>المخزن</h2><div class="attn" style="margin-bottom:6px"><span>مشتريات الفترة</span><b>{{ r.bought|money:0 }}</b></div><div class="attn" style="margin-bottom:6px"><span>تالف وعجز جرد</span><b>{{ r.damage|money:0 }}</b></div><div class="attn"><span>قيمة المخزون الآن</span><b>{{ r.stock|money:0 }}</b></div></div>
-<div class="card"><h2>الورديات والأجهزة</h2><div class="attn" style="margin-bottom:6px"><span>ورديات الفترة</span><b>{{ r.shifts }}</b></div>{% if r.open_shifts %}<div class="attn gold" style="margin-bottom:6px"><span>ورديات مفتوحة</span><b>{{ r.open_shifts }}</b></div>{% endif %}<div class="attn"><span>آخر مزامنة</span><b>{{ r.last_sync|date:"d/m H:i"|default:"لم تتم بعد" }}</b></div></div>
+<div class="card"><h2>الورديات والأجهزة</h2><div class="attn" style="margin-bottom:6px"><span>ورديات الفترة</span><b>{{ r.shifts }}</b></div>{% if r.open_shifts %}<div class="attn gold" style="margin-bottom:6px"><span>ورديات مفتوحة</span><b>{{ r.open_shifts }}</b></div>{% endif %}<div class="attn"><span>آخر مزامنة</span><b>{{ r.last_sync|date:"d/m H:i"|default:"لم تتم بعد" }}</b></div>
+{% for d in devices %}<div class="attn" style="margin-top:6px"><span>🖥 {{ d.name }}</span><b>{% if d.last_sync %}{{ d.last_sync|date:"d/m H:i" }}{% else %}لم يُربط بعد{% endif %}</b></div>{% endfor %}
+<p class="muted" style="font-size:12.5px;margin:8px 0 0">ربط جهاز كاشير: على جهاز الفرع ادخل بحسابك ثم «لوحة البيع» ← «اربط هذا الجهاز».</p></div>
 <div class="card"><h2>فريق الفرع</h2>{% for st in staff %}<div class="attn" style="margin-bottom:6px"><span>{{ st.user.first_name|default:st.user.username }}</span><b>{{ st.title }}</b></div>{% empty %}<p class="muted">لا يوجد موظفون مسجّلون على الفرع</p>{% endfor %}</div>
 </div></div>
 {% endblock %}

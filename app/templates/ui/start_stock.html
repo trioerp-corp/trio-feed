@@ -1,0 +1,82 @@
+{% extends "base.html" %}{% load ar l10n gg %}{% block title %}رصيد البضاعة الحالي{% endblock %}
+{% block content %}
+<style>
+.os-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}.os-bar .field{flex:1;min-width:200px;margin:0}
+.os-sum{position:sticky;bottom:0;z-index:5;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 -4px 14px rgba(0,0,0,.06);margin-top:12px}
+.os-sum{padding-inline-end:130px}@media (max-width:600px){.os-sum{padding-inline-end:62px}}/* the «؟ اسأل» button sits at that corner */
+.os-sum b{font-size:18px}.os-t td{vertical-align:middle}.os-t input{width:100%;min-width:0;padding:6px 8px;min-height:38px}.os-t .qx{display:flex;gap:6px;align-items:center}.os-t .qx input{width:90px}.os-t .qx small{white-space:nowrap}
+.os-t .c{width:120px}.os-t .x{width:150px}.os-t tr.hit{outline:3px solid var(--gold);outline-offset:-3px}.os-t tr.has td:first-child{border-inline-start:4px solid var(--good)}
+.os-t .nm b{display:block}.os-t .nm small{color:var(--muted)}.os-g{border-collapse:collapse;margin-top:6px}.os-g th,.os-g td{padding:3px;text-align:center;font-size:13px}.os-g input{width:64px;min-height:34px;text-align:center}
+.os-g small{display:block;color:var(--muted);font-size:11px}
+@media (max-width:700px){.os-t tr{grid-template-columns:1fr 1fr!important}.os-t td.nm,.os-t td.gr,.os-t td.gq{grid-column:1/-1}.os-t td.gq button{width:100%;white-space:normal}.os-t .qx input{width:100%}.os-t .c,.os-t .x{width:auto}.os-g input{width:52px}.os-gw{overflow-x:auto;max-width:calc(100vw - 48px)}}
+</style>
+<div class="page-head"><div><h1>📦 رصيد البضاعة الموجودة عندك الآن</h1>
+<p class="muted" style="margin:0">اكتب لكل صنف الكمية الموجودة على الرف الآن وسعر شرائه — ويُسجَّل كله مرة واحدة رصيدًا أول المدة بقيمته في الحسابات. الأصناف التي لا تكتب لها كمية تبقى كما هي.</p></div>
+<div class="actions"><a class="btn light" href="{% url 'import_upload' 'opening' %}">⬆ من ملف إكسل</a><a class="btn light" href="{% url 'start' %}#stock">⬅ تجهيز المحل</a></div></div>
+
+{% if first %}<div class="msg" style="margin-bottom:12px">✔ سُجّل رصيد أول المدة يوم {{ first.date|date:"d/m/Y" }} ({{ first.n|count:"صنف" }} بقيمة {{ first.v|money }} ج.م). <b>ما تكتبه الآن يُضاف فوق الرصيد الحالي</b> رصيدًا افتتاحيًا إضافيًا (لبضاعة نسيتها أو وصلت قبل أول فاتورة شراء). لتصحيح رصيد خاطئ استخدم <a href="{% url 'shop_count' %}">الجرد</a>.</div>{% endif %}
+
+{% if not data %}<div class="card"><h2>لا توجد أصناف بعد</h2><p class="muted">أضف أصنافك أولًا (أو ارفعها من إكسل مع كمياتها مرة واحدة)، ثم ارجع إلى هنا.</p>
+<div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'import_upload' 'items' %}">⬆ ارفع الأصناف من إكسل</a><a class="btn light" href="{% url 'shop_items' %}">أضف صنفًا يدويًا</a></div></div>
+{% else %}
+<form method="post" id="osF">{% csrf_token %}<input type="hidden" name="nonce" value="{{ nonce }}"><input type="hidden" name="rows" id="osRows">
+<div class="card" style="margin-bottom:12px"><div class="os-bar">
+{% if whs|length > 1 %}<label class="field">المخزن<select name="wh" onchange="location.href='?wh='+this.value">{% for w in whs %}<option value="{{ w.pk|unlocalize }}"{% if w == wh %} selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>{% else %}<input type="hidden" name="wh" value="{{ wh.pk|unlocalize }}">{% endif %}
+<label class="field">🔎 بحث بالاسم أو الكود<input id="osQ" autocomplete="off" placeholder="اكتب جزءًا من الاسم…"></label>
+<label class="field">▦ امسح الباركود<input id="osScan" autocomplete="off" inputmode="numeric" placeholder="امسح ثم اكتب الكمية" dir="ltr"></label>
+<label class="field check" style="flex:0 0 auto;min-width:0"><input type="checkbox" id="osMine"> ما كتبته فقط</label></div>
+<p class="muted" style="margin:0;font-size:13px" id="osHint">{% if pharmacy %}الأدوية التي تُباع بالشريط: اكتب عدد العلب، والشرائط الفكة إن وُجدت، وسعر شراء العلبة.{% elif apparel %}الأصناف بمقاسات وألوان: اضغط «المقاسات والألوان» واكتب كمية كل مقاس ولون، وسعر شراء القطعة مرة واحدة.{% else %}سعر الشراء مكتوب مسبقًا إن كان معروفًا — عدّله إن لزم.{% endif %}</p></div>
+<div class="table-wrap"><table class="stack os-t"><thead><tr><th>الصنف</th><th class="n">الرصيد الحالي</th><th>الكمية الموجودة الآن</th><th>سعر الشراء</th>{% if expiry %}<th>الصلاحية (اختياري)</th>{% endif %}<th class="n">القيمة</th></tr></thead><tbody id="osB"></tbody></table></div>
+<p class="muted" id="osMore" style="display:none"></p>
+<div class="os-sum"><span><span id="osN">لم تكتب أي كمية بعد</span> — القيمة <b id="osV">0.00</b> ج.م</span><button type="submit" id="osGo">✔ تسجيل الرصيد</button></div></form>
+{{ data|json_script:"os-data" }}{{ typed|json_script:"os-typed" }}
+<script>
+(function(){const D=JSON.parse(document.getElementById('os-data').textContent),X={{ expiry|yesno:"true,false" }},$=id=>document.getElementById(id);
+const nz=s=>String(s||'').toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ').trim();
+const num=v=>{v=String(v??'').trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/٫/g,'.').replace(/,/g,'');return v===''?0:(/^\d+(\.\d*)?$|^\.\d+$/.test(v)?parseFloat(v):NaN)};
+const fmt=n=>(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+// typed values: V[item id] = {q, l, c, x}; a sizes × colours product: G[parent id] = {c, cells: {variant id: q}}
+const V={},G={},byB={};
+for(const r of D){if(r.grid){G[r.id]={c:r.c,cells:{}};for(const b of r.b)byB[b]=r}else for(const b of r.b)byB[b]=r;}
+try{const t=JSON.parse(JSON.parse(document.getElementById('os-typed').textContent)||'[]');for(const x of t){const g=D.find(r=>r.grid&&Object.values(r.cells).some(c=>c.id===+x.id));if(g){G[g.id].cells[x.id]=x.q;if(x.c)G[g.id].c=x.c}else V[x.id]={q:x.q||'',l:x.l||'',c:x.c||'',x:x.x||''}}}catch(e){}
+const open=new Set();let hit=null;
+function val(r){if(r.grid){const g=G[r.id],c=num(g.c);let q=0;for(const k in g.cells)q+=num(g.cells[k])||0;return {q,v:q*(c||0)}}
+const v=V[r.id]||{},bf=r.bu?+r.bu.f:1,q=(num(v.q)||0)*bf+(r.bu?(num(v.l)||0):0),c=v.c!==undefined&&v.c!==''?num(v.c):num(r.c);return {q,v:(r.bu?(num(v.q)||0)*(c||0)+(num(v.l)||0)*(c||0)/bf:q*(c||0))}}
+function sum(){let n=0,t=0;for(const r of D){const x=val(r);if(x.q>0){n++;t+=x.v}}$('osN').textContent=n?('كتبت رصيد '+n+' صنف'):'لم تكتب أي كمية بعد';$('osV').textContent=fmt(t)}
+function inp(v,cls,ph,on,im){const i=document.createElement('input');i.value=v??'';if(cls)i.className=cls;if(ph)i.placeholder=ph;i.inputMode=im||'decimal';i.autocomplete='off';i.oninput=()=>{on(i.value);sum();paint()};return i}
+function cell(tr,label,el,cls){const td=document.createElement('td');td.dataset.label=label;if(cls)td.className=cls;if(el)td.append(el);tr.append(td);return td}
+function paint(){for(const tr of $('osB').children){const r=tr._r;if(!r)continue;const x=val(r);tr.classList.toggle('has',x.q>0);const vc=tr.querySelector('.vv');if(vc)vc.textContent=x.q>0?fmt(x.v):'—'}}
+function draw(){const q=nz($('osQ').value),mine=$('osMine').checked,B=$('osB');B.innerHTML='';let shown=0,all=0;
+for(const r of D){if(q&&!q.split(' ').every(w=>nz(r.n+' '+(r.code||'')+' '+r.cat+' '+r.b.join(' ')).includes(w)))continue;if(mine&&!(val(r).q>0))continue;all++;if(shown>=150&&r!==hit)continue;shown++;
+const tr=document.createElement('tr');tr._r=r;if(r===hit)tr.className='hit';
+const nm=document.createElement('div');nm.innerHTML='<b></b><small></small>';nm.querySelector('b').textContent=r.n;nm.querySelector('small').textContent=[r.cat,r.code].filter(Boolean).join(' · ');cell(tr,'الصنف',nm,'nm');
+if(r.grid){const ks=Object.values(r.cells);cell(tr,'الرصيد الحالي',document.createTextNode(String(ks.reduce((a,c)=>a+(+c.h||0),0))),'n');
+const b=document.createElement('button');b.type='button';b.className='light';b.textContent=(open.has(r.id)?'▲ ':'▼ ')+'المقاسات والألوان ('+ks.length+')';b.onclick=()=>{open.has(r.id)?open.delete(r.id):open.add(r.id);draw()};cell(tr,'الكمية الموجودة الآن',b,'gq');
+cell(tr,'سعر شراء القطعة',inp(G[r.id].c,'c','0.00',v=>G[r.id].c=v));if(X)cell(tr,'الصلاحية',null);const vt=cell(tr,'القيمة',null,'n vv');B.append(tr);
+if(open.has(r.id)){const t2=document.createElement('tr');t2._r=null;const td=document.createElement('td');td.colSpan=6;td.className='gr';const w=document.createElement('div');w.className='os-gw';const tb=document.createElement('table');tb.className='os-g';
+let h='<tr><th></th>'+r.sizes.map(s=>'<th></th>').join('')+'</tr>';tb.innerHTML=h;tb.querySelectorAll('th').forEach((th,i)=>{if(i)th.textContent=r.sizes[i-1]||'—'});
+for(const c of r.colors){const row=document.createElement('tr');const th=document.createElement('th');th.textContent=c||'—';row.append(th);for(const s of r.sizes){const td2=document.createElement('td');const ce=r.cells[s+'|'+c];
+if(ce){const i=inp(G[r.id].cells[ce.id]??'','','0',v=>G[r.id].cells[ce.id]=v,'numeric');i.title=(s+' '+c).trim();i.dataset.b=ce.b;td2.append(i);const sm=document.createElement('small');sm.textContent='الآن '+ce.h;td2.append(sm)}else td2.textContent='—';row.append(td2)}tb.append(row)}
+w.append(tb);td.append(w);t2.append(td);B.append(t2)}continue}
+cell(tr,'الرصيد الحالي',document.createTextNode(r.h+' '+r.u),'n');const v=V[r.id]||(V[r.id]={q:'',l:'',c:'',x:''});const qx=document.createElement('div');qx.className='qx';
+if(r.bu){const a=inp(v.q,'','0',x=>v.q=x);a.title=r.bu.n;qx.append(a,Object.assign(document.createElement('small'),{textContent:r.bu.n}));const l=inp(v.l,'','0',x=>v.l=x,'numeric');l.title=r.u+' فكة';qx.append(l,Object.assign(document.createElement('small'),{textContent:r.u+' فكة'}))}
+else{qx.append(inp(v.q,'','0',x=>v.q=x),Object.assign(document.createElement('small'),{textContent:r.u}))}
+cell(tr,'الكمية الموجودة الآن',qx);const ci=inp(v.c!==''?v.c:r.c,'c',r.c||'0.00',x=>v.c=x);ci.title=r.bu?'سعر شراء '+r.bu.n:'سعر شراء '+r.u;const ct=cell(tr,r.bu?'سعر شراء '+r.bu.n:'سعر شراء '+r.u,ci);
+if(X){const xi=inp(v.x,'x','',x=>v.x=x);xi.type='date';cell(tr,'الصلاحية',xi)}cell(tr,'القيمة',null,'n vv');B.append(tr)}
+$('osMore').style.display=all>shown?'':'none';$('osMore').textContent=all>shown?('يظهر أول '+shown+' من '+all+' صنف — اكتب في البحث للوصول إلى الباقي'):'';paint();sum()}
+$('osQ').oninput=()=>{hit=null;draw()};$('osMine').onchange=draw;
+$('osScan').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();const b=$('osScan').value.trim();if(!b)return;const r=byB[b]||D.find(x=>x.code===b);$('osScan').value='';
+if(!r){alert('الباركود '+b+' غير مسجّل على أي صنف — أضف الصنف أولًا من «الأصناف»');return}$('osQ').value='';$('osMine').checked=false;hit=r;if(r.grid)open.add(r.id);draw();
+const tr=[...$('osB').children].find(t=>t._r===r);if(!tr)return;tr.scrollIntoView({block:'center'});let f=tr.querySelector('.qx input');
+if(r.grid){const n=tr.nextElementSibling;f=n&&n.querySelector('input[data-b="'+CSS.escape(b)+'"]')||n&&n.querySelector('input')}if(f){f.focus();f.select()}};
+$('osF').onsubmit=e=>{const out=[],bad=[],noc=[];for(const r of D){if(r.grid){const g=G[r.id];let any=false;for(const id in g.cells){const q=num(g.cells[id]);if(isNaN(q)){bad.push(r.n);continue}if(q>0){any=true;out.push({id:+id,q:String(q),c:g.c})}}if(any&&(String(g.c??'').trim()===''||isNaN(num(g.c))))noc.push(r.n);continue}
+const v=V[r.id];if(!v)continue;const q=num(v.q),l=num(v.l);if(isNaN(q)||isNaN(l)||(v.c!==''&&isNaN(num(v.c)))){bad.push(r.n);continue}const c=v.c!==''?v.c:r.c;if(q>0||l>0){if(String(c??'').trim()==='')noc.push(r.n);out.push({id:r.id,q:String(q||0),l:String(l||0),c,x:v.x||''})}}
+if(bad.length){e.preventDefault();alert('اكتب الأرقام فقط في: '+bad.slice(0,5).join('، '));return}
+if(noc.length){e.preventDefault();alert('اكتب سعر الشراء لـ: '+noc.slice(0,5).join('، ')+(noc.length>5?' و'+(noc.length-5)+' غيرها':''));return}
+if(!out.length){e.preventDefault();alert('لم تكتب أي كمية — اكتب كمية صنف واحد على الأقل');return}
+if(!confirm('تسجيل رصيد '+out.length+' سطر بقيمة '+$('osV').textContent+' ج.م؟'{% if first %}+'\nيُضاف فوق الرصيد الحالي.'{% endif %})){e.preventDefault();return}
+$('osRows').value=JSON.stringify(out);$('osGo').disabled=true;$('osGo').textContent='جارٍ التسجيل…'};
+draw();if(window.matchMedia&&matchMedia('(pointer:fine)').matches)$('osScan').focus()})();
+</script>
+{% endif %}
+{% endblock %}

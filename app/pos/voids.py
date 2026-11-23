@@ -32,6 +32,12 @@ def is_owner(user):
     return can(user, "approve")
 
 
+def is_head(user):
+    """The whole shop's owner pages (setup, payroll, taxes, prices / offers, master data): the owner or a head-office user who may
+    approve — never a user tied to one branch (a branch manager approves his branch's voids, but does not run the business)."""
+    return bool(user and getattr(user, "is_authenticated", False) and (user.is_superuser or (is_owner(user) and not _my_branch(user))))
+
+
 def can_edit(user):
     """Cancel / edit invoices: the owner, or a cashier when the owner switched «يمكن للكاشير إلغاء الفواتير وتعديلها» on."""
     if is_owner(user):
@@ -151,6 +157,9 @@ def void_order(order: Order, reason, user=None):
         if d:
             void_cash_move(d.collect_move, f"إلغاء الفاتورة {order.uid}: {reason}", user=user or "system")
     on_order_void(order)
+    from core.alerts import on_void  # 1.25: the owner's WhatsApp
+
+    on_void(order, reason, editing=str(reason).startswith("تعديل:"))
     return order
 
 
@@ -190,8 +199,10 @@ def edit_order(order: Order, lines, reason, user=None, pay="", customer_id=None)
             rate = it.vat_rate if it.vat_rate is not None else s.default_vat_rate
             t += (t * rate / 100).quantize(Decimal("0.01"))
         total += t.quantize(Decimal("0.01"))
-    pay = pay or ("credit" if order.paid_credit else "rider" if order.paid_rider else "card" if order.paid_card and not order.paid_cash else "cash")
-    data = dict(order.raw or {}, uid=f"{order.uid}-E{n}", lines=lines, paid_cash="0", paid_card="0", paid_credit="0", paid_rider="0",
+    pay = pay if pay in ("cash", "card", "credit", "rider", "insta") else ""
+    pay = pay or ("credit" if order.paid_credit else "rider" if order.paid_rider else "insta" if order.paid_insta and not order.paid_cash
+                  else "card" if order.paid_card and not order.paid_cash else "cash")
+    data = dict(order.raw or {}, uid=f"{order.uid}-E{n}", lines=lines, paid_cash="0", paid_card="0", paid_credit="0", paid_rider="0", paid_insta="0",
                 created_at=order.created_at_device.isoformat(), shift_uid=order.shift.uid if order.shift_id else None,
                 is_return=order.is_return, shift_seq=order.shift_seq)
     data["paid_" + pay] = str(total)

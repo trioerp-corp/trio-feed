@@ -19,9 +19,9 @@ from .models import Employee, PayRun, Payslip
 def _owner(view):
     @login_required
     def wrap(request, *a, **k):
-        from pos.voids import is_owner
+        from pos.voids import is_head
 
-        if not (request.user.is_superuser or is_owner(request.user)):
+        if not is_head(request.user):  # payroll of every branch: the owner's
             raise PermissionDenied("هذه الصفحة لصاحب المحل")
         return view(request, *a, **k)
 

@@ -27,3 +27,6 @@ class CoreConfig(AppConfig):
             from pos import qr_orders
 
             qr_orders.start()  # customers' orders from the QR on their table (1.23)
+            from pos.clinic import online as clinic_online
+
+            clinic_online.start()  # 1.25 the clinic's online booking requests

@@ -25,7 +25,7 @@
 .total{font-size:30px;font-weight:700;color:var(--brand)}
 .status{font-size:13px;padding:4px 10px;border-radius:99px}
 .st-on{background:var(--brand-2);color:var(--brand)}.st-off{background:#f8e1dd;color:#7a2418}
-.pay{display:flex;gap:6px}.pay button{flex:1;white-space:nowrap;padding-inline:6px;background:var(--card);color:var(--ink);border:1px solid var(--line)}.pay button.on{background:var(--brand);color:#fff}
+.pay{display:flex;gap:6px;flex-wrap:wrap}.pay button{flex:1 1 auto;min-width:64px;white-space:nowrap;padding-inline:6px;background:var(--card);color:var(--ink);border:1px solid var(--line)}.pay button.on{background:var(--brand);color:#fff}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
 .modal .card{width:min(420px,92vw);display:flex;flex-direction:column;gap:10px}
 .logo svg{width:40px;height:40px}
@@ -66,6 +66,7 @@
 @media(pointer:coarse){.kbd{display:none}}
 .kbar{display:none;position:fixed;left:8px;right:8px;bottom:8px;z-index:40;min-height:56px;font-size:17px;font-weight:800;background:#B45F06;color:#fff;border:0;border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 @media(max-width:900px){body.kb .kbar{display:block}body.kb{padding-bottom:76px}}
+.iqb svg{width:220px;height:220px;display:block;margin:0 auto}.rc .iq{text-align:center;margin-top:4px}.rc .iq b{font-size:13px}.rc .iqr{width:30mm;height:30mm;margin:2px auto}.rc .iqr svg{width:100%!important;height:100%!important}
 #toast{position:fixed;bottom:16px;left:16px;background:#0B1F3A;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:60;font-weight:700}
 @media print{body *{visibility:hidden}#receipt,#receipt *{visibility:visible}#receipt{display:block;position:absolute;top:0;right:0;width:72mm}#receipt .rc svg{width:auto;height:auto}}
 /* 1.24.1: before the device is linked (or while locked) only the link step shows — no till buttons, no «أوفلاين» */
@@ -86,13 +87,14 @@ body:has(#setup[style*="block"]) .gg-top>:not(.gg-brand){display:none!important}
 <button class="btn light" id="heldBtn" type="button">⏸️ المعلّقة</button>
 <button class="btn light" id="exBtn" type="button">🔁 استبدال / مرتجع بفاتورة</button>
 <button class="btn light" id="reprintBtn" type="button">🖨 إعادة طباعة</button>
+<button class="btn light" id="dispBtn" type="button" title="تفتح في نافذة ثانية — اسحبها إلى الشاشة التي يراها العميل">🖥 شاشة العميل</button>
 <button class="btn light" id="reqBtn" type="button">↩ طلب إلغاء/تعديل</button>
 <button class="btn light" id="resetTok" type="button" title="إن غيّرت الجهاز أو المفتاح">🔑 مفتاح الجهاز</button></header>
 
 <div id="setup" class="card" style="max-width:420px;margin:40px auto;display:none">
 <h2>ربط الجهاز</h2><p class="muted" id="setupHint">اكتب مفتاح الجهاز من «الإعدادات ← أجهزة الكاشير» (مرة واحدة على كل جهاز).</p>
 <div id="setupMsg" class="msg error" style="display:none"></div>
-<div id="linkBox" style="display:none;border:2px solid var(--brand);border-radius:12px;padding:10px;margin-bottom:12px;background:var(--brand-2)"><b>أنت داخل بحساب صاحب المحل</b><p class="muted" style="margin:4px 0">اختر الجهاز ثم اضغط الزر — دون نسخ أي مفتاح.</p><select id="linkSel" style="width:100%"></select><p style="margin:8px 0 0"><button class="btn" id="linkBtn" type="button">🔗 اربط هذا الجهاز</button></p></div>
+<div id="linkBox" style="display:none;border:2px solid var(--brand);border-radius:12px;padding:10px;margin-bottom:12px;background:var(--brand-2)"><b>أنت داخل بحساب الإدارة</b><p class="muted" style="margin:4px 0">اختر الجهاز ثم اضغط الزر — دون نسخ أي مفتاح.</p><select id="linkSel" style="width:100%"></select><p style="margin:8px 0 0"><button class="btn" id="linkBtn" type="button">🔗 اربط هذا الجهاز</button></p></div>
 <details id="manualKey" open><summary class="muted" style="cursor:pointer;margin-bottom:6px">لصق مفتاح الجهاز يدويًا</summary>
 <label>مفتاح الجهاز<input id="tok" style="width:100%" autocomplete="off"></label><p><button class="btn" id="saveTok" type="button">حفظ</button></p></details></div>
 
@@ -114,12 +116,13 @@ body:has(#setup[style*="block"]) .gg-top>:not(.gg-brand){display:none!important}
 <label id="oNoteL" style="display:none">ملاحظة على الطلب كله (تظهر في المطبخ وعلى الفاتورة)<input id="oNoteIn" maxlength="200" style="width:100%" placeholder="مثال: بدون ملح، التسليم بعد ربع ساعة"></label>
 <div id="discRow" class="dsc" style="display:none"></div>
 <div style="display:flex;justify-content:space-between;align-items:baseline"><span id="totL">الإجمالي</span><span class="total" id="tot">0.00</span></div>
-<div class="pay" id="payKinds"><button type="button" data-k="cash" class="on">نقدي</button><button type="button" data-k="card">بطاقة / محفظة</button><button type="button" data-k="credit">آجل</button><button type="button" data-k="rider" id="pkRider" style="display:none">🛵 مع عامل التوصيل</button></div>
+<div class="pay" id="payKinds"><button type="button" data-k="cash" class="on">نقدي</button><button type="button" data-k="card">بطاقة / محفظة</button><button type="button" data-k="insta" id="pkInsta" style="display:none">📲 InstaPay</button><button type="button" data-k="credit">آجل</button><button type="button" data-k="rider" id="pkRider" style="display:none">🛵 مع عامل التوصيل</button></div>
 <label id="cashL">المبلغ المدفوع نقدًا (لحساب الباقي)<input id="cash" inputmode="decimal" autocomplete="off" style="width:100%;font-size:20px"></label>
 <div id="chg" class="chg"></div>
 <label id="custL" style="display:none">العميل<span style="display:flex;gap:6px"><select id="cust" style="flex:1"></select><button type="button" id="custNew" class="light" title="عميل جديد">+ جديد</button></span></label>
 <label id="spL" style="display:none">البائع<select id="spSel" style="width:100%"></select></label>
-<label id="nowL" style="display:none">المدفوع الآن (والباقي آجل على العميل)<span style="display:flex;gap:6px"><input id="credNow" inputmode="decimal" autocomplete="off" placeholder="0" style="flex:1"><select id="credHow" style="width:auto"><option value="cash">نقدًا</option><option value="card">بطاقة / محفظة</option></select></span><span class="muted" id="nowHint" style="font-size:13px"></span></label>
+<label id="nowL" style="display:none">المدفوع الآن (والباقي آجل على العميل)<span style="display:flex;gap:6px"><input id="credNow" inputmode="decimal" autocomplete="off" placeholder="0" style="flex:1"><select id="credHow" style="width:auto"><option value="cash">نقدًا</option><option value="card">بطاقة / محفظة</option><option value="insta" id="chInsta" hidden>InstaPay</option></select></span><span class="muted" id="nowHint" style="font-size:13px"></span></label>
+<label id="planL" style="display:none">طريقة سداد الآجل<select id="credPlan" style="width:100%"><option value="1">دفعة واحدة (حسب مدة السداد)</option><option value="2">قسطان شهريان</option><option value="3">3 أقساط شهرية</option><option value="4">4 أقساط شهرية</option><option value="6">6 أقساط شهرية</option><option value="9">9 أقساط شهرية</option><option value="12">12 قسطًا شهريًا</option></select><span class="muted" id="planHint" style="font-size:13px"></span></label>
 <button class="btn" id="sendK" type="button" style="height:52px;font-size:18px;display:none;background:#B45F06">🍳 إرسال للمطبخ</button><button id="kBar" class="kbar" type="button"></button>
 <button class="btn light" id="splitBtn" type="button" style="display:none">✂ تقسيم الحساب</button>
 <button class="btn" id="pay" type="button" style="height:52px;font-size:18px">تحصيل وطباعة</button>
@@ -224,6 +227,10 @@ body:has(#setup[style*="block"]) .gg-top>:not(.gg-brand){display:none!important}
 <div id="exList" class="sug"></div><div id="exLines" style="max-height:45vh;overflow:auto"></div>
 <div id="exErr" class="msg error" style="display:none"></div>
 <div class="actions"><button class="btn" id="exOk" type="button" style="display:none">متابعة: أضف الأصناف الجديدة</button><button class="btn light" id="exCancel" type="button">إلغاء</button></div></div></div>
+<div class="modal" id="instaModal"><div class="card" style="text-align:center;width:min(440px,94vw)"><h2>📲 الدفع بـ InstaPay</h2>
+<div id="iqBox" class="iqb"></div><div class="total" id="iqAmt"></div><div class="muted" id="iqLbl" dir="ltr"></div>
+<p style="margin:0;font-size:14px">يمسح العميل الرمز ويحوّل المبلغ. <b>تأكّد من وصول التحويل على هاتف المحل</b> قبل التحصيل — يُسجَّل في حساب InstaPay وليس في الدرج.</p>
+<div class="tact"><button type="button" id="iqOk">✔ وصل التحويل — تحصيل وطباعة</button><button type="button" class="light" id="iqNo">رجوع</button></div></div></div>
 <div class="modal" id="dlgModal" style="z-index:70"><div class="card"><h2 id="dlgT"></h2><p id="dlgM" style="margin:0;white-space:pre-line"></p><div id="dlgF" style="display:flex;flex-direction:column;gap:8px"></div>
 <div id="dlgErr" class="msg error" style="display:none"></div>
 <div class="actions"><button class="btn" id="dlgOk" type="button">موافق</button><button class="btn light" id="dlgAlt" type="button" style="display:none"></button><button class="btn light" id="dlgCancel" type="button">إلغاء</button></div></div></div>
@@ -264,15 +271,19 @@ const w=isWaiter();$('shiftBtn').textContent=shift?(w?'تسجيل الخروج':
 function isWaiter(){return !!(shift&&shift.role==='waiter')}
 function cafeTill(){return !!cat&&['cafe','gaming'].includes(cat.biz)}  // café / restaurant words: no «barcode», no «items without a code»
 // what the person on the till may do: a waiter never takes money, returns or cash moves; a table is paid in its own step
-function payUI(){const w=isWaiter(),hide=w||(curT&&!tPay);$('scanL').style.display=w?'none':'';$('resetTok').style.display=w?'none':'';$('kbd').style.display=w?'none':'';$('collectBtn').style.display=w?'none':'';$('moneyBtn').style.display=w?'none':'';$('reqBtn').style.display=w?'none':'';$('takeaway').style.display=w?'none':'';
+function payUI(){const w=isWaiter(),hide=w||(curT&&!tPay);{const io=instaOn();$('pkInsta').style.display=io?'':'none';$('chInsta').hidden=!io;if(!io&&$('credHow').value==='insta')$('credHow').value='cash';if(!io&&payKind==='insta'){payKind='cash';document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k==='cash'))}}$('scanL').style.display=w?'none':'';$('resetTok').style.display=w?'none':'';$('kbd').style.display=w?'none':'';$('collectBtn').style.display=w?'none':'';$('moneyBtn').style.display=w?'none':'';$('reqBtn').style.display=w?'none':'';$('takeaway').style.display=w?'none':'';
 $('isRetL').style.display=(hide||curT||exch)?'none':'';$('payKinds').style.display=hide?'none':'';$('cashL').style.display=(hide||payKind!=='cash'||$('isRet').checked)?'none':'';
 $('custL').style.display=(!hide&&payKind==='credit')?'':'none';$('pay').style.display=w?'none':'';
 if(!dlv&&payKind==='rider'){payKind='cash';document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k==='cash'))}
 const don=!!(cat&&cat.delivery&&cat.delivery.on);$('pkRider').style.display=dlv?'':'none';$('dlvSet').style.display=don&&!w&&!curT&&!dlv?'':'none';
 $('dlvBtn').style.display=don&&!w?'':'none';$('dlvNew').style.display=don&&!w?'':'none';$('splitBtn').style.display=tPay&&!tPick&&!w?'':'none';
 const rt=$('isRet').checked,ex=!!exch;$('discB').style.display=(w||rt)?'none':'';$('holdB').style.display=(w||curT||tPay||ex)?'none':'';$('heldBtn').style.display=w?'none':'';$('exBtn').style.display=w?'none':'';
-$('nowL').style.display=(!hide&&payKind==='credit'&&!rt)?'':'none';for(const k of ['credit','rider'])if(ex)document.querySelector('#payKinds [data-k='+k+']').style.display='none';else if(k==='credit')document.querySelector('#payKinds [data-k=credit]').style.display='';
+$('nowL').style.display=(!hide&&payKind==='credit'&&!rt)?'':'none';$('planL').style.display=(!hide&&payKind==='credit'&&!rt)?'':'none';platUI(hide||rt||ex);for(const k of ['credit','rider'])if(ex)document.querySelector('#payKinds [data-k='+k+']').style.display='none';else if(k==='credit')document.querySelector('#payKinds [data-k=credit]').style.display='';
 if(ex&&(payKind==='credit'||payKind==='rider')){payKind='cash';document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k==='cash'))}heldSave()}
+// 1.25 delivery platforms as ways to pay (the owner turns them on in «منصات التوصيل»)
+function platUI(off){const box=$('payKinds'),ps=(cat&&cat.plats)||[];box.querySelectorAll('[data-plat]').forEach(b=>{if(!ps.some(x=>'plat:'+x.k===b.dataset.k))b.remove()});
+for(const x of ps)if(!box.querySelector('[data-k="plat:'+x.k+'"]')){const b=document.createElement('button');b.type='button';b.dataset.k='plat:'+x.k;b.dataset.plat='1';b.textContent=x.i+' '+x.n;b.onclick=()=>setPay(b.dataset.k);box.appendChild(b)}
+box.querySelectorAll('[data-plat]').forEach(b=>{b.style.display=off||dlv?'none':'';b.classList.toggle('on',b.dataset.k===payKind)});if(payKind.startsWith('plat:')&&(off||!ps.some(x=>'plat:'+x.k===payKind))){payKind='cash';box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.k==='cash'))}}
 function setPay(k){payKind=k;document.querySelectorAll('#payKinds button').forEach(x=>x.classList.toggle('on',x.dataset.k===k));payUI()}
 async function api(path,opt={}){const r=await fetch('/pos/api/'+path,{...opt,headers:{'Content-Type':'application/json','X-Device-Token':tok}});const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||r.status);e.status=r.status;throw e}return j}
 async function loadCatalog(){try{cat=await api('catalog/');LS.set('pos_catalog',cat);if((cat.next_seq||0)>seq){seq=cat.next_seq;LS.set('pos_seq',seq)}setNet(true);noFill();if(LS.get('pos_locked')){LS.set('pos_locked',null);$('main').style.display='grid';$('setup').style.display='none';$('setupMsg').style.display='none'}}catch(e){
@@ -375,35 +386,41 @@ $('isRet').onchange=()=>{retApp=null;showView();render()};
 document.querySelectorAll('#payKinds button').forEach(b=>b.onclick=()=>setPay(b.dataset.k));
 $('pay').onclick=()=>{if(curT)return tablePay();payNow()};
 let retApp=null;  // the owner's approval of the return being paid {token, reason, amount}
+let lateOk=null;  // 1.25 the cashier confirmed this late customer's credit sale
 function payNow(done,sp){if(exch)return exPay(done);if(!cart.length)return false;if(dlv&&$('isRet').checked){alert('المرتجع لا يكون طلب دليفري — ألغِ الدليفري أولًا');return false}if(!shift){afterShift=()=>$('pay').click();$('shiftBtn').click();return false}
 if(isWaiter()){alert('التحصيل من الكاشير — الويتر يرسل الطلبات إلى المطبخ ويطبع الحساب فقط');return false}const total=cartTotal(),isR=$('isRet').checked;
 if(isR&&payKind==='cash'&&!sp&&!drawerHas(total))return false;
 if(isR&&!(retApp&&retApp.amount===total)){retOpen(total,done);return false}
 if(!isR&&discNeed()){discOpen(true);return false}
 if(!isR&&cat.plus&&cat.plus.sp&&cat.plus.sp.need&&!$('spSel').value){alert('اختر البائع');return false}
-let cash=0,card=0,credit=0,given=0,cust=null,rider=0,cu=null;
-if(sp){cash=sp.cash;card=sp.card;given=sp.cash}
+let cash=0,card=0,credit=0,given=0,cust=null,rider=0,cu=null,insta=0,plat='',platAmt=0;
+if(sp){cash=sp.cash;card=sp.card;insta=sp.insta||0;given=sp.cash}
 else if(payKind==='cash'){given=$('cash').value.trim()===''?total:num($('cash').value);if(!(given>=0)){alert('اكتب المبلغ المدفوع بالأرقام');return false}if(!isR&&given<total){alert('المدفوع أقل من الإجمالي');return false}if(isR)given=total;cash=total}
 else if(payKind==='card'){card=total}
+else if(payKind==='insta'){if(!instaOk){instaAsk(total,done);return false}insta=total}
 else if(payKind==='rider'){if(!dlv){alert('«مع عامل التوصيل» لطلبات الدليفري فقط');return false}rider=total}
+else if(payKind.startsWith('plat:')){plat=payKind.slice(5);if(!(cat.plats||[]).some(x=>x.k===plat)){alert('هذه المنصة غير مفعّلة');return false}if(dlv){alert('طلب المنصة يوصله عامل المنصة — ألغِ «الدليفري» أولًا');return false}platAmt=total}
 else{cust=$('cust').value;if(!cust){alert('اختر العميل للبيع الآجل');return false}cu=(cat.customers||[]).find(x=>String(x.id)===cust);
+if(cu&&!isR&&(+cu.late||0)>0.004){if(cat.credit&&cat.credit.block_late){say('على '+cu.name+' مستحقات متأخرة '+fmt(cu.late)+' ج — حصّلها أولًا («تحصيل من عميل»)، أو تواصل مع صاحب المحل','مستحقات متأخرة');return false}
+if(lateOk!==cu.id){yes('على '+cu.name+' مستحقات متأخرة '+fmt(cu.late)+' ج. هل تكمل البيع الآجل؟','مستحقات متأخرة','أكمل البيع','إلغاء').then(v=>{if(v){lateOk=cu.id;payNow(done,sp)}});return false}}
 // 1.25 part payment: cash / card now, the rest on the customer's account
 let now=0;if(!isR&&$('credNow').value.trim()!==''){now=num($('credNow').value);if(!(now>=0)){alert('اكتب المدفوع الآن بالأرقام');return false}if(now>=total){alert('المدفوع الآن يغطي الإجمالي كله — اختر «نقدي» أو «بطاقة / محفظة»');return false}}
 now=Math.round(now*100)/100;const rest=Math.round((total-now)*100)/100;
 if(cu&&cu.limit!=null&&!isR&&(+cu.balance)+rest>(+cu.limit)){alert('هذا البيع سيتجاوز حد مديونية '+cu.name+': عليه '+fmt(cu.balance)+' والحد '+fmt(cu.limit)+' — حصّل منه أولًا أو تواصل مع صاحب المحل');return false}
-credit=rest;if(now){if($('credHow').value==='card')card=now;else{cash=now;given=now}}if(cu)cu.balance=String(Math.round(((+cu.balance)+(isR?-total:rest))*100)/100)}
+credit=rest;if(now){const hw=$('credHow').value;if(hw==='card')card=now;else if(hw==='insta'&&instaOn())insta=now;else{cash=now;given=now}}if(cu)cu.balance=String(Math.round(((+cu.balance)+(isR?-total:rest))*100)/100)}
 const no=noTake();shift.n=(shift.n||0)+1;const o={uid:cat.branch.code+'-'+cat.device+'-'+String(no).padStart(7,'0'),shift_uid:shift.uid,shift_seq:no,created_at:new Date().toISOString(),is_return:isR,
-paid_cash:fmt(cash),paid_card:fmt(card),paid_credit:fmt(credit),paid_rider:fmt(rider),...(curT?{table:curT.name}:{}),...(dlv?{delivery:{...dlv}}:{}),...(sp?{split:sp.parts}:{}),customer_id:(cust&&String(cust).startsWith('new:'))?null:cust,customer_new:(cust&&String(cust).startsWith('new:'))?(()=>{const c=(cat.customers||[]).find(x=>String(x.id)===cust)||{};return {name:c.name,phone:c.phone||''}})():null,note:orderNote,lines:cartLines()};
+paid_cash:fmt(cash),paid_card:fmt(card),paid_credit:fmt(credit+platAmt),paid_rider:fmt(rider),...(plat?{platform:plat}:{}),paid_insta:fmt(insta),...(curT?{table:curT.name}:{}),...(dlv?{delivery:{...dlv}}:{}),...(sp?{split:sp.parts}:{}),customer_id:(cust&&String(cust).startsWith('new:'))?null:cust,customer_new:(cust&&String(cust).startsWith('new:'))?(()=>{const c=(cat.customers||[]).find(x=>String(x.id)===cust)||{};return {name:c.name,phone:c.phone||''}})():null,note:orderNote,lines:cartLines()};
 if(cu&&credit)o.cbal=cu.balance;
+if(cu&&credit&&!isR&&+$('credPlan').value>1)o.plan={n:+$('credPlan').value};  // 1.25 instalments (the program makes the plan)
 const man=isR?0:discManual();if(man>0.004)o.disc=discInfo(man);if($('spSel').value)o.sp=+$('spSel').value;
 if(loy){const la=isR?0:loyAmt(),use=la>0?loy.use:0,er=Math.floor(total/(+cat.plus.loy.per||1));o.loy={ph:loy.ph,n:loy.n||'',use,amt:fmt(la),tok:use>0&&loy.tok||''};o.loyR={earn:isR?-er:er,use,bal:loy.bal!=null?loy.bal-use+(isR?-er:er):null}}
 if(tOn()&&!curT&&!dlv)o.away=true;  // «تيك أواي» on the kitchen ticket
 if(o.is_return){o.ret_ok=retApp.token;o.ret_reason=retApp.reason}
-const sg=o.is_return?-1:1,st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0});st.cash+=sg*cash;st.card+=sg*card;st.credit+=sg*credit;if(o.is_return)st.ret+=total;if(rider)st.rider=(st.rider||0)+rider;if(o.disc)st.disc=Math.round(((st.disc||0)+man)*100)/100;
+const sg=o.is_return?-1:1,st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0});st.cash+=sg*cash;st.card+=sg*card;st.credit+=sg*credit;if(platAmt)st.plat=r2((st.plat||0)+sg*platAmt);if(insta)st.insta=r2((st.insta||0)+sg*insta);if(o.is_return)st.ret+=total;if(rider)st.rider=(st.rider||0)+rider;if(o.disc)st.disc=Math.round(((st.disc||0)+man)*100)/100;
 for(const l of o.lines)if(l.x){const v=sg*l.qty*l.price;if(cat.svc&&cat.svc.code&&l.item_code===cat.svc.code)st.svc=r2((st.svc||0)+v);else if(cat.delivery&&cat.delivery.code&&l.item_code===cat.delivery.code)st.fee=r2((st.fee||0)+v)}
 {const kd=o.table?'tbl':o.delivery?'dlv':o.away?'away':'ctr';st.k=st.k||{};st.k[kd]=r2((st.k[kd]||0)+sg*total)}
 const rec={o,total,given,cashier:shift.cashier_name};remember(o.uid,'فاتورة رقم '+o.shift_seq+' — '+fmt(total)+' ج — '+new Date().toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'}),rec);queue.push(o);shift.cash=(shift.cash||0)+(o.is_return?-1:1)*cash;save();printReceipt(o,total,given,false,shift.cashier_name,!o.table);
-lastRec={...rec,chg:payKind==='cash'&&!sp&&!isR&&given>total?Math.round((given-total)*100)/100:0};dlv=null;cart=[];orderNote='';invD=null;discOk=null;loy=null;$('spSel').value='';showNote();$('cash').value='';$('credNow').value='';$('isRet').checked=false;retApp=null;$('cust').value='';setPay('cash');render();lowCheck(o);sync();if(done)done(o);focusScan();return true}
+lastRec={...rec,chg:payKind==='cash'&&!sp&&!isR&&given>total?Math.round((given-total)*100)/100:0};dlv=null;cart=[];orderNote='';invD=null;discOk=null;loy=null;$('spSel').value='';showNote();$('cash').value='';$('credNow').value='';$('credPlan').value='1';lateOk=null;$('isRet').checked=false;retApp=null;$('cust').value='';setPay('cash');render();lowCheck(o);sync();if(done)done(o);focusScan();return true}
 let retDone=null;function retOpen(total,done){retDone=done;$('retAmt').textContent='إجمالي المرتجع '+fmt(total)+' ج.م';$('retWhy').value='';$('retU').value='';$('retP').value='';
 $('retOwner').style.display=cat.can_edit?'none':'';$('retErr').style.display='none';$('retModal').dataset.total=total;$('retModal').style.display='flex';$('retWhy').focus()}
 $('retCancel').onclick=()=>{$('retModal').style.display='none';retDone=null};
@@ -444,12 +461,12 @@ rcItems(o,false)+'<div class="row2"><span>عدد الأصناف</span><span>'+H(
 (o.disc&&+o.disc.inv?'<div class="row2"><span>خصم على الفاتورة</span><span>−'+fmtG(o.disc.inv)+'</span></div>':'')+(o.loy&&+o.loy.amt?'<div class="row2"><span>استبدال '+H(o.loy.use)+' نقطة</span><span>−'+fmtG(o.loy.amt)+'</span></div>':'')+
 '<div class="tot"><span>'+(o.is_return?'إجمالي المرتجع':'الإجمالي')+'</span><span>'+fmtG(total)+' ج.م</span></div>'+(o.disc&&+o.disc.total?'<div class="row2"><span>وفّرت بالخصم</span><span>'+fmtG(o.disc.total)+'</span></div>':'')+
 (vat>0.004&&cat.tax_id?'<div class="row2"><span>منها ضريبة القيمة المضافة</span><span>'+fmtG(vat)+'</span></div>':'')+
-(o.prebill?'':o.split?o.split.map((p,i)=>'<div class="row2"><span>الجزء '+(i+1)+' — '+(p.k==='card'?'بالبطاقة / المحفظة':'نقدًا')+'</span><span>'+fmtG(p.a)+'</span></div>').join(''):payRows(o,total,given).map(x=>'<div class="row2"><span>'+H(x[0])+'</span><span>'+x[1]+'</span></div>').join(''))+
+(o.prebill?'':o.split?o.split.map((p,i)=>'<div class="row2"><span>الجزء '+(i+1)+' — '+pkName(p.k)+'</span><span>'+fmtG(p.a)+'</span></div>').join(''):payRows(o,total,given).map(x=>'<div class="row2"><span>'+H(x[0])+'</span><span>'+x[1]+'</span></div>').join(''))+
 (o.loyR?'<hr><div class="row2"><span>⭐ نقاط هذه الفاتورة</span><span>'+(o.loyR.earn>0?'+':'')+H(o.loyR.earn)+'</span></div>'+(o.loyR.bal!=null?'<div class="row2"><span>رصيد نقاطك</span><span>'+H(pts(o.loyR.bal))+'</span></div>':''):'')+
-(+o.paid_credit>0?'<hr><div class="row2"><span>توقيع العميل بالاستلام</span><span>............</span></div>':'')+(cat.branch.policy?'<hr><div class="pol">'+H(cat.branch.policy)+'</div>':'')+'<hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div><div class="pw">بواسطة تريو · 01228827915</div></div>';
+(+o.paid_credit>0?'<hr><div class="row2"><span>توقيع العميل بالاستلام</span><span>............</span></div>':'')+(cat.branch.policy?'<hr><div class="pol">'+H(cat.branch.policy)+'</div>':'')+rcInsta(o,total)+'<hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div><div class="pw">بواسطة تريو · 01228827915</div></div>';
 // the kitchen ticket: with a new order only (not a copy, not a return) — on this printer, or the kitchen printer
 const kit=fresh&&!o.is_return&&cat.kitchen&&cat.kitchen!=='off';
-if(o.split&&!copy)o.split.forEach((p,i)=>{h+='<div class="brk"></div><div class="rc"><div class="c"><div class="nm">'+H(cat.company)+'</div></div><hr class="b"><div class="c"><b>إيصال جزء من الحساب</b></div><div class="no">الجزء '+(i+1)+' من '+o.split.length+'</div><div class="info">'+(o.table?'<b>الترابيزة</b><span>'+H(o.table)+'</span>':'')+'<b>الفاتورة</b><span>رقم '+H(o.shift_seq||'')+'</span><b>إجمالي الحساب</b><span>'+fmt(total)+'</span></div><hr><div class="tot"><span>المطلوب من هذا الجزء</span><span>'+fmt(p.a)+' ج.م</span></div><div class="row2"><span>'+(p.k==='card'?'مدفوع بالبطاقة / المحفظة':'مدفوع نقدًا')+'</span><span>'+fmt(p.a)+'</span></div><hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div></div>'});
+if(o.split&&!copy)o.split.forEach((p,i)=>{h+='<div class="brk"></div><div class="rc"><div class="c"><div class="nm">'+H(cat.company)+'</div></div><hr class="b"><div class="c"><b>إيصال جزء من الحساب</b></div><div class="no">الجزء '+(i+1)+' من '+o.split.length+'</div><div class="info">'+(o.table?'<b>الترابيزة</b><span>'+H(o.table)+'</span>':'')+'<b>الفاتورة</b><span>رقم '+H(o.shift_seq||'')+'</span><b>إجمالي الحساب</b><span>'+fmt(total)+'</span></div><hr><div class="tot"><span>المطلوب من هذا الجزء</span><span>'+fmt(p.a)+' ج.م</span></div><div class="row2"><span>'+'مدفوع '+pkName(p.k)+'</span><span>'+fmt(p.a)+'</span></div><hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div></div>'});
 if(kit&&cat.kitchen==='same')h+='<div class="brk"></div>'+rcKitchen(o,cashier);
 r.innerHTML=h;window.print();
 if(kit&&cat.kitchen==='printer')api('kitchen/',{method:'POST',body:JSON.stringify({o,cashier})}).catch(e=>yes('تعذّرت الطباعة على طابعة المطبخ ('+e.message+'). هل تُطبع ورقة المطبخ هنا؟','طابعة المطبخ','اطبع هنا').then(ok=>{if(ok){r.innerHTML=rcKitchen(o,cashier);window.print()}}))}
@@ -472,7 +489,7 @@ const dop=dOpen(),rep={cashier:shift.cashier_name,opened:shift.opened_at,closed,
 shift=null;save();sync();$('closeModal').style.display='none';showReport(rep,true)};
 function repRows(r){const st=r.st,d=Math.round((r.counted-r.exp)*100)/100,rows=[['الكاشير',H(r.cashier)],['من',new Date(r.opened).toLocaleString('ar-EG-u-nu-latn')],['إلى',new Date(r.closed).toLocaleString('ar-EG-u-nu-latn')],['عدد الفواتير',r.n],['رصيد الفتح',fmt(r.float)]];
 if(st)rows.push(['مبيعات نقدية (بعد المرتجع)',fmt(st.cash)],['بطاقة / محفظة',fmt(st.card)],['آجل',fmt(st.credit)],['المرتجعات',fmt(st.ret)],['مصروفات ومسحوبات من الدرج',fmt(st.out)],['إيداعات في الدرج',fmt(st.in)]);
-if(st&&st.disc)rows.push(['الخصومات اليدوية',fmt(st.disc)]);if(st&&st.coll)rows.push(['تحصيل من عملاء آجل (نقدي)',fmt(st.coll)]);
+if(st&&st.plat)rows.push(['طلبات المنصات (طلبات / المنيوز — ليست في الدرج)',fmt(st.plat)]);if(st&&st.insta)rows.push(['InstaPay (تحويلات — ليست في الدرج)',fmt(st.insta)]);if(st&&st.disc)rows.push(['الخصومات اليدوية',fmt(st.disc)]);if(st&&st.coll)rows.push(['تحصيل من عملاء آجل (نقدي)',fmt(st.coll)]);
 if(st&&(st.rider||st.dlvin))rows.push(['دليفري خرج مع عامل التوصيل',fmt(st.rider||0)],['تحصيل دليفري من عمال التوصيل (نقدي)',fmt(st.dlvin||0)]);
 if(st&&st.svc)rows.push(['إجمالي الخدمة (للعاملين)',fmt(st.svc)]);if(st&&st.fee)rows.push(['رسوم التوصيل',fmt(st.fee)]);
 if(st&&st.k){const K=Object.keys(st.k).filter(k=>Math.abs(st.k[k])>0.004);if(K.length>1||K.some(k=>k!=='ctr'))for(const [k,n] of [['tbl','الصالة (الترابيزات)'],['away','تيك أواي'],['dlv','دليفري'],['ctr','بيع مباشر']])if(K.includes(k))rows.push([n,fmt(st.k[k])])}
@@ -685,7 +702,7 @@ function spMode(m){spM=m;$('spEq').style.display=m==='eq'?'':'none';$('spLn').st
 $('spEqB').onclick=()=>spMode('eq');$('spLnB').onclick=()=>spMode('ln');
 function spParts(){const n=num($('spN').value);if(!(n>=2&&n<=20&&n===Math.floor(n)))return null;const total=cartTotal(),base=Math.floor(total/n*100)/100,out=[];for(let i=0;i<n;i++)out.push(i<n-1?base:Math.round((total-base*(n-1))*100)/100);return out}
 function spRows(){const box=$('spRows'),ps=spParts(),kinds=[...box.querySelectorAll('select')].map(s=>s.value);box.innerHTML='';if(!ps){box.innerHTML='<p class="muted">اكتب عدد الأجزاء من 2 إلى 20.</p>';return}
-ps.forEach((a,i)=>{const d=document.createElement('div');d.className='sp';d.innerHTML='<span></span><select><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option></select>';d.querySelector('span').textContent='الجزء '+(i+1)+': '+fmt(a)+' ج';if(kinds[i])d.querySelector('select').value=kinds[i];box.appendChild(d)})}
+ps.forEach((a,i)=>{const d=document.createElement('div');d.className='sp';d.innerHTML='<span></span><select><option value="cash">نقدي</option><option value="card">بطاقة / محفظة</option>'+(instaOn()?'<option value="insta">InstaPay</option>':'')+'</select>';d.querySelector('span').textContent='الجزء '+(i+1)+': '+fmt(a)+' ج';if(kinds[i])d.querySelector('select').value=kinds[i];box.appendChild(d)})}
 $('spN').addEventListener('input',spRows);
 function splitOpen(){if(!tPay||tPick)return;$('spErr').style.display='none';spMode('eq');$('spN').value='2';$('spRows').innerHTML='';spRows();const box=$('spLines');box.innerHTML='';
 for(const c of cart){const d=document.createElement('div');d.className='sp';d.innerHTML='<span></span><input inputmode="decimal" placeholder="0"><button type="button" class="light">الكل</button>';
@@ -693,8 +710,8 @@ d.querySelector('span').textContent=qn(c.qty)+' × '+c.name;const inp=d.querySel
 $('splitBtn').onclick=splitOpen;$('spCancel').onclick=()=>{$('spModal').style.display='none'};
 $('spOk').onclick=()=>{const err=m=>{$('spErr').textContent=m;$('spErr').style.display='block'};
 if(spM==='eq'){const ps=spParts();if(!ps)return err('اكتب عدد الأجزاء من 2 إلى 20');const ks=[...$('spRows').querySelectorAll('select')].map(s=>s.value);
-const parts=ps.map((a,i)=>({a:fmt(a),k:ks[i]||'cash'}));let cash=0,card=0;for(const p of parts){if(p.k==='card')card+=+p.a;else cash+=+p.a}
-$('spModal').style.display='none';const tab=tPay,name=curT.name;payNow(o=>{closeTab(tab.id,o.uid);toast('تم الحساب ✔ — '+name+' أصبحت متاحة');leaveTable()},{cash:Math.round(cash*100)/100,card:Math.round(card*100)/100,parts});return}
+const parts=ps.map((a,i)=>({a:fmt(a),k:ks[i]||'cash'}));let cash=0,card=0,insta=0;for(const p of parts){if(p.k==='card')card+=+p.a;else if(p.k==='insta')insta+=+p.a;else cash+=+p.a}
+$('spModal').style.display='none';const tab=tPay,name=curT.name;payNow(o=>{closeTab(tab.id,o.uid);toast('تم الحساب ✔ — '+name+' أصبحت متاحة');leaveTable()},{cash:Math.round(cash*100)/100,card:Math.round(card*100)/100,insta:Math.round(insta*100)/100,parts});return}
 const picks=[],keep=[];for(const inp of $('spLines').querySelectorAll('input')){const c=cart.find(x=>x.key===inp.dataset.k);if(!c||inp.value.trim()==='')continue;const v=num(inp.value);
 if(!(v>=0)||v>c.qty)return err('كمية «'+c.name+'» غير صحيحة (من 0 إلى '+qn(c.qty)+')');if(v>0){picks.push({id:+c.key.slice(1),qty:v});keep.push({...c,qty:v})}}
 if(!picks.length)return err('اكتب كمية صنف واحد على الأقل');$('spModal').style.display='none';tPick=picks;cart=keep;setPay('cash');$('cash').value='';showView();render();toast('حصّل هذا الجزء ثم اضغط «تحصيل وطباعة»')};
@@ -791,6 +808,8 @@ if(g>due+0.004){b.innerHTML='<small>الباقي للعميل</small>'+fmt(g-due
 $('cash').addEventListener('input',showChg);$('cash').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('pay').click()}});
 $('credNow').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('pay').click()}});
 $('credNow').addEventListener('input',()=>{const v=num($('credNow').value),t=cartTotal();$('nowHint').textContent=v>0&&v<t?'الآجل على العميل: '+fmt(t-v)+' ج':''});
+function planHint(){const n=+$('credPlan').value,v=num($('credNow').value)||0,t=cartTotal()-(v>0?v:0);$('planHint').textContent=n>1&&t>0?n+' أقساط شهرية — القسط نحو '+fmt(Math.floor(t/n))+' ج، أولها بعد شهر':''}
+$('credPlan').addEventListener('change',planHint);$('credNow').addEventListener('input',planHint);
 function renderMore(t){const m=cart.length?discManual():0,inv=cart.length?invOnly():0,la=cart.length?loyAmt():0,dr=$('discRow');dr.style.display=m>0.004||la>0?'flex':'none';
 dr.innerHTML=(m>0.004?'<span>✂ خصم'+(inv?' (منه على الفاتورة '+fmt(inv)+')':'')+'</span><span class="pr">−'+fmt(m)+'</span>':'')+(la>0?'<span>⭐ استبدال '+loy.use+' نقطة</span><span class="pr">−'+fmt(la)+'</span>':'');plusUI();
 const xb=$('exBox');if(exch){const S=cart.length?cartTotal():0,d=r2(S-exch.total);xb.style.display='';
@@ -802,10 +821,12 @@ lb.innerHTML='<b>✔ '+H(lastRec.title||('فاتورة رقم '+(o.shift_seq||''
 const bs=lb.querySelectorAll('button');bs[0].onclick=()=>{waSend(lastRec);focusScan()};bs[1].onclick=()=>{if(lastRec.exr)printExch(lastRec.exr);else printReceipt(o,lastRec.total,lastRec.given,true,lastRec.cashier);focusScan()}}else lb.style.display='none';
 payUI();showChg()}
 // payment rows of the receipt (and of the WhatsApp text)
-function payRows(o,total,given){const pc=+o.paid_cash||0,pk=+o.paid_card||0,pr=+o.paid_credit||0,rd=+o.paid_rider||0,out=[];
+function payRows(o,total,given){const pc=+o.paid_cash||0,pk=+o.paid_card||0,pr=+o.paid_credit||0,rd=+o.paid_rider||0,pi=+o.paid_insta||0,out=[];
 if(rd)return [['مع عامل التوصيل — يُدفع عند الاستلام',fmt(total)]];
-if(o.exch_from){out.push(['من قيمة المرتجع',fmt(o.exch_from)]);if(pc-(+o.exch_from)>0.004)out.push(['نقدًا',fmt(pc-(+o.exch_from))]);if(pk)out.push(['بالبطاقة / المحفظة',fmt(pk)]);return out}
-if(pr){if(pc)out.push(['مدفوع نقدًا',fmt(pc)]);if(pk)out.push(['مدفوع بالبطاقة / المحفظة',fmt(pk)]);out.push([o.is_return?'يُخصم من حساب العميل':'آجل على الحساب',fmt(pr)]);if(o.cbal!=null)out.push(['رصيد العميل بعد الفاتورة',fmt(o.cbal)]);return out}
+if(o.platform){const pn=((cat&&cat.plats||[]).find(x=>x.k===o.platform)||{}).n||o.platform;return [[o.is_return?'مرتجع طلب '+pn:'طلب عبر '+pn+' — مدفوع للمنصة',fmt(total)]]}
+if(o.exch_from){out.push(['من قيمة المرتجع',fmt(o.exch_from)]);if(pc-(+o.exch_from)>0.004)out.push(['نقدًا',fmt(pc-(+o.exch_from))]);if(pk)out.push(['بالبطاقة / المحفظة',fmt(pk)]);if(pi)out.push(['بـ InstaPay',fmt(pi)]);return out}
+if(pr){if(pc)out.push(['مدفوع نقدًا',fmt(pc)]);if(pk)out.push(['مدفوع بالبطاقة / المحفظة',fmt(pk)]);if(pi)out.push(['مدفوع بـ InstaPay',fmt(pi)]);out.push([o.is_return?'يُخصم من حساب العميل':'آجل على الحساب',fmt(pr)]);if(o.plan&&o.plan.n>1)out.push(['على '+o.plan.n+' أقساط شهرية، القسط نحو',fmt(Math.floor(pr/o.plan.n))]);if(o.cbal!=null)out.push(['رصيد العميل بعد الفاتورة',fmt(o.cbal)]);return out}
+if(pi){if(pc)out.push(['نقدًا',fmt(pc)]);if(pk)out.push(['بالبطاقة / المحفظة',fmt(pk)]);out.push([o.is_return?'المردود بـ InstaPay':'مدفوع بـ InstaPay',fmt(pi)]);return out}
 if(pk&&pc)return [['نقدًا',fmt(pc)],['بالبطاقة / المحفظة',fmt(pk)]];if(pk)return [['مدفوع بالبطاقة / المحفظة',fmt(total)]];
 out.push([o.is_return?'المردود نقدًا':'المدفوع نقدًا',fmt(given)]);if(given>total)out.push(['الباقي',fmt(given-total)]);return out}
 // ---- WhatsApp receipt: wa.me/20… with the receipt as text (the customer's phone from the credit / delivery customer, or typed)
@@ -869,15 +890,16 @@ if(diff<0&&!drawerHas(-diff))return false;
 const even=diff>=-0.004;/* nothing goes back to the customer: no reason, no owner (pos.services.check_return checks the sale) */
 if(!even&&!(retApp&&retApp.amount===R)){retOpen(R,done);return false}
 if(cart.length&&discNeed()){discOpen(true);return false}
-let cash=0,card=0,given=0;
-if(diff>0){if(payKind==='card')card=diff;else if(payKind==='cash'){given=$('cash').value.trim()===''?diff:num($('cash').value);if(!(given>=diff)){alert('المدفوع أقل من الفرق');return false}cash=diff}else{alert('فرق الاستبدال يُدفع نقدًا أو بالبطاقة');return false}}
+let cash=0,card=0,given=0,insta=0;
+if(diff>0&&payKind==='insta'&&!instaOk){instaAsk(diff,done);return false}
+if(diff>0){if(payKind==='card')card=diff;else if(payKind==='insta')insta=diff;else if(payKind==='cash'){given=$('cash').value.trim()===''?diff:num($('cash').value);if(!(given>=diff)){alert('المدفوع أقل من الفرق');return false}cash=diff}else{alert('فرق الاستبدال يُدفع نقدًا أو بالبطاقة');return false}}
 const st=shift.st||(shift.st={cash:0,card:0,credit:0,ret:0,out:0,in:0}),pre=cat.branch.code+'-'+cat.device+'-',now=new Date().toISOString();
 const rno=noTake();shift.n=(shift.n||0)+1;const r={uid:pre+String(rno).padStart(7,'0'),shift_uid:shift.uid,shift_seq:rno,created_at:now,is_return:true,paid_cash:fmt(R),paid_card:'0.00',paid_credit:'0.00',paid_rider:'0.00',
 ret_of:exch.uid,ret_ok:even?'':retApp.token,ret_reason:even?'استبدال':retApp.reason,note:'استبدال من الفاتورة رقم '+(exch.seq||exch.uid),lines:exch.lines.map(l=>({item_code:l.item_code,qty:l.qty,price:l.price,discount:l.discount,name:l.name,shown_qty:l.qty,shown_price:l.price,vr:l.vr}))};
 st.cash-=R;st.ret+=R;shift.cash=(shift.cash||0)-R;remember(r.uid,'مرتجع (استبدال) رقم '+r.shift_seq+' — '+fmt(R)+' ج',{o:r,total:R,given:R,cashier:shift.cashier_name});
-let s=null;if(S>0){const sno=noTake();shift.n++;const pc=r2(Math.min(R,S)+cash);s={uid:pre+String(sno).padStart(7,'0'),shift_uid:shift.uid,shift_seq:sno,created_at:now,is_return:false,paid_cash:fmt(pc),paid_card:fmt(card),paid_credit:'0.00',paid_rider:'0.00',
+let s=null;if(S>0){const sno=noTake();shift.n++;const pc=r2(Math.min(R,S)+cash);s={uid:pre+String(sno).padStart(7,'0'),shift_uid:shift.uid,shift_seq:sno,created_at:now,is_return:false,paid_cash:fmt(pc),paid_card:fmt(card),paid_credit:'0.00',paid_rider:'0.00',paid_insta:fmt(insta),
 exch_of:r.uid,exch_src:exch.uid,exch_from:fmt(Math.min(R,S)),customer_id:null,note:orderNote,lines:cartLines()};const man=discManual();if(man>0.004){s.disc=discInfo(man);st.disc=r2((st.disc||0)+man)}
-r.exch_to=s.uid;queue.push(s);st.cash+=pc;st.card+=card;shift.cash+=pc;remember(s.uid,'فاتورة استبدال رقم '+s.shift_seq+' — '+fmt(S)+' ج',{o:s,total:S,given:r2(Math.min(R,S)+given),cashier:shift.cashier_name})}
+r.exch_to=s.uid;queue.push(s);st.cash+=pc;st.card+=card;if(insta)st.insta=r2((st.insta||0)+insta);shift.cash+=pc;remember(s.uid,'فاتورة استبدال رقم '+s.shift_seq+' — '+fmt(S)+' ج',{o:s,total:S,given:r2(Math.min(R,S)+given),cashier:shift.cashier_name})}
 queue.push(r);/* after its sale: the server sees the new invoice before the return it pays for */
 const exr={r,s,R,S,diff,given,ex:{uid:exch.uid,seq:exch.seq},cashier:shift.cashier_name};save();printExch(exr);
 lastRec={o:s||r,total:s?S:R,given,cashier:shift.cashier_name,exr,title:'استبدال من الفاتورة رقم '+(exch.seq||exch.uid),chg:diff<0?-diff:(given>diff?r2(given-diff):0),chgL:diff<0?'يُرد للعميل':'الباقي للعميل'};
@@ -887,7 +909,7 @@ function printExch(x){const d=new Date(x.r.created_at),sd=x.s;let h='<div class=
 '<div class="c"><b>المرتجع</b></div>'+rcItems(x.r,false)+'<div class="row2"><b>قيمة المرتجع</b><b>−'+fmt(x.R)+'</b></div>'+
 (sd?'<hr><div class="c"><b>الأصناف الجديدة</b></div>'+rcItems(sd,false)+(sd.disc&&+sd.disc.inv?'<div class="row2"><span>خصم على الفاتورة</span><span>−'+fmt(sd.disc.inv)+'</span></div>':'')+'<div class="row2"><b>قيمة الأصناف الجديدة</b><b>'+fmt(x.S)+'</b></div>':'')+
 '<div class="tot"><span>'+(x.diff>0?'الفرق المدفوع':(x.diff<0?'المردود للعميل':'الفرق'))+'</span><span>'+fmt(Math.abs(x.diff))+' ج.م</span></div>'+
-(x.diff>0?'<div class="row2"><span>'+(sd&&+sd.paid_card?'بالبطاقة / المحفظة':'المدفوع نقدًا')+'</span><span>'+fmt(sd&&+sd.paid_card?x.diff:x.given)+'</span></div>'+(!(sd&&+sd.paid_card)&&x.given>x.diff?'<div class="row2"><span>الباقي</span><span>'+fmt(x.given-x.diff)+'</span></div>':''):'')+
+(x.diff>0?'<div class="row2"><span>'+(sd&&+sd.paid_insta?'بـ InstaPay':sd&&+sd.paid_card?'بالبطاقة / المحفظة':'المدفوع نقدًا')+'</span><span>'+fmt(sd&&(+sd.paid_card||+sd.paid_insta)?x.diff:x.given)+'</span></div>'+(!(sd&&(+sd.paid_card||+sd.paid_insta))&&x.given>x.diff?'<div class="row2"><span>الباقي</span><span>'+fmt(x.given-x.diff)+'</span></div>':''):'')+
 '<hr><div class="thx">'+H(cat.branch.footer||'شكرًا لزيارتكم')+'</div><div class="pw">بواسطة تريو · 01228827915</div></div>';$('receipt').innerHTML=h;window.print()}
 // ---- keyboard-only till: F2 the paid amount (Enter pays) · F12 pay now · F4 hold · F8 discount · F9 held invoices · Esc closes / clears
 document.addEventListener('keydown',e=>{const m=modalOpen();
@@ -923,6 +945,36 @@ document.body.innerHTML='<div class="card" style="max-width:460px;margin:60px au
 heldSave();
 window.addEventListener('online',()=>{sync();loadCatalog()});setInterval(sync,15000);setInterval(loadCatalog,300000);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/pos/sw.js',{scope:'/pos/'}).catch(()=>{});
+// ---------------------------------------------------------------- 1.25 InstaPay (pos/instapay.py) + the customer display (/pos/display/)
+function instaOn(){return !!(cat&&cat.insta&&cat.insta.on)}
+function pkName(k){return k==='card'?'بالبطاقة / المحفظة':k==='insta'?'بـ InstaPay':'نقدًا'}
+let instaOk=false,instaDone=null,instaAmt=0;
+function instaAsk(amount,done){instaDone=done;instaAmt=amount;const q=cat.insta||{};$('iqBox').innerHTML=q.qr||'';$('iqBox').style.display=q.qr?'':'none';
+$('iqAmt').textContent=fmtG(amount)+' ج.م';$('iqLbl').textContent=q.label||'';$('instaModal').style.display='flex';$('iqOk').focus();dispSend({mode:'insta',amount})}
+$('iqNo').onclick=()=>{$('instaModal').style.display='none';instaDone=null;dispPush()};
+$('iqOk').onclick=()=>{$('instaModal').style.display='none';const d=instaDone;instaDone=null;instaOk=true;try{payNow(d)}finally{instaOk=false}};
+// the receipt: «ادفع بـ InstaPay» + QR (links carry no amount — the amount is printed next to it when something is still due)
+function rcInsta(o,total){const q=cat.insta||{};if(!q.qr||q.rc===false||o.is_return||(+o.paid_insta>0&&!(+o.paid_credit>0)))return '';
+const due=o.prebill?total:(+o.paid_credit>0?+o.paid_credit:0);
+return '<hr><div class="iq"><b>'+(due>0?'ادفع بـ InstaPay':'للدفع بـ InstaPay امسح الرمز')+'</b><div class="iqr">'+q.qr+'</div><div class="sub" dir="ltr">'+H(q.label||'')+'</div>'+
+(due>0?'<div class="row2" style="font-weight:800"><span>'+(o.prebill?'المبلغ المطلوب':'المتبقي على حسابك')+'</span><span>'+fmtG(due)+' ج.م</span></div>':'')+'</div>'}
+// customer display: a second window on the same computer (BroadcastChannel «trio-display» — never «trio-pos», which keeps one till)
+let dispBC=null,dispHold=0;try{dispBC=new BroadcastChannel('trio-display');dispBC.onmessage=e=>{if(e.data&&e.data.k==='want')dispPush(true)}}catch(e){}
+function dispBase(){return {k:'state',co:cat?cat.company:'',logo:cat?cat.logo||'':'',insta:cat&&cat.insta&&cat.insta.qr?{qr:cat.insta.qr,label:cat.insta.label||''}:null,
+promos:cat?(cat.promos||[]).filter(p=>{const d=new Date().toISOString().slice(0,10);return p.start<=d&&p.end>=d}).map(p=>p.name).filter(Boolean).slice(0,6):[],footer:cat?cat.branch.footer||'':''}}
+function dispSend(x){if(!dispBC||window.posDead)return;try{dispBC.postMessage({...dispBase(),...x})}catch(e){}}
+function dispPush(force){if(!dispBC||!cat)return;if(!force&&Date.now()<dispHold&&!cart.length)return;if(cart.length)dispHold=0;
+const lines=cart.map(c=>{const lc=lineCalc(c);return {n:c.name,q:qn(c.qty),t:fmt(lc.total+addsTotal(c)),a:(c.adds||[]).map(a=>a.name).join('، '),d:lc.disc+lc.md>0.004?fmt(lc.disc+lc.md):''}});
+for(const x of extras())lines.push({n:x.name,q:'',t:fmt(x.price)});
+if(!lines.length){if(Date.now()<dispHold)return;dispSend({mode:'idle'});return}
+const inv=invDiscAmt();dispSend({mode:'cart',lines,total:fmt(cartTotal()),disc:inv>0.004?fmt(inv):'',ret:$('isRet').checked,exch:exch?fmt(exch.total):''})}
+function dispPaid(rec){if(!rec||!rec.o)return;const o=rec.o;dispHold=Date.now()+12000;
+dispSend({mode:'paid',total:fmt(rec.total),paid:fmt(rec.given||0),chg:rec.chg?fmt(rec.chg):'',ret:!!o.is_return,how:+o.paid_insta>0?'insta':+o.paid_credit>0?'credit':+o.paid_card>0&&!(+o.paid_cash>0)?'card':'cash'});
+setTimeout(()=>{if(!cart.length)dispSend({mode:'idle'})},12500)}
+{const _r=render;render=function(){_r.apply(this,arguments);try{dispPush()}catch(e){}}}
+{const _p=payNow;payNow=function(){const was=lastRec,ok=_p.apply(this,arguments);if(ok&&lastRec&&lastRec!==was)try{dispPaid(lastRec)}catch(e){}return ok}}
+$('dispBtn').onclick=async()=>{let f='popup,width=1024,height=700';try{if(window.getScreenDetails){const sd=await getScreenDetails(),o=sd.screens.find(x=>x!==sd.currentScreen);if(o)f='popup,left='+o.availLeft+',top='+o.availTop+',width='+o.availWidth+',height='+o.availHeight}}catch(e){}
+const w=window.open('/pos/display/','trio_display',f);if(!w){alert('المتصفح منع فتح نافذة جديدة — اسمح بالنوافذ المنبثقة لهذا الموقع ثم اضغط «شاشة العميل» مرة أخرى');return}setTimeout(()=>dispPush(true),800);toast('اسحب نافذة شاشة العميل إلى الشاشة الثانية ثم اضغط F11 لملء الشاشة')};
 cartBack();save();render();if(LS.get('pos_locked'))lockPos();if(tok)loadCatalog().then(dPoll);
 </script>
 </body>

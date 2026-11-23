@@ -16,7 +16,7 @@ def _allowed(request):
     s = CompanySettings.get()
     if s.business not in T.TABLE_BIZ:
         raise Http404("الترابيزات للكافيهات والمطاعم")
-    if not (request.user.is_superuser or is_owner(request.user)):
+    if not (request.user.is_superuser or is_owner(request.user)) or __import__("pos.voids", fromlist=["x"])._my_branch(request.user):
         raise PermissionDenied
     return s
 

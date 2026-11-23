@@ -58,7 +58,7 @@
     let h='<div>🏪 <b>'+esc($('shop').value)+'</b> — '+esc(p.name)+'</div>';
     h+='<div>📂 '+(p.categories||[]).length+' تصنيف: '+(p.categories||[]).slice(0,6).map(esc).join('، ')+'…</div>';
     if((p.fields||[]).length)h+='<div>🏷 بيانات لكل '+esc(p.item||'صنف')+': '+p.fields.map(x=>esc(x.n)).join('، ')+'</div>';
-    h+='<div>🖥 '+$('devices').value+(p.clinic?' مكتب استقبال':' جهاز كاشير')+'</div>';
+    h+='<div>🖥 '+$('devices').value+(p.clinic?' مكتب استقبال':' جهاز كاشير')+'</div>';if(multi)h+='<div>🏬 أكثر من فرع: بعد الدخول افتح كل فرع من «الفروع» (مخزن وخزينة وأجهزة ومدير لكل فرع)</div>';
     if(p.tables)h+='<div>🪑 '+(Math.max(0,Math.min(100,parseInt($('tables').value)||0))||'بدون')+' ترابيزة'+(+$('tables').value>0?' مع بطاقات QR':' (تيك أواي)')+'</div>';
     if(p.hall){const g=[];if(+$('ps_count').value>0)g.push((+$('ps_count').value)+' بلايستيشن 5 ('+esc($('ps_rate').value)+' فردي / '+esc($('ps_multi').value||'—')+' مالتي)');if(+$('ps4_count').value>0)g.push((+$('ps4_count').value)+' بلايستيشن 4 ('+esc($('ps4_rate').value)+' فردي / '+esc($('ps4_multi').value||'—')+' مالتي)');if(+$('bl_count').value>0)g.push((+$('bl_count').value)+' بلياردو ('+esc($('bl_rate').value)+' ج/ساعة)');h+='<div>🎮 '+(g.join('، ')||'بدون أجهزة')+'</div>'}
     if(f.querySelector('[name=samples]:checked').value==='1'&&(p.samples||[]).length)h+='<div>🧪 '+p.samples.length+' أصناف أمثلة: '+p.samples.slice(0,3).map(x=>esc(x[0])).join('، ')+'…</div>';

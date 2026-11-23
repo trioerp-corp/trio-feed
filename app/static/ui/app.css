@@ -75,7 +75,7 @@ box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:280px;overflow:auto;display:non
 .lookup .menu button{display:block;width:100%;text-align:right;background:none;border:0;border-bottom:1px solid var(--line-2);color:var(--ink);font-weight:400;border-radius:0;min-height:38px;padding:8px 10px}
 .lookup .menu button:hover,.lookup .menu button.act{background:var(--brand-2)}
 .lookup .menu small{color:var(--muted);margin-inline-start:6px}
-.msg{padding:10px 14px;border-radius:12px;margin-bottom:10px;background:var(--brand-2);color:var(--brand)}.msg.error{background:var(--bad-2);color:var(--bad)}
+.msg{overflow-wrap:anywhere;padding:10px 14px;border-radius:12px;margin-bottom:10px;background:var(--brand-2);color:var(--brand)}.msg.error{background:var(--bad-2);color:var(--bad)}
 .note{background:var(--gold-2);color:var(--gold-ink);border-radius:12px;padding:10px 14px;margin:10px 0}
 .seg{display:inline-flex;background:var(--line-2);border-radius:12px;padding:4px;gap:4px}.seg a{padding:7px 14px;border-radius:9px;color:var(--muted)}.seg a.on{background:var(--card);color:var(--brand);font-weight:700}
 .pager{display:flex;gap:8px;align-items:center;margin-top:12px}

@@ -1,0 +1,23 @@
+{% load gg l10n static %}<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>إذن تحويل {{ t.number }}</title>
+<link rel="stylesheet" href="{% static 'ui/fonts.css' %}"><style>
+body{font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;color:#111;margin:0;background:#f3f4f6}.sheet{max-width:800px;margin:20px auto;background:#fff;padding:28px 32px;box-shadow:0 2px 10px #0001}
+.top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0b3b5c;padding-bottom:12px;margin-bottom:14px}.top h1{margin:0;font-size:22px;color:#0b3b5c}.logo svg,.logo img{max-height:56px;max-width:140px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;font-size:14px;margin-bottom:14px}.meta b{color:#0b3b5c}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border:1px solid #bbb;padding:7px 8px;text-align:right}th{background:#eef3f7}td.n,th.n{text-align:left;font-variant-numeric:tabular-nums}
+.sig{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px;font-size:14px}.sig div{border-top:1px solid #333;padding-top:6px;text-align:center}
+.bar{max-width:800px;margin:12px auto 0;display:flex;gap:8px}.bar button{font:inherit;padding:8px 18px;border-radius:9px;border:0;background:#0b3b5c;color:#fff;cursor:pointer}
+@media print{body{background:#fff}.sheet{box-shadow:none;margin:0;max-width:none;padding:0}.bar{display:none}}
+@media(max-width:600px){.sheet{padding:16px;margin:8px}.meta{grid-template-columns:1fr}.sig{grid-template-columns:1fr;gap:28px}}
+</style></head><body>
+<div class="bar"><button onclick="window.print()">🖨 طباعة</button></div>
+<div class="sheet"><div class="top"><div><h1>إذن تحويل بضاعة بين الفروع</h1><div style="margin-top:4px">{{ s.name }}</div></div><div class="logo">{% if s.logo_svg %}{{ s.logo_svg|safe }}{% endif %}</div></div>
+<div class="meta"><div>رقم الإذن: <b dir="ltr">{{ t.number }}</b></div><div>الحالة: <b>{{ t.get_state_display }}</b></div>
+<div>من: <b>{{ src.name|default:t.from_warehouse.name }}</b>{% if src.address %} — {{ src.address }}{% endif %}</div><div>إلى: <b>{{ dst.name|default:t.to_warehouse.name }}</b>{% if dst.address %} — {{ dst.address }}{% endif %}</div>
+<div>تاريخ الإرسال: <b>{{ t.sent_at|date:"d/m/Y H:i"|default:"—" }}</b></div><div>تاريخ الاستلام: <b>{{ t.received_at|date:"d/m/Y H:i"|default:"—" }}</b></div>
+{% if t.driver %}<div>المندوب / السائق: <b>{{ t.driver }}</b></div>{% endif %}{% if t.note %}<div>ملاحظة: {{ t.note }}</div>{% endif %}</div>
+<table><thead><tr><th>#</th><th>الصنف</th><th>الوحدة</th><th class="n">المطلوب</th><th class="n">المرسل</th><th class="n">المستلم</th><th class="n">الفرق</th></tr></thead><tbody>
+{% for ln in lines %}<tr><td>{{ forloop.counter }}</td><td>{{ ln.item.name }}<br><small dir="ltr">{{ ln.item.code }}</small></td><td>{{ ln.item.unit }}</td><td class="n">{{ ln.qty_req|floatformat:"-3" }}</td><td class="n">{{ ln.qty_sent|floatformat:"-3" }}</td>
+<td class="n">{% if t.state == 'sent' %}&nbsp;{% else %}{{ ln.qty_recv|floatformat:"-3" }}{% endif %}</td><td class="n">{% if ln.qty_lost %}عجز {{ ln.qty_lost|floatformat:"-3" }}{% endif %}{% if ln.qty_back %} رجع {{ ln.qty_back|floatformat:"-3" }}{% endif %}</td></tr>{% endfor %}</tbody></table>
+{% if t.reply %}<p>ملاحظة الاستلام: {{ t.reply }}</p>{% endif %}
+<div class="sig"><div>أمين مخزن الفرع المرسل</div><div>المندوب / السائق</div><div>المستلم في الفرع</div></div>
+<p style="font-size:11px;color:#666;margin-top:24px">طُبع من برنامج Trio — {% now "d/m/Y H:i" %}</p></div></body></html>

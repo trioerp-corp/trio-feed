@@ -1,8 +1,8 @@
-{% extends "base.html" %}{% block title %}دليل البرنامج{% endblock %}
+{% extends "base.html" %}{% block title %}دليل الاستخدام{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>📘 دليل البرنامج — {{ title }}</h1><p class="muted" style="margin:0">خطوة بخطوة، بنفس مصطلحات البرنامج.</p></div>
+<div class="page-head"><div><h1>📘 دليل الاستخدام — {{ title }}</h1><p class="muted" style="margin:0">خطوة بخطوة، بنفس مصطلحات البرنامج.</p></div>
 <div class="actions noprint">{% if has_pdf %}<a class="btn" href="?pdf=download">⬇ نزّل الدليل PDF</a><a class="btn light" href="?pdf=view" target="_blank" rel="noopener">افتح الـ PDF</a>{% endif %}<button type="button" class="light" onclick="print()">🖨 اطبع</button></div></div>
 <nav class="card noprint" style="margin-bottom:16px" aria-label="المحتوى"><b>المحتوى:</b> {% for s in secs %}<a href="#g{{ forloop.counter }}">{{ s.t }}</a>{% if not forloop.last %} · {% endif %}{% endfor %}</nav>
-{% for s in secs %}<section class="card" id="g{{ forloop.counter }}" style="margin-bottom:12px;scroll-margin-top:80px"><h2 style="margin-top:0">{{ forloop.counter }}. {{ s.t }}</h2>
-<ol style="margin:0;padding-inline-start:22px;line-height:2">{% for x in s.steps %}<li>{{ x }}</li>{% endfor %}</ol>{% if s.shot %}<p style="margin:8px 0 0" class="noprint"><a href="{{ s.shot }}">افتح الصفحة ←</a></p>{% endif %}</section>{% endfor %}
+{% for s in secs %}{% if s.part %}<h2 style="margin:22px 0 10px">{{ s.part }}</h2>{% endif %}<section class="card" id="g{{ forloop.counter }}" style="margin-bottom:12px;scroll-margin-top:80px"><h2 style="margin-top:0">{{ forloop.counter }}. {{ s.t }}</h2>
+<ol style="margin:0;padding-inline-start:22px;line-height:2">{% for x in s.steps %}<li>{{ x }}</li>{% endfor %}</ol>{% if s.kbd %}<table style="margin:8px 0">{% for k, v in s.kbd %}<tr><td dir="ltr" style="font-weight:800;white-space:nowrap">{{ k }}</td><td>{{ v }}</td></tr>{% endfor %}</table>{% endif %}{% if s.tip %}<p style="margin:8px 0 0;padding:8px 12px;border-radius:10px;background:var(--soft,#EAF8F5)"><b>نصيحة:</b> {{ s.tip }}</p>{% endif %}{% if s.shot %}<p style="margin:8px 0 0" class="noprint"><a href="{{ s.shot }}">افتح الصفحة ←</a></p>{% endif %}</section>{% endfor %}
 {% endblock %}

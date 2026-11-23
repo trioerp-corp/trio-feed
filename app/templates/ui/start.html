@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load ar %}{% load l10n %}{% block title %}تجهيز المحل{% endblock %}
+{% extends "base.html" %}{% load ar %}{% load l10n gg %}{% block title %}تجهيز المحل{% endblock %}
 {% block content %}
 <style>
 .st-prog{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}.st-prog a{font-size:13px;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none}
@@ -13,9 +13,10 @@
 <p class="muted" style="margin:0">كل ما يحتاجه البرنامج ليعمل كل شيء دون أن يقول لك «افعل كذا أولًا». املأه الآن، أو تخطَّ أي جزء وارجع إليه لاحقًا.</p></div>
 <div class="actions"><a class="btn light" href="/">{% if left %}أكمل لاحقًا{% else %}✔ انتهيت — إلى الرئيسية{% endif %}</a></div></div>
 
-<div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>📘 <b>دليل البرنامج لنشاطك</b> — خطوة بخطوة بالصور{% if auto_guide %} (يُنزَّل الآن على جهازك){% endif %}.</span><span class="actions"><a class="btn light" href="{% url 'guide' %}?pdf=download" id="guideDl">⬇ نزّل الدليل PDF</a><a class="btn light" href="{% url 'guide' %}">اقرأه هنا</a></span></div>
+<div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>📘 <b>دليل الاستخدام لنشاطك</b> — خطوة بخطوة بالصور{% if auto_guide %} (يُنزَّل الآن على جهازك){% endif %}.</span><span class="actions"><a class="btn light" href="{% url 'guide' %}?pdf=download" id="guideDl">⬇ نزّل الدليل PDF</a><a class="btn light" href="{% url 'guide' %}">اقرأه هنا</a></span></div>
 {% if auto_guide %}<script>window.addEventListener('load',()=>setTimeout(()=>{const a=document.getElementById('guideDl');if(a)a.click()},600))</script>{% endif %}
 <nav class="st-prog" aria-label="الخطوات">{% for r in rows %}<a href="#{{ r.key }}" class="{% if r.done %}ok{% endif %}">{% if r.done %}✔{% else %}○{% endif %} {{ r.title }}</a>{% endfor %}</nav>
+{% if status.stock and not status.stock.done and items %}<div class="card" style="margin-bottom:16px;border:2px solid var(--brand);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><b style="font-size:17px">📦 أدخل رصيد البضاعة الموجودة عندك الآن</b><br><span class="muted">الكمية وسعر الشراء لكل صنف — ليعرف البرنامج مخزونك وقيمته وأرباحك من أول فاتورة.</span></div><a class="btn" href="{% url 'start_stock' %}">ابدأ الآن</a></div>{% endif %}
 
 {% with st=status.shop %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="shop"><h2><span class="n">1</span> {% if s.business == 'clinic' %}بيانات العيادة{% else %}بيانات المحل{% endif %}</h2>
 <p class="muted why">تظهر على الإيصال وعلى الفاتورة.</p>
@@ -52,7 +53,8 @@
 <div class="st-row"><label class="field">محفظة / حساب بنكي آخر (اختياري)<input name="new_box" maxlength="100" placeholder="مثلًا: محفظة أورانج كاش"></label>
 <label class="field" style="max-width:160px">النوع<select name="new_kind"><option value="wallet">محفظة</option><option value="bank">بنك</option></select></label>
 <label class="field" style="max-width:220px">النقدية في الدرج اليوم{% if opening_cash %} <small class="muted">(تم التسجيل {{ opening_cash }})</small>{% endif %}<input name="opening_cash" inputmode="decimal" dir="ltr" placeholder="0" {% if opening_cash %}disabled{% endif %}></label>
-<button>حفظ</button></div></form></section>{% endwith %}
+<button>حفظ</button></div>
+<div style="margin-top:12px;border-top:1px dashed var(--line);padding-top:10px">{% include "ui/_insta.html" %}<div><button>حفظ</button></div></div></form></section>{% endwith %}
 
 {% if 'clinic' in mods %}
 <section class="card st-sec {% if status.doctors.done %}ok{% endif %}" id="doctors"><h2><span class="n">4</span> الأطباء</h2>
@@ -104,6 +106,11 @@
 <div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'import_upload' 'items' %}">⬆ ارفع الأصناف من إكسل</a><a class="btn light" href="{% url 'shop_items' %}{% if no_limit %}?noreorder=1{% endif %}">{% if no_limit %}اكتب حد الطلب الناقص{% else %}أضف صنفًا يدويًا{% endif %}</a>
 {% if is_pharmacy %}<a class="btn light" href="{% url 'pharmacy' %}">💊 من مكتبة الأدوية</a>{% endif %}</div></section>
 <span id="reorder"></span>{% endif %}
+
+{% if status.stock %}<section class="card st-sec {% if status.stock.done %}ok{% endif %}" id="stock"><h2><span class="n">✦</span> رصيد البضاعة الموجودة عندك الآن</h2>
+<p class="muted why">{% if opening %}✔ سُجّل يوم {{ opening.date|date:"d/m/Y" }}: {{ opening.n|count:"صنف" }} بقيمة {{ opening.v|money }} ج.م — يمكنك إضافة ما نسيته (يُضاف فوق الرصيد).{% elif items %}اكتب لكل صنف الكمية الموجودة على الرف الآن وسعر شرائه — بالبحث أو بمسح الباركود{% if is_pharmacy %} (بالعلبة والشريط){% endif %}، أو ارفع ملف إكسل. يُسجَّل مرة واحدة رصيدًا أول المدة.{% else %}أضف الأصناف أولًا، ثم اكتب رصيدها هنا.{% endif %}</p>
+<div class="actions" style="justify-content:flex-start">{% if items %}<a class="btn" href="{% url 'start_stock' %}">📦 {% if opening %}أضف رصيدًا{% else %}أدخل الرصيد{% endif %}</a>{% endif %}<a class="btn light" href="{% url 'import_upload' 'opening' %}">⬆ من ملف إكسل</a></div>
+{% if not status.stock.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="stock"><button class="skip">لا توجد بضاعة الآن (سأسجّلها مع فواتير الشراء) — تخطٍّ</button></form>{% endif %}</section>{% endif %}
 
 {% if 'purchases' in mods %}<section class="card st-sec {% if status.suppliers.done %}ok{% endif %}" id="suppliers"><h2><span class="n">✦</span> الموردين</h2>
 {% if suppliers %}<div class="st-chips">{% for n in suppliers %}<span>{{ n }}</span>{% endfor %}</div>{% endif %}

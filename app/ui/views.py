@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q, Sum
@@ -117,13 +117,22 @@ def _cash_guard(request):
         raise PermissionDenied("الخزينة للمدير بس")
 
 
+def _my_branch(request):
+    from pos.branches import home_branch
+
+    return home_branch(request.user)
+
+
 @login_required
 def voucher_list(request):
     _cash_guard(request)
     qs = Voucher.objects.select_related("cashbox", "to_cashbox", "partner").order_by("-date", "-id")
+    mb = _my_branch(request)
+    if mb:  # 1.25: a branch manager sees his branch's drawer only
+        qs = qs.filter(Q(cashbox=mb.cashbox) | Q(to_cashbox=mb.cashbox))
     resp = _list(request, qs, {"kind": "kind", "state": "state", "cashbox": "cashbox_id"},
                  ["number", "legacy_number", "description", "payee", "partner__name"], "ui/voucher_list.html",
-                 dict(cashboxes=CashBox.objects.filter(active=True), kinds=Voucher.KINDS, states=Voucher.STATES))
+                 dict(cashboxes=CashBox.objects.filter(active=True, **({"pk": mb.cashbox_id} if mb else {})), kinds=Voucher.KINDS, states=Voucher.STATES))
     return resp
 
 
@@ -136,7 +145,15 @@ def voucher_form(request, pk=None):
     if v.pk and v.state != "draft":
         messages.error(request, "السند مرحّل — التعديل بالإلغاء (قيد عكسي) وإنشاء سند جديد")
         return redirect("voucher_detail", pk=v.pk)
+    mb = _my_branch(request)
+    if mb and v.pk and mb.cashbox_id not in (v.cashbox_id, v.to_cashbox_id):
+        raise PermissionDenied
     form = VoucherForm(request.POST or None, instance=v)
+    if mb:  # 1.25: a branch manager pays and receives from his branch's drawer only
+        if not v.pk:
+            form.initial["cashbox"] = mb.cashbox_id
+        if "cashbox" in form.fields:
+            form.fields["cashbox"].queryset = CashBox.objects.filter(pk=mb.cashbox_id)
     initial = None
     if not v.pk and request.GET.get("accrual"):
         from accruals.models import Accrual
@@ -175,6 +192,9 @@ def voucher_form(request, pk=None):
 def voucher_detail(request, pk):
     _cash_guard(request)
     v = get_object_or_404(Voucher.objects.select_related("cashbox", "to_cashbox", "partner", "entry"), pk=pk)
+    mb = _my_branch(request)
+    if mb and mb.cashbox_id not in (v.cashbox_id, v.to_cashbox_id):
+        raise PermissionDenied
     if request.method == "POST":
         try:
             if "post" in request.POST and request.user.has_perm("treasury.change_voucher"):
@@ -199,15 +219,23 @@ def voucher_detail(request, pk):
 # ------------------------------------------------------------------ inventory
 @login_required
 def move_list(request):
+    if not (request.user.has_perm("inventory.view_stockmove") or request.user.has_perm("inventory.add_stockmove")):
+        raise PermissionDenied
     qs = StockMove.objects.select_related("warehouse", "partner").order_by("-date", "-id")
+    mb = _my_branch(request)
+    if mb:  # 1.25: a branch sees its own store's papers
+        qs = qs.filter(Q(warehouse=mb.warehouse) | Q(to_warehouse=mb.warehouse))
     return _list(request, qs, {"kind": "kind", "state": "state", "warehouse": "warehouse_id"},
                  ["number", "legacy_number", "description", "receiver", "lines__item__name"], "ui/move_list.html",
-                 dict(warehouses=Warehouse.objects.filter(active=True), kinds=[k for k in StockMove.KINDS if k[0] != "harvest"], states=StockMove.STATES))
+                 dict(warehouses=Warehouse.objects.filter(active=True, **({"pk": mb.warehouse_id} if mb else {})), kinds=[k for k in StockMove.KINDS if k[0] != "harvest"], states=StockMove.STATES))
 
 
 @login_required
 @permission_required("inventory.add_stockmove", raise_exception=True)
 def move_form(request, pk=None):
+    if _my_branch(request):  # 1.25: a branch moves goods to another branch through «التحويلات بين الفروع» (with approval)
+        messages.info(request, "التحويل لفرع آخر من «التحويلات بين الفروع»")
+        return redirect("transfers")
     m = get_object_or_404(StockMove, pk=pk) if pk else StockMove(kind=request.GET.get("kind", "issue"), date=timezone.localdate(),
                                                                   warehouse=Warehouse.objects.filter(active=True).first())
     if m.pk and m.state != "draft":
@@ -234,6 +262,9 @@ def move_form(request, pk=None):
 @login_required
 def move_detail(request, pk):
     m = get_object_or_404(StockMove.objects.select_related("warehouse", "partner", "entry"), pk=pk)
+    mb = _my_branch(request)
+    if mb and mb.warehouse_id not in (m.warehouse_id, m.to_warehouse_id):
+        raise PermissionDenied
     if request.method == "POST" and "post" in request.POST:
         try:
             INV.post_move(m, user=request.user)

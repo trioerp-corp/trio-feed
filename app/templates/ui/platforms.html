@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% load gg l10n %}{% block title %}منصات التوصيل{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>🛵 منصات التوصيل (طلبات · المنيوز)</h1><p class="muted" style="margin:0">اختياري: سجّل طلبات المنصات من شاشة الكاشير بطريقة دفع «طلبات» أو «المنيوز» — لا تدخل الدرج، بل تُسجَّل مستحقة على المنصة بعد خصم عمولتها، حتى تحوّل لك المبلغ.</p></div>
+<div class="actions"><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
+
+<div class="card" style="margin-bottom:16px;border-inline-start:5px solid #C9A227"><b>ℹ️ لماذا تُسجَّل الطلبات يدويًا؟</b>
+<p style="margin:6px 0 0">استيراد طلبات «طلبات» و«المنيوز» تلقائيًا إلى البرنامج يحتاج إلى واجهة الشركاء البرمجية (Partner API) الخاصة بكل منصة، وهي تُمنح بعقد تكامل مع المنصة نفسها وغير متاحة للمحلات حاليًا. لذلك يسجّل الكاشير طلب المنصة عند وصوله (نفس الأصناف والأسعار) ويختار المنصة عند الدفع — ويظهر كل شيء في هذا التقرير. عند إتاحة الربط من المنصات سيُضاف تلقائيًا.</p></div>
+
+<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));align-items:start;margin-bottom:16px">
+{% if owner %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="cfg"><h2 style="margin:0 0 10px">⚙️ الإعدادات</h2>
+{% for c in cfg %}<fieldset style="border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px"><legend><b>{{ c.icon }} {{ c.name }}</b></legend>
+<label class="field check"><input type="checkbox" name="{{ c.key }}_on" value="1"{% if c.on %} checked{% endif %}> أستقبل طلبات من {{ c.name }}</label>
+<label class="field">رابط محلك على {{ c.name }}<input name="{{ c.key }}_link" dir="ltr" value="{{ c.link }}" placeholder="https://www.{% if c.key == 'talabat' %}talabat.com/egypt/...{% else %}elmenus.com/cairo/...{% endif %}"></label>
+<label class="field">عمولة المنصة %<input name="{{ c.key }}_pct" inputmode="decimal" dir="ltr" value="{{ c.pct|unlocalize }}"></label></fieldset>{% endfor %}
+<p class="muted" style="font-size:12.5px;margin:0 0 8px">العمولة تُحسب من إجمالي الطلب وتُسجَّل مصروفًا «عمولات منصات التوصيل» لحظة البيع.</p><button>حفظ</button></form>{% endif %}
+
+<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="payout"><h2 style="margin:0 0 10px">🏦 تسجيل تحويل من المنصة</h2>
+<label class="field">المنصة<select name="platform">{% for c in cfg %}{% if c.pid %}<option value="{{ c.key }}">{{ c.icon }} {{ c.name }}</option>{% endif %}{% endfor %}</select></label>
+<div class="form-grid"><label class="field">المبلغ المحوَّل<input name="amount" inputmode="decimal" dir="ltr" required></label>
+<label class="field">خصومات أخرى من المنصة<input name="other" inputmode="decimal" dir="ltr" placeholder="0"></label>
+<label class="field">دخل في<select name="box">{% for b in boxes %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endfor %}</select></label>
+<label class="field">التاريخ<input type="date" name="date" value="{{ today|date:'Y-m-d' }}"></label></div>
+<label class="field">بيان<input name="note" maxlength="200" placeholder="مثال: تسوية الأسبوع 1–7"></label>
+<p class="muted" style="font-size:12.5px;margin:0 0 8px">«خصومات أخرى» = ما خصمته المنصة غير عمولتها (رسوم، غرامات، استرداد لعميل) — يُسجَّل على العمولات ويُغلق من المستحق.</p>
+{% if rows %}<button>تسجيل التحويل</button>{% else %}<p class="muted">فعّل منصة أولًا.</p>{% endif %}</form></div>
+
+<div class="card" style="margin-bottom:16px"><form method="get" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px"><h2 style="margin:0 0 0 auto">📊 تقرير المنصات</h2>
+<label class="field" style="margin:0">من<input type="date" name="from" value="{{ start|date:'Y-m-d' }}"></label><label class="field" style="margin:0">إلى<input type="date" name="to" value="{{ end|date:'Y-m-d' }}"></label><button class="light">عرض</button></form>
+{% if rows %}<div class="table-wrap"><table><thead><tr><th>المنصة</th><th class="n">الطلبات</th><th class="n">المبيعات</th><th class="n">العمولة</th><th class="n">الصافي لك</th><th class="n">حُوِّل في الفترة</th><th class="n">المستحق على المنصة الآن</th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.icon }} {{ r.name }}</b>{% if r.link %}<br><a href="{{ r.link }}" target="_blank" rel="noopener" style="font-size:12px">صفحة المحل ↗</a>{% endif %}{% if not r.on %} <span class="badge gray">متوقفة</span>{% endif %}</td><td class="n">{{ r.n }}</td><td class="n">{{ r.sales|money }}</td><td class="n">{{ r.comm|money }}</td><td class="n">{{ r.net|money }}</td><td class="n">{{ r.got|money }}{% if r.other %}<br><small class="muted">+ خصومات {{ r.other|money }}</small>{% endif %}</td><td class="n"><b{% if r.owed > 0 %} style="color:#B45F06"{% endif %}>{{ r.owed|money }}</b></td></tr>{% endfor %}</tbody></table></div>
+{% for r in rows %}{% if r.orders %}<details style="margin-top:10px"><summary>طلبات {{ r.name }} ({{ r.orders|length }})</summary><div class="table-wrap"><table><thead><tr><th>الوقت</th><th>الفاتورة</th><th class="n">الإجمالي</th><th class="n">العمولة</th></tr></thead><tbody>
+{% for o in r.orders %}<tr><td>{{ o.created_at_device|date:"d/m H:i" }}</td><td dir="ltr" style="text-align:right">{{ o.uid }}{% if o.is_return %} (مرتجع){% endif %}</td><td class="n">{{ o.total|money }}</td><td class="n">{{ o.raw.plat_comm|default:"0" }}</td></tr>{% endfor %}</tbody></table></div></details>{% endif %}{% endfor %}
+{% else %}<p class="muted" style="margin:0">لم تُفعَّل أي منصة بعد.</p>{% endif %}</div>
+
+{% if payouts %}<div class="card"><h2 style="margin:0 0 10px">🏦 التحويلات</h2><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>المنصة</th><th class="n">المبلغ</th><th class="n">خصومات أخرى</th><th>دخل في</th><th>بيان</th><th></th></tr></thead><tbody>
+{% for x in payouts %}<tr{% if x.cancelled %} style="opacity:.5"{% endif %}><td>{{ x.date|date:"d/m/Y" }}</td><td>{{ names|get:x.platform }}</td><td class="n">{{ x.amount|money }}</td><td class="n">{{ x.other|money }}</td><td>{{ x.box.name }}</td><td>{{ x.note }}{% if x.by %} <small class="muted">({{ x.by }})</small>{% endif %}</td>
+<td>{% if x.cancelled %}ملغى{% elif owner %}<form method="post" onsubmit="return confirm('إلغاء هذا التحويل بقيد عكسي؟')">{% csrf_token %}<input type="hidden" name="op" value="cancel_payout"><input type="hidden" name="pk" value="{{ x.pk|unlocalize }}"><button class="light" style="padding:2px 8px;font-size:12px">إلغاء</button></form>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+{% endblock %}

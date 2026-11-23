@@ -72,7 +72,7 @@ def page(request):
     for it in items[:80]:
         n, box = U.strip_info(it)
         rows.append(dict(it=it, n=n, box=box, guess=D.guess_strips(it.name)))
-    return render(request, "ui/pharmacy.html", dict(q=q, q2=q2, results=results, rows=rows, total=len(D.library())))
+    return render(request, "ui/pharmacy.html", dict(q=q, q2=q2, results=results, rows=rows, total=D.count()))
 
 
 @login_required

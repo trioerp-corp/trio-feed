@@ -5,6 +5,9 @@
 
 <style>.menu-forms{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));align-items:start;margin-bottom:16px}
 .menu-forms>form{min-width:0}.menu-forms input,.menu-forms select,.menu-forms textarea{max-width:100%;box-sizing:border-box}
+.menu-list .ml-act{white-space:nowrap}
+/* 1.25 phone: every product is a small card — «تعديل» and «إزالة» are on the card itself, never behind a sideways scroll */
+@media (max-width:700px){.menu-list tr{grid-template-columns:1fr!important}.menu-list .ml-name b{font-size:16px}.menu-list .ml-act{display:flex!important;gap:8px;flex-wrap:wrap;white-space:normal;padding-top:6px!important}.menu-list .ml-act .btn,.menu-list .ml-act button{flex:1 1 40%;min-height:44px}.menu-list .ml-act form{display:flex!important;flex:1 1 40%}.menu-list .ml-act form button{flex:1}}
 @media (max-width:760px){.menu-forms{grid-template-columns:1fr}.menu-forms .form-grid{grid-template-columns:1fr!important}.menu-forms .form-grid .field{grid-column:1/-1}}</style>
 <div class="menu-forms">
 <form method="post" class="card" id="product" novalidate>{% csrf_token %}<input type="hidden" name="op" value="product">{% if edit %}<input type="hidden" name="item" value="{{ edit.pk|unlocalize }}">{% endif %}
@@ -32,20 +35,20 @@
 <p class="muted" style="margin:10px 0 4px">تظهر مع تصنيفات (إن لم تختر شيئًا تظهر مع كل المنتجات):</p>
 <div style="display:flex;flex-wrap:wrap;gap:8px">{% for c in cats %}<label class="field check" style="display:inline-flex"><input type="checkbox" name="cats" value="{{ c.pk|unlocalize }}"{% if c.pk in edit_cats %} checked{% endif %}> {{ c.name }}</label>{% endfor %}</div>
 <div class="actions" style="margin-top:12px"><button>{% if edit_addon %}حفظ التعديل{% else %}إضافة{% endif %}</button>{% if edit_addon %}<a class="btn light" href="{% url 'shop_menu' %}">إلغاء</a>{% endif %}</div>
-{% if addons %}<div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>الإضافة</th><th class="n">السعر</th><th>مع</th><th></th></tr></thead><tbody>
-{% for a in addons %}<tr><td>{{ a.name }}</td><td class="n">{{ a.sale_price|unlocalize }}</td><td class="muted">{% for c in a.addon_for.all %}{{ c.name }}{% if not forloop.last %}، {% endif %}{% empty %}كل المنتجات{% endfor %}</td>
-<td style="white-space:nowrap"><a class="btn light" href="?edit={{ a.pk|unlocalize }}#addon">✏</a></td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% if addons %}<div class="table-wrap" style="margin-top:12px"><table class="stack menu-list"><thead><tr><th>الإضافة</th><th class="n">السعر</th><th>مع</th><th></th></tr></thead><tbody>
+{% for a in addons %}<tr><td class="ml-name" data-label="الإضافة"><b>{{ a.name }}</b></td><td class="n" data-label="السعر">{{ a.sale_price|default_if_none:"—"|unlocalize }}</td><td class="muted" data-label="مع">{% for c in a.addon_for.all %}{{ c.name }}{% if not forloop.last %}، {% endif %}{% empty %}كل المنتجات{% endfor %}</td>
+<td class="ml-act"><a class="btn light" href="?edit={{ a.pk|unlocalize }}#addon">✏ تعديل</a></td></tr>{% endfor %}</tbody></table></div>{% endif %}
 </form></div>
 
 <h2>المنيو الحالي <span class="badge">{{ n|count:"منتج" }}</span></h2>
 {% for g, rows in groups.items %}<h3 style="margin:16px 0 6px">{{ g }}</h3>
-<div class="table-wrap"><table><thead><tr><th>المنتج</th><th>السعر / الأحجام</th><th>المكونات للعميل</th><th>المخزون والتكلفة</th><th></th></tr></thead><tbody>
-{% for r in rows %}<tr><td><b>{{ r.item.name }}</b></td>
-<td>{% if r.sizes %}{% for v in r.sizes %}<span class="badge" style="margin:2px">{{ v.size_name }} {{ v.sale_price|unlocalize }}</span>{% endfor %}{% else %}{{ r.item.sale_price|unlocalize }}{% endif %}</td>
-<td class="muted">{{ r.desc|default:"—" }}</td>
-<td>{% if r.item.item_type == 'stock' %}<span class="badge gray">صنف مخزني</span>{% elif r.sizes %}{% for v in r.sizes %}<a class="badge {% if not v.recipe_id_ %}gray{% endif %}" style="margin:2px" href="{% url 'shop_recipes' %}?{% if v.recipe_id_ %}edit={{ v.recipe_id_ }}{% else %}item={{ v.pk|unlocalize }}{% endif %}#form">{{ v.size_name }}: {% if v.recipe_id_ %}✔ مكونات{% else %}+ مكونات{% endif %}</a>{% endfor %}
+<div class="table-wrap"><table class="stack menu-list"><thead><tr><th>المنتج</th><th>السعر / الأحجام</th><th>المكونات للعميل</th><th>المخزون والتكلفة</th><th></th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="ml-name" data-label="المنتج"><b>{{ r.item.name }}</b></td>
+<td data-label="السعر / الأحجام">{% if r.sizes %}{% for v in r.sizes %}<span class="badge" style="margin:2px">{{ v.size_name }} {{ v.sale_price|default_if_none:"—"|unlocalize }}</span>{% endfor %}{% else %}{{ r.item.sale_price|default_if_none:"—"|unlocalize }}{% endif %}</td>
+<td class="muted" data-label="المكونات للعميل">{{ r.desc|default:"—" }}</td>
+<td data-label="المخزون والتكلفة">{% if r.item.item_type == 'stock' %}<span class="badge gray">صنف مخزني</span>{% elif r.sizes %}{% for v in r.sizes %}<a class="badge {% if not v.recipe_id_ %}gray{% endif %}" style="margin:2px" href="{% url 'shop_recipes' %}?{% if v.recipe_id_ %}edit={{ v.recipe_id_ }}{% else %}item={{ v.pk|unlocalize }}{% endif %}#form">{{ v.size_name }}: {% if v.recipe_id_ %}✔ مكونات{% else %}+ مكونات{% endif %}</a>{% endfor %}
 {% elif r.recipe %}<a class="badge" href="{% url 'shop_recipes' %}?edit={{ r.recipe }}#form">✔ له مكونات</a>{% else %}<a class="badge gray" href="{% url 'shop_recipes' %}?item={{ r.item.pk|unlocalize }}#form">+ مكونات (اختياري)</a>{% endif %}</td>
-<td style="white-space:nowrap"><a class="btn light" href="?edit={{ r.item.pk|unlocalize }}#product">✏ تعديل</a>
+<td class="ml-act"><a class="btn light" href="?edit={{ r.item.pk|unlocalize }}#product">✏ تعديل</a>
 <form method="post" style="display:inline" onsubmit="return confirm('إزالة «{{ r.item.name|escapejs }}» من المنيو؟')">{% csrf_token %}<input type="hidden" name="op" value="stop"><input type="hidden" name="item" value="{{ r.item.pk|unlocalize }}"><button class="light">إزالة من المنيو</button></form></td></tr>{% endfor %}
 </tbody></table></div>{% empty %}<p class="muted">لا توجد منتجات بعد — أضف أول منتج من الأعلى.</p>{% endfor %}
 <script>(function(){const c=document.getElementById('hasSizes');function t(){document.getElementById('sizesBox').style.display=c.checked?'':'none';document.getElementById('onePrice').style.display=c.checked?'none':''}c.onchange=t;t()})()</script>

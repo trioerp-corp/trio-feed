@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import plus as plus_page
 from . import supply
+from . import credit_page  # noqa: E402,I001 — 1.25 credit customers + delivery platforms
+from . import transfers_page  # noqa: E402,I001
 from . import branches, connect, delivery_page, find, guide, imports, manage, menu_page, pharmacy, profit, restore, setup, shop, start, tables_page, upgrade, variants, views
 
 urlpatterns = [
@@ -36,6 +38,10 @@ urlpatterns = [
     path("ui/shop/branches/add/", branches.add_branch, name="branch_add"),
     path("ui/shop/branches/staff/", branches.add_staff, name="branch_staff"),
     path("ui/shop/branches/<int:pk>/", branches.branch_report, name="branch_report"),
+    path("ui/shop/branches/<int:pk>/edit/", branches.edit_branch, name="branch_edit"),
+    path("ui/shop/transfers/", transfers_page.page, name="transfers"),
+    path("ui/shop/transfers/<int:pk>/", transfers_page.detail, name="transfer"),
+    path("ui/shop/transfers/<int:pk>/print/", transfers_page.note, name="transfer_print"),
     path("ui/import/<str:kind>/", imports.upload, name="import_upload"),
     path("ui/import/<str:kind>/sheet/", imports.sheet, name="import_sheet"),
     path("ui/shop/statement/", shop.statement, name="shop_statement"),
@@ -46,6 +52,9 @@ urlpatterns = [
     path("ui/shop/purchases/", shop.purchases, name="shop_purchases"),
     path("ui/shop/purchases/new/", shop.purchase_new, name="shop_purchase_new"),
     path("ui/shop/partners/", shop.partners, name="shop_partners"),
+    path("ui/shop/dues/", credit_page.dues, name="credit_dues"),
+    path("ui/shop/partners/<int:pk>/", credit_page.customer, name="credit_customer"),
+    path("ui/shop/platforms/", credit_page.platforms, name="shop_platforms"),
     path("ui/shop/production/", shop.production, name="shop_production"),
     path("ui/shop/close/", shop.day_close, name="shop_close"),
     path("ui/shop/money/", shop.money, name="shop_money"),
@@ -79,6 +88,7 @@ urlpatterns = [
     path("ui/shop/pharmacy/", pharmacy.page, name="pharmacy"),
     path("ui/shop/pharmacy/lookup/", pharmacy.lookup, name="pharmacy_lookup"),
     path("ui/start/", start.page, name="start"),
+    path("ui/start/stock/", __import__("ui.opening", fromlist=["x"]).page, name="start_stock"),  # 1.25 opening stock step
     path("ui/find/", find.find, name="find"),
     path("ui/guide/", guide.page, name="guide"),
     path("ui/data/", manage.hub, name="data_hub"),

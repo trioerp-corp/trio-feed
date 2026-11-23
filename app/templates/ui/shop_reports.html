@@ -20,6 +20,6 @@
 <td class="n">{% if s.closed_at %}{% with d=s.counted_cash|sub:s.expected_cash %}<b class="{% if d < 0 %}bad{% endif %}">{{ d|money }}</b>{% endwith %}{% endif %}</td></tr>{% empty %}<tr><td colspan="6" class="muted">—</td></tr>{% endfor %}</tbody></table></div>
 </div><div class="side">
 <div class="card"><h2>المصروفات</h2>{% for n, v in expenses %}<div class="attn" style="margin-bottom:6px"><span>{{ n }}</span><b>{{ v|money:0 }}</b></div>{% empty %}<p class="muted">لا توجد مصروفات مسجّلة</p>{% endfor %}</div>
-<div class="card" id="low"><h2>أصناف وصلت حد الطلب</h2>{% for i in low %}<div class="attn gold" style="margin-bottom:6px"><span>{{ i.name }}</span><b>{{ i.qty_on_hand|floatformat:-3 }}</b></div>{% empty %}<p class="muted">لا يوجد</p>{% endfor %}
+<div class="card" id="low"><h2>أصناف وصلت حد الطلب</h2>{% for i in low %}<div class="attn gold" style="margin-bottom:6px"><span>{{ i.name }}</span><b>{{ i.here|floatformat:-3 }}</b></div>{% empty %}<p class="muted">لا يوجد</p>{% endfor %}
 <p class="muted">قيمة المخزون الحالية: <b>{{ stock_value|money:0 }}</b></p></div></div></div>
 {% endblock %}

@@ -286,6 +286,11 @@ class ClinicSettings(models.Model):
     max_discount_pct = models.DecimalField("أقصى خصم يمنحه الاستقبال دون موافقتك (%)", max_digits=5, decimal_places=2, default=Decimal("0"),
                                            help_text="0 = لا خصم من الاستقبال إلا باسم صاحب العيادة وكلمة سره")
 
+    online_on = models.BooleanField("الحجز أونلاين يعمل", default=False)
+    online_auto = models.BooleanField("تأكيد الحجز أونلاين تلقائيًا دون مراجعة الاستقبال", default=False)
+    online_days = models.PositiveSmallIntegerField("الحجز أونلاين حتى (يوم مقدمًا)", default=14)
+    online_note = models.CharField("ملاحظة تظهر في صفحة الحجز", max_length=200, blank=True)
+
     class Meta:
         verbose_name = "إعدادات العيادة"
         verbose_name_plural = "إعدادات العيادة"
@@ -293,3 +298,34 @@ class ClinicSettings(models.Model):
     @classmethod
     def get(cls):
         return cls.objects.order_by("pk").first() or cls.objects.create()
+
+
+class OnlineBooking(models.Model):
+    """A booking request from the clinic's public page (1.25, Worker /book/<id>): the reception confirms or refuses it;
+    a confirmed one becomes a normal booking (Appointment, note «حجز أونلاين»). `answered` = the patient's page knows."""
+
+    STATES = [("pending", "بانتظار التأكيد"), ("ok", "مؤكَّد"), ("no", "مرفوض")]
+    rid = models.CharField(max_length=20, unique=True)
+    name = models.CharField("الاسم", max_length=80)
+    phone = models.CharField("الموبايل", max_length=20, db_index=True)
+    note = models.CharField("ملاحظة المريض", max_length=200, blank=True)
+    doctor = models.ForeignKey(Doctor, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="الطبيب")
+    service = models.ForeignKey(Service, null=True, blank=True, on_delete=models.SET_NULL, related_name="+", verbose_name="الخدمة")
+    date = models.DateField("اليوم")
+    time = models.TimeField("الساعة", null=True, blank=True)
+    state = models.CharField("الحالة", max_length=8, choices=STATES, default="pending")
+    msg = models.CharField("الرد على المريض", max_length=200, blank=True)
+    answered = models.BooleanField(default=False)
+    appointment = models.OneToOneField(Appointment, null=True, blank=True, on_delete=models.SET_NULL, related_name="online")
+    decided_by = models.CharField(max_length=100, blank=True)
+    decided_at = models.DateTimeField(null=True, blank=True)
+    sent_at = models.DateTimeField("وقت الطلب")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "حجز أونلاين"
+        verbose_name_plural = "الحجوزات أونلاين"
+        ordering = ["date", "time", "id"]
+
+    def __str__(self):
+        return f"{self.name} {self.date:%d/%m}"

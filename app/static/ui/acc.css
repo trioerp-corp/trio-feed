@@ -110,6 +110,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);box-shado
 /* branches */
 .brsel select{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);min-height:38px;font-weight:700;padding:4px 10px;border-radius:10px}
 .brsel select option{color:#0B1F3A}
+.brsel.one select{background:var(--accent);color:#04213F;border-color:var(--accent)} /* 1.25: one branch on screen — never forgotten */
 .brchip{background:var(--accent);color:#04213F;font-weight:800;border-radius:10px;padding:7px 12px;font-size:14px;white-space:nowrap}
 .brgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
 .brcard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:10px;border-top:4px solid var(--brand)}
@@ -185,3 +186,4 @@ button.danger{background:var(--card);color:var(--bad);border:1px solid var(--bad
 .table-wrap th,.table-wrap td{overflow-wrap:normal}
 .table-wrap td code{overflow-wrap:anywhere}
 .table-wrap td button,.table-wrap td .btn{white-space:nowrap}
+.seg a{white-space:nowrap} /* 1.25: «اليوم» never breaks into two lines on a phone */

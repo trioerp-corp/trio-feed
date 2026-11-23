@@ -15,8 +15,10 @@ def company(request):
             from pos.models import ChangeRequest
             from pos.voids import is_owner
 
-            owner = is_owner(u)
-            if owner:
+            from pos.voids import is_head
+
+            owner = is_head(u)  # 1.25: a branch manager approves his branch's voids, but the owner's pages stay the owner's
+            if is_owner(u):
                 pending = ChangeRequest.objects.filter(state="pending").count()
         except Exception:
             pending = 0

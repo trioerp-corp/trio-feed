@@ -6,6 +6,7 @@
 {% if unverified %}<div class="msg error">{{ unverified|length|count:"وردية" }} فُتحت دون تأكيد كلمة سر الكاشير (كان الخادم غير متاح) — راجعها.</div>{% endif %}
 <section class="grid" style="margin-bottom:16px"><div class="card kpi hero"><span class="k">صافي مبيعات اليوم</span><span class="v">{{ t.net|money:0 }}</span><span class="k">{{ t.n|count:"فاتورة" }}</span></div>
 <div class="card kpi"><span class="k">نقدي</span><span class="v">{{ t.cash|money:0 }}</span></div><div class="card kpi"><span class="k">بطاقات / محافظ</span><span class="v">{{ t.card|money:0 }}</span></div>
+{% if t.insta %}<div class="card kpi"><span class="k">InstaPay (تحويلات)</span><span class="v">{{ t.insta|money:0 }}</span><span class="k">طابِقه مع ما وصل على تطبيق InstaPay</span></div>{% endif %}
 <div class="card kpi"><span class="k">آجل</span><span class="v">{{ t.credit|money:0 }}</span></div>
 {% if t.rider %}<div class="card kpi"><span class="k">دليفري مع عامل التوصيل</span><span class="v">{{ t.rider|money:0 }}</span>{% if k.dlv_out %}<span class="k" style="color:#C62828">لم يُحصَّل بعد: {{ k.dlv_out|money:0 }} ({{ k.dlv_n|count:"طلب" }})</span>{% else %}<span class="k">حُصّل كله</span>{% endif %}</div>{% endif %}</section>
 {% if k.svc or k.fees or k.split|length > 1 %}<section class="grid" style="margin-bottom:16px">{% if k.svc %}<div class="card kpi"><span class="k">إجمالي الخدمة (للعاملين)</span><span class="v">{{ k.svc|money }}</span></div>{% endif %}

@@ -20,9 +20,9 @@ from core.modules import enabled
 
 
 def _owner(u):
-    from pos.voids import is_owner
+    from pos.voids import is_head
 
-    return is_owner(u)
+    return is_head(u)
 
 
 # ------------------------------------------------------------------ what to do when a row is new

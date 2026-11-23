@@ -1,0 +1,4 @@
+{# 1.25 InstaPay: one field (link or name@instapay) + print on the receipt — used in «تجهيز المحل» and «إعدادات المحل» #}
+<label class="field">رابط InstaPay أو اسم المستخدم (<bdi dir="ltr">@instapay</bdi>)<input name="insta" value="{{ insta.link }}" dir="ltr" maxlength="300" placeholder="https://ipn.eg/S/name/instapay/… أو name@instapay" autocomplete="off"></label>
+<small class="muted" style="display:block;margin:-4px 0 8px">من تطبيق InstaPay: «طلب أموال» ← «مشاركة رابط الدفع» ثم الصقه هنا. يُطبع QR بهذا الرابط على الإيصال ويظهر على شاشة العميل، ويظهر زر «InstaPay» في الكاشير. لا يحمل الرابط المبلغ — يُطبع المبلغ بجواره.</small>
+<label class="field check"><input type="checkbox" name="rc" value="1"{% if insta.rc %} checked{% endif %}> اطبع QR الدفع بـ InstaPay على كل إيصال</label>
