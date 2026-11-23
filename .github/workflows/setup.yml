@@ -68,7 +68,7 @@ jobs:
           git config --global user.name "Trio QA"; git config --global user.email "trioerp.corp@gmail.com"
           git clone -q --depth 1 --branch qa-results "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" res
           rm -rf res/setup; mkdir -p res/setup/TrioWindow
-          cp out/*.png out/*.txt out/*.log res/setup/ 2>/dev/null
+          cp out/*.png out/*.pdf out/*.txt out/*.log res/setup/ 2>/dev/null
           cp out/Trio-Setup.exe res/setup/ 2>/dev/null
           cp -r build/window/* res/setup/TrioWindow/ 2>/dev/null; rm -rf res/setup/TrioWindow/*.pdb res/setup/TrioWindow/*.xml res/setup/TrioWindow/runtimes res/setup/TrioWindow/Microsoft.Web.WebView2.Wpf.dll
           echo "run ${{ github.run_id }} $(date -u)" > res/setup/RUN.txt

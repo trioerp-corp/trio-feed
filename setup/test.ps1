@@ -88,7 +88,7 @@ Check ($w.Title -like "*Trio*") "window title has Trio"
 Check ([W]::IsZoomed($w.H)) "first open = maximized"
 Shot "02-window"
 L "visible top-level windows:"; Windows | ForEach-Object { L ("   " + $_.Proc + " | " + $_.Class + " | " + $_.Title + " | " + $_.Rect) }
-$bad = Windows | Where-Object { $_.Proc -in @("python", "pythonw", "cmd", "conhost", "waitress", "Trio", "Trio Cashier", "msedge", "chrome", "WindowsTerminal") -or $_.Class -in @("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS", "Chrome_WidgetWin_1") }
+$bad = Windows | Where-Object { $_.Proc -in @("python", "pythonw", "cmd", "conhost", "waitress", "Trio", "Trio Cashier", "msedge", "chrome", "WindowsTerminal") -or $_.Class -in @("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS", "Chrome_WidgetWin_1") } | Where-Object { $_.Title -notlike "*GitHub\HostedComputeAgent*" }  # the runner's own agent terminal
 Check (-not $bad) ("no console / browser window (" + (($bad | ForEach-Object { $_.Proc + ":" + $_.Class }) -join ", ") + ")")
 Check (Get-Process python -ErrorAction SilentlyContinue) "python (the server) runs in the background"
 
@@ -106,8 +106,11 @@ $dlg = Windows | Where-Object { $_.Pid -eq $pt.Id -and $_.Class -eq "#32770" }
 Check ($printed) "till page: window.print() printed to the default printer ($((Get-Item $pdf -ErrorAction SilentlyContinue).Length) bytes)"
 Check (-not $dlg) "till page: no print dialog"
 Shot "03-till-print"
-python -m pip install -q pypdf 2>$null
-if ($printed) { $txt = python -c "import pypdf,sys;print(''.join(p.extract_text() for p in pypdf.PdfReader(sys.argv[1]).pages))" $pdf; L ("printed text: " + $txt); Check ($txt -match "RECEIPT-ONE-123") "the receipt printed is the page at the moment of window.print()" }
+python -m pip install -q pymupdf 2>$null
+if ($printed) {
+  Copy-Item $pdf "$Out\03-till-printed.pdf"
+  $txt = python -c "import fitz,sys;d=fitz.open(sys.argv[1]);d[0].get_pixmap(dpi=60).save(sys.argv[2]);print(len(d),'page(s):',' '.join(p.get_text() for p in d).replace(chr(10),' '))" $pdf "$Out\03-till-printed-page.png"
+  L ("printed: " + $txt); Check ($txt -match "RECEIPT-ONE-123") "the receipt printed is the page at the moment of window.print()" }
 Stop-Process -Id $pt.Id -Force -ErrorAction SilentlyContinue
 $pr = Start-Process -PassThru C:\Trio\window\TrioWindow.exe -ArgumentList "http://127.0.0.1:8123/rep/t.html", "--key", "ptest"
 $d2 = WaitFor 30 { Windows | Where-Object { $_.Pid -eq $pr.Id -and $_.Class -eq "#32770" } }
