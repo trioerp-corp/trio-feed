@@ -1,5 +1,5 @@
 {
- "_how": "Trio prices per market. year / branch (extra branch a year) / visit (set-up visit) / custom (custom requests, up to 3 changes) are what the customer sees in his currency; egp is what Paymob (EGP account) actually charges — fixed, computed once at rate (EGP per 1 unit, 11/2026) and rounded up to 10 EGP. Edit here, then run tools/sync_worker_catalog.py (writes worker.js and the site's assets/prices.json). Any country not listed → USD.",
+ "_how": "Trio prices per market. year / branch (extra branch a year) / visit (on-site set-up visit — EG only, Greater Cairo: القاهرة / الجيزة / القليوبية; no other market has it, setup and training are remote there) / custom (custom requests, up to 3 changes) are what the customer sees in his currency; egp is what Paymob (EGP account) actually charges — fixed, computed once at rate (EGP per 1 unit, 11/2026) and rounded up to 10 EGP. Edit here, then run tools/sync_worker_catalog.py (writes worker.js and the site's assets/prices.json). Any country not listed → USD.",
  "markets": {
   "EG": {
    "cur": "EGP",
@@ -24,12 +24,10 @@
    "rate": 13.1,
    "year": 899,
    "branch": 199,
-   "visit": 399,
    "custom": 399,
    "egp": {
     "year": 11780,
     "branch": 2610,
-    "visit": 5230,
     "custom": 5230
    }
   },
@@ -40,12 +38,10 @@
    "rate": 13.4,
    "year": 899,
    "branch": 199,
-   "visit": 399,
    "custom": 399,
    "egp": {
     "year": 12050,
     "branch": 2670,
-    "visit": 5350,
     "custom": 5350
    }
   },
@@ -56,12 +52,10 @@
    "rate": 13.5,
    "year": 899,
    "branch": 199,
-   "visit": 399,
    "custom": 399,
    "egp": {
     "year": 12140,
     "branch": 2690,
-    "visit": 5390,
     "custom": 5390
    }
   },
@@ -72,12 +66,10 @@
    "rate": 160,
    "year": 75,
    "branch": 15,
-   "visit": 35,
    "custom": 35,
    "egp": {
     "year": 12000,
     "branch": 2400,
-    "visit": 5600,
     "custom": 5600
    }
   },
@@ -88,12 +80,10 @@
    "rate": 130,
    "year": 89,
    "branch": 19,
-   "visit": 39,
    "custom": 39,
    "egp": {
     "year": 11570,
     "branch": 2470,
-    "visit": 5070,
     "custom": 5070
    }
   },
@@ -104,12 +94,10 @@
    "rate": 127.5,
    "year": 89,
    "branch": 19,
-   "visit": 39,
    "custom": 39,
    "egp": {
     "year": 11350,
     "branch": 2430,
-    "visit": 4980,
     "custom": 4980
    }
   },
@@ -120,12 +108,10 @@
    "rate": 69.2,
    "year": 129,
    "branch": 29,
-   "visit": 59,
    "custom": 59,
    "egp": {
     "year": 8930,
     "branch": 2010,
-    "visit": 4090,
     "custom": 4090
    }
   },
@@ -136,12 +122,10 @@
    "rate": 0.0375,
    "year": 250000,
    "branch": 50000,
-   "visit": 100000,
    "custom": 100000,
    "egp": {
     "year": 9380,
     "branch": 1880,
-    "visit": 3750,
     "custom": 3750
    }
   },
@@ -152,12 +136,10 @@
    "rate": 5.3,
    "year": 1490,
    "branch": 290,
-   "visit": 590,
    "custom": 590,
    "egp": {
     "year": 7900,
     "branch": 1540,
-    "visit": 3130,
     "custom": 3130
    }
   },
@@ -168,12 +150,10 @@
    "rate": 0.38,
    "year": 19900,
    "branch": 3900,
-   "visit": 7900,
    "custom": 7900,
    "egp": {
     "year": 7570,
     "branch": 1490,
-    "visit": 3010,
     "custom": 3010
    }
   },
@@ -184,12 +164,10 @@
    "rate": 16.6,
    "year": 399,
    "branch": 79,
-   "visit": 159,
    "custom": 159,
    "egp": {
     "year": 6630,
     "branch": 1320,
-    "visit": 2640,
     "custom": 2640
    }
   },
@@ -200,12 +178,10 @@
    "rate": 9.0,
    "year": 690,
    "branch": 139,
-   "visit": 279,
    "custom": 279,
    "egp": {
     "year": 6210,
     "branch": 1260,
-    "visit": 2520,
     "custom": 2520
    }
   },
@@ -216,12 +192,10 @@
    "rate": 49,
    "year": 199,
    "branch": 39,
-   "visit": 79,
    "custom": 79,
    "egp": {
     "year": 9760,
     "branch": 1920,
-    "visit": 3880,
     "custom": 3880
    }
   }
@@ -342,5 +316,147 @@
    "Other country",
    "USD"
   ]
- }
+ },
+ "visit_govs": [
+  "C",
+  "GZ",
+  "KB"
+ ],
+ "govs": [
+  [
+   "C",
+   "القاهرة",
+   "Cairo"
+  ],
+  [
+   "GZ",
+   "الجيزة",
+   "Giza"
+  ],
+  [
+   "KB",
+   "القليوبية",
+   "Qalyubia"
+  ],
+  [
+   "ALX",
+   "الإسكندرية",
+   "Alexandria"
+  ],
+  [
+   "BH",
+   "البحيرة",
+   "Beheira"
+  ],
+  [
+   "DK",
+   "الدقهلية",
+   "Dakahlia"
+  ],
+  [
+   "DT",
+   "دمياط",
+   "Damietta"
+  ],
+  [
+   "GH",
+   "الغربية",
+   "Gharbia"
+  ],
+  [
+   "KFS",
+   "كفر الشيخ",
+   "Kafr El Sheikh"
+  ],
+  [
+   "MNF",
+   "المنوفية",
+   "Monufia"
+  ],
+  [
+   "SHR",
+   "الشرقية",
+   "Sharqia"
+  ],
+  [
+   "IS",
+   "الإسماعيلية",
+   "Ismailia"
+  ],
+  [
+   "PTS",
+   "بورسعيد",
+   "Port Said"
+  ],
+  [
+   "SUZ",
+   "السويس",
+   "Suez"
+  ],
+  [
+   "FYM",
+   "الفيوم",
+   "Faiyum"
+  ],
+  [
+   "BNS",
+   "بني سويف",
+   "Beni Suef"
+  ],
+  [
+   "MN",
+   "المنيا",
+   "Minya"
+  ],
+  [
+   "AST",
+   "أسيوط",
+   "Asyut"
+  ],
+  [
+   "SHG",
+   "سوهاج",
+   "Sohag"
+  ],
+  [
+   "KN",
+   "قنا",
+   "Qena"
+  ],
+  [
+   "LX",
+   "الأقصر",
+   "Luxor"
+  ],
+  [
+   "ASN",
+   "أسوان",
+   "Aswan"
+  ],
+  [
+   "BA",
+   "البحر الأحمر",
+   "Red Sea"
+  ],
+  [
+   "WAD",
+   "الوادي الجديد",
+   "New Valley"
+  ],
+  [
+   "MT",
+   "مطروح",
+   "Matrouh"
+  ],
+  [
+   "SIN",
+   "شمال سيناء",
+   "North Sinai"
+  ],
+  [
+   "JS",
+   "جنوب سيناء",
+   "South Sinai"
+  ]
+ ]
 }

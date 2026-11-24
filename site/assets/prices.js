@@ -26,7 +26,7 @@
       cc = String(cc || "EG").toUpperCase();
       P.country = cc;
       P.m = T.markets[(T.countries[cc] || [0, 0, "USD"])[2]];
-      P.p = { year: P.m.year, branch: P.m.branch, visit: P.m.visit, custom: P.m.custom };
+      P.p = { year: P.m.year, branch: P.m.branch, visit: P.m.visit || 0, custom: P.m.custom };
       if (keep) LS.set("trio_cc", cc);
       paint();
     }
