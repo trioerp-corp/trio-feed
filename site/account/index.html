@@ -20,7 +20,7 @@
 .band{background:radial-gradient(120% 140% at 100% 0,var(--band-2) 0,var(--band) 60%);color:var(--band-ink);padding:18px 16px 90px}
 .in{max-width:980px;margin:0 auto}
 nav{display:flex;align-items:center;gap:12px}nav a.logo{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font:800 22px var(--display)}nav a.logo img{width:38px;height:38px;border-radius:10px}
-nav .r{margin-inline-start:auto;display:flex;gap:8px}nav .r a{color:var(--band-ink);text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.08)}
+nav .r{margin-inline-start:auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;min-width:0}@media (max-width:420px){nav .r a{padding:7px 9px;font-size:13px}}nav .r a{color:var(--band-ink);text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.08)}
 .band h1{font:800 clamp(26px,4vw,36px)/1.3 var(--display);margin:30px 0 6px}.band p{color:var(--band-muted);margin:0;max-width:620px}
 main{max-width:980px;margin:-64px auto 40px;padding:0 16px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
@@ -93,7 +93,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
    <p class="muted" style="font-size:13px;margin:10px 0 0">بإنشاء الحساب فإنك توافق على <a href="../terms/">الشروط والأحكام</a> و<a href="../privacy/">سياسة الخصوصية</a>.</p>
   </form>
   <form id="fRep" class="hide" novalidate>
-   <div class="stat" style="margin-bottom:14px">🤝 <span>اعمل مندوبًا لـ Trio من مكانك: تحصل على رابط وكود QR خاص بك، وكل عميل يأتي عن طريقك تُحسب لك عمولته.</span></div>
+   <div class="stat" style="margin-bottom:14px">🤝 <span>اعمل مندوبًا لدى Trio من مكانك: تحصل على رابط وكود QR خاص بك، وكل عميل يأتي عن طريقك تُحسب لك عمولته.</span></div>
    <div class="g2">
     <label>الاسم الكامل<input name="name" autocomplete="name" required></label>
     <label>رقم الهاتف (واتساب)<input name="phone" inputmode="tel" dir="ltr" placeholder="01xxxxxxxxx" autocomplete="tel" required></label>
@@ -337,5 +337,14 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 16px 30p
   load();
 })();
 </script>
-</body>
+<!--lang--><style>.lsw{position:fixed;z-index:9999;top:10px;left:50%;transform:translateX(-50%);display:flex;border-radius:999px;overflow:hidden;background:var(--card,#fff);box-shadow:0 2px 10px rgba(0,0,0,.18),inset 0 0 0 1px var(--line,#ccc);font:700 13px/1 system-ui,sans-serif}
+.lsw a{padding:9px 14px;color:var(--ink,#123);text-decoration:none;cursor:pointer}.lsw a.on{background:var(--brand,#17698F);color:#fff}</style>
+<script>(function(){var K="trio_lang",q=new URLSearchParams(location.search).get("lang"),l;try{l=q||localStorage.getItem(K)}catch(e){l=q}if(!l){var n=(navigator.language||"").slice(0,2);l=n==="fr"?"fr":(n==="en"?"en":"ar")}l=["en","fr"].indexOf(l)<0?"ar":l;
+var w=document.createElement("div");w.className="lsw";w.setAttribute("aria-label","Language");[["ar","ع"],["en","EN"],["fr","FR"]].forEach(function(x){var a=document.createElement("a");a.textContent=x[1];a.lang=x[0];a.href="?lang="+x[0];if(x[0]===l)a.className="on";a.onclick=function(e){e.preventDefault();try{localStorage.setItem(K,x[0])}catch(_){}location.href=location.pathname+(x[0]==="ar"?"":"?lang="+x[0])};w.appendChild(a)});document.body.appendChild(w);
+if(l==="ar")return;var h=document.documentElement;h.lang=l;h.dir="ltr";document.querySelectorAll("a[href^='../']").forEach(function(a){var u=a.getAttribute("href");if(/^\.\.\/(privacy\/|terms\/|refund\/|#|$)/.test(u))a.setAttribute("href","../"+l+"/"+u.slice(3))});
+fetch("i18n.json").then(function(r){return r.json()}).then(function(D){var i=l==="en"?0:1,L="ء-يٮ-ۓۺ-ۿ",M="ً-ٰٟـ‌",RE=new RegExp("["+L+"]["+L+M+"]*(?:(?:[  ]+|[  ]*[/\\-–][  ]*)["+L+"]["+L+M+"]*)*","g"),AR=/[؀-ۿ]/,P={"؟":"?","،":",","؛":";"};
+function tr(t){return t.replace(RE,function(m){return D[m]?D[m][i]:m}).replace(/[؟،؛]/g,function(c){return P[c]})}
+function walk(n){if(n.nodeType===3){if(AR.test(n.data)){var v=tr(n.data);if(v!==n.data)n.data=v}return}if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.tagName))return;
+["placeholder","title","aria-label"].forEach(function(a){var v=n.getAttribute(a);if(v&&AR.test(v))n.setAttribute(a,tr(v))});if(n.tagName==="INPUT"&&/^(button|submit)$/.test(n.type)&&AR.test(n.value))n.value=tr(n.value);for(var c=n.firstChild;c;c=c.nextSibling)walk(c)}
+["alert","confirm","prompt"].forEach(function(k){var f=window[k];window[k]=function(m,d){return f.call(window,typeof m==="string"?tr(m):m,d)}});walk(document.body);document.title=tr(document.title);new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData"||m.type==="attributes")walk(m.target);else m.addedNodes.forEach(walk)})}).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label"]})}).catch(function(){})})();</script><!--/lang--></body>
 </html>

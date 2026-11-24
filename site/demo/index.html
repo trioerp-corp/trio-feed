@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>جرّب Trio — تجربة تفاعلية</title>
-<meta name="description" content="جرّب برنامج Trio على الموبايل: اكتب نشاطك، شوف برنامجك باسم محلك وأصنافك، واعمل فاتورة تجربة — قبل ما تنزّله وتجربه 14 يوم.">
+<meta name="description" content="جرّب برنامج Trio على الموبايل: اكتب نشاطك، شاهد برنامجك باسم محلك وأصنافك، واعمل فاتورة تجربة — قبل تنزيله وتجربته 14 يوم.">
 <link rel="canonical" href="https://trioerp.pages.dev/demo/"><meta name="robots" content="index,follow">
 <link rel="icon" type="image/png" href="../logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -185,12 +185,12 @@ const item = id => S.items.find(x => x.id === id);
 
 /* ---------- guide steps ---------- */
 const STEPS = {
-  retail: [["add", "اضغط على أي صنف — هيتضاف للفاتورة"], ["qty", "زوّد الكمية بـ «+» أو اعمل خصم"], ["pay", "اضغط «ادفع» واختار نقدي / بطاقة / InstaPay"], ["dash", "افتح «الرئيسية» — هتلاقي الأرقام اتحركت"]],
-  pharmacy: [["add", "اضغط على دوا واختار «علبة» أو «شريط»"], ["alt", "اضغط «أوجمنتين» (نفد) — هيقترح عليك البدائل"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — شوف المخزون والمبيعات"]],
-  clothes: [["add", "اضغط على صنف واختار المقاس واللون"], ["qty", "زوّد الكمية أو اعمل خصم"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — هتلاقي الأرقام اتحركت"]],
-  cafe: [["table", "من «الطاولات» افتح طاولة فاضية"], ["add", "ضيف مشروب واختار الحجم"], ["kitchen", "اضغط «ابعت للمطبخ» — شوف تذكرة المطبخ"], ["pay", "اضغط «الحساب» وادفع"]],
-  gaming: [["start", "من «الصالة» شغّل جهاز فاضي"], ["buffet", "ضيف طلب بوفيه على الجهاز"], ["pay", "اضغط «اقفل وحاسب» وادفع"], ["dash", "افتح «الرئيسية» — شوف إيراد الصالة"]],
-  clinic: [["walkin", "من «الاستقبال» ضيف مريض بدون حجز"], ["doctor", "من «شاشة الطبيب» اكتب التشخيص والروشتة"], ["pay", "ادفع الكشف — جرّب مريض عليه تأمين"], ["dash", "افتح «اليوم» — شوف الكشوفات والإيراد"]]
+  retail: [["add", "اضغط على أي صنف — سيُضاف إلى الفاتورة"], ["qty", "زِد الكمية بـ «+» أو أضف خصمًا"], ["pay", "اضغط «ادفع» واختار نقدي / بطاقة / InstaPay"], ["dash", "افتح «الرئيسية» — ستجد الأرقام قد تغيّرت"]],
+  pharmacy: [["add", "اضغط على دوا واختار «علبة» أو «شريط»"], ["alt", "اضغط «أوجمنتين» (نفد) — سيقترح عليك البدائل"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — اطّلع على المخزون والمبيعات"]],
+  clothes: [["add", "اضغط على صنف واختار المقاس واللون"], ["qty", "زِد الكمية أو أضف خصمًا"], ["pay", "اضغط «ادفع» وخلّص الفاتورة"], ["dash", "افتح «الرئيسية» — ستجد الأرقام قد تغيّرت"]],
+  cafe: [["table", "من «الطاولات» افتح طاولة فاضية"], ["add", "ضيف مشروب واختار الحجم"], ["kitchen", "اضغط «أرسل للمطبخ» — اطّلع على تذكرة المطبخ"], ["pay", "اضغط «الحساب» وادفع"]],
+  gaming: [["start", "من «الصالة» شغّل جهاز فاضي"], ["buffet", "ضيف طلب بوفيه على الجهاز"], ["pay", "اضغط «اقفل وحاسب» وادفع"], ["dash", "افتح «الرئيسية» — اطّلع على إيراد الصالة"]],
+  clinic: [["walkin", "من «الاستقبال» ضيف مريض بدون حجز"], ["doctor", "من «شاشة الطبيب» اكتب التشخيص والروشتة"], ["pay", "ادفع الكشف — جرّب مريض عليه تأمين"], ["dash", "افتح «اليوم» — اطّلع على الكشوفات والإيراد"]]
 };
 function did(k){ if (!S || S.done[k]) return; const st = STEPS[S.mode]; if (!st.some(x => x[0] === k)) return; S.done[k] = 1; save(); renderHint(); }
 
@@ -216,7 +216,7 @@ function renderSide(){ $("side").innerHTML = nav().map(x => x === 0 ? "<hr>" : x
 function renderHint(){
   const st = STEPS[S.mode], n = st.filter(x => S.done[x[0]]).length, cur = st.find(x => !S.done[x[0]]);
   $("hint").innerHTML = `<span class="steps">${st.map((x, i) => `<i class="${S.done[x[0]] ? "d" : x === cur ? "c" : ""}">${S.done[x[0]] ? "✓" : i + 1}</i>`).join("")}</span>
-   <span class="txt">${cur ? `<b>جرّب (${n + 1}/${st.length}):</b> ${E(cur[1])}` : "<b>خلّصت التجربة 👏</b> — كده شفت أهم حاجة. البرنامج الكامل فيه المخزن والمشتريات والحسابات كمان."}</span>`;
+   <span class="txt">${cur ? `<b>جرّب (${n + 1}/${st.length}):</b> ${E(cur[1])}` : "<b>خلّصت التجربة 👏</b> — بهذا شاهدت أهم ما في البرنامج. البرنامج الكامل فيه المخزن والمشتريات والحسابات كمان."}</span>`;
   $("cta").innerHTML = (S.sales.length || !cur) ? `<div class="cta"><p>عجبك؟ نزّله على كمبيوتر المحل وجرّبه 14 يوم مجانًا — أو اطلب الاشتراك.</p><button class="btn p s" data-a="dl">نزّل البرنامج وجرّبه 14 يوم</button><a class="btn g s" href="${ORDER}">اطلب اشتراك</a></div>` : "";
 }
 function go(v){ S.view = v; save(); closeMenu(); renderSide(); $("mbar").innerHTML = "";
@@ -245,11 +245,11 @@ V.home = () => { const t = totals(), r = recent(), cl = S.mode === "clinic";
   if (S.mode === "cafe") extra = k("طاولات مفتوحة", Object.keys(S.tables).length + " / 8");
   if (S.mode === "gaming") extra = k("أجهزة شغالة", S.dev.filter(d => d.on).length + " / " + S.dev.length);
   if (cl) extra = k("في الانتظار", S.q.filter(p => p.stt === "wait" || p.stt === "doc").length + " مريض") + k("مستحق على التأمين", fmt(t.ins) + " ج");
-  return `<div class="ph"><div><h1>${cl ? "اليوم في العيادة" : "الرئيسية"}</h1><span class="muted">${now().toLocaleDateString("ar-EG", { weekday: "long", day: "numeric", month: "long" })} · بيانات تجريبية</span></div>
+  return `<div class="ph"><div><h1>${cl ? "اليوم في العيادة" : "الرئيسية"}</h1><span class="muted">${now().toLocaleDateString(({en:"en-GB",fr:"fr-FR"})[document.documentElement.lang]||"ar-EG", { weekday: "long", day: "numeric", month: "long" })} · بيانات تجريبية</span></div>
   <button class="btn p" data-a="go" data-v="${{ cafe: "tables", gaming: "hall", clinic: "recep" }[S.mode] || "pos"}">${{ cafe: "افتح طاولة", gaming: "الصالة", clinic: "الاستقبال" }[S.mode] || "فاتورة جديدة"}</button></div>
   <div class="kpis">${k(cl ? "إيراد اليوم" : "مبيعات اليوم", fmt(t.sum) + " ج", "h", r ? "+" + fmt(r.tot) + " من فاتورتك" : "")}${k(cl ? "كشوفات وفواتير" : "عدد الفواتير", t.cnt, "", r ? "+1" : "")}${k("ربح اليوم", fmt(t.profit) + " ج", "", r ? "+" + fmt(r.prof) : "")}${extra}</div>
   <div class="two"><div class="card"><h2>${cl ? "أكثر الخدمات اليوم" : "الأكثر مبيعًا اليوم"}</h2>${top.map(x => `<div class="bar"><span>${E(x.n)}<span class="t" style="width:${Math.max(6, x.sold / mx * 100)}%"></span></span><b>${x.sold}</b></div>`).join("")}</div>
-  <div class="card"><h2>${cl ? "مستهلكات قربت تخلص" : "أصناف قربت تخلص"}</h2>${low.length ? `<ul class="rows">${low.map(x => `<li><span>${E(x.n)}</span><span class="tag ${unitSt(x) <= 0 ? "bad" : "gd"}">${unitSt(x) <= 0 ? "نفد" : "باقي " + stTxt(x)}</span></li>`).join("")}</ul>` : `<p class="muted">مفيش أصناف تحت حد الطلب.</p>`}
+  <div class="card"><h2>${cl ? "مستهلكات قربت تخلص" : "أصناف قربت تخلص"}</h2>${low.length ? `<ul class="rows">${low.map(x => `<li><span>${E(x.n)}</span><span class="tag ${unitSt(x) <= 0 ? "bad" : "gd"}">${unitSt(x) <= 0 ? "نفد" : "باقي " + stTxt(x)}</span></li>`).join("")}</ul>` : `<p class="muted">لا توجد أصناف تحت حد الطلب.</p>`}
   <p class="muted" style="font-size:13px;margin-top:8px">في البرنامج الكامل: تنبيه بالنواقص وطلب شراء بضغطة.</p></div></div>`; };
 
 const unitSt = x => x.s ? Math.floor(x.st / x.s) : x.st;
@@ -262,7 +262,7 @@ function tilesHtml(list){ return `<input id="srch" type="search" placeholder="ا
 function tilesOnly(list){ const q = nz(qry).trim();
   const l = (list || S.items.filter(x => !x.svc)).filter(x => (tab === "الكل" || x.cat === tab) && (!q || nz(x.n + " " + Object.values(x.ex).join(" ")).includes(q)));
   return l.map(x => { const ex = Object.values(x.ex).filter(Boolean).slice(0, 1).join(""); const out = x.st != null && unitSt(x) <= 0 && x.st <= 0;
-    return `<button class="tile ${out ? "out" : ""}" data-a="pick" data-v="${x.id}"><b>${E(x.n)}</b>${ex ? `<small>${E(ex)}</small>` : ""}${x.s ? `<small>${x.s} شريط في العلبة</small>` : ""}${x.sz ? `<small>${x.sz.length} مقاس · ${x.col.length} ألوان</small>` : ""}<span class="pr">${fmt(x.p)} ج</span></button>`; }).join("") || `<p class="empty">مفيش نتيجة — جرّب كلمة تانية.</p>`; }
+    return `<button class="tile ${out ? "out" : ""}" data-a="pick" data-v="${x.id}"><b>${E(x.n)}</b>${ex ? `<small>${E(ex)}</small>` : ""}${x.s ? `<small>${x.s} شريط في العلبة</small>` : ""}${x.sz ? `<small>${x.sz.length} مقاس · ${x.col.length} ألوان</small>` : ""}<span class="pr">${fmt(x.p)} ج</span></button>`; }).join("") || `<p class="empty">لا توجد نتائج — جرّب كلمة تانية.</p>`; }
 
 /* order context: "pos" | "t:<n>" | "d:<id>" */
 let ctx = "pos";
@@ -271,7 +271,7 @@ const sub = l => l.reduce((a, x) => a + x.q * x.p, 0);
 function cartHtml(title, foot){ const l = lines();
   return `<div class="card cart" id="cart"><h2><span>${title}</span><span class="muted" style="font-size:13px;font-weight:400">${l.reduce((a, x) => a + x.q, 0)} صنف</span></h2>
   ${l.length ? l.map((x, i) => `<div class="ln ${ctx[0] === "t" && !x.sent ? "new" : ""}"><span>${E(x.n)}<small>${fmt(x.p)} ج${x.sent ? " · اتبعت للمطبخ" : ctx[0] === "t" ? " · جديد" : ""}</small></span><b>${fmt(x.q * x.p)}</b>
-   <span class="q"><button data-a="qty" data-v="${i}" data-d="-1" aria-label="أقل">−</button><b>${x.q}</b><button data-a="qty" data-v="${i}" data-d="1" aria-label="أكتر">+</button></span></div>`).join("") : `<p class="empty">الفاتورة فاضية — اضغط على صنف.</p>`}
+   <span class="q"><button data-a="qty" data-v="${i}" data-d="-1" aria-label="أقل">−</button><b>${x.q}</b><button data-a="qty" data-v="${i}" data-d="1" aria-label="زيادة">+</button></span></div>`).join("") : `<p class="empty">الفاتورة فاضية — اضغط على صنف.</p>`}
   <div class="tot"><span>الإجمالي</span><span>${fmt(sub(l))} ج</span></div>${foot}</div>`; }
 function mbar(label, btn){ const l = lines(); $("mbar").innerHTML = `<div class="mbar"><div class="i">${fmt(sub(l))} ج<small>${label} · ${l.reduce((a, x) => a + x.q, 0)} صنف</small></div><button class="btn s" data-a="tocart">الفاتورة</button>${btn}</div>`; }
 
@@ -288,7 +288,7 @@ function pick(id){ const x = item(id); if (!x) return;
      <button class="opt" data-a="addv" data-v="${id}" data-o="box">علبة<small>${fmt(x.p)} ج</small></button>
      <button class="opt" data-a="addv" data-v="${id}" data-o="strip">شريط<small>${fmt(sp)} ج</small></button></div><p class="note">البرنامج بيخصم من المخزون بالشريط ويحسب العلب لوحده.</p>`); }
   if (x.sz) return varModal(x);
-  const sz = sizes(x); if (sz) return modal(mh(E(x.n)) + `<p class="muted" style="margin-top:-6px">اختار الحجم</p><div class="opts">${sz.map((s, i) => `<button class="opt" data-a="addv" data-v="${id}" data-o="${i}">${s[0]}<small>${fmt(x.p + s[1])} ج</small></button>`).join("")}</div>`);
+  const sz = sizes(x); if (sz) return modal(mh(E(x.n)) + `<p class="muted" style="margin-top:-6px">اختر الحجم</p><div class="opts">${sz.map((s, i) => `<button class="opt" data-a="addv" data-v="${id}" data-o="${i}">${s[0]}<small>${fmt(x.p + s[1])} ج</small></button>`).join("")}</div>`);
   addLine(x, x.n, x.p, 1); }
 function sizes(x){ if (S.mode !== "cafe" && S.mode !== "gaming") return null; if (S.mode === "gaming") return null;
   if (/بيتزا/.test(x.n)) return [["صغير", -40], ["وسط", 0], ["كبير", 60]]; if (/سندوتش|ساندوتش/.test(x.n)) return [["عادي", 0], ["سوبر", 25]];
@@ -298,15 +298,15 @@ function addLine(x, name, price, per, vk){ const l = lines(); const key = x.id +
   did("add"); save(); refresh(); toast("اتضاف: " + name); }
 function altModal(x){ const g = x.ex.generic; const alts = S.items.filter(a => a.id !== x.id && a.ex.generic && g && a.ex.generic === g && a.st > 0);
   did("alt");
-  modal(mh("«" + E(x.n) + "» نفد من المخزن") + `<p class="note">البدائل اللي عندك بنفس المادة الفعالة: <b>${E(g || "")}</b></p>${alts.length ? `<div class="opts">${alts.map(a => `<button class="opt" data-a="altpick" data-v="${a.id}">${E(a.n)}<small>${E(a.ex.company || "")} · ${fmt(a.p)} ج · ${stTxt(a)}</small></button>`).join("")}</div>` : "<p>مفيش بديل في المخزن.</p>"}
-  <p class="muted" style="font-size:13px">وفي البرنامج: الصنف الناقص يتسجل في «النواقص» علشان تطلبه من المورد.</p>`); }
+  modal(mh("«" + E(x.n) + "» نفد من المخزن") + `<p class="note">البدائل المتوفرة لديك بنفس المادة الفعالة: <b>${E(g || "")}</b></p>${alts.length ? `<div class="opts">${alts.map(a => `<button class="opt" data-a="altpick" data-v="${a.id}">${E(a.n)}<small>${E(a.ex.company || "")} · ${fmt(a.p)} ج · ${stTxt(a)}</small></button>`).join("")}</div>` : "<p>لا يوجد بديل في المخزن.</p>"}
+  <p class="muted" style="font-size:13px">وفي البرنامج: الصنف الناقص يتسجل في «النواقص» لتطلبه من المورد.</p>`); }
 let vSel = {};
 function varModal(x){ vSel = { id: x.id, s: vSel.id === x.id ? vSel.s : null, c: vSel.id === x.id ? vSel.c : null };
   const cols = x.col.length + 1;
-  modal(mh(E(x.n) + " — " + fmt(x.p) + " ج") + `<p class="muted" style="margin-top:-6px">اختار المقاس واللون — الرقم = المتاح في المخزن</p>
+  modal(mh(E(x.n) + " — " + fmt(x.p) + " ج") + `<p class="muted" style="margin-top:-6px">اختر المقاس واللون — الرقم = المتاح في المخزن</p>
   <div class="vg" style="grid-template-columns:repeat(${cols},minmax(0,1fr))"><span></span>${x.col.map(c => `<span class="h">${E(c)}</span>`).join("")}
   ${x.sz.map(s => `<span class="h">${E(s)}</span>` + x.col.map(c => { const q = x.v[s + "|" + c]; return `<button class="${vSel.s === s && vSel.c === c ? "on" : ""}" data-a="vsel" data-v="${E(s)}" data-o="${E(c)}" ${q ? "" : "disabled"}>${q || "—"}</button>`; }).join("")).join("")}</div>
-  <button class="btn p w" data-a="vadd" ${vSel.s ? "" : "disabled"}>${vSel.s ? `ضيف ${E(vSel.s)} / ${E(vSel.c)}` : "اختار مقاس ولون"}</button>`); }
+  <button class="btn p w" data-a="vadd" ${vSel.s ? "" : "disabled"}>${vSel.s ? `ضيف ${E(vSel.s)} / ${E(vSel.c)}` : "اختر مقاسًا ولونًا"}</button>`); }
 
 /* payment */
 let pay = null;
@@ -323,9 +323,9 @@ function payModal(kind, extra){ // kind: pos | table | dev | clinic
   ${insAmt ? `<div class="mrow"><span>نصيب شركة التأمين (${insR[2]}%) — آجل على ${E(insR[1])}</span><b>${fmt(insAmt)} ج</b></div>` : ""}
   <div class="mrow big"><span>${insAmt ? "يدفع المريض" : "المطلوب"}</span><span id="ptot">${fmt(tot)} ج</span></div>
   <div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px">${Object.keys(PAYN).map(m => `<button class="opt ${pay.m === m ? "on" : ""}" data-a="pm" data-v="${m}">${m === "cash" ? "💵 " : m === "card" ? "💳 " : "📲 "}${PAYN[m]}</button>`).join("")}</div>
-  ${pay.m === "cash" ? `<label>المبلغ اللي استلمته<input type="number" inputmode="decimal" value="${paid}" data-in="paid"></label><div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr))">${sug.map(v => `<button class="opt" data-a="paidq" data-v="${v}">${fmt(v)}</button>`).join("")}</div>
+  ${pay.m === "cash" ? `<label>المبلغ الذي استلمته<input type="number" inputmode="decimal" value="${paid}" data-in="paid"></label><div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr))">${sug.map(v => `<button class="opt" data-a="paidq" data-v="${v}">${fmt(v)}</button>`).join("")}</div>
    <div class="mrow big"><span>الباقي للزبون</span><span id="chg" class="ok">${fmt(Math.max(0, paid - tot))} ج</span></div>`
-   : pay.m === "insta" ? `<p class="note">الزبون يحوّل على عنوان InstaPay بتاع المحل، والكاشير يكتب رقم العملية.</p><label>رقم العملية (اختياري)<input data-in="ref" placeholder="مثلًا 123456"></label>` : `<p class="note">ادفع بالماكينة وبعدين أكّد. البرنامج بيفصل فلوس البطاقة عن الكاش في الخزينة.</p>`}
+   : pay.m === "insta" ? `<p class="note">الزبون يحوّل على عنوان InstaPay الخاص بالمحل، والكاشير يكتب رقم العملية.</p><label>رقم العملية (اختياري)<input data-in="ref" placeholder="مثلًا 123456"></label>` : `<p class="note">ادفع بالماكينة وبعدين أكّد. البرنامج بيفصل فلوس البطاقة عن الكاش في الخزينة.</p>`}
   <div class="mbtns"><button class="btn p" data-a="confirm" id="cfm" ${pay.m === "cash" && paid < tot ? "disabled" : ""}>تأكيد الدفع${pay.m === "cash" ? "" : " — " + fmt(tot) + " ج"}</button><button class="btn" data-a="close">رجوع</button></div>`); }
 function confirmPay(){ const p = pay; if (!p) return; const kind = p.kind; let l, label = "", rx = null, pn = "";
   if (kind === "clinic") { const pt = S.q.find(x => x.id === p.extra.pid); const sv = item(pt.svc); l = [{ n: sv.n, q: 1, p: sv.p, c: 0, id: sv.id }]; rx = pt; pn = pt.n; label = "مريض: " + pt.n; pt.stt = "done"; pt.ins = p.ins; }
@@ -344,7 +344,7 @@ function receipt(s){ const d = new Date(s.at);
   <div class="r b"><span>${s.ins ? "يدفع المريض" : "المطلوب"}</span><span>${fmt(s.tot)} ج</span></div><div class="r"><span>${PAYN[s.pay]}</span><span>${fmt(s.paid)}</span></div>${s.pay === "cash" && s.paid > s.tot ? `<div class="r"><span>الباقي</span><span>${fmt(s.paid - s.tot)}</span></div>` : ""}
   ${s.rx && (s.rx.dx || s.rx.rx.length) ? `<hr><b>الروشتة</b>${s.rx.dx ? `<div>التشخيص: ${E(s.rx.dx)}</div>` : ""}${s.rx.rx.map(r => `<div>℞ ${E(r[0])} — ${E(r[1])}</div>`).join("")}` : ""}
   <hr><div class="c">شكرًا لزيارتكم</div><div class="pw">بواسطة تريو · 01228827915</div></div>
-  <p class="note" style="margin-top:12px">ده شكل الإيصال على الطابعة الحرارية. ${S.mode === "clinic" ? "" : "والمخزون اتخصم لوحده."}</p>
+  <p class="note" style="margin-top:12px">هذا شكل الإيصال على الطابعة الحرارية. ${S.mode === "clinic" ? "" : "والمخزون اتخصم لوحده."}</p>
   <div class="mbtns"><button class="btn" data-a="print">طباعة</button><button class="btn p" data-a="close">تمام</button></div>
   <div class="mbtns" style="margin-top:6px"><button class="btn g" data-a="dl">نزّل البرنامج وجرّبه 14 يوم</button><a class="btn" href="${ORDER}">اطلب اشتراك</a></div>`); }
 
@@ -353,14 +353,14 @@ V.tables = () => { const T = S.tables;
   return `<div class="ph"><div><h1>الطاولات</h1><span class="muted">اضغط على طاولة تفتحها أو تكمّل طلبها</span></div><button class="btn" data-a="go" data-v="pos">تيك أواي</button></div>
   <div class="grid">${[1, 2, 3, 4, 5, 6, 7, 8].map(n => { const t = T[n]; return `<button class="tbl ${t ? "busy" : ""}" data-a="table" data-v="${n}"><b>طاولة ${n}</b><span>${t ? "مفتوحة من " + Math.max(1, Math.round((Date.now() - t.t0) / 60000)) + " د" : "فاضية"}</span><span class="v">${t ? fmt(sub(t.lines)) + " ج" : ""}</span></button>`; }).join("")}</div>`; };
 V.table = () => { const n = ctx.slice(2), t = S.tables[n]; if (!t) { S.view = "tables"; return V.tables(); } const nw = t.lines.filter(x => !x.sent).length;
-  const foot = `<button class="btn w" data-a="kitchen" ${nw ? "" : "disabled"}>🍳 ابعت للمطبخ${nw ? " (" + nw + ")" : ""}</button><button class="btn p w" style="margin-top:6px" data-a="bill" ${t.lines.length ? "" : "disabled"}>الحساب</button>`;
+  const foot = `<button class="btn w" data-a="kitchen" ${nw ? "" : "disabled"}>🍳 أرسل للمطبخ${nw ? " (" + nw + ")" : ""}</button><button class="btn p w" style="margin-top:6px" data-a="bill" ${t.lines.length ? "" : "disabled"}>الحساب</button>`;
   setTimeout(() => mbar("طاولة " + n, `<button class="btn s" data-a="kitchen" ${nw ? "" : "disabled"}>للمطبخ</button><button class="btn p s" data-a="bill" ${t.lines.length ? "" : "disabled"}>الحساب</button>`));
-  return `<div class="ph"><div><h1>طاولة ${n}</h1><span class="muted">${nw ? nw + " طلب جديد لسه ما اتبعتش للمطبخ" : "كل الطلبات اتبعتت"}</span></div><button class="btn" data-a="go" data-v="tables">← الطاولات</button></div>
+  return `<div class="ph"><div><h1>طاولة ${n}</h1><span class="muted">${nw ? nw + " طلب جديد لم يُرسل إلى المطبخ بعد" : "كل الطلبات اتبعتت"}</span></div><button class="btn" data-a="go" data-v="tables">← الطاولات</button></div>
   <div class="pos"><div>${tilesHtml()}</div>${cartHtml("طلبات الطاولة", foot)}</div>`; };
 function kitchen(){ const n = ctx.slice(2), t = S.tables[n]; const nw = t.lines.filter(x => !x.sent); if (!nw.length) return;
   nw.forEach(x => x.sent = 1); did("kitchen"); save(); refresh();
   modal(mh("تذكرة المطبخ") + `<div class="paper kt"><div class="big">طاولة ${n}</div><div class="c">${hm(new Date())} · الكابتن: أحمد</div><hr>${nw.map(x => `<div class="r b"><span>${x.q} × ${E(x.n)}</span></div>`).join("")}<hr><div class="c">بتطلع على طابعة المطبخ / البار</div></div>
-  <p class="note" style="margin-top:12px">كل قسم ليه طابعته: المشروبات للبار، والأكل للمطبخ. والطلبات الجديدة بس هي اللي بتتطبع.</p><div class="mbtns"><button class="btn p" data-a="close">تمام</button></div>`); }
+  <p class="note" style="margin-top:12px">لكل قسم طابعته: المشروبات للبار، والأكل للمطبخ. ولا يُطبع إلا الطلبات الجديدة.</p><div class="mbtns"><button class="btn p" data-a="close">تمام</button></div>`); }
 function bill(){ const n = ctx.slice(2), t = S.tables[n];
   modal(mh("حساب طاولة " + n) + `<div class="paper"><h3>${E(S.shop)}</h3><div class="c">شيك طاولة ${n} · ${hm(new Date())}</div><hr>${t.lines.map(x => `<div class="r"><span>${x.q} × ${E(x.n)}</span><span>${fmt(x.q * x.p)}</span></div>`).join("")}<hr><div class="r b"><span>الإجمالي</span><span>${fmt(sub(t.lines))} ج</span></div><div class="pw">بواسطة تريو</div></div>
   <div class="mbtns"><button class="btn p" data-a="paytbl">ادفع</button><button class="btn" data-a="close">رجوع</button></div>`); }
@@ -369,7 +369,7 @@ function bill(){ const n = ctx.slice(2), t = S.tables[n];
 const dmin = d => d.on ? Math.floor((Date.now() - d.on.t0) / 1000) : 0; // ×60: 1 sec = 1 min
 const dcost = d => d.on ? Math.ceil(dmin(d) * (d.on.multi ? d.r2 : d.r1) / 60) : 0;
 const clk = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
-V.hall = () => `<div class="ph"><div><h1>🎮 الصالة</h1><span class="muted">الوقت هنا مُسرّع ×60 للتجربة: كل ثانية = دقيقة (يعني دقيقة = ساعة)</span></div></div>
+V.hall = () => `<div class="ph"><div><h1>🎮 الصالة</h1><span class="muted">الوقت هنا مُسرّع ×60 للتجربة: كل ثانية = دقيقة (أي إن الدقيقة = ساعة)</span></div></div>
   <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${S.dev.map(d => `<div class="dev ${d.on ? "busy" : ""}"><b>${E(d.n)}</b>
   ${d.on ? `<span class="clk" data-clk="${d.id}">${clk(dmin(d))}</span><span>${d.on.multi ? "مالتي" : "فردي"} · ${d.on.multi ? d.r2 : d.r1} ج/ساعة</span><span>الوقت: <b data-cost="${d.id}">${fmt(dcost(d))}</b> ج${d.on.buf.length ? " + بوفيه " + fmt(sub(d.on.buf)) + " ج" : ""}</span>
    <div class="acts"><button class="btn s" data-a="buf" data-v="${d.id}">+ بوفيه</button><button class="btn p s" data-a="dclose" data-v="${d.id}">اقفل وحاسب</button></div>`
@@ -399,12 +399,12 @@ function walkin(){ modal(mh("مريض بدون حجز") + `<label>اسم الم�
   <div class="mbtns"><button class="btn p" data-a="wsave">ضيف للدور</button><button class="btn" data-a="close">رجوع</button></div>`); }
 let rxDraft = null;
 V.doc = () => { const p = S.q.find(x => x.stt === "doc"); const nx = S.q.find(x => x.stt === "wait");
-  if (!p) return `<div class="ph"><h1>شاشة الطبيب</h1></div><div class="card"><p>مفيش مريض جوه دلوقتي.</p>${nx ? `<button class="btn p" data-a="call" data-v="${nx.id}">دخّل التالي: ${E(nx.n)}</button>` : `<button class="btn p" data-a="go" data-v="recep">الاستقبال</button>`}</div>`;
+  if (!p) return `<div class="ph"><h1>شاشة الطبيب</h1></div><div class="card"><p>لا يوجد مريض في الكشف الآن.</p>${nx ? `<button class="btn p" data-a="call" data-v="${nx.id}">دخّل التالي: ${E(nx.n)}</button>` : `<button class="btn p" data-a="go" data-v="recep">الاستقبال</button>`}</div>`;
   if (!rxDraft || rxDraft.id !== p.id) rxDraft = { id: p.id, cc: "", dx: "", rx: [] };
   const dx = DX[S.k] || DX.clinic, sv = svcOf(p);
   return `<div class="ph"><div><h1>شاشة الطبيب</h1><span class="muted">${E(p.n)} · ${E(sv.n)}${p.ph ? " · " + E(p.ph) : ""}</span></div><span class="tag ok">زيارة سابقة: لا يوجد</span></div>
   <div class="two"><div class="card"><label>الشكوى<textarea data-in="cc" placeholder="مثلًا: كحة وسخونية من يومين">${E(rxDraft.cc)}</textarea></label>
-  <label>التشخيص<input data-in="dx" value="${E(rxDraft.dx)}" placeholder="اكتب أو اختار"></label><div class="chips">${dx.map(d => `<button data-a="dxq" data-v="${E(d)}">${E(d)}</button>`).join("")}</div></div>
+  <label>التشخيص<input data-in="dx" value="${E(rxDraft.dx)}" placeholder="اكتب أو اختر"></label><div class="chips">${dx.map(d => `<button data-a="dxq" data-v="${E(d)}">${E(d)}</button>`).join("")}</div></div>
   <div class="card"><h2>الروشتة</h2>${rxDraft.rx.map((r, i) => `<div class="rx"><input value="${E(r[0])}" data-in="rxn" data-i="${i}"><input value="${E(r[1])}" data-in="rxd" data-i="${i}"><button class="btn s" data-a="rxdel" data-v="${i}" aria-label="حذف">×</button></div>`).join("") || `<p class="muted">اضغط على دوا يضاف للروشتة:</p>`}
   <div class="chips">${RX.map((r, i) => `<button data-a="rxq" data-v="${i}">+ ${E(r[0])}</button>`).join("")}</div>
   <button class="btn p w" data-a="dfinish">إنهاء الكشف وتحويله للخزينة</button><p class="muted" style="font-size:13px;margin-top:6px">في البرنامج: ملف المريض بكل زياراته، وطباعة الروشتة، ونسبة الطبيب.</p></div></div>`; };
@@ -421,37 +421,37 @@ function newItem(){ modal(mh("إضافة صنف") + `<div class="frm"><label>ا�
 
 /* report */
 V.rep = () => { const t = totals(), cl = S.mode === "clinic", cost = t.sum - t.profit;
-  return `<div class="ph"><div><h1>تقرير اليوم</h1><span class="muted">${now().toLocaleDateString("ar-EG")} · يشمل بيانات تجريبية + فواتيرك</span></div><button class="btn" data-a="print2">طباعة</button></div>
+  return `<div class="ph"><div><h1>تقرير اليوم</h1><span class="muted">${now().toLocaleDateString(({en:"en-GB",fr:"fr-FR"})[document.documentElement.lang]||"ar-EG")} · يشمل بيانات تجريبية + فواتيرك</span></div><button class="btn" data-a="print2">طباعة</button></div>
   <div class="two"><div class="card"><h2>المبيعات حسب طريقة الدفع</h2><ul class="rows"><li><span>💵 نقدي (في الدرج)</span><b>${fmt(t.cash)} ج</b></li><li><span>💳 بطاقة</span><b>${fmt(t.card)} ج</b></li><li><span>📲 InstaPay</span><b>${fmt(t.insta)} ج</b></li>${cl ? `<li><span>🏥 آجل على شركات التأمين</span><b>${fmt(t.ins)} ج</b></li>` : ""}<li><b>الإجمالي</b><b>${fmt(t.sum)} ج</b></li></ul></div>
   <div class="card"><h2>الربح</h2><ul class="rows"><li><span>المبيعات</span><b>${fmt(t.sum)} ج</b></li><li><span>تكلفة البضاعة${cl ? " والمستهلكات" : ""}</span><b>${fmt(cost)} ج</b></li><li><span>الخصومات</span><b>${fmt(t.disc)} ج</b></li><li><b>ربح اليوم</b><b class="ok">${fmt(t.profit)} ج</b></li></ul></div></div>
-  <div class="card" style="margin-top:14px"><h2>فواتيرك في التجربة</h2>${S.sales.length ? `<ul class="rows">${S.sales.slice().reverse().map(s => `<li><span>#${s.no} · ${hm(s.at)} · ${PAYN[s.pay]}${s.label ? " · " + E(s.label) : ""}</span><b>${fmt(s.tot + s.ins)} ج</b></li>`).join("")}</ul>` : `<p class="muted">لسه ما عملتش فاتورة.</p>`}</div>`; };
+  <div class="card" style="margin-top:14px"><h2>فواتيرك في التجربة</h2>${S.sales.length ? `<ul class="rows">${S.sales.slice().reverse().map(s => `<li><span>#${s.no} · ${hm(s.at)} · ${PAYN[s.pay]}${s.label ? " · " + E(s.label) : ""}</span><b>${fmt(s.tot + s.ins)} ج</b></li>`).join("")}</ul>` : `<p class="muted">لم تُنشئ فاتورة بعد.</p>`}</div>`; };
 
 /* ---------- start screen ---------- */
 function startScreen(pre){
   const P = POP.map(k => LIB.find(p => p.k === k)).filter(Boolean);
   $("root").innerHTML = `<div class="start"><div class="box"><div class="mark"><img src="../logo.png" alt=""><span>Trio</span><a href="../" style="margin-inline-start:auto;font-size:14px;font-weight:500">← الموقع</a></div>
-  <h1>جرّب برنامجك قبل ما تنزّله</h1><p class="lead">اكتب اسم محلك ونشاطك، وهتلاقي برنامجك جاهز بأصنافك وأسعار تقريبية — اضغط واعمل فاتورة تجربة.</p>
+  <h1>جرّب برنامجك قبل تنزيله</h1><p class="lead">اكتب اسم محلك ونشاطك، وهتلاقي برنامجك جاهز بأصنافك وأسعار تقريبية — اضغط واعمل فاتورة تجربة.</p>
   <div class="card"><label>اسم المحل<input id="sShop" maxlength="40" placeholder="مثلًا: صيدلية الشفاء" value="${E(pre.s || "")}"></label>
   <label>نشاطك<input id="sAct" list="sList" autocomplete="off" placeholder="مثلًا: كافيه، صيدلية، قطع غيار…" value="${E(pre.a || "")}"></label><datalist id="sList">${LIB.map(p => `<option value="${E(p.n)}">`).join("")}</datalist>
   <div class="chips">${P.map(p => `<button type="button" data-a="spop" data-v="${E(p.n)}">${E(p.n)}</button>`).join("")}</div>
   <button class="btn p w" data-a="sgo">افتح برنامجي</button></div>
-  <p class="fine">تجربة مبسطة بتشتغل على المتصفح بس — مفيش حاجة بتتبعت لأي حد، والبيانات بتفضل على جهازك. البرنامج الحقيقي بيتثبت على كمبيوتر المحل ويشتغل من غير إنترنت.</p></div></div>`;
+  <p class="fine">تجربة مبسطة تعمل على المتصفح فقط — لا يُرسل أي شيء إلى أي جهة، والبيانات بتفضل على جهازك. يُثبَّت البرنامج الحقيقي على كمبيوتر المحل ويعمل دون إنترنت.</p></div></div>`;
   $("sAct").addEventListener("keydown", e => { if (e.key === "Enter") A.sgo(); }); }
 
 /* ---------- actions ---------- */
 function dl(){ if (!isPhone) { window.open(DOWNLOAD, "_blank", "noopener"); return; }
-  modal(mh("البرنامج بيتثبت على كمبيوتر المحل") + `<p>Trio بيشتغل على كمبيوتر ويندوز في المحل (من غير إنترنت). افتح الرابط من الكمبيوتر ونزّله من هناك — التجربة 14 يوم مجانًا.</p>
-  <div class="mbtns"><a class="btn p" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("تحميل Trio (افتحه من كمبيوتر المحل): " + DOWNLOAD)}">ابعت الرابط لنفسي على واتساب</a><a class="btn" target="_blank" rel="noopener" href="${DOWNLOAD}">نزّله على الموبايل برضه</a></div>`); }
+  modal(mh("يُثبَّت البرنامج على كمبيوتر المحل") + `<p>Trio بيشتغل على كمبيوتر ويندوز في المحل (من غير إنترنت). افتح الرابط من الكمبيوتر ونزّله من هناك — التجربة 14 يوم مجانًا.</p>
+  <div class="mbtns"><a class="btn p" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent("تحميل Trio (افتحه من كمبيوتر المحل): " + DOWNLOAD)}">أرسل الرابط لنفسي على واتساب</a><a class="btn" target="_blank" rel="noopener" href="${DOWNLOAD}">نزّله على الموبايل برضه</a></div>`); }
 const A = {
   menu(){ const s = $("side"); s.classList.add("open"); const c = document.createElement("div"); c.className = "scrim"; c.dataset.a = "scrim"; document.body.appendChild(c); },
   scrim: closeMenu,
   go(v){ go(v); },
-  locked(){ toast("القسم ده موجود في البرنامج الكامل — نزّله وجرّبه 14 يوم"); },
-  reset(){ if (!confirm("نمسح التجربة ونبدأ من الأول؟")) return; try { localStorage.removeItem(KEY); } catch (e) {} S = null; clearInterval(tk); startScreen({}); },
+  locked(){ toast("هذا القسم متاح في البرنامج الكامل — نزّله وجرّبه 14 يوم"); },
+  reset(){ if (!confirm("هل نمسح التجربة ونبدأ من جديد؟")) return; try { localStorage.removeItem(KEY); } catch (e) {} S = null; clearInterval(tk); startScreen({}); },
   dl, close: mclose,
   ovx(v, el, e){ if (e.target === el) mclose(); },
   spop(v){ $("sAct").value = v; document.querySelectorAll(".chips button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); },
-  sgo(){ const a = $("sAct").value.trim(); if (a.length < 2) { $("sAct").focus(); toast("اكتب نشاطك أو اختار من اللي تحت"); return; }
+  sgo(){ const a = $("sAct").value.trim(); if (a.length < 2) { $("sAct").focus(); toast("اكتب نشاطك أو اختر مما يلي"); return; }
     S = newState($("sShop").value, a); tab = "الكل"; qry = ""; save(); shell(); },
   tab(v){ tab = v; refresh(); },
   pick(v){ pick(v); },
@@ -461,7 +461,7 @@ const A = {
   altpick(v){ mclose(); pick(v); },
   vsel(v, el){ vSel.s = v; vSel.c = el.dataset.o; varModal(item(vSel.id)); },
   vadd(){ const x = item(vSel.id); const vk = vSel.s + "|" + vSel.c; const inCart = lines().filter(l => l.vk === vk && l.id === x.id).reduce((a, l) => a + l.q, 0);
-    if (inCart >= x.v[vk]) { toast("مفيش أكتر من كده في المخزن"); return; } mclose(); addLine(x, `${x.n} — ${vSel.s} / ${vSel.c}`, x.p, 1, vk); vSel = {}; },
+    if (inCart >= x.v[vk]) { toast("لا يوجد أكثر من ذلك في المخزن"); return; } mclose(); addLine(x, `${x.n} — ${vSel.s} / ${vSel.c}`, x.p, 1, vk); vSel = {}; },
   qty(v, el){ const l = lines(), i = +v, d = +el.dataset.d; if (!l[i]) return; l[i].q += d; if (l[i].q <= 0) l.splice(i, 1); else if (d > 0) did("qty"); save(); refresh(); if (ctx[0] === "d") bufModal(ctx.slice(2)); },
   clear(){ S.cart = []; save(); refresh(); },
   tocart(){ const c = $("cart"); if (c) c.scrollIntoView({ behavior: "smooth", block: "start" }); },
@@ -469,7 +469,7 @@ const A = {
   pm(v){ pay.m = v; payModal(pay.kind, pay.extra); },
   paidq(v){ pay.paid = +v; payModal(pay.kind, pay.extra); },
   confirm: confirmPay,
-  print(){ window.print(); }, print2(){ toast("في البرنامج: التقرير بيتطبع على الطابعة أو يتبعت واتساب"); },
+  print(){ window.print(); }, print2(){ toast("في البرنامج: يُطبع التقرير على الطابعة أو يُرسل عبر واتساب"); },
   table(v){ ctx = "t:" + v; if (!S.tables[v]) { S.tables[v] = { lines: [], t0: Date.now() }; did("table"); } S.view = "table"; save(); closeMenu(); renderSide(); $("main").innerHTML = V.table(); window.scrollTo(0, 0); },
   kitchen, bill, paytbl(){ pay = null; payModal("table", { label: "طاولة " + ctx.slice(2) }); },
   dstart(v, el){ const d = S.dev.find(x => x.id === v); d.on = { t0: Date.now(), multi: +el.dataset.o, buf: [] }; did("start"); save(); refresh(); toast("بدأ " + d.n + " — العداد شغال"); },
@@ -487,7 +487,7 @@ const A = {
   isave(){ const n = $("nn").value.trim(), p = parseFloat($("np").value); if (!n || !(p > 0)) { toast("اكتب الاسم والسعر"); return; } const ex = {};
     document.querySelectorAll("[data-f]").forEach(i => { if (i.value.trim()) ex[i.dataset.f] = i.value.trim(); });
     const k = parseFloat($("nk").value); S.items.push({ id: "n" + Date.now(), n, p, c: k > 0 ? k : Math.round(p * .74), cat: $("nc").value, ex, st: parseInt($("ns").value, 10) || 0, sold: 0 });
-    save(); mclose(); refresh(); toast("اتحفظ «" + n + "» — وبقى ظاهر في الكاشير"); }
+    save(); mclose(); refresh(); toast("اتحفظ «" + n + "» — وأصبح ظاهرًا في الكاشير"); }
 };
 document.addEventListener("click", e => { const el = e.target.closest("[data-a]"); if (!el || el.disabled) return; const f = A[el.dataset.a]; if (!f) return; if (el.tagName === "A") return; f(el.dataset.v, el, e); });
 document.addEventListener("input", e => { const el = e.target, k = el.dataset && el.dataset.in; if (!k) return;
@@ -516,4 +516,4 @@ fetch("i18n.json").then(function(r){return r.json()}).then(function(D){var i=l==
 function tr(t){return t.replace(RE,function(m){return D[m]?D[m][i]:m}).replace(/[؟،؛]/g,function(c){return P[c]})}
 function walk(n){if(n.nodeType===3){if(AR.test(n.data)){var v=tr(n.data);if(v!==n.data)n.data=v}return}if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.tagName))return;
 ["placeholder","title","aria-label"].forEach(function(a){var v=n.getAttribute(a);if(v&&AR.test(v))n.setAttribute(a,tr(v))});if(n.tagName==="INPUT"&&/^(button|submit)$/.test(n.type)&&AR.test(n.value))n.value=tr(n.value);for(var c=n.firstChild;c;c=c.nextSibling)walk(c)}
-walk(document.body);document.title=tr(document.title);new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData")walk(m.target);else m.addedNodes.forEach(walk)})}).observe(document.body,{childList:true,subtree:true,characterData:true})}).catch(function(){})})();</script><!--/lang--></body></html>
+["alert","confirm","prompt"].forEach(function(k){var f=window[k];window[k]=function(m,d){return f.call(window,typeof m==="string"?tr(m):m,d)}});walk(document.body);document.title=tr(document.title);new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData"||m.type==="attributes")walk(m.target);else m.addedNodes.forEach(walk)})}).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["placeholder","title","aria-label"]})}).catch(function(){})})();</script><!--/lang--></body></html>

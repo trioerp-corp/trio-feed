@@ -48,7 +48,11 @@
   // the header button: «حسابي» once signed in
   document.addEventListener("DOMContentLoaded", function () {
     var a = document.getElementById("acctLink"), u = window.TrioAcct.user();
-    if (a && u) a.textContent = (a.dataset.me || "حسابي") + " — " + String(u.name || "").split(" ")[0];
+    if (a && u) {
+      var t = (a.dataset.me || "حسابي") + " — " + String(u.name || "").split(" ")[0], sp = a.querySelector(".al-t");
+      if (sp) sp.textContent = " " + t; else a.textContent = t;
+      a.title = t; a.setAttribute("aria-label", t);
+    }
     var box = document.getElementById("refNote"), c = ref();
     if (box && c) call("/ref?c=" + c).then(function (d) {
       if (d.ok) {
