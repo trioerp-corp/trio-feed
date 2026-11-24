@@ -507,9 +507,9 @@ S = load();
 if (qa && (!S || S.an !== qa)) { const m = LIB.find(p => p.k === qa); S = newState(qsh, m ? m.n : qa); save(); history.replaceState(null, "", location.pathname); }
 if (S) { if (S.view === "table") S.view = "tables"; shell(); } else startScreen({ s: qsh });
 })();
-</script><!--lang--><style>.lsw{position:fixed;z-index:9999;inset-block-end:12px;inset-inline-start:12px;display:flex;border-radius:999px;overflow:hidden;background:var(--card,#fff);box-shadow:0 2px 10px rgba(0,0,0,.18),inset 0 0 0 1px var(--line,#ccc);font:700 13px/1 system-ui,sans-serif}
-.lsw a{padding:8px 11px;color:var(--ink,#123);text-decoration:none;cursor:pointer}.lsw a.on{background:var(--brand,#17698F);color:#fff}</style>
-<script>(function(){var K="trio_lang",q=new URLSearchParams(location.search).get("lang"),l;try{l=q||localStorage.getItem(K)}catch(e){l=q}l=["en","fr"].indexOf(l)<0?"ar":l;
+</script><!--lang--><style>.lsw{position:fixed;z-index:9999;top:10px;left:50%;transform:translateX(-50%);display:flex;border-radius:999px;overflow:hidden;background:var(--card,#fff);box-shadow:0 2px 10px rgba(0,0,0,.18),inset 0 0 0 1px var(--line,#ccc);font:700 13px/1 system-ui,sans-serif}
+.lsw a{padding:9px 14px;color:var(--ink,#123);text-decoration:none;cursor:pointer}.lsw a.on{background:var(--brand,#17698F);color:#fff}</style>
+<script>(function(){var K="trio_lang",q=new URLSearchParams(location.search).get("lang"),l;try{l=q||localStorage.getItem(K)}catch(e){l=q}if(!l){var n=(navigator.language||"").slice(0,2);l=n==="fr"?"fr":(n==="en"?"en":"ar")}l=["en","fr"].indexOf(l)<0?"ar":l;
 var w=document.createElement("div");w.className="lsw";w.setAttribute("aria-label","Language");[["ar","ع"],["en","EN"],["fr","FR"]].forEach(function(x){var a=document.createElement("a");a.textContent=x[1];a.lang=x[0];a.href="?lang="+x[0];if(x[0]===l)a.className="on";a.onclick=function(e){e.preventDefault();try{localStorage.setItem(K,x[0])}catch(_){}location.href=location.pathname+(x[0]==="ar"?"":"?lang="+x[0])};w.appendChild(a)});document.body.appendChild(w);
 if(l==="ar")return;var h=document.documentElement;h.lang=l;h.dir="ltr";
 fetch("i18n.json").then(function(r){return r.json()}).then(function(D){var i=l==="en"?0:1,L="ء-يٮ-ۓۺ-ۿ",M="ً-ٰٟـ‌",RE=new RegExp("["+L+"]["+L+M+"]*(?:(?:[  ]+|[  ]*[/\\-–][  ]*)["+L+"]["+L+M+"]*)*","g"),AR=/[؀-ۿ]/,P={"؟":"?","،":",","؛":";"};
