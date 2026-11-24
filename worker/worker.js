@@ -8,7 +8,7 @@ const PUB = "tM+bQlw/40oF17B+DvmHJ1TxQd1oIs0oMTOJ3LxDs4c=";   // Trio's public k
 const FEED = "https://raw.githubusercontent.com/trioerp-corp/trio-feed/main/feed.txt"; // the command channel written into every licence
 const PAYMOB = "https://accept.paymob.com";
 // the price (one yearly subscription) and the parts — the same as the program (core/modules.py); the browser never decides the price
-const CAT = /*CATALOG*/{"year": 3000, "branch": 500, "visit": 1500, "custom": 1500, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكثر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكثر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على البريد", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الهاتف"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}}
+const CAT = /*CATALOG*/{"year": 3000, "branch": 500, "visit": 1500, "custom": 1500, "plan_mods": {"basic": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "expiry"], "standard": ["pos", "items", "purchases", "partners", "money", "treasury", "profit_monthly", "stores", "returns", "promos", "units", "labels", "expiry", "valuation"], "pro": ["pos", "items", "purchases", "partners", "money", "treasury", "stores", "returns", "promos", "units", "labels", "expiry", "valuation", "production", "recipes", "gaming", "clinic", "branches", "profit_monthly", "profit_yearly", "report_whatsapp", "report_telegram", "report_email", "drive_backup", "mobile"]}, "business": {"market": ["labels", "units"], "retail": [], "cafe": ["recipes"], "gaming": ["gaming", "recipes"], "clinic": ["clinic"]}, "for_business": {"gaming": ["gaming"], "recipes": ["cafe", "gaming"], "production": ["market"], "clinic": ["clinic"], "labels": ["market", "retail", "cafe", "gaming"], "units": ["market", "retail", "cafe", "gaming"], "promos": ["market", "retail", "cafe", "gaming"]}, "names": {"pos": "نقطة البيع والكاشير", "items": "الأصناف والمخزن", "purchases": "المشتريات والموردين", "partners": "العملاء الآجل", "money": "المصروفات والمرتبات وصاحب المحل", "treasury": "الخزينة والمحافظ والبنك", "stores": "أكثر من مخزن وتحويلات", "returns": "مرتجع المشتريات للمورد", "promos": "العروض والخصومات", "units": "الوحدات (كرتونة/علبة)", "labels": "ملصقات الباركود والميزان", "expiry": "الصلاحية (الإنتاج والانتهاء)", "valuation": "تقييم المخزون", "production": "التصنيع", "recipes": "المنيو والمكونات", "gaming": "صالة الألعاب بالساعة", "clinic": "العيادة", "branches": "أكثر من فرع", "profit_monthly": "تقرير الأرباح الشهري والشركاء", "profit_yearly": "تقرير الأرباح السنوي", "report_whatsapp": "ملخص اليوم على واتساب", "report_telegram": "ملخص اليوم على تليجرام", "report_email": "ملخص اليوم على البريد", "drive_backup": "نسخة احتياطية على جوجل درايف", "mobile": "تابع محلك من الهاتف"}, "plan_names": {"basic": "أساسي", "standard": "متقدم", "pro": "شامل"}, "markets": {"EG": {"cur": "EGP", "ar": "ج.م", "en": "EGP", "rate": 1, "year": 3000, "branch": 500, "visit": 1500, "custom": 1500, "egp": {"year": 3000, "branch": 500, "visit": 1500, "custom": 1500}}, "SA": {"cur": "SAR", "ar": "ر.س", "en": "SAR", "rate": 13.1, "year": 899, "branch": 199, "visit": 399, "custom": 399, "egp": {"year": 11780, "branch": 2610, "visit": 5230, "custom": 5230}}, "AE": {"cur": "AED", "ar": "د.إ", "en": "AED", "rate": 13.4, "year": 899, "branch": 199, "visit": 399, "custom": 399, "egp": {"year": 12050, "branch": 2670, "visit": 5350, "custom": 5350}}, "QA": {"cur": "QAR", "ar": "ر.ق", "en": "QAR", "rate": 13.5, "year": 899, "branch": 199, "visit": 399, "custom": 399, "egp": {"year": 12140, "branch": 2690, "visit": 5390, "custom": 5390}}, "KW": {"cur": "KWD", "ar": "د.ك", "en": "KWD", "rate": 160, "year": 75, "branch": 15, "visit": 35, "custom": 35, "egp": {"year": 12000, "branch": 2400, "visit": 5600, "custom": 5600}}, "BH": {"cur": "BHD", "ar": "د.ب", "en": "BHD", "rate": 130, "year": 89, "branch": 19, "visit": 39, "custom": 39, "egp": {"year": 11570, "branch": 2470, "visit": 5070, "custom": 5070}}, "OM": {"cur": "OMR", "ar": "ر.ع", "en": "OMR", "rate": 127.5, "year": 89, "branch": 19, "visit": 39, "custom": 39, "egp": {"year": 11350, "branch": 2430, "visit": 4980, "custom": 4980}}, "JO": {"cur": "JOD", "ar": "د.أ", "en": "JOD", "rate": 69.2, "year": 129, "branch": 29, "visit": 59, "custom": 59, "egp": {"year": 8930, "branch": 2010, "visit": 4090, "custom": 4090}}, "IQ": {"cur": "IQD", "ar": "د.ع", "en": "IQD", "rate": 0.0375, "year": 250000, "branch": 50000, "visit": 100000, "custom": 100000, "egp": {"year": 9380, "branch": 1880, "visit": 3750, "custom": 3750}}, "MA": {"cur": "MAD", "ar": "د.م", "en": "MAD", "rate": 5.3, "year": 1490, "branch": 290, "visit": 590, "custom": 590, "egp": {"year": 7900, "branch": 1540, "visit": 3130, "custom": 3130}}, "DZ": {"cur": "DZD", "ar": "د.ج", "en": "DZD", "rate": 0.38, "year": 19900, "branch": 3900, "visit": 7900, "custom": 7900, "egp": {"year": 7570, "branch": 1490, "visit": 3010, "custom": 3010}}, "TN": {"cur": "TND", "ar": "د.ت", "en": "TND", "rate": 16.6, "year": 399, "branch": 79, "visit": 159, "custom": 159, "egp": {"year": 6630, "branch": 1320, "visit": 2640, "custom": 2640}}, "LY": {"cur": "LYD", "ar": "د.ل", "en": "LYD", "rate": 9.0, "year": 690, "branch": 139, "visit": 279, "custom": 279, "egp": {"year": 6210, "branch": 1260, "visit": 2520, "custom": 2520}}, "USD": {"cur": "USD", "ar": "$", "en": "$", "rate": 49, "year": 199, "branch": 39, "visit": 79, "custom": 79, "egp": {"year": 9760, "branch": 1920, "visit": 3880, "custom": 3880}}}, "countries": {"EG": ["مصر", "Egypt", "EG"], "SA": ["السعودية", "Saudi Arabia", "SA"], "AE": ["الإمارات", "UAE", "AE"], "QA": ["قطر", "Qatar", "QA"], "KW": ["الكويت", "Kuwait", "KW"], "BH": ["البحرين", "Bahrain", "BH"], "OM": ["عُمان", "Oman", "OM"], "JO": ["الأردن", "Jordan", "JO"], "IQ": ["العراق", "Iraq", "IQ"], "MA": ["المغرب", "Morocco", "MA"], "DZ": ["الجزائر", "Algeria", "DZ"], "TN": ["تونس", "Tunisia", "TN"], "LY": ["ليبيا", "Libya", "LY"], "LB": ["لبنان", "Lebanon", "USD"], "SY": ["سوريا", "Syria", "USD"], "PS": ["فلسطين", "Palestine", "USD"], "YE": ["اليمن", "Yemen", "USD"], "SD": ["السودان", "Sudan", "USD"], "MR": ["موريتانيا", "Mauritania", "USD"], "SO": ["الصومال", "Somalia", "USD"], "DJ": ["جيبوتي", "Djibouti", "USD"], "KM": ["جزر القمر", "Comoros", "USD"], "ZZ": ["بلد آخر", "Other country", "USD"]}}
 /*END*/;
 
 const enc = new TextEncoder();
@@ -60,8 +60,17 @@ async function sign(env, lic) {
 // (every part that fits the shop's business, one branch) — CAT.year; + CAT.branch a year for each extra branch (a quantity,
 // kept in the licence as «br» and renewed with it); + optional one-time services: the set-up visit and custom requests
 // (up to 3 changes). No plans, no add-ons; lifetime is never sold here (an old lifetime licence keeps working).
+// 11/2026: each market sees its own currency (CAT.markets from core/prices.json); Paymob (an EGP account) charges the fixed
+// «egp» amounts. The market comes from the VISITOR's country (Cloudflare request.cf.country) — never from the page.
+function market(cc) {
+  cc = String(cc || "").toUpperCase();
+  if (!/^[A-Z]{2}$/.test(cc) || cc === "XX" || cc === "T1") cc = "EG"; // unknown / Tor / local → Egypt
+  const key = (CAT.countries[cc] || [0, 0, "USD"])[2], m = CAT.markets[key];
+  return { country: cc, key, currency: m.cur, sym: { ar: m.ar, en: m.en }, prices: { year: m.year, branch: m.branch, visit: m.visit, custom: m.custom }, egp: m.egp };
+}
 const nBr = (v) => Math.max(0, Math.min(50, parseInt(v, 10) || 0));
-async function price(b) {
+async function price(b, mk = market("EG")) {
+  const E = mk.egp, P = mk.prices;
   const business = CAT.business[b.business] ? b.business : "market";
   let cur = null;
   if (b.lic) {
@@ -72,15 +81,16 @@ async function price(b) {
   const branches = life ? had : Math.max(nBr(b.branches), had); // a renewal never drops branches paid for
   const renew = !!cur && !life && b.renew !== false; // false: only services / more branches on a running subscription
   if (!cur || renew) {
-    lines.push([cur ? "تجديد الاشتراك السنوي — كل البرنامج" : "اشتراك سنوي — كل البرنامج (فرع واحد)", CAT.year]);
-    if (branches) lines.push(["فرع إضافي × " + branches + " — سنة", branches * CAT.branch]);
-  } else if (!life && branches > had) lines.push(["فرع إضافي × " + (branches - had) + " — حتى نهاية الاشتراك", (branches - had) * CAT.branch]);
+    lines.push([cur ? "تجديد الاشتراك السنوي — كل البرنامج" : "اشتراك سنوي — كل البرنامج (فرع واحد)", E.year, P.year]);
+    if (branches) lines.push(["فرع إضافي × " + branches + " — سنة", branches * E.branch, branches * P.branch]);
+  } else if (!life && branches > had) lines.push(["فرع إضافي × " + (branches - had) + " — حتى نهاية الاشتراك", (branches - had) * E.branch, (branches - had) * P.branch]);
   const visit = !!b.visit, custom = !!b.custom;
-  if (visit) lines.push(["زيارة تجهيز وتدريب في المحل", CAT.visit]);
-  if (custom) lines.push(["طلبات خاصة — حتى 3 تعديلات", CAT.custom]);
-  const total = lines.reduce((a, l) => a + l[1], 0);
+  if (visit) lines.push(["زيارة تجهيز وتدريب في المحل", E.visit, P.visit]);
+  if (custom) lines.push(["طلبات خاصة — حتى 3 تعديلات", E.custom, P.custom]);
+  const total = lines.reduce((a, l) => a + l[1], 0), local_total = lines.reduce((a, l) => a + l[2], 0); // total = EGP charged
   if (!(total > 0)) return { error: life ? "رخصتك مدى الحياة — لا تحتاج إلى تجديد" : "لا يوجد ما يُدفع" };
-  return { business: (cur && cur.b) || business, plan: "pro", extras: [], life: [], renew, branches, visit, custom, lines, total, cur };
+  return { business: (cur && cur.b) || business, plan: "pro", extras: [], life: [], renew, branches, visit, custom, lines, total, cur,
+    country: mk.country, currency: mk.currency, local_total };
 }
 
 // a renewal extends from the current expiry (renewing early loses no day); one that ended more than its grace days ago
@@ -150,13 +160,14 @@ async function checkout(req, env, url) {
   if (!name) return err("اكتب اسم المحل");
   const agree = String(b.agree || "").slice(0, 10);
   if (!b.m && !agree) return err("يجب الموافقة على الشروط والأحكام وسياسة الاسترجاع قبل الدفع");
-  const pr = await price(b);
+  const pr = await price(b, market(req.cf && req.cf.country)); // the visitor's country, worked out here
   if (pr.error) return err(pr.error);
   const id = "TRIO-" + b64u(crypto.getRandomValues(new Uint8Array(5))).toUpperCase().replace(/[^A-Z0-9]/g, "7").slice(0, 6);
   const email = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(b.email || "") ? b.email : phone + "@trioerp.pages.dev";
   const back = /^http:\/\/[a-z0-9.\-]+(:\d+)?\/ui\/shop\/pay\/$/i.test(b.back || "") ? b.back : "";
   const o = { id, status: "pending", src: b.m ? "app" : "site", m: b.m || "", name, phone, email, business: pr.business, plan: pr.plan, extras: pr.extras,
     life: pr.life, renew: pr.renew, branches: pr.branches, visit: pr.visit, custom: pr.custom, lines: pr.lines, total: pr.total, cur: pr.cur, back, created: iso(),
+    country: pr.country, currency: pr.currency, local_total: pr.local_total,
     terms: agree ? { v: agree, at: iso() } : null }; // the terms / refund policy version the customer ticked
   // where the owner wants his daily summary (filled on the order form; the program saves them when the order is claimed)
   const repMail = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(b.rep_email || "").trim()) ? String(b.rep_email).trim().slice(0, 120) : "";
@@ -179,7 +190,7 @@ async function checkout(req, env, url) {
   o.pm = String(d.intention_order_id || "");
   if (o.pm) await env.ACC.put("p:" + o.pm, id);
   await putOrder(env, o);
-  return json({ id, amount: pr.total, lines: pr.lines,
+  return json({ id, amount: pr.total, lines: pr.lines, country: pr.country, currency: pr.currency, local_total: pr.local_total,
     url: (env.PAYMOB_CHECKOUT || PAYMOB) + "/unifiedcheckout/?publicKey=" + encodeURIComponent(env.PAYMOB_PUBLIC) + "&clientSecret=" + encodeURIComponent(d.client_secret) });
 }
 
@@ -1913,7 +1924,7 @@ async function ordersPage(env, st, tok, msg) {
   const stx = { paid: ["دُفع", "ok"], pending: ["بانتظار الدفع", "warn"], failed: ["فشل", "red"] };
   const row = (o) => { const s = stx[o.status] || [o.status || "—", ""]; const known = o.m && (st.clients || {})[o.m];
     return `<div style="padding:10px 0;border-bottom:1px solid #EDF2F7"><b>${esc(o.name || o.phone || o.id)}</b> <span class="tag ${s[1]}">${esc(s[0])}</span><br>
-<small class="muted">${esc(o.id)} · ${esc(CAT.plan_names[o.plan] || o.plan || "")} · ${esc(String(o.total || o.amount || ""))} ج · ${esc(o.phone || "")}${o.m ? " · " + esc(o.m) : " · لم يُفعَّل على جهاز بعد"}</small>
+<small class="muted">${esc(o.id)} · ${esc(CAT.plan_names[o.plan] || o.plan || "")} · ${esc(String(o.total || o.amount || ""))} ج${o.currency && o.currency !== "EGP" ? " (" + esc(String(o.local_total)) + " " + esc(o.currency) + " · " + esc(o.country || "") + ")" : ""} · ${esc(o.phone || "")}${o.m ? " · " + esc(o.m) : " · لم يُفعَّل على جهاز بعد"}</small>
 ${o.status === "paid" && o.m && o.code && !known ? `<form method="post"><input type="hidden" name="csrf" value="${tok}"><input type="hidden" name="a" value="take"><input type="hidden" name="id" value="${esc(o.id)}"><button class="btn alt">سجّله في العملاء</button></form>` : known ? `<a href="/admin/c/${o.m}" class="muted">عند العملاء ←</a>` : ""}</div>`; };
   return apage("الطلبات", `${msg ? `<div class="msg">${esc(msg)}</div>` : ""}<h1>💳 طلبات الدفع الإلكتروني</h1><div class="card">${os.map(row).join("") || '<p class="muted">لا توجد طلبات بعد</p>'}</div>`, "/more");
 }
@@ -2265,6 +2276,7 @@ export default {
     if (req.method === "POST" && url.pathname === "/trial") return trialSync(req, env);
     if (url.pathname === "/list" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "m:"));
     if (url.pathname === "/sales" && env.KEY && q.get("k") === env.KEY) return json(await all(env, "o:"));
+    if (url.pathname === "/geo") { const m = market(req.cf && req.cf.country); return json({ country: m.country, currency: m.currency, sym: m.sym, prices: m.prices, egp: m.egp }); }
     if (url.pathname === "/info") return json({ pay: !!(env.SALES_KEY && env.PAYMOB_SECRET), ai: !!env.ANTHROPIC_KEY, catalog: CAT,
       mobile: true, db: !!env.DB, tg: env.TG_TOKEN ? await tgBot(env) : "", mail: !!(env.BREVO_KEY && env.MAIL_FROM), wa: !!(env.WA_TOKEN && env.WA_PHONE_ID) });
     if (req.method === "POST" && url.pathname === "/snap") return snap(req, env);
@@ -2340,7 +2352,7 @@ export default {
       const o = await getOrder(env, q.get("id") || "");
       if (!o) return json({ status: "missing" });
       const mine = o.m && o.m === q.get("m");
-      return json({ id: o.id, status: o.status, total: o.total, lines: o.lines, code: mine ? o.code || "" : "", claim: o.status === "paid" && !o.m });
+      return json({ id: o.id, status: o.status, total: o.total, lines: o.lines, country: o.country || "EG", currency: o.currency || "EGP", local_total: o.local_total ?? o.total, code: mine ? o.code || "" : "", claim: o.status === "paid" && !o.m });
     }
     if (req.method === "POST" && url.pathname === "/claim") {
       let b = {};
