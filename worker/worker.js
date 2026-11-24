@@ -1655,7 +1655,14 @@ async function updatesAct(env, st, f) {
 // ---------------------------------------------------------------- the command channel (same lines as Trio License)
 function feedText(st) {
   const L = ["Trio command channel. Every line is signed with Trio's key.", st.lines?.control || ""];
-  for (const m of Object.keys(st.clients || {}).sort()) if (st.clients[m].Order) L.push(st.clients[m].Order);
+  // each client's order, then (1.26) a release made for him only while it is newer than the general one, and his custom pack
+  const gl = relVer(st.lines?.release), done = new Set();
+  for (const m of Object.keys(st.clients || {}).sort()) {
+    const c = st.clients[m];
+    if (c.Order) L.push(c.Order);
+    if (c.Rel && (!gl || verGt(c.RelVer || "", gl)) && !done.has(c.Rel)) { done.add(c.Rel); L.push(c.Rel); }
+    if (c.Pack && !done.has(c.Pack)) { done.add(c.Pack); L.push(c.Pack); }
+  }
   if (st.lines?.triop) L.push(st.lines.triop);
   for (const k of st.lines?.keys || []) L.push(k);
   if (st.lines?.release) L.push(st.lines.release);
@@ -2282,7 +2289,7 @@ export default {
       try { d = await req.json(); } catch (e) { return new Response("bad", { status: 400 }); }
       if (!MACHINE.test(d.m || "")) return new Response("bad", { status: 400 });
       const cut = (x, n) => String(x || "").slice(0, n);
-      const rec = { v: cut(d.v, 20), p: cut(d.p, 12), b: cut(d.b, 12), s: cut(d.s, 12), n: cut(d.n, 80), ph: cut(d.ph, 30), mk: cut(d.mk, 12), at: new Date().toISOString() };
+      const rec = { v: cut(d.v, 20), p: cut(d.p, 12), b: cut(d.b, 12), s: cut(d.s, 12), n: cut(d.n, 80), ph: cut(d.ph, 30), mk: cut(d.mk, 12), cp: cut(d.cp, 8), at: new Date().toISOString() };
       await env.ACC.put("m:" + d.m, JSON.stringify(rec));
       return new Response("ok");
     }
