@@ -83,8 +83,10 @@ func shortcutScript(dir, exe, version string) string {
 	lnk := title + ".lnk"
 	return "$ErrorActionPreference='Stop';$w=New-Object -ComObject WScript.Shell;" +
 		"$d=[Environment]::GetFolderPath('Desktop');$p=[Environment]::GetFolderPath('Programs');" +
-		"foreach($f in @($d,$p)){$s=$w.CreateShortcut((Join-Path $f " + psQuote(lnk) + "));$s.TargetPath=" + psQuote(exe) +
-		";$s.WorkingDirectory=" + psQuote(dir) + ";$s.IconLocation=" + psQuote(exe+",0") + ";$s.Description=" + psQuote(title) + ";$s.Save()};" +
+		// WScript.Shell saves only names of the system code page (an English Windows refuses «الكاشير»): an ASCII name first, then renamed
+		"foreach($f in @($d,$p)){$t=Join-Path $f 'TrioCashier-new.lnk';$s=$w.CreateShortcut($t);$s.TargetPath=" + psQuote(exe) +
+		";$s.WorkingDirectory=" + psQuote(dir) + ";$s.IconLocation=" + psQuote(exe+",0") + ";$s.Description='Trio';$s.Save();" +
+		"Move-Item -Force -LiteralPath $t -Destination (Join-Path $f " + psQuote(lnk) + ")};" +
 		"$k=" + psQuote(uninstallKey) + ";New-Item -Path $k -Force|Out-Null;" +
 		"New-ItemProperty -Path $k -Name DisplayName -Value " + psQuote(title) + " -PropertyType String -Force|Out-Null;" +
 		"New-ItemProperty -Path $k -Name DisplayVersion -Value " + psQuote(version) + " -PropertyType String -Force|Out-Null;" +

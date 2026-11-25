@@ -69,7 +69,7 @@ L ("discovery found: " + ($found -join ", "))
 Check (($found -join " ") -match "127\.0\.0\.1:8000") "owner launcher answered the discovery"
 
 L "== 5. the cashier app (proxy) → owner"
-$app = Start-Process -PassThru "$inst\TrioCashier.exe" -ArgumentList "-nowindow"
+$capp = Start-Process -PassThru "$inst\TrioCashier.exe" -ArgumentList "-nowindow"
 Check (WaitFor 30 { $s = Status; $s -and $s.online }) "cashier app connected to the owner PC"
 $r = Get "http://127.0.0.1:8010/cashier/"
 Check ($r -and $r.StatusCode -eq 200 -and $r.Content -match 'id="linkBox"' -and $r.Content -match "/__trio/boot.js") "/cashier/ → till page through the proxy (boot.js injected)"
@@ -78,7 +78,7 @@ $r = Get "http://127.0.0.1:8010/pos/api/catalog/" @{ "X-Device-Token" = $tok }
 Check ($r -and $r.StatusCode -eq 200) "catalog through the proxy with the paired device key"
 try { $s = Invoke-RestMethod -Method Post -TimeoutSec 30 -ContentType "application/json" -Headers @{ "X-Device-Token" = $tok } -Body '{"orders":[]}' http://127.0.0.1:8010/pos/api/sync/; Check ($null -ne $s.accepted) "sync POST through the proxy" } catch { Check $false ("sync POST: " + $_) }
 Invoke-WebRequest -UseBasicParsing -Method Post -Headers @{ "X-Trio-Local" = "1" } http://127.0.0.1:8010/__trio/quit | Out-Null
-Check (WaitFor 15 { $app.HasExited }) "-nowindow app quit on request"
+Check (WaitFor 15 { $capp.HasExited }) "-nowindow app quit on request"
 
 L "== 6. from the desktop shortcut: the till window"
 Remove-Item Env:TRIO_DISCOVER_EXTRA

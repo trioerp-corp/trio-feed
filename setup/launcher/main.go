@@ -242,15 +242,18 @@ func shortcuts() {
 		"$s=$w.CreateShortcut((Join-Path $d " + psQuote(brand+".lnk") + "));$s.TargetPath=" + psQuote(exe) + ";$s.WorkingDirectory=" +
 		psQuote(dir) + ";$s.IconLocation=" + psQuote(exe+",0") + ";$s.Description='Trio';$s.Save();"
 	if _, err := os.Stat(cashier); err == nil {
-		script += "$c=$w.CreateShortcut((Join-Path $d " + psQuote(brand+" - الكاشير.lnk") + "));$c.TargetPath=" + psQuote(cashier) +
-			";$c.WorkingDirectory=" + psQuote(dir) + ";$c.IconLocation=" + psQuote(cashier+",0") + ";$c.Save();"
+		// WScript.Shell saves only names of the system code page (an English Windows refuses Arabic): ASCII name, then renamed
+		script += "$c=$w.CreateShortcut((Join-Path $d 'trio-cashier-new.lnk'));$c.TargetPath=" + psQuote(cashier) +
+			";$c.WorkingDirectory=" + psQuote(dir) + ";$c.IconLocation=" + psQuote(cashier+",0") + ";$c.Save();" +
+			"Move-Item -Force -LiteralPath (Join-Path $d 'trio-cashier-new.lnk') -Destination (Join-Path $d " + psQuote(brand+" - الكاشير.lnk") + ");"
 	}
 	// Start menu → Trio: open, cashier, stop (the stop is not on the desktop so nobody presses it by mistake)
 	script += "$p=Join-Path ([Environment]::GetFolderPath('Programs')) 'Trio';New-Item -ItemType Directory -Force -Path $p|Out-Null;" +
 		"$a=$w.CreateShortcut((Join-Path $p " + psQuote(brand+".lnk") + "));$a.TargetPath=" + psQuote(exe) + ";$a.WorkingDirectory=" + psQuote(dir) +
 		";$a.IconLocation=" + psQuote(exe+",0") + ";$a.Save();" +
-		"$x=$w.CreateShortcut((Join-Path $p 'إيقاف Trio.lnk'));$x.TargetPath=" + psQuote(exe) + ";$x.Arguments='-stop';$x.WorkingDirectory=" +
-		psQuote(dir) + ";$x.IconLocation=" + psQuote(exe+",0") + ";$x.Description='إيقاف البرنامج';$x.Save();"
+		"$x=$w.CreateShortcut((Join-Path $p 'trio-stop-new.lnk'));$x.TargetPath=" + psQuote(exe) + ";$x.Arguments='-stop';$x.WorkingDirectory=" +
+		psQuote(dir) + ";$x.IconLocation=" + psQuote(exe+",0") + ";$x.Description='Stop Trio';$x.Save();" +
+		"Move-Item -Force -LiteralPath (Join-Path $p 'trio-stop-new.lnk') -Destination (Join-Path $p 'إيقاف Trio.lnk');"
 	// the old «ACC ERP» shortcuts and Start-menu folder give way to «Trio»
 	script += "Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $d 'ACC ERP.lnk'),(Join-Path $d 'ACC ERP - الكاشير.lnk');" +
 		"Remove-Item -Recurse -Force -ErrorAction SilentlyContinue (Join-Path ([Environment]::GetFolderPath('Programs')) 'ACC ERP');"
