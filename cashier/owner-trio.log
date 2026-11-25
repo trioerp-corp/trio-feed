@@ -1,11 +1,22 @@
-2026-11-25 10:28:07 Trio · 01228827915 · 01121460640
+2026-11-25 10:41:56 Trio · 01228827915 · 01121460640
 Operations to perform:
   Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
 Running migrations:
   No migrations to apply.
-2026-11-25 10:28:10 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
+2026-11-25 10:41:59 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
 قناة الأوامر ✔ الإيقاف: شغال — الحضور ✔ — التجربة ✔
 لا يوجد بريد إرسال ولا رابط تحكم
 لا يوجد بريد البرنامج
-نسخة على الجهاز: C:\pkg\Trio\backups\shop_2026-11-25_122813.zip
+نسخة على الجهاز: C:\pkg\Trio\backups\shop_2026-11-25_124202.zip
 صيانة قاعدة البيانات: الفحص سليم — ضُغطت ونُظّفت
+2026-11-25 10:42:51 Trio · 01228827915 · 01121460640
+Operations to perform:
+  Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
+Running migrations:
+  No migrations to apply.
+2026-11-25 10:42:53 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
+قناة الأوامر ✔ الإيقاف: قديم —  — التجربة ✔
+لا يوجد بريد إرسال ولا رابط تحكم
+لا يوجد بريد البرنامج
+آخر نسخة ما زالت حديثة
+صيانة قاعدة البيانات: لم يحن وقتها بعد
