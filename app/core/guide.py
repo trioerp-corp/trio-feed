@@ -33,7 +33,7 @@ def key_for_activity(business, activity):
 
 def key_for(s):
     """Which guide a shop gets."""
-    return key_for_activity(s.business, s.activity)
+    return key_for_activity(s.business, __import__("core.activities", fromlist=["x"]).current(s))
 
 
 # ------------------------------------------------------------------------------------------------ chapters
@@ -65,8 +65,8 @@ def _setup(key):
         ], tip="هذا الدليل يُنزَّل تلقائيًا أول مرة تفتح فيها «تجهيز المحل»، وتجده دائمًا في القائمة: «📘 دليل الاستخدام»."),
     ]
     if not cl and not cafe:
-        out.append(dict(t="رصيد البضاعة الموجودة عندك (أول مرة)", shot="/ui/start/stock/", pic="opening", steps=[
-            "من «تجهيز المحل»: «📦 أدخل رصيد البضاعة الموجودة عندك الآن» — مرة واحدة عند بدء العمل بالبرنامج.",
+        out.append(dict(t="رصيد البضاعة الموجودة لديك (أول مرة)", shot="/ui/start/stock/", pic="opening", steps=[
+            "من «تجهيز المحل»: «📦 أدخل رصيد البضاعة الموجودة لديك الآن» — مرة واحدة عند بدء العمل بالبرنامج.",
             "ابحث عن الصنف بالاسم أو امسح الباركود، واكتب الكمية الموجودة وتكلفتها" + (" (بالعلبة أو بالشريط)." if key == "pharmacy" else
                                                                                   (" (ولكل مقاس ولون كميته)." if key in ("clothes", "retail") else ".")),
             "«حفظ الرصيد»: يُسجَّل كله في قيد واحد كبضاعة أول المدة. وإن رجعت للصفحة لاحقًا تُضاف الكميات الجديدة ولا يتكرر ما سُجّل.",
@@ -550,4 +550,66 @@ def sections(key, words=None):
                 "ورقة المطبخ (بلا أسعار) تُطبع مع الإيصال على الطابعة نفسها أو على طابعة المطبخ — من «الإعدادات ← 🍳 ورقة المطبخ».",
             ]))
     out += _money_reports(key, words) + _owner_tail(key)
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ English / French
+# Whole sentences: core/locale/guide.json {arabic: {"en": …, "fr": …}} (tools/make_guides.py --lang builds the PDFs from it).
+# A sentence it does not know (a shop that renamed its pages) falls back to the program's word-by-segment dictionary.
+_GJ = {"m": None, "d": {}}
+UI = {  # the PDF's own words
+    "guide": {"ar": "دليل استخدام Trio", "en": "Trio user guide", "fr": "Guide d’utilisation de Trio"},
+    "lead": {"ar": "كل ما تحتاج إليه لتشغيل نشاطك بالبرنامج — من التثبيت إلى التقارير — خطوة بخطوة وبصور من البرنامج نفسه.",
+             "en": "Everything you need to run your business with the program — from installation to reports — step by step, with pictures of the program itself.",
+             "fr": "Tout ce qu’il vous faut pour gérer votre activité avec le logiciel — de l’installation aux rapports — étape par étape, avec des captures du logiciel lui-même."},
+    "toc": {"ar": "المحتوى", "en": "Contents", "fr": "Sommaire"},
+    "tip": {"ar": "نصيحة:", "en": "Tip:", "fr": "Conseil :"},
+    "foot": {"ar": "Trio — دليل الاستخدام", "en": "Trio — User guide", "fr": "Trio — Guide d’utilisation"},
+}
+
+
+def _gdict():
+    from pathlib import Path
+    import json
+
+    p = Path(__file__).with_name("locale") / "guide.json"
+    try:
+        m = p.stat().st_mtime
+    except OSError:
+        return {}
+    if _GJ["m"] != m:
+        try:
+            _GJ["d"] = json.loads(p.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            _GJ["d"] = {}
+        _GJ["m"] = m
+    return _GJ["d"]
+
+
+def tr(s, lang):
+    """One guide sentence in en / fr (ar: as it is)."""
+    if not s or lang not in ("en", "fr"):
+        return s
+    hit = (_gdict().get(s) or {}).get(lang)
+    if hit:
+        return hit
+    from core.i18n_mw import translate_text
+
+    return translate_text(s, lang)
+
+
+def localized(secs, lang):
+    """sections() in the viewer's language — same keys, text translated."""
+    if lang not in ("en", "fr"):
+        return secs
+    out = []
+    for s in secs:
+        x = dict(s)
+        for f in ("t", "part", "tip"):
+            if x.get(f):
+                x[f] = tr(x[f], lang)
+        x["steps"] = [tr(v, lang) for v in x.get("steps") or []]
+        if x.get("kbd"):
+            x["kbd"] = [(tr(k, lang), tr(v, lang)) for k, v in x["kbd"]]
+        out.append(x)
     return out

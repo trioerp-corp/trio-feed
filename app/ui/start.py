@@ -64,7 +64,10 @@ def _save(request, s, op):
             raise ValidationError("اكتب اسم المحل")
         check_shop_name(name)
         s.name, s.phone, s.address = name, P.get("phone", "").strip()[:40], P.get("address", "").strip()[:250]
-        s.save(update_fields=["name", "phone", "address"])
+        from core import currency as CUR
+
+        s.base_currency = CUR.clean(P.get("currency"), CUR.code(s))  # 1.26: the shop's currency (display only)
+        s.save(update_fields=["name", "phone", "address", "base_currency"])
         br = Branch.objects.order_by("pk").first()
         if br and P.get("footer") is not None:
             br.receipt_footer = P.get("footer", "").strip()[:200]
@@ -140,6 +143,19 @@ def _save(request, s, op):
                 made += 1
         _mark(s, op)
         return f"تمت الإضافة {made} {'مورد' if kind == 'supplier' else 'عميل'} ✔"
+    if op == "delivery":  # 1.26 optional: delivery orders at the till (fee, riders)
+        from pos import delivery as DL
+
+        DL.set_cfg(on=P.get("on") == "1", fee=P.get("fee") or "0", riders_text=P.get("riders", ""))
+        _mark(s, "delivery")
+        return "تم حفظ الدليفري ✔ — يظهر تبويب «🛵 الدليفري» في شاشة الكاشير"
+    if op == "platforms":  # 1.26 optional: «ربط منصات الطلبات» — the store link + commission % per platform
+        from pos.credit import platforms as PF
+
+        PF.set_cfg({k: dict(on=bool(P.get(f"{k}_link", "").strip()), link=P.get(f"{k}_link", ""), pct=P.get(f"{k}_pct") or "0")
+                    for k in PF.available(s)})
+        _mark(s, "platforms")
+        return "تم ربط المنصات ✔ — تظهر في شاشة الكاشير ضمن أنواع الطلب وطرق الدفع"
     if op == "doctor":
         from django.apps import apps
 
@@ -226,6 +242,10 @@ def page(request):
         if _pdf(key_for(s)):
             ctx["auto_guide"] = True
             _mark(s, "guide")
+    from pos import delivery as DL
+    from pos.credit import platforms as PF
+
+    ctx.update(dl=DL.raw_cfg(s), dl_riders="\n".join(DL.raw_cfg(s).get("riders") or []), plats=[c for c in PF.cfg(s) if PF.serves(c["key"], s)])
     if s.business == "cafe":
         from inventory import menu as MN
         from pos.models import DiningTable
@@ -239,4 +259,7 @@ def page(request):
 
         ctx["stations"] = apps.get_model("gaming", "Station").objects.filter(active=True).order_by("order")
         ctx["g_rule"] = rule_text(s)
+    from core import currency as CUR
+
+    ctx.update(cur_choices=CUR.choices(), cur_now=CUR.code(s), cur_set=(s.onboarding or {}).get("shop") or s.base_currency != CUR.DEFAULT)
     return render(request, "ui/start.html", ctx)

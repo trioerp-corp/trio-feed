@@ -25,7 +25,7 @@ function q(n){return f.querySelector('[name='+n+']')}
 var fb=document.getElementById('fuBox'),ft=document.getElementById('fuTxt'),lastP='';
 function check(){var t=q('time').value;if(!q('doctor').value&&!q('service').value){w.style.display='none';fb.style.display='none';return Promise.resolve(null)}
 return fetch('?check=1&d='+encodeURIComponent(q('date').value)+'&time='+encodeURIComponent(t)+'&doctor='+q('doctor').value+'&service='+q('service').value+'&patient='+q('patient').value,{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
-if(j.followup){ft.textContent='⟲ '+j.followup.note+' — بسعر '+(+j.followup.price?j.followup.price+' ج':'مجانًا');fb.style.display='block'}else{fb.style.display='none'}
+if(j.followup){ft.textContent='⟲ '+j.followup.note+' — بسعر '+(+j.followup.price?j.followup.price+' {{ CUR }}':'مجانًا');fb.style.display='block'}else{fb.style.display='none'}
 var msg=[];if(j.clash&&j.clash.length)msg.push(j.doctor+' لديه حجز '+j.clash[0].name+' الساعة '+j.clash[0].time+(j.free?' — أول موعد متاح '+j.free:' — لا يوجد موعد متاح بعدها اليوم'));
 (j.warn||[]).forEach(function(x){msg.push(x)});
 if(!msg.length){w.style.display='none';return null}

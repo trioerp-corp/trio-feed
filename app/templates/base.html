@@ -22,6 +22,7 @@
     <select id="brs" name="b" onchange="this.form.submit()"><option value="">🏬 كل الفروع</option>{% for x in branch_list %}<option value="{{ x.pk|unlocalize }}" {% if branch_view and x.pk == branch_view.pk %}selected{% endif %}>🏬 {{ x.name }}</option>{% endfor %}</select></form>{% endif %}{% endif %}
     <form class="gg-search" action="{% url 'find' %}" role="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D9E7F5" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <label class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden">بحث</label><input name="q" type="search" placeholder="ابحث: صنف، عميل، فاتورة، صفحة…"></form>
+    {% include "core/_lang.html" %}
     <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn light" title="تسجيل الخروج">خروج</button></form>
     <form method="post" action="/2fa/new-codes/">{% csrf_token %}<button class="gg-user" title="{{ user.get_username }} — اضغط لأكواد احتياطية جديدة لرمز التأكيد">{{ user.get_username|slice:":1"|upper }}</button></form>
   </div>
@@ -32,9 +33,9 @@
 <aside class="gg-side" id="ggSide" aria-label="الأقسام">
   <div class="gg-side-head"><b>القائمة</b><button type="button" class="gg-side-x" aria-label="أغلق القائمة" onclick="ggSide(false)">✕</button></div>
   <form action="{% url 'find' %}" role="search"><input class="gg-side-find" name="q" type="search" placeholder="ابحث… (Enter = في البرنامج كله)" aria-label="ابحث في القائمة، أو اضغط Enter للبحث في البرنامج كله" oninput="ggFind(this.value)"></form>
-  {% for title, links in menu %}<nav class="gg-group" aria-label="{{ title }}"><h3>{{ title }}</h3>
+  {% for g in menu %}{% with title=g.0 links=g.1 %}<details class="gg-group" data-g="{{ g.key }}"{% if g.open %} open{% endif %}><summary><span class="ic" aria-hidden="true">{{ g.icon }}</span><span class="tx">{{ title }}</span><span class="n">{{ links|length }}</span></summary><nav aria-label="{{ title }}">
   {% for l in links %}<a href="{{ l.url }}"{% if l.on %} class="on" aria-current="page"{% endif %}{% if l.new_tab %} target="_blank" rel="noopener"{% endif %}><span class="ic" aria-hidden="true">{{ l.icon }}</span><span class="tx">{{ l.label }}</span>{% if l.badge %}<span class="badge gold">{{ l.badge }}</span>{% endif %}{% if l.new_tab %}<span class="ext" aria-hidden="true">↗</span>{% endif %}</a>
-  {% endfor %}</nav>{% endfor %}
+  {% endfor %}</nav></details>{% endwith %}{% endfor %}
 </aside>
 <div class="gg-side-back" onclick="ggSide(false)"></div>
 <main class="page">
@@ -56,7 +57,11 @@
 <script src="{% static 'ui/app.js' %}"></script>
 <script>
 function ggSide(open){document.body.classList.toggle('side-open',open);const b=document.querySelector('.gg-burger');if(b)b.setAttribute('aria-expanded',open)}
-function ggFind(q){q=(q||'').trim();document.querySelectorAll('.gg-group').forEach(g=>{let any=false;g.querySelectorAll('a').forEach(a=>{const ok=!q||a.textContent.includes(q);a.style.display=ok?'':'none';any=any||ok});g.style.display=any?'':'none'})}
+function ggFind(q){q=(q||'').trim();document.querySelectorAll('.gg-group').forEach(g=>{let any=false;g.querySelectorAll('a').forEach(a=>{const ok=!q||a.textContent.toLowerCase().includes(q.toLowerCase());a.style.display=ok?'':'none';any=any||ok});g.style.display=any?'':'none';if(q)g.open=any;else ggRestore(g)})}
+/* 1.26: collapsible groups — the one holding the open page starts open; the rest remember what the user opened */
+function ggOpenSet(){try{return JSON.parse(localStorage.getItem('gg_open')||'[]')}catch(e){return[]}}
+function ggRestore(g){g.open=!!g.querySelector('a.on')||ggOpenSet().includes(g.dataset.g)}
+document.querySelectorAll('.gg-group').forEach(g=>{ggRestore(g);g.addEventListener('toggle',()=>{if(document.querySelector('.gg-side-find')?.value)return;let s=ggOpenSet().filter(x=>x!==g.dataset.g);if(g.open)s.push(g.dataset.g);try{localStorage.setItem('gg_open',JSON.stringify(s))}catch(e){}})});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')ggSide(false)});
 (function(){const on=document.querySelector('.gg-side a.on');if(on)on.scrollIntoView({block:'nearest'})})();
 </script>

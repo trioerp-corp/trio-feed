@@ -1,12 +1,27 @@
 {% extends "base.html" %}{% load ar l10n %}{% block title %}إعدادات المحل{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>إعدادات المحل</h1><p class="muted" style="margin:0">أجهزة الكاشير والكاشيرات وبيانات الإيصال</p></div></div>
+<div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b>🌐 لغة البرنامج الافتراضية للمحل</b><span class="langsw" role="group" aria-label="Language"><a href="/lang/?l=ar&amp;shop=1&amp;next=/ui/shop/settings/" lang="ar">ع</a><a href="/lang/?l=en&amp;shop=1&amp;next=/ui/shop/settings/" lang="en">EN</a><a href="/lang/?l=fr&amp;shop=1&amp;next=/ui/shop/settings/" lang="fr">FR</a></span><small class="muted">لكل مستخدم أن يختار لغته من الشريط العلوي</small></div>
 <div class="split"><div class="main">
 <h2>أجهزة الكاشير</h2><div class="table-wrap" style="margin-bottom:12px"><table><thead><tr><th>الفرع</th><th>الجهاز</th><th>المفتاح (الصقه في لوحة البيع)</th><th>آخر مزامنة</th><th></th></tr></thead><tbody>
 {% for d in devices %}<tr><td>{{ d.branch.name }}</td><td>{{ d.name }}</td><td><code dir="ltr" style="user-select:all">{{ d.token }}</code></td><td>{{ d.last_sync|date:"d/m H:i"|default:"لم تتم بعد" }}</td>
 <td><form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle_device"><input type="hidden" name="id" value="{{ d.pk|unlocalize }}"><button class="light">{% if d.active %}إيقاف{% else %}تشغيل{% endif %}</button></form></td></tr>{% endfor %}</tbody></table></div>
 <form method="post" class="actions" style="margin-bottom:20px">{% csrf_token %}<input type="hidden" name="action" value="device"><input name="name" placeholder="اسم الجهاز (كاشير 3)" aria-label="اسم الجهاز">{% if branches|length > 1 %}<select name="branch" aria-label="الفرع">{% for b in branches %}{% if b.active %}<option value="{{ b.pk|unlocalize }}" {% if branch_view and b.pk == branch_view.pk %}selected{% endif %}>{{ b.name }}</option>{% endif %}{% endfor %}</select>{% endif %}<button class="light">+ جهاز</button></form>
 <p class="muted" style="margin:-12px 0 20px;font-size:13px">لربط جهاز: افتح «لوحة البيع» على ذلك الجهاز وأنت داخل بحسابك، ثم اختر الجهاز من «اربط هذا الجهاز» — دون نسخ المفتاح.</p>
+<div class="card" id="pair" style="margin:0 0 20px;display:flex;flex-direction:column;gap:8px"><h3 style="margin:0">➕ إضافة جهاز كاشير</h3>
+<p class="muted" style="margin:0;font-size:13px">لجهاز كمبيوتر آخر في المحل متصل بشبكة المحل نفسها: يُثبَّت عليه «Trio – الكاشير» وحده (دون البرنامج الكامل)، ويعمل حتى إذا انقطع الاتصال بهذا الجهاز ويرسل الفواتير عند عودته. إذا كان في المحل جهاز واحد فقط فلا حاجة لذلك: استخدم «Trio Cashier» على هذا الجهاز.</p>
+{% if pairing %}<div class="attn" role="status" style="flex-direction:column;align-items:stretch;gap:6px;border:2px solid var(--brand)">
+<b>على جهاز الكاشير «{{ pairing.device }}»: افتح متصفح Edge واكتب أحد هذه العناوين:</b>
+{% for a in pairing.addrs %}<code dir="ltr" style="font-size:18px;user-select:all">{{ a }}</code>{% empty %}<span class="muted">لم يُعثر على عنوان هذا الجهاز في الشبكة — استخدم الفلاشة.</span>{% endfor %}
+<span>ثم اكتب الرمز: <b dir="ltr" style="font-size:30px;letter-spacing:6px">{{ pairing.code }}</b></span>
+<small class="muted">يُستخدم مرة واحدة وينتهي بعد {{ pairing.mins }} دقيقة. لا تعطه إلا لمن يجهّز جهاز المحل.</small></div>{% endif %}
+{% if pair_ready %}<form method="post" class="actions" style="flex-wrap:wrap">{% csrf_token %}
+<select name="id" aria-label="الجهاز"><option value="new">جهاز جديد</option>{% for d in devices %}{% if d.active and d.code != "CL" and d.code != "GM" %}<option value="{{ d.pk|unlocalize }}">{{ d.name }}{% if branches|length > 1 %} — {{ d.branch.name }}{% endif %}</option>{% endif %}{% endfor %}</select>
+<input name="name" placeholder="اسم الجهاز الجديد (كاشير 2)" aria-label="اسم الجهاز الجديد">{% if branches|length > 1 %}<select name="branch" aria-label="الفرع">{% for b in branches %}{% if b.active %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endif %}{% endfor %}</select>{% endif %}
+<button class="btn" name="action" value="pair_code">📲 رمز للتنزيل عبر شبكة المحل</button>
+<button class="light" name="action" value="pair_file">📦 تنزيل الملف لنقله بفلاشة</button></form>
+<small class="muted">«📦» ينزّل ملفًا واحدًا «Trio Cashier Setup - اسم الجهاز.exe»: انقله إلى جهاز الكاشير وشغّله مرة واحدة. احتفظ بالملف؛ يربط جهازًا بمحلك — إذا فُقد اضغط «إيقاف» أمام الجهاز.</small>
+{% else %}<small class="muted">ملف تجهيز جهاز الكاشير غير موجود في هذه النسخة — حدّث البرنامج.</small>{% endif %}</div>
 <h2>المستخدمين</h2><div class="table-wrap" style="margin-bottom:12px"><table><thead><tr><th>المستخدم</th><th>الاسم</th><th>الدور</th>{% if branches|length > 1 %}<th>الفرع</th>{% endif %}<th>الحالة</th><th></th></tr></thead><tbody>
 {% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.first_name }}</td><td>{% if u.staff.title %}{{ u.staff.title }}{% else %}{% for g in u.groups.all %}{{ g.name }} {% endfor %}{% endif %}</td>{% if branches|length > 1 %}<td>{{ u.staff.branch.name|default:"كل الفروع" }}</td>{% endif %}<td>{% if u.is_active %}نشط{% else %}<span class="badge red">موقوف</span>{% endif %}</td>
 <td class="actions"><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reset"><input type="hidden" name="id" value="{{ u.pk|unlocalize }}"><button class="light">كلمة سر مؤقتة</button></form>
@@ -14,7 +29,7 @@
 <form method="post" class="actions">{% csrf_token %}<input type="hidden" name="action" value="cashier"><input name="username" placeholder="اسم الدخول (كاشير3)" dir="ltr"><input name="first_name" placeholder="الاسم">
 {% if branches|length > 1 %}<select name="branch" aria-label="الفرع">{% for b in branches %}{% if b.active %}<option value="{{ b.pk|unlocalize }}" {% if branch_view and b.pk == branch_view.pk %}selected{% endif %}>{{ b.name }}</option>{% endif %}{% endfor %}</select>{% endif %}<select name="role" aria-label="الدور">{% for k, t in roles %}<option value="{{ k }}">{{ t.0 }}</option>{% endfor %}</select>{% if clinic_doctors %}<select name="doctor" aria-label="إن كان طبيبًا: من"><option value="">إن كان طبيبًا: من؟</option>{% for d in clinic_doctors %}<option value="{{ d.pk|unlocalize }}">{{ d }}</option>{% endfor %}</select>{% endif %}<button class="light">+ مستخدم</button>{% if branch_on and not branch_locked %}<a class="btn light" href="{% url 'branches' %}#staff">موظف بمسمى وصلاحيات…</a>{% endif %}</form>
 </div><div class="side">{% if is_owner %}<div class="card"><h2>نشاط المحل</h2><p style="margin:0 0 8px"><b>{{ act.name }}</b><br><span class="muted" style="font-size:13px">{{ act.categories|length|count:"تصنيف" }}{% if act.fields %} · بيانات إضافية: {% for f in act.fields %}{{ f.n }}{% if not forloop.last %}، {% endif %}{% endfor %}{% endif %}</span></p>
-<a class="btn light" href="{% url 'shop_activity' %}">غيّر / اضبط النشاط</a></div>{% endif %}
+<span class="muted" style="font-size:13px">🔒 يُحدَّد النشاط مرة واحدة عند التجهيز الأول ولا يتغير بعده.</span></div>{% endif %}
 {% if is_owner %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="cashier_edit"><h2>الإلغاء والتعديل</h2>
 <p class="muted" style="margin:0 0 8px">إلغاء فاتورة أو صنف داخلها أو تعديل الكميات والأسعار. يمكن لصاحب المحل ذلك دائمًا. {% if s.cashier_can_edit %}<b>يمكن للكاشير حاليًا أيضًا</b> (من الكاشير ومن صفحة الفاتورة).{% else %}الكاشير حاليًا يرسل طلبًا ويوافق صاحب المحل.{% endif %}</p>
 {% if s.cashier_can_edit %}<button class="light" name="on" value="0">اقفلها عن الكاشير</button>{% else %}<button name="on" value="1">اسمح للكاشير بالإلغاء والتعديل</button>{% endif %}</form>{% endif %}
@@ -29,12 +44,14 @@
 {% if is_pharmacy or plus.pharm.on %}<label class="field check"><input type="checkbox" name="on" value="pharm"{% if plus.pharm.on %} checked{% endif %}> 💊 رصيد الصنف على كارت الكاشير وبدائله بالمادة الفعالة (للصيدليات)</label>{% endif %}
 <label class="field check"><input type="checkbox" name="on" value="sp"{% if plus.sp.on %} checked{% endif %}> 🧑‍💼 «البائع» على كل فاتورة وعمولته</label>
 <label class="field check"><input type="checkbox" name="on" value="loy"{% if plus.loy.on %} checked{% endif %}> ⭐ نقاط الولاء للعملاء برقم الموبايل</label>
-<div class="actions"><button>حفظ</button><a class="btn light" href="{% url 'plus_commission' %}">نسب العمولة والتقرير</a><a class="btn light" href="{% url 'plus_loyalty' %}">إعداد النقاط</a><a class="btn light" href="{% url 'plus_season' %}">🏷 التخفيض الموسمي</a></div></form>{% endif %}
+<div class="actions"><button>حفظ</button><a class="btn light" href="{% url 'plus_commission' %}">نسب العمولة والتقرير</a><a class="btn light" href="{% url 'plus_loyalty' %}">إعداد النقاط</a>{% if s.business == 'market' or s.business == 'retail' %}<a class="btn light" href="{% url 'plus_season' %}">🏷 التخفيض الموسمي</a>{% endif %}</div></form>{% endif %}
 <form method="post" class="card" id="receipt" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="receipt"><h2>بيانات الإيصال</h2>
 {% if s.logo_svg %}<div style="width:72px;height:72px;margin-bottom:6px">{{ s.logo_svg|safe }}</div>{% endif %}
 <label class="field">لوجو المحل (يظهر على الإيصال)<input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label>
 {% if s.logo_svg %}<label class="field check"><input type="checkbox" name="no_logo" value="1"> إزالة اللوجو</label>{% endif %}
 <label class="field">التليفون<input name="phone" value="{{ s.phone }}"></label><label class="field">العنوان<input name="address" value="{{ s.address }}"></label>
+{% include "core/_currency.html" %}
+<label class="field">عرض ورق الإيصال<select name="paper"><option value="80"{% if paper == "80" %} selected{% endif %}>80 مم (الطابعة الحرارية العادية)</option><option value="58"{% if paper == "58" %} selected{% endif %}>58 مم (الطابعة الصغيرة)</option></select></label>
 <label class="field">آخر سطر في الإيصال<input name="footer" value="{{ br.receipt_footer }}" placeholder="شكرًا لزيارتكم"></label><button>حفظ</button></form>
 {% if is_owner %}<form method="post" class="card" id="insta">{% csrf_token %}<input type="hidden" name="action" value="insta"><h2>📲 الدفع بـ InstaPay</h2>
 {% include "ui/_insta.html" %}<button>حفظ</button></form>{% endif %}
@@ -58,7 +75,7 @@
 <form method="post">{% csrf_token %}<input type="hidden" name="action" value="alerts">
 <label class="field">رقم واتساب صاحب المحل<input name="whatsapp" value="{{ s.owner_whatsapp }}" dir="ltr" inputmode="tel" placeholder="01001234567"></label>
 <div style="margin:8px 0;display:grid;gap:4px;font-size:14px">{% for k, label, on in alert_kinds %}<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="on" value="{{ k }}" style="width:auto;min-height:0;flex:none" {% if on %}checked{% endif %}><span>{{ label }}</span></label>{% endfor %}</div>
-<label class="field">تنبيه عجز الدرج إذا زاد عن (ج)<input name="short_min" value="{{ alerts.short_min|unlocalize|floatformat:'-2' }}" inputmode="decimal" dir="ltr"></label>
+<label class="field">تنبيه عجز الدرج إذا زاد عن ({{ CUR }})<input name="short_min" value="{{ alerts.short_min|unlocalize|floatformat:'-2' }}" inputmode="decimal" dir="ltr"></label>
 <p class="muted" style="font-size:12.5px;margin:6px 0">{% if wa_on %}✔ الإرسال التلقائي على واتساب يعمل من خادم Trio (للنسخ المفعّلة).{% else %}واتساب التلقائي لم يُفعَّل على خادم Trio بعد — تصلك التنبيهات نفسها على تليجرام والبريد المربوطين في «📱 الموبايل والتقارير».{% endif %}</p>
 <div class="actions"><button>حفظ</button><button class="light" name="test" value="1">أرسل تنبيه تجربة</button></div></form>
 {% if user.is_superuser and wa_guide %}<p style="font-size:12.5px;margin:8px 0 0"><a href="{{ wa_guide }}" target="_blank" rel="noopener">دليل تفعيل واتساب على خادم Trio (للمطور)</a></p>{% endif %}</div>{% endif %}

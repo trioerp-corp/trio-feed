@@ -7,14 +7,36 @@ register = template.Library()
 
 
 @register.filter
-def money(v, places=2):
+def money(v, places=None):
+    """The amount with the shop's currency decimals (1.26: KWD 3, IQD 0 — core/currency.py); negatives in brackets."""
     if v is None or v == "":
         return ""
+    if places is None:
+        from core.currency import places as _places
+
+        places = _places()
     v = Decimal(v).quantize(Decimal(1).scaleb(-int(places)), rounding=ROUND_HALF_UP)
     s = f"{abs(v):,.{int(places)}f}"
     if v < 0:
         return format_html('<span class="neg">({})</span>', s)
     return s
+
+
+@register.filter
+def cur(v):
+    """«1,250.50 ج.م» / «1,250.50 EGP» — the shop's currency in the viewer's language (core/currency.fmt)."""
+    if v is None or v == "":
+        return ""
+    from core.currency import fmt
+
+    return fmt(v)
+
+
+@register.simple_tag
+def cur_sym():
+    from core.currency import sym
+
+    return sym()
 
 
 @register.filter

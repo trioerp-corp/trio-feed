@@ -11,11 +11,13 @@ from core import menu
 from core.models import CompanySettings
 
 
-def _pdf(key):
-    for base in (Path(settings.BASE_DIR) / "static" / "ui" / "guides", Path(settings.BASE_DIR) / "staticfiles" / "ui" / "guides"):
-        p = base / f"guide-{key}.pdf"
-        if p.exists():
-            return p
+def _pdf(key, lang="ar"):
+    names = ([f"guide-{key}-{lang}.pdf"] if lang in ("en", "fr") else []) + [f"guide-{key}.pdf"]
+    for name in names:
+        for base in (Path(settings.BASE_DIR) / "static" / "ui" / "guides", Path(settings.BASE_DIR) / "staticfiles" / "ui" / "guides"):
+            p = base / name
+            if p.exists():
+                return p
     return None
 
 
@@ -23,10 +25,14 @@ def _pdf(key):
 def page(request):
     s = CompanySettings.get()
     key = G.key_for(s)
+    lang = getattr(request, "trio_lang", "ar")
+    title = G.tr(G.TITLES[key], lang)
     if request.GET.get("pdf"):
-        p = _pdf(key)
+        p = _pdf(key, lang)
         if not p:
             raise Http404
-        return FileResponse(open(p, "rb"), as_attachment=request.GET.get("pdf") == "download", filename=f"دليل Trio - {G.TITLES[key]}.pdf",
+        name = f"Trio guide - {title}.pdf" if lang == "en" else (f"Guide Trio - {title}.pdf" if lang == "fr" else f"دليل Trio - {title}.pdf")
+        return FileResponse(open(p, "rb"), as_attachment=request.GET.get("pdf") == "download", filename=name.replace("/", "-"),
                             content_type="application/pdf")
-    return render(request, "ui/guide.html", dict(key=key, title=G.TITLES[key], secs=G.sections(key, menu.words(s)), has_pdf=bool(_pdf(key))))
+    secs = G.localized(G.sections(key, menu.words(s)), lang)
+    return render(request, "ui/guide.html", dict(key=key, title=title, secs=secs, has_pdf=bool(_pdf(key, lang))))

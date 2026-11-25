@@ -150,7 +150,8 @@ def catalog(device):
         return [{"code": v.code, "n": v.size_name, "p": str(v.sale_price), "v": _vat(v.vat_rate), **_cell(v)} for v in vs]
 
     addons = [{"code": a.code, "name": a.name, "p": str(a.sale_price), "v": _vat(a.vat_rate), "cats": [c.name for c in a.addon_for.all()]}
-              for a in Item.objects.filter(active=True, is_addon=True, sale_price__isnull=False).prefetch_related("addon_for").order_by("name")]
+              for a in Item.objects.filter(active=True, is_addon=True, sale_price__isnull=False).prefetch_related("addon_for").order_by("name")
+              ] if s.business in ("cafe", "gaming") else []  # 1.26: menu add-ons are a café's / hall's only (old menu data stays hidden)
     from inventory.models import ItemUnit
 
     units = {}
@@ -163,7 +164,8 @@ def catalog(device):
     return __import__("pos.plus", fromlist=["x"]).decorate({
         "branch": {"code": device.branch.code, "name": device.branch.name, "footer": device.branch.receipt_footer, "policy": receipt_policy(s)},
         "device": device.code, "next_seq": next_seq(device), "company": s.name, "phone": device.branch.phone or s.phone, "address": device.branch.address or s.address,
-        "tax_id": s.tax_registration,
+        "tax_id": s.tax_registration or s.tax_file_no, "vat_reg": s.vat_registered,  # 1.26: the tax number prints only when VAT-registered
+        "cur": __import__("core.currency", fromlist=["x"]).till(s), "paper": __import__("pos.receipt", fromlist=["x"]).width(s),
         "prices_include_vat": s.pos_prices_include_vat, "neg": s.allow_negative_stock,
         "default_vat": str(s.default_vat_rate),
         "logo": s.logo_svg,
@@ -462,7 +464,7 @@ def ingest_order(device, data, renumber=False):
     plus.loy_earn(order, data)
     order.raw = data
     order.save()
-    if isinstance(data.get("delivery"), dict) and not is_return:
+    if (isinstance(data.get("delivery"), dict) or plat) and not is_return:  # 1.26: a platform order is tracked on the delivery board too
         from .delivery import record
 
         record(order, data)

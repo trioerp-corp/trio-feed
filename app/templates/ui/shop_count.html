@@ -30,7 +30,7 @@
 <div class="card" style="margin-bottom:12px"><div class="form-grid">
 <label class="field">تاريخ الجرد<input type="date" name="date" value="{{ date }}"></label>
 <label class="field">ملاحظة<input name="note" value="{{ note }}" placeholder="جرد آخر الشهر…"></label>
-<div class="field">ملخص<div class="cntsum"><span>المعدود <b id="nC">0</b></span><span>فيه فرق <b id="nD">0</b></span><span class="bad">عجز <b id="vL">0.00</b></span><span class="ok">زيادة <b id="vG">0.00</b></span></div></div>
+<div class="field">ملخص<div class="cntsum"><span>المعدود <b id="nC">0</b></span><span>به فرق <b id="nD">0</b></span><span class="bad">عجز <b id="vL">0.00</b></span><span class="ok">زيادة <b id="vG">0.00</b></span></div></div>
 </div></div>
 <div class="table-wrap"><table class="count-table"><thead><tr><th>الكود</th><th>الصنف</th><th>التصنيف</th><th class="n">الرصيد في البرنامج</th><th style="width:150px">الجرد الفعلي</th><th class="n">الفرق</th><th class="n">قيمة الفرق</th></tr></thead><tbody>
 {% for r in items %}<tr data-book="{{ r.book|stringformat:'s' }}" data-cost="{{ r.it.avg_cost|stringformat:'.4f' }}"><td>{{ r.it.code }}</td><td><b>{{ r.it.name }}</b> <small class="muted">{{ r.it.unit }}</small></td><td class="muted">{{ r.it.category.name }}</td>

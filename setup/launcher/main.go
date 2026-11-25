@@ -422,6 +422,7 @@ func install() bool {
 	fw := exec.Command("netsh", "advfirewall", "firewall", "add", "rule", "name=Trio 8000", "dir=in", "action=allow", "protocol=TCP", "localport=8000")
 	hide(fw)
 	fw.Run()
+	udpRule() // 1.26.1: cashier PCs find this PC on the network (UDP 8001)
 	say("=== الجهاز جاهز ✔ ===")
 	return true
 }
@@ -580,6 +581,12 @@ func main() {
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 	stopAll := func() { stopping = true; sig <- os.Interrupt }
 	controlPort(stopAll)
+	if pc, err := discoveryListen(":"+discoverPort, func() string { return shopID(dir) }); err == nil { // 1.26.1 cashier PCs
+		defer pc.Close()
+	} else {
+		say("البحث عن هذا الجهاز من أجهزة الكاشير غير متاح: " + err.Error())
+	}
+	go udpRule()
 	go watchWindows(stopAll) // the last window closed → stop (or keep running for other devices)
 	go func() {              // the server stopped by itself: start it again (the user has no window to see it)
 		fails := 0

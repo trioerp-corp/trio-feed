@@ -1,6 +1,7 @@
 """Clinic workflow. A visit is paid like any sale (ingest_order on the reception device «CL»): cash / card / on the patient's
 account, consumables of each service leave the store, the doctor's percentage is booked as an expense owed to him and paid
 later from the cash box (pos.money kind «doctor»). Cancel / edit go through reversing entries, never deletes."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 from decimal import Decimal
 
@@ -441,7 +442,7 @@ def checkout(v: Visit, user=None, *, paid_card=0, paid_credit=0, discount=0, kin
     if disc and not _trusted(user) and not approver:
         cap = L.q2(gross * ClinicSettings.get().max_discount_pct / 100)
         if disc > cap:
-            raise ValidationError(f"الخصم أكبر من المسموح للاستقبال ({cap:,.2f} ج) — يكتب صاحب العيادة اسمه وكلمة سره للموافقة")
+            raise ValidationError(f"الخصم أكبر من المسموح للاستقبال ({_CUR.fmt(cap)}) — يكتب صاحب العيادة اسمه وكلمة سره للموافقة")
     paid_card, paid_credit = L.q2(Decimal(str(paid_card or 0))), L.q2(Decimal(str(paid_credit or 0)))
     ins, ins_amt = None, Z
     if insured:

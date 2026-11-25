@@ -16,6 +16,16 @@ from django.utils import timezone
 from .models import CompanySettings
 
 
+def _lang_text(*parts):
+    """Telegram / e-mail texts in the shop's language (the owner's «ع | EN | FR» choice for the shop; default Arabic)."""
+    from .i18n_mw import prefs, translate_text
+
+    lg = prefs().get("shop")
+    if lg not in ("en", "fr"):
+        return parts
+    return tuple(translate_text(x, lg) if isinstance(x, str) else x for x in parts)
+
+
 def summary_text(day):
     from ui.shop import whatsapp_text
 
@@ -73,6 +83,7 @@ def send_mail_to(s, to, subject, text):
         raise ValueError("لا يوجد بريد إرسال مُجهّز")
     from .devaccess import smtp_send
 
+    subject, text = _lang_text(subject, text)
     m = EmailMessage()
     m["Subject"], m["From"], m["To"] = subject, snd["user"], to
     m.set_content(text)
@@ -82,6 +93,7 @@ def send_mail_to(s, to, subject, text):
 def _deliver(s, subject, text, out, label=""):
     """Telegram + e-mail to the owner. A shop with its own bot / mailbox (older set-ups) sends directly; otherwise Trio's
     Worker sends with Trio's bot and mail service — the owner only linked his Telegram and wrote his e-mail."""
+    subject, text = _lang_text(subject, text)
     tag = f" — {label}" if label else ""
     via_tg = bool(s.report_telegram and not (s.telegram_token and s.telegram_chat))
     via_mail = bool(s.report_email and not (s.smtp_user and s.smtp_password) and s.email_to)

@@ -30,7 +30,7 @@ def attach(patient, upload, *, kind="lab", title="", taken_on=None, visit=None, 
     data = upload.read()
     ct = sniff(data[:16])
     if not ct:
-        raise ValidationError("نوع الملف غير مقبول — صور (JPG / PNG) أو PDF بس")
+        raise ValidationError("نوع الملف غير مقبول — صور (JPG / PNG) أو PDF فقط")
     kinds = dict(PatientFile.KINDS)
     return PatientFile.objects.create(patient=patient, visit=visit, kind=kind if kind in kinds else "other", title=(title or "").strip()[:150],
                                       taken_on=taken_on, filename=(upload.name or "file")[-200:], content_type=ct, size=len(data), data=data,

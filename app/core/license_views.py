@@ -33,7 +33,7 @@ def renew_pay(request, s):
             return 0
 
     st = LIC.status(s)
-    sel = dict(renew=bool(s.license_code) and request.POST.get("what") != "extra", branches=max(num("branches"), int(st.get("branches") or 0)), visit=bool(request.POST.get("visit")),
+    sel = dict(renew=bool(s.license_code) and request.POST.get("what") != "extra", branches=max(num("branches"), int(st.get("branches") or 0)), visit=bool(request.POST.get("visit")), gov=str(request.POST.get("gov") or "")[:4],
                custom=bool(request.POST.get("custom")), phone=(request.POST.get("phone") or s.phone or s.owner_whatsapp or "").strip(), agree=TERMS_VERSION)
     try:
         res = pay.checkout(sel, s, request.build_absolute_uri("/ui/shop/pay/"))
@@ -90,9 +90,9 @@ def page(request):
 
     wa = "https://wa.me/201228827915?text=" + quote(f"أرغب في الاشتراك في Trio\nالمحل: {s.name}\nكود الجهاز: {LIC.machine_code()}")
     from . import pay
-    from .modules import year_total
+    from .modules import shop_prices
 
     st = LIC.status(s)
-    return render(request, "core/license.html", dict(st=st, renew=_box(st, s, pay.enabled()), pay_on=pay.enabled(), year_price=f"{year_total(st.get('branches') or 0):,}",
+    return render(request, "core/license.html", dict(st=st, renew=_box(st, s, pay.enabled()), pay_on=pay.enabled(), **shop_prices(s, st.get('branches') or 0),
                                                      renew_wa=LIC.renew_wa(s), support=LIC.SUPPORT, hide_nav=True, feed_url=feed.feed_url(s), wa=wa,
                                                      feed_ok=dt.datetime.fromisoformat(ok) if ok else None))

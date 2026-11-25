@@ -187,7 +187,9 @@ def login_page(request):
     if is_dev(request):
         return redirect("/trio/setup/")
     s = CompanySettings.get()
-    ctx = dict(hide_nav=True, dev_email=DEV_EMAIL[:3] + "•••" + DEV_EMAIL[DEV_EMAIL.index("@"):], machine=LIC.machine_code(), s=s,
+    from . import currency as CUR
+
+    ctx = dict(cur_choices=CUR.choices(), cur_now=CUR.clean(request.POST.get("currency"), CUR.default_code("", request)), hide_nav=True, dev_email=DEV_EMAIL[:3] + "•••" + DEV_EMAIL[DEV_EMAIL.index("@"):], machine=LIC.machine_code(), s=s,
                sent=False, challenge="", has_sender=bool(sender()), act_library=_act_names())
     ctx["self_open"] = not s.setup_done
     if request.method == "POST" and request.POST.get("action") in ("self", "self_request", "self_claim", "demo") and not s.setup_done:
@@ -202,7 +204,7 @@ def login_page(request):
         ctx["username"] = user
         try:
             if user.lower() != S.DEV_USER.lower():
-                raise ValidationError("تُفتح واجهة المطور باسم Trio بس")
+                raise ValidationError("تُفتح واجهة المطور باسم Trio فقط")
             if request.POST.get("action") == "send":
                 otp, _ = new_code(request)
                 ctx.update(sent=True, challenge=otp.challenge)
@@ -266,6 +268,7 @@ def demo_start(request, ctx):
                             dict(kind="ps4", prefix="PS4", count=n("ps4_count", 0), rate=rate("ps4_rate", 30), rate_multi=multi("ps4_multi")),
                             dict(kind="billiard", prefix="ترابيزة", count=n("bl_count", 1), rate=rate("bl_rate", 50))] if x["count"]]
     data = dict(name=(P.get("shop") or "").strip(), phone=(P.get("phone") or "").strip(), address=(P.get("address") or "").strip(), business=business,
+                currency=P.get("currency") or __import__("core.currency", fromlist=["x"]).default_code(P.get("phone") or "", request),
                 plan="basic", activity=act, modules=list(M.defaults("basic", business)), vat_rate="14", devices=n("devices", 1, 1, 10),
                 users=[dict(username=username, first_name=(P.get("owner") or "").strip() or "صاحب المحل", password=password, role="owner", active=True)],
                 stations=stations if business == "gaming" else [], tables=n("tables", 0, 0, 100) if business == "cafe" else 0)
@@ -378,6 +381,7 @@ def _form_data(request):
 
     act = A.lookup(request, P["activity"]) if (P.get("activity") or "").strip() else None
     return dict(activity=act, name=P.get("name"), name_en=P.get("name_en"), phone=P.get("phone"), address=P.get("address"), business=P.get("business"),
+                currency=P.get("currency"),
                 owner_whatsapp=P.get("owner_whatsapp"), email_to=P.get("email_to"),
                 plan=P.get("plan"), modules=P.getlist("modules"), vat=P.get("vat") == "1", vat_rate=P.get("vat_rate"), users=users,
                 stations=stations, branches=branches, force_change=P.get("force_change") == "1", license_code=P.get("license_code"),
@@ -438,7 +442,10 @@ def setup_page(request):
         role = st.role if st else next((k for k, (g, _) in S.ROLES.items() if g and u.groups.filter(name=g).exists()), "cashier")
         existing.append(dict(username=u.username, name=u.first_name, role=role, active=u.is_active, branch=st.branch.code if st and st.branch_id else "",
                              title=st.title if st else "", caps=st.caps if st else [], email=st.email if st else ""))
-    ctx = dict(hide_nav=True, s=s, first=not s.setup_done, always=M.ALWAYS, self_lic=lic,
+    from . import currency as CUR
+
+    ctx = dict(hide_nav=True, s=s, first=not s.setup_done, always=M.ALWAYS, self_lic=lic, cur_choices=CUR.choices(), cur_set=s.setup_done,
+               cur_now=CUR.code(s) if s.setup_done else CUR.default_code(s.phone, request),
                self_plan=M.PLANS.get((lic or {}).get("p") or "", ("",))[0], self_extra=[M.MODULES[x][0] for x in (lic or {}).get("x") or [] if x in M.MODULES], branches_existing=list(Branch.objects.filter(active=True).order_by("id")), modules=list(M.MODULES.items()), plans=list(M.PLANS.items()), business=list(M.BUSINESS.items()),
                roles=list(S.ROLES.items()), act_library=_act_names(), act_value=(s.activity or {}).get("text") or (s.activity or {}).get("name", "") if s.setup_done else "",
                enabled=M.enabled(s) if s.setup_done else set(M.defaults("standard", "market")), machine=LIC.machine_code(),
@@ -536,4 +543,6 @@ def activity_preview(request):
     text = (request.GET.get("q") or "").strip()[:200]
     if len(text) < 2:
         return JsonResponse({"profile": None})
-    return JsonResponse({"profile": A.view(A.lookup(request, text))})
+    v = A.view(A.lookup(request, text))
+    # «i18n_view»: the same profile for display only — core/i18n_mw translates it in en / fr; «profile» stays the data sent back
+    return JsonResponse({"profile": v, "i18n_view": v})

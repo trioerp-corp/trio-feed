@@ -5,7 +5,7 @@
 @media print{.noprint,.gg-top,.gg-foot{display:none!important}.lbl{border:0;page-break-inside:avoid}main.page{padding:0}}</style>
 <div class="page-head noprint"><div><h1>ملصقات الباركود والأسعار</h1><p class="muted" style="margin:0">ملصق 50×30 مم — اختر الأصناف وعدد الملصقات، ثم اطبع (طابعة ملصقات أو ورق A4)</p></div>
 {% if chosen %}<div class="actions"><button onclick="window.print()">🖨 طباعة {{ chosen|length|count:"ملصق" }}</button></div>{% endif %}</div>
-{% if chosen %}<div class="labels">{% for i in chosen %}<div class="lbl{% if i.variant_of_id %} v{% endif %}">{% if not i.variant_of_id %}<small>{{ company.name }}</small>{% endif %}{% if i.variant_of_id %}<b>{{ i.variant_of.name }}</b><b class="vr">{{ i.size_name }}</b>{% else %}<b>{{ i.name }}</b>{% endif %}<div class="pr">{{ i.sale_price|money }} ج</div>
+{% if chosen %}<div class="labels">{% for i in chosen %}<div class="lbl{% if i.variant_of_id %} v{% endif %}">{% if not i.variant_of_id %}<small>{{ company.name }}</small>{% endif %}{% if i.variant_of_id %}<b>{{ i.variant_of.name }}</b><b class="vr">{{ i.size_name }}</b>{% else %}<b>{{ i.name }}</b>{% endif %}<div class="pr">{{ i.sale_price|money }} {{ CUR }}</div>
 <svg class="bc" data-code="{{ i.barcode|default:i.code }}" data-alt="{{ i.code }}"></svg></div>{% endfor %}</div>
 <script src="{% static 'ui/JsBarcode.all.min.js' %}"></script><script>/* labels never crash: EAN-13 only for a valid EAN, else CODE128; a code CODE128 can't draw (Arabic, symbols) → the item code; none → the text alone */
 (function(){const o={height:34,width:1.3,fontSize:11,margin:0},ok=c=>/^[\x20-\x7e]{1,80}$/.test(c);

@@ -51,7 +51,7 @@ def checklist(s=None):
     if stock_step(s):  # 1.25 the goods already on the shelves, with their purchase price — one opening move
         from inventory.models import StockMove
 
-        add("stock", "رصيد البضاعة الموجودة عندك الآن", ob.get("stock") or StockMove.objects.filter(kind="opening", state="posted").exists(),
+        add("stock", "رصيد البضاعة الموجودة لديك الآن", ob.get("stock") or StockMove.objects.filter(kind="opening", state="posted").exists(),
             "الكمية وسعر الشراء لكل صنف — مرة واحدة")
     no_limit = Item.objects.filter(active=True, item_type="stock", reorder_level__isnull=True).exclude(code="0").count()
     if s.business != "cafe" or no_limit:  # a menu holds no stock; only the café's stock items (cans) need it
@@ -64,6 +64,17 @@ def checklist(s=None):
     if "partners" in mods:
         add("customers", "المرضى بالآجل (إن كان لديك مرضى بالآجل)" if cl else "عملاء الآجل (إن كنت تبيع بالآجل)", Partner.objects.filter(kind="customer", active=True).exists())
     add("employees", "الموظفين ومرتباتهم", _employees_done(), "من أجل المرتبات والسلف وضريبة كسب العمل والتأمينات")
+    from pos import delivery as DL  # 1.26 optional steps: never on the home card as «missing»
+
+    if s.business in DL.BIZ:
+        add("delivery", "الدليفري (اختياري)", DL.raw_cfg(s).get("on") or ob.get("delivery"), "رسم التوصيل وعمال التوصيل")
+        rows[-1]["opt"] = True
+        from pos.credit import platforms as PF
+
+        if PF.available(s):
+            add("platforms", "ربط منصات الطلبات (اختياري)", any(c["link"] for c in PF.cfg(s)) or ob.get("platforms"),
+                "رابط محلك على طلبات / المنيوز ونسبة العمولة")
+            rows[-1]["opt"] = True
     return rows
 
 
@@ -84,7 +95,7 @@ def _employees_done():
 
 
 def missing(s=None):
-    return [r for r in checklist(s) if not r["done"]]
+    return [r for r in checklist(s) if not r["done"] and not r.get("opt")]
 
 
 def card(request):

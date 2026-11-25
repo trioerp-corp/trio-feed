@@ -4,7 +4,10 @@ The licence code carries the channel's address (field «f», put there by Trio L
 is connected the moment its licence is pasted: from the flash drive or downloaded online, the same way. The file holds:
   TRIOC  — the forced-stop list (the newest applies),
   TRIOM  — the newest order for each machine (plan / parts, and a new licence: renewal, lifetime),
-  TRIOUP — the newest release with the address of its zip («u»), for the machines that may take it («to»).
+  TRIOUP — the newest release with the address of its zip («u»), for the machines that may take it («to»); several may stand
+           together (the general release + one for a single client, «one»: true); a copy takes the newest it may. A release
+           can carry a light «delta» too ({from, ud, sd}): a copy that runs exactly «from» downloads only the changed files.
+  TRIOCP — a client's own custom pack (core/custom.py), only for the machines in «to».
 Everything is signed with Trio's private key, so a copy of the file cannot be changed or forged.
 
 A licensed copy that has not reached the channel for OFFLINE_DAYS stops (after a warning) until it is online once — so a
@@ -24,7 +27,7 @@ from . import license as LIC
 
 OFFLINE_DAYS = 30
 WARN_DAYS = 7
-CODE_RE = re.compile(r"TRIO(?:C|M|UP|P|K)(?:\.[A-Za-z0-9_-]+){2}(?:\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)?")
+CODE_RE = re.compile(r"TRIO(?:CP|C|M|UP|P|K)(?:\.[A-Za-z0-9_-]+){2}(?:\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)?")
 
 
 def _state_file():
@@ -77,11 +80,44 @@ def feed_url(s=None):
     return f if f.startswith("https://") or f.startswith("http://127.0.0.1") else ""
 
 
+def _ctx_certifi():
+    """Old Windows copies sometimes lack the root certificates GitHub uses: fall back to the CA bundle pip ships."""
+    import ssl
+    import sys
+
+    for base in sys.path:
+        pem = Path(base) / "pip" / "_vendor" / "certifi" / "cacert.pem"
+        if pem.exists():
+            return ssl.create_default_context(cafile=str(pem))
+    return None
+
+
+def mirrors(url):
+    """The channel address, then mirrors of the same public file (a blocked / failing route never stops updates)."""
+    out = [url]
+    m = re.match(r"https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/([^/]+)/(.+)$", url)
+    if m:
+        o, r, br, f = m.groups()
+        out += [f"https://cdn.jsdelivr.net/gh/{o}/{r}@{br}/{f}", f"https://github.com/{o}/{r}/raw/{br}/{f}"]
+    return out
+
+
 def _get(url, limit=4 << 20, timeout=25):
     sep = "&" if "?" in url else "?"
-    req = urllib.request.Request(f"{url}{sep}t={int(timezone.now().timestamp()) // 300}", headers={"User-Agent": "Trio"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read(limit)
+    last = None
+    for u in mirrors(url):
+        for ctx in (None, "certifi"):
+            try:
+                if ctx == "certifi":
+                    ctx = _ctx_certifi()
+                    if ctx is None:
+                        continue
+                req = urllib.request.Request(f"{u}{sep}t={int(timezone.now().timestamp()) // 300}", headers={"User-Agent": "Trio"})
+                with urllib.request.urlopen(req, timeout=timeout, context=ctx) as r:
+                    return r.read(limit)
+            except Exception as e:  # noqa: BLE001
+                last = e
+    raise last
 
 
 def offline(s=None, today=None):
@@ -117,8 +153,9 @@ def check(s=None, fetch=None):
         raw = fetch(url) if fetch else _get(url)
         text = raw.decode("utf-8", "ignore") if isinstance(raw, bytes) else raw
     except Exception as e:  # noqa: BLE001
-        _save(failed=timezone.now().isoformat(), error=type(e).__name__)
-        return f"قناة الأوامر: تعذّر الاتصال ({type(e).__name__})"
+        why = str(getattr(e, "reason", "") or e)[:120]
+        _save(failed=timezone.now().isoformat(), error=f"{type(e).__name__}: {why}")
+        return f"قناة الأوامر: تعذّر الاتصال ({type(e).__name__}: {why})"
     codes = CODE_RE.findall(text)  # one code per line
     out = []
     # 0) first: keys Trio stopped (sales / phone / update key) — what they signed is refused from this round on
@@ -159,25 +196,45 @@ def check(s=None, fetch=None):
                 continue
             if updates.held(p):
                 continue
-            if latest is None or updates.newer(p.get("v", "0"), latest.get("v", "0")):
-                latest = p
-            if p.get("u") and updates.newer(p.get("v", "0")) and updates._for_me(p.get("to", "*")) and (rel is None or updates.newer(p["v"], rel["v"])):
+            mine = updates._for_me(p.get("to", "*"))
+            if (mine or not p.get("one")) and (latest is None or updates.newer(p.get("v", "0"), latest.get("v", "0"))):
+                latest = p  # a release made for one other client is not «a newer version» for this copy
+            if p.get("u") and updates.newer(p.get("v", "0")) and mine and (rel is None or updates.newer(p["v"], rel["v"])):
                 rel = p
     if rel:
         st = updates.state()
         if st["ready"] and not updates.newer(rel["v"], st["ready"]["v"]):
             out.append(f"التحديثات: {st['ready']['v']} جاهز")
         else:
-            try:
-                data = fetch(moved(rel["u"])) if fetch else _get(moved(rel["u"]), limit=200 << 20, timeout=300)
-                if isinstance(data, str):
-                    data = data.encode()
-                updates.stage(rel, data)
-                out.append(f"التحديثات: {rel['v']} تم التنزيل ✔")
-            except Exception as e:  # noqa: BLE001
-                out.append(f"التحديثات: تعذّر تنزيل {rel['v']} ({type(e).__name__})")
+            def dl(u, limit=200 << 20):
+                data = fetch(moved(u)) if fetch else _get(moved(u), limit=limit, timeout=300)
+                return data.encode() if isinstance(data, str) else data
+
+            staged = False
+            if updates.delta_for_me(rel):  # this copy runs exactly the version the light update was made from
+                try:
+                    updates.stage_delta(rel, dl(rel["ud"]))
+                    staged = True
+                    out.append(f"التحديثات: {rel['v']} تم التنزيل ✔ (الملفات المتغيّرة فقط)")
+                except Exception:  # noqa: BLE001 — the full zip is always there
+                    staged = False
+            if not staged:
+                try:
+                    updates.stage(rel, dl(rel["u"]))
+                    out.append(f"التحديثات: {rel['v']} تم التنزيل ✔")
+                except Exception as e:  # noqa: BLE001
+                    out.append(f"التحديثات: تعذّر تنزيل {rel['v']} ({type(e).__name__})")
     if latest:
         _save(latest=latest.get("v", ""), latest_notes=latest.get("notes", ""))
+    # 3b) this client's own custom pack (only the machines named in it)
+    from . import custom
+
+    try:
+        cp = custom.from_codes(codes, lambda u: (fetch(moved(u)) if fetch else _get(moved(u), limit=custom.MAX_BYTES, timeout=300)))
+    except Exception as e:  # noqa: BLE001
+        cp = f"تعذّرت مراجعة التعديلات الخاصة ({type(e).__name__})"
+    if cp:
+        out.append("التعديلات الخاصة: " + cp)
     # 4) Trio's presence address: this copy says once a day which version it runs (shown in Trio License)
     for c in codes:
         if c.startswith("TRIOP."):
@@ -219,16 +276,19 @@ def ping(url, s=None, force=False):
         return ""
     st = state()
     today = timezone.localdate().isoformat()
-    if not force and st.get("ping_day") == today and st.get("ping_v") == VERSION:
+    from . import custom
+
+    cp = custom.installed_r()
+    if not force and st.get("ping_day") == today and st.get("ping_v") == VERSION and st.get("ping_cp", 0) == cp:
         return ""
     s = s or CompanySettings.get()
     try:
         lic = LIC.status(s)
-        body = json.dumps(dict(m=LIC.machine_code(), v=VERSION, p=s.plan, b=s.business, s=lic.get("state", ""), n=(s.name or "")[:80], ph=(s.phone or "")[:30])).encode()
+        body = json.dumps(dict(m=LIC.machine_code(), v=VERSION, p=s.plan, b=s.business, s=lic.get("state", ""), n=(s.name or "")[:80], ph=(s.phone or "")[:30], mk=LIC.market_flag(s), cp=str(cp or ""))).encode()
         req = urllib.request.Request(url.rstrip("/") + "/ping", data=body, headers={"Content-Type": "application/json", "User-Agent": "Trio"})
         with urllib.request.urlopen(req, timeout=20) as r:
             r.read(100)
-        _save(ping_day=today, ping_v=VERSION)
+        _save(ping_day=today, ping_v=VERSION, ping_cp=cp)
         return "الحضور ✔"
     except Exception as e:  # noqa: BLE001
         return f"الحضور: ({type(e).__name__})"

@@ -52,6 +52,16 @@ def api_catalog(request):
     return JsonResponse(P.catalog(dev))
 
 
+def api_ping(request):
+    """1.26.1 «Trio – الكاشير» checks it reached the right shop PC with its device key (and learns the shop id)."""
+    dev, err = _device(request)
+    if err:
+        return err
+    from .cashier_setup import shop_id
+
+    return JsonResponse({"ok": True, "shop_id": shop_id(), "device": dev.name})
+
+
 @csrf_exempt
 def api_sync(request):
     dev, err = _device(request)
@@ -91,6 +101,16 @@ def api_sync(request):
     each(body.get("orders"), take, accepted)
     each(body.get("cash_moves"), lambda m: P.ingest_cash_move(dev, m), moved)
     each(body.get("requests"), lambda r: P.ingest_request(dev, r), reqs)
+    steps, refused = [], {}  # 1.26 delivery tracking: steps after the orders they move
+
+    def step(x):
+        from .delivery import ingest_step
+
+        why = ingest_step(dev, x)
+        if why:
+            refused[str(x.get("uid"))] = why
+
+    each(body.get("dsteps"), step, steps)
     each([sh for sh in shifts if sh.get("closed_at")], lambda sh: P.ingest_shift(dev, sh), closed)  # closes after its orders
     if dev.stuck != errors:
         dev.stuck = errors
@@ -102,7 +122,8 @@ def api_sync(request):
         from inventory.reorder import low as low_items
 
         low = low_items(sold)
-    return JsonResponse({"accepted": accepted, "cash_moves": moved, "requests": reqs, "errors": errors, "closed_shifts": closed, "low": low})
+    return JsonResponse({"accepted": accepted, "cash_moves": moved, "requests": reqs, "errors": errors, "closed_shifts": closed, "low": low,
+                         "dsteps": steps, "dstep_refused": refused})
 
 
 @csrf_exempt
@@ -287,11 +308,13 @@ def api_delivery(request):
     dev, err = _device(request)
     if err:
         return err
+    from pos.credit import platforms as PF
+
     from . import delivery as D
 
-    if not D.cfg()["on"]:
+    if not D.cfg()["on"] and not PF.active():
         return JsonResponse({"orders": []})
-    return JsonResponse({"orders": D.open_json(dev.branch)})
+    return JsonResponse({"orders": D.open_json(dev.branch), "late": D.late_cfg()})
 
 
 # ---------------------------------------------------------------- tables (1.23): the till asks the program, every waiter sees the same bill

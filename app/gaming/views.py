@@ -341,7 +341,10 @@ def receipt(request, pk):
         from . import bookings as BK
 
         left = BK.usable(ses.hall_customer, ses.station.kind)
-    return render(request, "gaming/receipt.html", dict(ses=ses, b=b, s=CompanySettings.get(), hide_nav=True, rule=G.rule_text(), left=left))
+    from pos import receipt as RC
+
+    return render(request, "gaming/receipt.html", dict(ses=ses, b=b, s=CompanySettings.get(), hide_nav=True, rule=G.rule_text(), left=left,
+                                                       rc_title="فاتورة الصالة", rc_due=bool(ses.order_id and ses.order.paid_credit), **RC.ctx()))
 
 
 @_guard
@@ -368,7 +371,9 @@ def package_receipt(request, pk):
     from .models import MinuteMove
 
     mv = get_object_or_404(MinuteMove.objects.select_related("customer", "package", "order"), pk=pk, minutes__gt=0)
-    return render(request, "gaming/package_receipt.html", dict(mv=mv, s=CompanySettings.get(), hide_nav=True,
+    from pos import receipt as RC
+
+    return render(request, "gaming/package_receipt.html", dict(mv=mv, s=CompanySettings.get(), hide_nav=True, rc_title="إيصال باقة ساعات", **RC.ctx(),
                                                                left=BK.usable(mv.customer, mv.kind)))
 
 

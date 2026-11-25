@@ -149,8 +149,17 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);box-shado
 .gg-side-head{display:none;justify-content:space-between;align-items:center;padding:4px 6px 10px}
 .gg-side-x{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none;min-width:40px;min-height:40px}
 .gg-side-find{width:100%;box-sizing:border-box;margin:0 0 10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
-.gg-group{margin:0 0 12px}
-.gg-group h3{font-size:12px;font-weight:800;color:var(--muted);margin:10px 8px 4px;letter-spacing:.2px}
+.gg-group{margin:0 0 4px}
+.gg-group{border-bottom:1px solid var(--line,#e5e7eb);padding-bottom:4px}
+.gg-group summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--ink);padding:10px 10px;border-radius:10px;min-height:40px;box-sizing:border-box}
+.gg-group summary::-webkit-details-marker{display:none}
+.gg-group summary::after{content:"▾";transition:transform .15s;opacity:.6}
+.gg-group:not([open]) summary::after{transform:rotate(90deg)}
+[dir=rtl] .gg-group:not([open]) summary::after{transform:rotate(-90deg)}
+.gg-group summary .n{font-size:11px;font-weight:700;color:var(--muted);background:var(--brand-2);border-radius:99px;padding:1px 7px;margin-inline-start:auto}
+.gg-group summary:hover{background:var(--brand-2)}
+.gg-group summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.gg-group nav{padding-inline-start:6px}
 .gg-group a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:var(--ink);font-weight:600;text-decoration:none;line-height:1.35;min-height:40px;box-sizing:border-box}
 .gg-group a:hover{background:var(--brand-2)}
 .gg-group a.on{background:var(--brand);color:#fff;box-shadow:0 2px 8px rgba(23,105,143,.3)}
@@ -187,3 +196,6 @@ button.danger{background:var(--card);color:var(--bad);border:1px solid var(--bad
 .table-wrap td code{overflow-wrap:anywhere}
 .table-wrap td button,.table-wrap td .btn{white-space:nowrap}
 .seg a{white-space:nowrap} /* 1.25: «اليوم» never breaks into two lines on a phone */
+
+/* 1.27 language switch «ع | EN | FR» */
+.langsw{display:inline-flex;border:1px solid #ffffff55;border-radius:8px;overflow:hidden;font-size:13px;flex:none}.langsw a{padding:5px 8px;color:inherit;text-decoration:none;font-weight:700}.langsw a.on{background:#fff;color:#0C4A76}.card .langsw{border-color:#0C4A7655;color:#0C4A76}.card .langsw a.on{background:#0C4A76;color:#fff}

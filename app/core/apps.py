@@ -17,6 +17,9 @@ class CoreConfig(AppConfig):
             "auth.User", "auth.Group",
         ]
         audit.register(*[apps.get_model(m) for m in audited])
+        from . import custom
+
+        custom.run_ready()  # a client's custom pack: extra/apps.py ready() — never raises
         import sys
 
         if any("waitress" in a for a in sys.argv[:2]):  # the shop's web server (not manage.py commands or tests)

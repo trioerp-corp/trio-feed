@@ -6,6 +6,7 @@ plan: then its instalments are the dues. A plan over the customer's whole balanc
 its day. What the customer still owes sits on the latest dues; everything older counts as paid (FIFO), so payments,
 returns and zeroing never need to be matched by hand. A cancelled sale (reversed entry) is no charge.
 """
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 from decimal import Decimal
 from urllib.parse import quote
@@ -326,20 +327,20 @@ def statement_text(partner, d=None, s=None, today=None):
     d = d or dues(partner, today, s)
     lines = [f"السيد/ة {partner.name}، تحية طيبة من {s.name}.", f"كشف حسابكم حتى {today:%d/%m/%Y}:"]
     if d["owed"] <= 0:
-        lines.append("لا توجد مستحقات عليكم — شكرًا لتعاملكم معنا." if d["owed"] == 0 else f"رصيد لكم لدينا: {money(-d['owed'])} ج.م")
+        lines.append("لا توجد مستحقات عليكم — شكرًا لتعاملكم معنا." if d["owed"] == 0 else f"رصيد لكم لدينا: {_CUR.fmt(money(-d['owed']))}")
     else:
-        lines.append(f"إجمالي المستحق: {money(d['owed'])} ج.م")
+        lines.append(f"إجمالي المستحق: {_CUR.fmt(money(d['owed']))}")
         if d["late"] > 0:
-            lines.append(f"منها متأخر السداد: {money(d['late'])} ج.م")
+            lines.append(f"منها متأخر السداد: {_CUR.fmt(money(d['late']))}")
         open_rows = [r for r in d["rows"] if r["remaining"] > 0]
         for r in open_rows[:8]:
             what = f"القسط {r['no']} من {r['count']}" if r["kind"] == "inst" else r["ref"]
-            lines.append(f"• {what}: {money(r['remaining'])} ج.م — يستحق {r['due']:%d/%m/%Y}" + (f" (متأخر {r['late_days']} يوم)" if r["late_days"] else ""))
+            lines.append(f"• {what}: {_CUR.fmt(money(r['remaining']))} — يستحق {r['due']:%d/%m/%Y}" + (f" (متأخر {r['late_days']} يوم)" if r["late_days"] else ""))
         if len(open_rows) > 8:
             lines.append(f"• و{len(open_rows) - 8} مستحقات أخرى")
     last = payments(partner, 1)
     if last:
-        lines.append(f"آخر سداد: {money(last[0]['amount'])} ج.م بتاريخ {last[0]['date']:%d/%m/%Y}")
+        lines.append(f"آخر سداد: {_CUR.fmt(money(last[0]['amount']))} بتاريخ {last[0]['date']:%d/%m/%Y}")
     if s.phone:
         lines.append(f"للاستفسار: {s.phone}")
     lines.append("مع خالص الشكر.")
@@ -352,8 +353,8 @@ def reminder_text(partner, row, owed, s=None):
     when = f"المستحق يوم {DAY_NAMES[row['due'].weekday()]} {row['due']:%d/%m/%Y}"
     late = f"، وقد تأخر سداده {row['late_days']} يوم" if row["late_days"] else ""
     tail = f" للاستفسار: {s.phone}." if s.phone else ""
-    return (f"السيد/ة {partner.name}، تحية طيبة من {s.name}. نذكّركم بسداد {what} بمبلغ {money(row['remaining'])} ج.م {when}{late}. "
-            f"إجمالي المستحق عليكم {money(owed)} ج.م.{tail} مع خالص الشكر.")
+    return (f"السيد/ة {partner.name}، تحية طيبة من {s.name}. نذكّركم بسداد {what} بمبلغ {_CUR.fmt(money(row['remaining']))} {when}{late}. "
+            f"إجمالي المستحق عليكم {_CUR.fmt(money(owed))}.{tail} مع خالص الشكر.")
 
 
 def mark_reminded(partner, user=None):

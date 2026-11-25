@@ -156,7 +156,7 @@ def void_order(order: Order, reason, user=None):
         d = DeliveryOrder.objects.filter(order=order, state="paid", collect_move__isnull=False, collect_move__cancelled=False).first()
         if d:
             void_cash_move(d.collect_move, f"إلغاء الفاتورة {order.uid}: {reason}", user=user or "system")
-    on_order_void(order)
+    on_order_void(order, reason)
     from core.alerts import on_void  # 1.25: the owner's WhatsApp
 
     on_void(order, reason, editing=str(reason).startswith("تعديل:"))

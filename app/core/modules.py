@@ -95,6 +95,45 @@ def defaults(plan, business):
     return sorted((m for m in mods if fits(m, business)), key=list(MODULES).index)
 
 
+# 1.26: pages that belong to some businesses only. A copy shows ONLY its current business (CompanySettings.business): a clinic
+# that was a café / hall before 1.23.1 keeps those stations, tables and menus in the database, but none of their pages opens
+# (ModuleGuard sends the owner home with a message). Longest prefix wins; "/pos/api/" is checked by each API itself.
+SHELF = ("market", "retail")
+PAGES_FOR = {
+    "/ui/play": ("gaming",),
+    "/ui/clinic": ("clinic",),
+    "/ui/shop/menu": ("cafe", "gaming"),
+    "/ui/shop/recipes": ("cafe", "gaming"),
+    "/ui/shop/tables": ("cafe",),
+    "/ui/shop/kitchen": ("cafe",),
+    "/ui/shop/delivery": ("market", "retail", "cafe"),
+    "/ui/shop/platforms": ("market", "retail", "cafe"),
+    "/ui/shop/labels": SHELF,
+    "/ui/shop/units": SHELF,
+    "/ui/shop/promos": SHELF,
+    "/ui/shop/season": SHELF,
+    "/ui/shop/variants": SHELF,
+    "/ui/shop/pharmacy": SHELF,
+    "/ui/shop/supply/returns": SHELF,
+    "/ui/shop/supply/orders": ("market", "retail", "cafe", "clinic"),
+    "/ui/shop/production": ("market",),
+    "/pos/": ("market", "retail", "cafe", "gaming"),  # a clinic checks out at the reception, never at a till
+}
+
+
+def page_fits(path, s=None):
+    """False when `path` is a page of another business than this copy's (see PAGES_FOR)."""
+    if path.startswith("/pos/api/"):
+        return True
+    best = max((p for p in PAGES_FOR if path.startswith(p)), key=len, default=None)
+    if best is None:
+        return True
+    from .models import CompanySettings
+
+    s = s or CompanySettings.get()
+    return (getattr(s, "business", "") or "market") in PAGES_FOR[best]
+
+
 def module_for_path(path):
     for key, (_, _, prefixes) in MODULES.items():
         for pre in prefixes:
@@ -111,6 +150,50 @@ BRANCH_PRICE = 500  # EGP a year for each extra branch (a quantity; renewed with
 VISIT_PRICE = 1500  # optional on-site set-up and training visit, one-time
 CUSTOM_PRICE = 1500  # optional custom requests — up to 3 changes, one-time
 CUSTOM_CHANGES = 3
+
+# 11/2026 — every Arab market sees the price in its own currency (core/prices.json, the ONE table the Worker and the site
+# share; the EG row is the prices above). Paymob charges the fixed «egp» amounts; any country not listed → USD.
+import json as _json  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
+
+PRICES = _json.loads((_Path(__file__).with_name("prices.json")).read_text(encoding="utf-8"))
+MARKETS, COUNTRIES = PRICES["markets"], PRICES["countries"]
+VISIT_GOVS = PRICES["visit_govs"]  # the on-site visit: Egypt, Greater Cairo only (القاهرة / الجيزة / القليوبية); elsewhere it is remote
+DIAL = {"20": "EG", "966": "SA", "971": "AE", "974": "QA", "965": "KW", "973": "BH", "968": "OM", "962": "JO", "964": "IQ", "212": "MA", "213": "DZ",
+        "216": "TN", "218": "LY", "961": "LB", "963": "SY", "970": "PS", "972": "PS", "967": "YE", "249": "SD", "222": "MR", "252": "SO", "253": "DJ", "269": "KM"}
+
+
+def country_of(phone):
+    """The copy's country from its phone (+966… / 00966…); a local number (01…) or none → Egypt."""
+    d = "".join(c for c in str(phone or "") if c.isdigit())
+    if str(phone or "").strip().startswith("+") or d.startswith("00"):
+        d = d[2:] if d.startswith("00") else d
+        for n in (3, 2):
+            if d[:n] in DIAL:
+                return DIAL[d[:n]]
+        return "ZZ"
+    return "EG"
+
+
+def market(country="EG"):
+    """(country, its market row) — the row has cur, ar/en symbols, year/branch/visit/custom (local) and egp (charged)."""
+    c = (country or "EG").upper()
+    return c, MARKETS[COUNTRIES.get(c, [0, 0, "USD"])[2]]
+
+
+def money(n, mk, lang="ar"):
+    """«899 ر.س» / «$199» / «3,000 ج.م»."""
+    s = mk["ar" if lang == "ar" else "en"]
+    return f"${n:,}" if s == "$" else f"{n:,} {s}"
+
+
+def shop_prices(s=None, branches=0):
+    """What the renewal / upgrade pages show, in the copy's currency (its phone's country; else Egypt)."""
+    cc, mk = market(country_of(getattr(s, "phone", "")))
+    br = max(0, int(branches or 0))
+    return dict(country=cc, cur=mk["cur"], year_price=money(mk["year"] + mk["branch"] * br, mk), year_one=money(mk["year"], mk),
+                branch_price=money(mk["branch"], mk), visit_price=money(mk["visit"], mk) if "visit" in mk else "", visit_on=cc == "EG" and "visit" in mk, custom_price=money(mk["custom"], mk),
+                egp_note="" if cc == "EG" else f"يُحصَّل المبلغ بالجنيه المصري بما يعادل ≈ {mk['egp']['year'] + mk['egp']['branch'] * br:,} ج.م عبر بوابة الدفع")
 # Lifetime is not sold online or on the site; Trio License can still issue one (kept as an option for the owner).
 
 

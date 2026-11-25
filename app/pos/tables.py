@@ -9,6 +9,7 @@ Prices always come from the program (never from the till or the customer's phone
 Settings live in CompanySettings.menu_cfg: tables (on/off), qr_order (customers may order), qr_confirm (the waiter
 confirms a customer's order before the kitchen sees it).
 """
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ValidationError
@@ -257,7 +258,7 @@ def close(tab, order_uid, by):
     amt = tab_total(tab)
     tab.state, tab.closed_at, tab.closed_by, tab.order_uid = "paid", timezone.now(), str(by)[:100], str(order_uid)[:60]
     tab.log = tab.log + [dict(at=timezone.now().isoformat(), by=str(by)[:60], part=tab.order_uid, amt=str(amt), last=True,
-                              what=f"حوسب الحساب بالفاتورة {tab.order_uid} ({amt} ج)")]
+                              what=f"حوسب الحساب بالفاتورة {tab.order_uid} ({_CUR.fmt(amt)})")]
     tab.save(update_fields=["state", "closed_at", "closed_by", "order_uid", "log"])
     return tab
 

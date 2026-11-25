@@ -116,6 +116,23 @@ def stage(payload, data):
     return zp
 
 
+def delta_for_me(p):
+    """A release with a light update made from exactly the version this copy runs (1.26): {from, ud (address), sd (sha256)}."""
+    return bool(p.get("ud") and p.get("sd") and p.get("from") and str(p["from"]) == VERSION)
+
+
+def stage_delta(payload, data):
+    """Keep a verified light update (only the changed files + the list of deleted ones) for the launcher."""
+    if hashlib.sha256(data).hexdigest() != payload["sd"]:
+        raise ValueError("وصل ملف التحديث ناقصًا")
+    f = folder()
+    zp = f / f"trio-{payload['v']}-from-{payload['from']}.zip"
+    zp.write_bytes(data)
+    (f / "ready.json").write_text(json.dumps(dict(v=payload["v"], notes=payload.get("notes", ""), file=zp.name, sha=payload["sd"], delta=True,
+                                                  **{"from": payload["from"]}, at=timezone.now().isoformat()), ensure_ascii=False), encoding="utf-8")
+    return zp
+
+
 def check_updates(snd, imap=None):
     best = None
     for text, files in _messages(snd, "ACC-UPDATE", imap=imap):
@@ -209,8 +226,10 @@ def check(imap_factory=None):
     snd = sender()
     if not snd:
         return "لا يوجد بريد البرنامج"
+    from . import custom
+
     out = []
-    for name, fn in (("التحديثات", check_updates), ("الترقيات", check_modules)):
+    for name, fn in (("التحديثات", check_updates), ("الترقيات", check_modules), ("التعديلات الخاصة", custom.check_mail)):
         try:
             out.append(f"{name}: {fn(snd, imap=imap_factory() if imap_factory else None)}")
         except Exception as e:  # noqa: BLE001

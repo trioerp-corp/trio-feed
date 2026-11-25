@@ -1,0 +1,5 @@
+{# 1.26 receipt header (pos/receipt.ctx): logo, shop, branch address / phone, tax number when VAT-registered, the title. #}
+<div class="c">{% if rc_logo %}<div class="logo">{{ rc_logo|safe }}</div>{% endif %}<div class="nm">{{ rc_name }}</div>
+{% if rc_address %}<div class="sub">{{ rc_address }}</div>{% endif %}{% if rc_phone %}<div class="sub">☎ <bdi dir="ltr">{{ rc_phone }}</bdi></div>{% endif %}
+{% if rc_tax %}<div class="sub">الرقم الضريبي: <bdi dir="ltr">{{ rc_tax }}</bdi></div>{% endif %}</div>
+<div class="ttl">{{ rc_title }}</div>

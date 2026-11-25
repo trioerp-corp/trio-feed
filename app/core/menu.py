@@ -30,7 +30,12 @@ def words(settings_obj=None):
 
     s = settings_obj or CompanySettings.get()
     business = getattr(s, "business", "") or "market"
-    act = s.activity if isinstance(getattr(s, "activity", None), dict) else {}
+    from .activities import current
+
+    try:
+        act = current(s)  # 1.26: never an activity left over from an older business
+    except Exception:  # noqa: BLE001 — the words never break a page
+        act = {}
     w = dict(WORDS["default"], **WORDS.get(business, {}))
     if act.get("key") == "pharmacy":
         w.update(WORDS["pharmacy"])
@@ -61,6 +66,18 @@ def _transfers_waiting(u):
         return None
 
 
+class Group(tuple):
+    """(title, links) — still unpacks as a pair in the template; 1.26 adds icon, key (remembered open / closed) and open
+    (the group that holds the page being viewed starts open, the rest closed)."""
+
+    def __new__(cls, title, links, n, icon="•"):
+        g = super().__new__(cls, (title, links))
+        g.key = f"g{n}"
+        g.icon = icon
+        g.open = any(x.get("on") for x in links)
+        return g
+
+
 def build(request, ctx):
     """[(group title, [dict(label, url, on, icon, badge, new_tab)])] for the logged-in user."""
     from .models import CompanySettings
@@ -89,10 +106,10 @@ def build(request, ctx):
         on = any(path == k for k in keys) if exact else any(path.startswith(k) for k in keys)
         return dict(label=label, url=url, on=on, icon=icon, badge=badge, new_tab=new_tab)
 
-    def group(title, *links):
+    def group(icon, title, *links):
         rows = [x for x in links if x]
         if rows:
-            groups.append((title, rows))
+            groups.append(Group(title, rows, len(groups) + 1, icon))
 
     view_items = u.has_perm("inventory.view_item")
     cash = u.has_perm("treasury.view_voucher") or u.is_superuser
@@ -103,7 +120,7 @@ def build(request, ctx):
     home = link(w["home"], "/ui/play/" if hall_worker else _url("home"), "🏠", ("/ui/play/",) if hall_worker else ("/", "/ui/clinic/"), exact=True)
     front_doctor = clinic and u.groups.filter(name="دكتور").exists() and not owner
     if clinic:
-        group("العيادة", home,
+        group("🩺", "العيادة", home,
               link("الاستقبال", _url("clinic_reception"), "🛎", ("/ui/clinic/reception",)),
               link("شاشة الطبيب", _url("clinic_doctor_screen"), "🩺", ("/ui/clinic/doctor",)),
               link("الحجوزات", _url("clinic_appointments"), "📅", ("/ui/clinic/appointments",)),
@@ -115,7 +132,7 @@ def build(request, ctx):
               link("لوحة صاحب العيادة", _url("clinic_owner") if owner else None, "📊", ("/ui/clinic/owner",)))
     else:
         hall = "gaming" in mods and business == "gaming"
-        group(w["sell"], home,
+        group("🛒", w["sell"], home,
               link("🎮 الصالة", "/ui/play/" if "gaming" in mods and not hall_worker else None, "", ("/ui/play/",), exact=True),
               link("حجوزات الأجهزة", _url("play_bookings") if hall else None, "📅", ("/ui/play/bookings",)),
               link("أرصدة الباقات", _url("play_customers") if hall else None, "🎟", ("/ui/play/customers",)),
@@ -124,13 +141,13 @@ def build(request, ctx):
               # a hall sells its buffet from the hall screen (its own drawer): no second drawer on the till
               link("لوحة البيع (الكاشير)", "/pos/" if not hall else None, "🧾", new_tab=True),
               link("الدليفري", _url("shop_delivery") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🛵", ("/ui/shop/delivery",)),
-              link("منصات التوصيل", _url("shop_platforms") if business in ("market", "retail", "cafe") and (owner or cash) else None, "🟠",
+              link("منصات التوصيل", _url("shop_platforms") if _platforms_on(s) and (owner or cash) else None, "🟠",
                    ("/ui/shop/platforms",)))
 
     # ---- stock (the clinic's reception / doctor: no purchases, stores or counts — those are the owner's and the store keeper's)
     front_desk = clinic and not owner and not (u.has_perm("inventory.add_stockmove") or u.has_perm("inventory.change_item"))
     if view_items and not front_desk:
-        group(w["stock"],
+        group("📦", w["stock"],
               link(w["items"], _url("shop_items"), "📦", ("/ui/shop/items",)),
               link("المقاسات والألوان", _url("shop_variants") if shelf and _variants_on(s) else None, "👕", ("/ui/shop/variants",)),
               link("💊 مكتبة الأدوية والشريط", _url("pharmacy") if ctx.get("is_pharmacy") else None, "", ("/ui/shop/pharmacy",)),
@@ -157,17 +174,17 @@ def build(request, ctx):
 
     # ---- money
     if cash:
-        group("الأموال",
+        group("💰", "الأموال",
               link(w["sales"], _url("shop_sales"), "💵", ("/ui/shop/sales",)),
               link(w["partners"], _url("shop_partners") if "partners" in mods else None, "👥", ("/ui/shop/partners", "/ui/shop/statement")),
               link("الأقساط والمستحقات", _url("credit_dues") if "partners" in mods else None, "📆", ("/ui/shop/dues",)),
               link(w["money"], _url("shop_money") if "money" in mods else None, "💸", ("/ui/shop/money",)),
               link(w["treasury"], _url("voucher_list") if "treasury" in mods else None, "🏦", ("/ui/vouchers",)),
               link(w["close"], _url("shop_close"), "🔒", ("/ui/shop/close",)))
-        group("الموظفين والضرايب",
+        group("👥", "الموظفون والضرائب",
               link("الموظفين والمرتبات", _url("staff_list") if owner else None, "🧑‍💼", ("/ui/staff",)),
               link("الإقرارات الضريبية", _url("tax_home") if owner else None, "🧮", ("/ui/tax",)))
-        group("التقارير",
+        group("📊", "التقارير",
               link(w["reports"], _url("shop_reports"), "📈", ("/ui/shop/reports", "/ui/shop/valuation")),
               link("عمولات البائعين", _url("plus_commission") if owner and _plus(s)["sp"]["on"] else None, "🧑‍💼", ("/ui/shop/commission",)),
               link("نقاط الولاء", _url("plus_loyalty") if owner and _plus(s)["loy"]["on"] else None, "⭐", ("/ui/shop/loyalty",)),
@@ -178,7 +195,7 @@ def build(request, ctx):
                    "🏬", ("/ui/shop/branches",)))
 
     # ---- the shop itself
-    group("الإعدادات والمساعدة",
+    group("⚙️", "الإعدادات والمساعدة",
           link("تجهيز المحل", _url("start") if owner else None, "🧰", ("/ui/start",)),
           link("البيانات الأساسية", _url("data_hub") if owner or u.has_perm("inventory.change_item") else None, "📚", ("/ui/data",)),
           link("الإعدادات", _url("shop_settings") if cash else None, "⚙", ("/ui/shop/settings", "/ui/shop/activity")),
@@ -187,11 +204,21 @@ def build(request, ctx):
           link("دليل الاستخدام", _url("guide"), "📘", ("/ui/guide",)),
           link("التحديثات", _url("upgrade") if ctx.get("app_version") else None, "🔄", ("/ui/shop/upgrade",)))
     if u.is_superuser:
-        group("المطور",
+        group("🔧", "المطور",
               link("الحسابات (قيود)", _url("entry_list"), "🔧", ("/ui/entries",)),
               link("إعدادات المطور", "/admin/", "🔧", ("/admin/",)),
               link("التثبيت والخطة", "/trio/setup/" if u.username == "ACC" else None, "🔧", ("/trio/setup",)))
     return groups
+
+
+def _platforms_on(s):
+    """1.26: Talabat / Elmenus serve restaurants / cafés, supermarkets and pharmacies (pos.credit.platforms.serves)."""
+    try:
+        from pos.credit.platforms import available
+
+        return bool(available(s))
+    except Exception:  # a menu never breaks on a half-set-up copy
+        return False
 
 
 def _variants_on(s):

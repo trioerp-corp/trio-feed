@@ -59,15 +59,24 @@ def company(request):
     is_pharmacy = False
     try:
         if c is not None and isinstance(c.activity, dict):
-            act_items = c.activity.get("items") or act_items
-            business_label = c.activity.get("name") or business_label
-            is_pharmacy = c.activity.get("key") == "pharmacy"
+            from .activities import current
+
+            from .activities import same_family
+
+            act = c.activity if same_family(c.activity.get("base"), c.business) else current(c)  # 1.26: never one left over from an older business
+            act_items = act.get("items") or act_items
+            business_label = act.get("name") or business_label
+            is_pharmacy = act.get("key") == "pharmacy"
     except Exception:  # noqa: BLE001
         pass
     ctx = {**br, **upd, "act_items": act_items, "is_pharmacy": is_pharmacy, "app_version": VERSION, "newer_version": newer_v, "business_label": business_label, "company": c, "training": getattr(settings, "TRAINING", False), "pending_requests": pending, "is_owner": owner, "mods": mods}
     from gaming.services import MIN_CHOICES, ROUND_CHOICES
 
     ctx.update(g_round_choices=ROUND_CHOICES, g_min_choices=MIN_CHOICES)
+    from . import currency as CUR
+
+    ctx.update(CUR=CUR.sym(CUR.code(c) if c is not None else None), CUR_CODE=CUR.code(c) if c is not None else CUR.DEFAULT,
+               CUR_D=CUR.places(CUR.code(c) if c is not None else None))  # 1.26: the shop's currency symbol in the viewer's language
     try:
         from . import menu
 

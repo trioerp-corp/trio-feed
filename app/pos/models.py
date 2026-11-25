@@ -303,6 +303,11 @@ class DeliveryOrder(models.Model):
     created_at = models.DateTimeField("وقت الطلب")
     collected_at = models.DateTimeField("وقت التحصيل", null=True, blank=True)
     collect_move = models.ForeignKey(CashMove, null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+    # 1.26 tracking (pos/delivery.py advance): the order's way to the customer; «state» above stays the money's
+    STAGES = [("new", "جديد"), ("prep", "قيد التحضير"), ("out", "خرج مع عامل التوصيل"), ("done", "تم التسليم"), ("void", "ملغي")]
+    stage = models.CharField("مرحلة الطلب", max_length=5, choices=STAGES, default="new", db_index=True)
+    steps = models.JSONField("المراحل", default=list, blank=True)  # [{s, at, by, dev, u}] — when each step happened and who did it
+    platform = models.CharField("المنصة", max_length=12, blank=True)  # «talabat» / «elmenus»: the platform's order (its rider)
 
     class Meta:
         verbose_name = "طلب دليفري"

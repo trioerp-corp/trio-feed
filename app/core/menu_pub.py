@@ -75,7 +75,8 @@ def data(s=None):
               for a in Item.objects.filter(active=True, is_addon=True, sale_price__gt=0).prefetch_related("addon_for").order_by("name")[:60]]
     cfg = s.menu_cfg or {}
     out = dict(name=s.name[:80], phone=s.phone[:40], address=s.address[:120], note=str(cfg.get("note", ""))[:200], cats=cats, add=addons,
-               vat=bool(s.default_vat_rate and not s.pos_prices_include_vat))
+               vat=bool(s.default_vat_rate and not s.pos_prices_include_vat),
+               cur=__import__("core.currency", fromlist=["x"]).sym(__import__("core.currency", fromlist=["x"]).code(s), "ar"))  # 1.26
     from pos import tables as T
 
     tc = T.cfg(s)

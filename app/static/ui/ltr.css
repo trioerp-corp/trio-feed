@@ -1,0 +1,8 @@
+/* 1.27: English / French (dir=ltr). The stylesheets use logical properties (inline-start/end), so only the
+   few physical RTL rules are mirrored here. Added by core/i18n_mw.py to every translated page. */
+@media print{html[dir=ltr] #receipt{right:auto;left:0}}
+html[dir=ltr] [style*="text-align:right"]{text-align:left!important}
+html[dir=ltr] [style*="float:right"]{float:left!important}
+html[dir=ltr] [style*="float:left"]{float:right!important}
+/* phone side menu slides in from the left in LTR */
+@media (max-width:900px){html[dir=ltr] .gg-side{transform:translateX(-110%)}html[dir=ltr] body.side-open .gg-side{transform:none}}

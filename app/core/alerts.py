@@ -10,6 +10,7 @@ so the owner is never left without the alert. Every alert is switched on/off by 
 
 Sending never blocks the till or a page: it runs after the transaction commits, in a background thread (SYNC = True in tests).
 """
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 import logging
 import threading
@@ -106,7 +107,10 @@ def deliver(kind, text, s=None):
         out["wa"] = "لا يوجد رقم واتساب لصاحب المحل"
     if out["wa"] != "ok" and kind != "daily":  # the fallback (the daily summary has its own Telegram / e-mail report): Trio's Telegram bot and / or e-mail, whatever the owner linked
         try:
-            res = mobile.notify(f"{head}\n{text}", head, telegram=True, email=s.email_to or "")
+            from .reports_send import _lang_text
+
+            body, hd = _lang_text(f"{head}\n{text}", head)
+            res = mobile.notify(body, hd, telegram=True, email=s.email_to or "")
             out.update({k: v for k, v in res.items() if k in ("tg", "mail")})
         except Exception as e:  # noqa: BLE001
             out["tg"] = str(e)
@@ -136,7 +140,7 @@ def fire(kind, text, s=None):
 def on_void(order, reason, editing=False):
     try:
         b = order.device.branch.name if order.device_id else ""
-        fire("void", f"{'عُدّلت' if editing else 'أُلغيت'} الفاتورة {order.shift_seq or order.uid} بقيمة {order.total:,.2f} ج"
+        fire("void", f"{'عُدّلت' if editing else 'أُلغيت'} الفاتورة {order.shift_seq or order.uid} بقيمة {_CUR.fmt(order.total)}"
                      f"{' — ' + b if b else ''} — السبب: {str(reason).replace('تعديل:', '').strip()[:120]}")
     except Exception:  # noqa: BLE001
         log.exception("void alert")
@@ -148,7 +152,7 @@ def on_shift_close(sh):
         if diff >= 0 or -diff < cfg()["short_min"]:
             return False
         b = sh.device.branch.name if sh.device_id else ""
-        return fire("short", f"عجز {-diff:,.2f} ج في درج {sh.cashier} ({sh.device.name}{' — ' + b if b else ''}) عند تقفيل الوردية: "
+        return fire("short", f"عجز {_CUR.fmt(-diff)} في درج {sh.cashier} ({sh.device.name}{' — ' + b if b else ''}) عند تقفيل الوردية: "
                              f"المتوقع {sh.expected_cash:,.2f} والمعدود {sh.counted_cash:,.2f}")
     except Exception:  # noqa: BLE001
         log.exception("short alert")
@@ -170,7 +174,7 @@ def on_transfer(t, what):
                 return False
             v = sum((ln.qty_lost * ln.unit_cost for ln in lost), Decimal(0))
             text = (f"عجز عند استلام التحويل {t.number} ({names[0]} ← {names[1]}): " + "، ".join(f"{ln.item.name} {ln.qty_lost:g}" for ln in lost)
-                    + f" — بالتكلفة {v:,.2f} ج على {names[0]}")
+                    + f" — بالتكلفة {_CUR.fmt(v)} على {names[0]}")
         return fire("transfer", text)
     except Exception:  # noqa: BLE001
         log.exception("transfer alert")
@@ -188,7 +192,7 @@ def digest_text(day=None):
     c = cfg()
     orders = list(Order.objects.filter(created_at_device__date=day))
     t = _sales(orders)
-    lines = [f"المبيعات: {t['net']:,.2f} ج ({t['n']} فاتورة)"]
+    lines = [f"المبيعات: {_CUR.fmt(t['net'])} ({t['n']} فاتورة)"]
     try:
         now = timezone.localtime() if day == timezone.localdate() else timezone.make_aware(dt.datetime.combine(day, dt.time(23, 59)))
         cm = comparisons(now)

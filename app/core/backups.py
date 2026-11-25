@@ -180,7 +180,7 @@ def restore(path, user=None):
     if p.parent != (Path(settings.BASE_DIR) / "data" / "restore").resolve() or not p.exists():
         raise ValidationError("افحص النسخة الأول")
     if connection.vendor != "sqlite":
-        raise ValidationError("الاسترجاع من هنا لقاعدة SQLite بس")
+        raise ValidationError("الاسترجاع من هنا لقاعدة SQLite فقط")
     s = CompanySettings.get()
     keep = {f: getattr(s, f) for f in KEEP}
     if not keep["backup_key"]:

@@ -39,7 +39,7 @@ def _accounts(rows, check_only):
         if p and not str(r["code"]).startswith(p):
             errs.append(f"سطر {i}: كود {r['code']} يجب أن يبدأ بكود الرئيسي {p}")
         if r.get("account_type") not in ("asset", "liability", "equity", "income", "expense"):
-            errs.append(f"سطر {i}: النوع لازم asset/liability/equity/income/expense")
+            errs.append(f"سطر {i}: النوع يجب أن يكون asset/liability/equity/income/expense")
     if errs or check_only:
         return errs
     for r in sorted(rows, key=lambda r: (int(r.get("level") or 1), str(r["code"]))):

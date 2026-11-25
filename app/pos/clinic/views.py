@@ -1,3 +1,4 @@
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 from datetime import timedelta as _td
 from decimal import Decimal, InvalidOperation
 
@@ -225,7 +226,7 @@ def home(request, reception=False):
                 messages.success(request, f"فُتح الدرج باسم {sh.cashier} ✔")
             elif a == "drawer_close":
                 sh = C.end_shift(request.user, request.POST.get("counted"))
-                messages.success(request, f"أُغلق الدرج — المبلغ المعدود {sh.counted_cash:.2f} ج. يراجع صاحب العيادة الفرق عند تقفيل اليوم ✔")
+                messages.success(request, f"أُغلق الدرج — المبلغ المعدود {_CUR.fmt(sh.counted_cash)}. يراجع صاحب العيادة الفرق عند تقفيل اليوم ✔")
             elif a in ("online_ok", "online_no"):  # 1.25 a booking request from the clinic's page
                 from . import online as ON
                 from .models import OnlineBooking
@@ -498,7 +499,7 @@ def patient(request, pk):
                     raise ValidationError("ليس لهذا المريض حساب آجل")
                 box = get_object_or_404(CashBox, pk=request.POST.get("box"), active=True)
                 C.collect(p.partner, _dec(request.POST.get("amount"), Decimal(0)), box, request.user, note=f"من {p.name}")
-                messages.success(request, f"حُصّل {request.POST.get('amount')} ج من {p.name} ✔")
+                messages.success(request, f"حُصّل {_CUR.fmt(request.POST.get('amount'))} من {p.name} ✔")
             elif a == "visit":
                 appt = C.walk_in(p, doctor=_doctor(request.POST.get("doctor")), service=_service(request.POST.get("service")), user=request.user)
                 return redirect("clinic_visit", appt.visit_id)
@@ -604,7 +605,7 @@ def visit(request, pk):
                     messages.success(request, "تم الحفظ ✔")
             elif a == "finish":  # the doctor is done: the patient leaves the queue (what is not paid yet waits at the reception)
                 Appointment.objects.filter(visit=v).update(state="done")
-                messages.success(request, f"انتهى كشف {v.patient.name} ✔" + (f" — عليه {v.unbilled:,.2f} ج يدفعها في الاستقبال" if v.unbilled else ""))
+                messages.success(request, f"انتهى كشف {v.patient.name} ✔" + (f" — عليه {_CUR.fmt(v.unbilled)} يدفعها في الاستقبال" if v.unbilled else ""))
                 return redirect("clinic_doctor_screen" if _is_doctor(request.user) else "clinic_home")
             elif a == "cancel":
                 C.cancel_visit(v, request.POST.get("reason", ""), request.user)
@@ -641,7 +642,14 @@ def receipt(request, pk):
         from types import SimpleNamespace
 
         pay = SimpleNamespace(pk=f"إعادة-{v.pk}", kind="visit", total=Decimal(0), discount=Decimal(0), order=None, insurance_id=None)
-    return render(request, "clinic/receipt.html", dict(v=v, s=CompanySettings.get(), hide_nav=True, pay=pay, appt=appt,
+    from pos import receipt as RC
+
+    booked = pay is not None and getattr(pay, "kind", "") == "booking" and appt is not None and appt.state == "booked"
+    title = "إيصال حجز" if booked else ("إيصال حساب إضافي" if getattr(pay, "kind", "") == "extra" else "إيصال كشف")
+    rc = RC.ctx()
+    rc.update(rc_title=title, rc_due=bool(getattr(getattr(pay, "order", None), "paid_credit", 0)),
+              rc_foot_line="من فضلك احضر قبل موعدك بـ 10 دقائق — ومعك هذا الإيصال" if booked else "شفاء عاجل إن شاء الله")
+    return render(request, "clinic/receipt.html", dict(**rc, v=v, s=CompanySettings.get(), hide_nav=True, pay=pay, appt=appt,
                                                        lines=pay.lines.select_related("item") if hasattr(pay, "lines") else v.lines.filter(payment__isnull=True).select_related("item"),
                                                        auto=request.GET.get("auto") == "1"))
 
@@ -883,7 +891,7 @@ def insurance_detail(request, pk):
                 box = get_object_or_404(CashBox, pk=request.POST.get("box"), active=True)
                 C.collect(C.insurer_customer(ins), _dec(request.POST.get("amount"), Decimal(0)), box, request.user,
                           note=f"من {ins.name} {request.POST.get('ref', '')}".strip())
-                messages.success(request, f"حُصّل {request.POST.get('amount')} ج من {ins.name} ✔")
+                messages.success(request, f"حُصّل {_CUR.fmt(request.POST.get('amount'))} من {ins.name} ✔")
         except ValidationError as e:
             _errs(request, e)
         return redirect("clinic_insurance_detail", ins.pk)

@@ -3,6 +3,7 @@
 Money: a package is sold as a normal sale of its own service item (cash drawer / card, revenue on the day it is sold — the
 simplest rule, as most Egyptian halls count it). Using the balance later charges only the minutes that are not covered, so the
 same hour is never counted twice as revenue."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 from decimal import Decimal
 
@@ -357,9 +358,9 @@ def refund_package(order, reason, user):
                                   paid_cash=str(info["amount"]), paid_card="0", paid_credit="0"))
     MinuteMove.objects.create(customer=mv.customer, kind=mv.kind, minutes=-info["left"], package=mv.package, order=ret,
                               amount=-info["amount"], by=_name(user))
-    order.flags = (f"استُرد منها {info['amount']} ج عن {info['left']} دقيقة (فاتورة {uid})؛ " + order.flags)[:300]
+    order.flags = (f"استُرد منها {_CUR.fmt(info['amount'])} عن {info['left']} دقيقة (فاتورة {uid})؛ " + order.flags)[:300]
     order.save(update_fields=["flags"])
     from core import audit
 
-    audit.log("gaming.package_refund", ret, summary=f"استرداد {info['amount']} ج عن {info['left']} دقيقة من باقة {mv.customer.name} — {reason}")
+    audit.log("gaming.package_refund", ret, summary=f"استرداد {_CUR.fmt(info['amount'])} عن {info['left']} دقيقة من باقة {mv.customer.name} — {reason}")
     return ret

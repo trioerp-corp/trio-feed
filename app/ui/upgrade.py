@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from core import license as LIC
 from core import modules as M
+from core import custom as C
 from core import updates as U
 from core.models import CompanySettings
 from core.version import VERSION
@@ -73,8 +74,21 @@ def page(request):
     lic = LIC.status(s)
     br = int(lic.get("branches") or 0)
     return render(request, "ui/upgrade.html", dict(s=s, version=VERSION, lic=lic, machine=LIC.machine_code(), st=U.state(), renew=renew_box(request, s),
-                                                  pay_on=pay.enabled(), year_price=f"{M.year_total(br):,}", branches=br,
-                                                  nv=newer_available(), have=[M.MODULES[k][0] for k in M.MODULES if k in mods]))
+                                                  pay_on=pay.enabled(), **M.shop_prices(s, br), branches=br,
+                                                  nv=newer_available(), have=[M.MODULES[k][0] for k in M.MODULES if k in mods],
+                                                  cp=C.info(), cp_prev=C.prev_info()))
+
+
+@login_required
+def custom_pack(request):
+    """«إلغاء التعديلات الخاصة» (the program as it is for everyone; the pack is kept aside) and «استعادة» (bring it back)."""
+    _owner(request)
+    if request.method == "POST":
+        if request.POST.get("what") == "restore":
+            messages.success(request, C.restore())
+        else:
+            messages.success(request, C.cancel())
+    return redirect("upgrade")
 
 
 @login_required

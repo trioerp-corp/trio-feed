@@ -1,4 +1,4 @@
-"""«رصيد البضاعة الموجودة عندك الآن» (1.25): the opening stock step of «تجهيز المحل».
+"""«رصيد البضاعة الموجودة لديك الآن» (1.25): the opening stock step of «تجهيز المحل».
 
 The owner types the quantity and the purchase price of what is on his shelves today — one grid with search and barcode scan,
 sizes × colours for clothes, boxes + loose strips for a pharmacy, or an Excel upload — and it posts ONE stock move of kind

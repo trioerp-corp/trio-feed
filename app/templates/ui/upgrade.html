@@ -7,12 +7,12 @@
 <div class="card kpi"><span class="k">الإمكانيات</span><span class="v" style="font-size:18px">كلها مفتوحة ✔</span><span class="k">{{ have|length }} جزء</span></div></section>
 {% if renew %}{% include "ui/_renew.html" %}{% endif %}
 <div class="card" id="sub" style="margin-bottom:16px"><h2 style="margin:0 0 6px">💳 اشتراكك</h2>
-<p style="margin:0">{% if lic.lifetime %}رخصة مدى الحياة ✔{% else %}اشتراك سنوي: <b>{{ year_price }} ج في السنة</b> — كل البرنامج{% if branches %} (فرع رئيسي + {{ branches }} فرع إضافي){% else %} (فرع واحد){% endif %}{% if lic.expires %} · ينتهي {{ lic.expires|date:"d/m/Y" }}{% endif %}{% endif %}</p>
-<p class="muted" style="margin:4px 0 10px">كل فرع إضافي 500 ج في السنة · زيارة تجهيز وتدريب 1,500 ج · طلبات خاصة حتى 3 تعديلات 1,500 ج (مرة واحدة). التجديد يبدأ من تاريخ الانتهاء الحالي.</p>
+<p style="margin:0">{% if lic.lifetime %}رخصة مدى الحياة ✔{% else %}اشتراك سنوي: <b>{{ year_price }} في السنة</b> — كل البرنامج{% if branches %} (فرع رئيسي + {{ branches }} فرع إضافي){% else %} (فرع واحد){% endif %}{% if lic.expires %} · ينتهي {{ lic.expires|date:"d/m/Y" }}{% endif %}{% endif %}</p>
+<p class="muted" style="margin:4px 0 10px">كل فرع إضافي {{ branch_price }} في السنة{% if visit_on %} · زيارة تجهيز وتدريب {{ visit_price }} (القاهرة الكبرى فقط){% endif %} · طلبات خاصة حتى 3 تعديلات {{ custom_price }} (مرة واحدة).{% if egp_note %} {{ egp_note }}.{% endif %} التجديد يبدأ من تاريخ الانتهاء الحالي.</p>
 {% if pay_on %}<form method="post" action="/license/" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">{% csrf_token %}<input type="hidden" name="action" value="renew"><input type="hidden" name="next" value="{% url 'upgrade' %}">
 {% if lic.client and not lic.lifetime %}<label class="field" style="margin:0">ماذا تدفع<select name="what"><option value="renew">تجديد سنة</option><option value="extra">فروع / خدمات فقط</option></select></label>{% elif lic.lifetime %}<input type="hidden" name="what" value="extra">{% endif %}
 {% if not lic.lifetime %}<label class="field" style="margin:0">عدد الفروع الإضافية<input name="branches" value="{{ branches }}" inputmode="numeric" dir="ltr" style="width:90px"></label>{% endif %}
-<label><input type="checkbox" name="visit" value="1"> زيارة تجهيز وتدريب</label><label><input type="checkbox" name="custom" value="1"> طلبات خاصة (حتى 3 تعديلات)</label>
+{% if visit_on %}<label><input type="checkbox" name="visit" value="1"> زيارة تجهيز وتدريب <select name="gov" aria-label="المحافظة"><option value="C">القاهرة</option><option value="GZ">الجيزة</option><option value="KB">القليوبية</option></select></label>{% else %}<span class="muted" style="font-size:13px">التجهيز والتدريب عن بُعد عبر الإنترنت</span>{% endif %}<label><input type="checkbox" name="custom" value="1"> طلبات خاصة (حتى 3 تعديلات)</label>
 <label class="field" style="margin:0">هاتف صاحب المحل<input name="phone" value="{{ s.phone|default:s.owner_whatsapp }}" dir="ltr" inputmode="tel" required></label>
 <label style="font-size:13px"><input type="checkbox" name="agree" value="1" required> قرأت <a href="https://trioerp.pages.dev/terms/" target="_blank" rel="noopener">الشروط</a> و<a href="https://trioerp.pages.dev/refund/" target="_blank" rel="noopener">سياسة الاسترجاع</a></label>
 <button>💳 ادفع بالفيزا</button></form>
@@ -26,6 +26,10 @@
 {% else %}<div><h2 style="margin:0">لديك أحدث إصدار ✔</h2><p class="muted" style="margin:4px 0 0">يبحث البرنامج عن التحديثات تلقائيًا كل ساعة.</p></div>
 <form method="post">{% csrf_token %}<button class="light">ابحث عن تحديث الآن</button></form>{% endif %}
 </div></div>
+{% if cp.r %}<div class="card" id="custom" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h2 style="margin:0 0 6px">✦ تعديلات خاصة بمحلك: الإصدار {{ cp.r }}{% if cp.notes %} — {{ cp.notes }}{% endif %}</h2><p class="muted" style="margin:0">تعديلات أُعدّت لمحلك وحده، وتبقى كما هي مع كل تحديث عام للبرنامج.</p></div>
+<form method="post" action="{% url 'custom_pack' %}">{% csrf_token %}<input type="hidden" name="what" value="cancel"><button class="light" onclick="return confirm('إلغاء التعديلات الخاصة والعودة إلى النسخة العامة؟')">إلغاء التعديلات الخاصة</button></form></div>
+{% elif cp_prev.r %}<div class="card" id="custom" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><h2 style="margin:0 0 6px">التعديلات الخاصة ملغاة</h2><p class="muted" style="margin:0">يعمل البرنامج بنسخته العامة. التعديلات السابقة (الإصدار {{ cp_prev.r }}) محفوظة ويمكن استعادتها.</p></div>
+<form method="post" action="{% url 'custom_pack' %}">{% csrf_token %}<input type="hidden" name="what" value="restore"><button class="light">استعادة التعديلات الخاصة</button></form></div>{% endif %}
 {% if st.applied %}<div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 6px">آخر تحديث مُثبَّت: {{ st.applied.v }}</h2>{% if st.applied.notes %}<p style="margin:0">{{ st.applied.notes|linebreaksbr }}</p>{% endif %}</div>{% endif %}
 <div class="card"><h2 style="margin:0 0 6px">تحتاج شيئًا؟</h2><p style="margin:0">تواصل مع Trio: <a href="tel:01228827915" dir="ltr">01228827915</a> · <a href="tel:01121460640" dir="ltr">01121460640</a> · <a href="https://wa.me/201228827915" target="_blank" rel="noopener">واتساب</a></p></div>
 {% endblock %}

@@ -1,4 +1,5 @@
 """Gaming hall rules: hourly billing with rounding, food & drinks on the device bill, closing into a normal sales invoice."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import math
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -264,7 +265,7 @@ def close_session(ses, user, paid_card=0, discount=0, customer_id=None, paid_cre
         raise ValidationError("الخصم بالسالب")
     gross = b["time_amount"] + b["items_amount"]
     if ses.discount and ses.discount > discount_cap(gross) and not approver:
-        raise ValidationError(f"الخصم أكبر من {HallSettings.get().max_discount_pct.normalize():f}% من الحساب ({discount_cap(gross)} ج) "
+        raise ValidationError(f"الخصم أكبر من {HallSettings.get().max_discount_pct.normalize():f}% من الحساب ({_CUR.fmt(discount_cap(gross))}) "
                               "— يحتاج إلى موافقة صاحب المحل")
     ses.discount_by = (approver or "")[:100] if ses.discount else ""
     if use:

@@ -221,9 +221,9 @@ def create_branch(name, address="", phone="", devices=1, code=""):
 def create_user(username, name, password, role, branch=None, title="", caps=None, email="", phone=""):
     U = get_user_model()
     if U.objects.filter(username=username).exists():
-        raise ValidationError(f"اسم الدخول «{username}» مستخدم قبل كده")
+        raise ValidationError(f"اسم الدخول «{username}» مستخدم من قبل")
     if not password or len(password) < 4:
-        raise ValidationError(f"كلمة سر «{username}» لازم 4 حروف/أرقام على الأقل")
+        raise ValidationError(f"كلمة سر «{username}» يجب ألا تقل عن 4 حروف/أرقام")
     u = U(username=username, first_name=(name or username)[:150])
     u.set_password(password)
     u.save()

@@ -1,6 +1,6 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}{{ ins.name }}{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>🛡 {{ ins.name }}</h1><p class="muted" style="margin:0">تتحمّل {{ ins.coverage_pct|floatformat:-2 }}%{% if ins.max_per_visit %} بحد {{ ins.max_per_visit|money:0 }} ج للزيارة{% endif %}{% if ins.contract_no %} · تعاقد {{ ins.contract_no }}{% endif %} — {{ company.name }}</p></div>
+<div class="page-head"><div><h1>🛡 {{ ins.name }}</h1><p class="muted" style="margin:0">تتحمّل {{ ins.coverage_pct|floatformat:-2 }}%{% if ins.max_per_visit %} بحد {{ ins.max_per_visit|money:0 }} {{ CUR }} للزيارة{% endif %}{% if ins.contract_no %} · تعاقد {{ ins.contract_no }}{% endif %} — {{ company.name }}</p></div>
 <div class="actions noprint"><a class="btn light" href="?d1={{ d1|date:'Y-m-d' }}&d2={{ d2|date:'Y-m-d' }}&print=1" onclick="setTimeout(()=>print(),300)">🖨 اطبع المطالبة</a><a class="btn light" href="{% url 'clinic_insurance' %}">كل الشركات</a></div></div>
 <form class="filters noprint" method="get"><label>من<input type="date" name="d1" value="{{ d1|date:'Y-m-d' }}"></label><label>حتى<input type="date" name="d2" value="{{ d2|date:'Y-m-d' }}"></label><button>عرض</button></form>
 <div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px">

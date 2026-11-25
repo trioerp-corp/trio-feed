@@ -5,6 +5,7 @@
 - purchase orders: items at / under their «حد الطلب» grouped by the supplier they were last bought from, and (clothes) the
   sold-out sizes / colours of the models that sell → a printable order / WhatsApp message to each supplier.
 """
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 import math
 from collections import OrderedDict
@@ -114,7 +115,7 @@ def company_returns(request):
                 for wh, rs in by_wh.items():
                     done.append(return_batches(rs, sup, wh, timezone.localdate(), request.user, note="مرتجع أصناف قاربت صلاحيتها"))
             total = sum((sum((l.value for l in m.lines.all()), Z) for m in done), Z)
-            messages.success(request, f"تم تسجيل مرتجع للمورد «{sup.name}» ({'، '.join(m.number for m in done)}) بقيمة {total:,.2f} ج بسعر الشراء — "
+            messages.success(request, f"تم تسجيل مرتجع للمورد «{sup.name}» ({'، '.join(m.number for m in done)}) بقيمة {_CUR.fmt(total)} بسعر الشراء — "
                                       "وقلّت مستحقاته بالقيمة نفسها")
         except (ValidationError, ValueError) as e:
             messages.error(request, " ".join(getattr(e, "messages", [str(e)])))

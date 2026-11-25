@@ -8,7 +8,7 @@
 <div class="card kpi"><span class="k">رصيد أول المدة</span><span class="v">{{ opening|money }}</span></div>
 <div class="card kpi hero"><span class="k">الرصيد الآن</span><span class="v">{% if closing < 0 %}{{ closing|neg|money }}{% else %}{{ closing|money }}{% endif %}</span>
 <span class="k">{% if not closing %}مسدّد{% elif owes_us %}{% if closing > 0 %}مستحق علينا له{% else %}مستحق له لدينا{% endif %}{% else %}{% if closing > 0 %}مستحق له لدينا{% else %}مستحق علينا له{% endif %}{% endif %}</span></div></section>
-<div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>القيد</th><th>البيان</th>{% if not partner %}<th>الطرف</th>{% endif %}<th class="n">مدين</th><th class="n">دائن</th><th class="n">الرصيد{% if owes_us %} (عليه){% else %} (ليه){% endif %}</th></tr></thead><tbody>
+<div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>القيد</th><th>البيان</th>{% if not partner %}<th>الطرف</th>{% endif %}<th class="n">مدين</th><th class="n">دائن</th><th class="n">الرصيد{% if owes_us %} (عليه){% else %} (له){% endif %}</th></tr></thead><tbody>
 {% for r in rows %}<tr><td>{{ r.date|date:"d/m/Y" }}</td><td>{{ r.number }}</td><td>{{ r.desc }}</td>{% if not partner %}<td>{{ r.partner.name|default:"" }}</td>{% endif %}
 <td class="n">{% if r.debit %}{{ r.debit|money }}{% endif %}</td><td class="n">{% if r.credit %}{{ r.credit|money }}{% endif %}</td><td class="n"><b>{{ r.bal|money }}</b></td></tr>
 {% empty %}<tr><td colspan="7" class="muted">لا توجد حركات في هذه المدة</td></tr>{% endfor %}</tbody></table></div>

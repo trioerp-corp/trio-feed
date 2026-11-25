@@ -33,6 +33,7 @@ urlpatterns = [
     path("ui/shop/update/now/", upgrade.update_now, name="update_now"),
     path("ui/shop/pay/", upgrade.paid, name="pay_done"),
     path("ui/shop/update/seen/", upgrade.seen, name="update_seen"),
+    path("ui/shop/custom/", upgrade.custom_pack, name="custom_pack"),
     path("ui/shop/branches/", branches.dashboard, name="branches"),
     path("ui/shop/branches/switch/", branches.switch, name="branch_switch"),
     path("ui/shop/branches/add/", branches.add_branch, name="branch_add"),

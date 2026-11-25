@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% load l10n %}{% block title %}الدليفري{% endblock %}
+{% extends "base.html" %}{% load gg l10n %}{% block title %}الدليفري{% endblock %}
 {% block content %}
 <div class="page-head"><div><h1>🛵 الدليفري</h1><p class="muted" style="margin:0">يُسجَّل طلب الدليفري في شاشة الكاشير كأي فاتورة، ويبقى مبلغه «مع عامل التوصيل» حتى يسلّمه في الدرج فيضغط الكاشير «تم التحصيل».</p></div>
 <div class="actions"><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
@@ -7,26 +7,45 @@
 {% if owner %}<form method="post" class="card">{% csrf_token %}
 <h2 style="margin:0 0 10px">⚙️ الإعدادات</h2>
 <label class="field check"><input type="checkbox" name="on" value="1"{% if raw.on %} checked{% endif %}> طلبات الدليفري تعمل في شاشة الكاشير</label>
-<label class="field">رسم التوصيل الافتراضي (ج.م)<input name="fee" inputmode="decimal" value="{{ raw.fee|default:'0'|unlocalize }}"></label>
+<label class="field">رسم التوصيل الافتراضي ({{ CUR }})<input name="fee" inputmode="decimal" value="{{ raw.fee|default:'0'|unlocalize }}"></label>
 <p class="muted" style="margin:0 0 8px">يظهر في الطلب ويمكن للكاشير تعديله؛ الطلب الذي يقل رسمه عن ذلك يظهر للمراجعة.</p>
 <label class="field">عمال التوصيل (اسم في كل سطر)<textarea name="riders" rows="4" placeholder="محمد&#10;كريم">{{ riders_text }}</textarea></label>
 {% if employees %}<p class="muted" style="margin:0 0 8px">لم تُكتب أسماء: تظهر أسماء الموظفين ({{ employees|join:"، " }}).</p>{% endif %}
+<fieldset style="border:1px solid var(--line);border-radius:12px;padding:6px 10px;margin:0 0 10px"><legend>⏱ تنبيه التأخير (دقائق في كل مرحلة)</legend>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><label class="field" style="flex:1;min-width:90px;margin:0">جديد<input name="late_new" inputmode="numeric" dir="ltr" value="{{ lim.new|unlocalize }}"></label>
+<label class="field" style="flex:1;min-width:90px;margin:0">قيد التحضير<input name="late_prep" inputmode="numeric" dir="ltr" value="{{ lim.prep|unlocalize }}"></label>
+<label class="field" style="flex:1;min-width:90px;margin:0">مع عامل التوصيل<input name="late_out" inputmode="numeric" dir="ltr" value="{{ lim.out|unlocalize }}"></label></div></fieldset>
 <button>حفظ</button></form>{% endif %}
 
 <div class="card"><h2 style="margin:0 0 10px">📌 الآن</h2>
 <p style="margin:0 0 6px">طلبات مع عمال التوصيل لم تُحصَّل: <b>{{ open_n }}</b></p>
-<p class="muted" style="margin:0">تظهر أيضًا في شاشة الكاشير «🛵 طلبات الدليفري» وفي تقرير قفل الوردية.</p></div></div>
+<p class="muted" style="margin:0">تظهر أيضًا في شاشة الكاشير (تبويب «🛵 الدليفري») وفي تقرير قفل الوردية.</p></div></div>
+
+<style>.dboard{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}@media(max-width:900px){.dboard{grid-template-columns:1fr}}
+.dcol{background:var(--brand-2,#F3F6F4);border-radius:14px;padding:8px;min-width:0}.dcol h3{margin:2px 4px 8px;font-size:15px}.dcard{background:var(--card,#fff);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:14px}
+.dcard.late{border:2px solid #C62828}.dcard .sub{display:block;color:var(--muted);font-size:12.5px}.dcard form{display:inline}.dcard .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}</style>
+<h2 style="margin:0 0 8px">🗂 الطلبات الجارية</h2>
+<div class="dboard">{% for c in cols %}<div class="dcol"><h3>{{ c.ar }} ({{ c.rows|length }})</h3>
+{% for b in c.rows %}<div class="dcard{% if b.late %} late{% endif %}"><b>#{{ b.d.order.shift_seq|default:b.d.order.uid }}</b> {% if b.d.platform %}<span class="pill">{{ plat_names|get:b.d.platform }}</span>{% endif %} <b style="float:left">{{ b.d.order.total|floatformat:2 }}</b>
+<span class="sub">{{ b.d.name|default:"—" }}{% if b.d.phone %} · <a href="tel:{{ b.d.phone }}" dir="ltr">{{ b.d.phone }}</a>{% endif %}</span>{% if b.d.address %}<span class="sub">📍 {{ b.d.address }}</span>{% endif %}
+{% if b.d.rider %}<span class="sub">🛵 {{ b.d.rider }}</span>{% endif %}{% if b.late %}<span class="sub" style="color:#C62828;font-weight:700">⚠ متأخر {{ b.late }} دقيقة</span>{% endif %}
+{% if b.d.state == "out" and b.d.stage == "done" %}<span class="sub">💰 بانتظار التحصيل {{ b.d.due|floatformat:2 }}</span>{% endif %}
+<details><summary class="muted" style="font-size:12.5px">المراحل</summary>{% for x in b.steps %}<span class="sub">{{ x.ar }} — {{ x.at|slice:"11:16" }}{% if x.by %} · {{ x.by }}{% endif %}</span>{% endfor %}</details>
+<div class="acts">{% if b.next %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="step"><input type="hidden" name="pk" value="{{ b.d.pk|unlocalize }}"><input type="hidden" name="to" value="{{ b.next }}">
+{% if b.next == "out" and not b.d.rider and not b.d.platform and riders %}<select name="rider" required><option value="">عامل التوصيل</option>{% for r in riders %}<option>{{ r }}</option>{% endfor %}</select>{% endif %}<button class="light">➜ {{ b.next_ar }}</button></form>{% endif %}
+{% if owner %}<form method="post" onsubmit="const r=prompt('سبب إلغاء الطلب (تُلغى الفاتورة بقيد عكسي)');if(!r)return false;this.reason.value=r">{% csrf_token %}<input type="hidden" name="op" value="cancel"><input type="hidden" name="pk" value="{{ b.d.pk|unlocalize }}"><input type="hidden" name="reason"><button class="light" style="color:#C62828">✖ إلغاء</button></form>{% endif %}</div></div>
+{% empty %}<p class="muted" style="margin:4px">—</p>{% endfor %}</div>{% endfor %}</div>
 
 <div class="card" style="margin-bottom:16px">
 <form method="get" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:10px"><h2 style="margin:0 0 0 auto">📊 الدليفري حسب عامل التوصيل</h2>
 <label class="field" style="margin:0">من<input type="date" name="from" value="{{ start|date:'Y-m-d' }}"></label>
 <label class="field" style="margin:0">إلى<input type="date" name="to" value="{{ end|date:'Y-m-d' }}"></label><button class="light">عرض</button></form>
-{% if rows %}<div class="table-wrap"><table><thead><tr><th>عامل التوصيل</th><th class="n">الطلبات</th><th class="n">الإجمالي</th><th class="n">رسوم التوصيل</th><th class="n">تم التحصيل</th><th class="n">لم يُحصَّل</th></tr></thead><tbody>
-{% for r in rows %}<tr><td><b>{{ r.rider }}</b></td><td class="n">{{ r.n }}</td><td class="n">{{ r.total|floatformat:2 }}</td><td class="n">{{ r.fees|floatformat:2 }}</td><td class="n">{{ r.got|floatformat:2 }}</td><td class="n">{% if r.out %}<b style="color:#C62828">{{ r.out|floatformat:2 }}</b>{% else %}0.00{% endif %}</td></tr>{% endfor %}
-<tr style="font-weight:800"><td>الإجمالي</td><td class="n">{{ tot.n }}</td><td class="n">{{ tot.total|floatformat:2 }}</td><td class="n">{{ tot.fees|floatformat:2 }}</td><td class="n">{{ tot.got|floatformat:2 }}</td><td class="n">{{ tot.out|floatformat:2 }}</td></tr></tbody></table></div>
+{% if rows %}<div class="table-wrap"><table><thead><tr><th>عامل التوصيل</th><th class="n">الطلبات</th><th class="n">الإجمالي</th><th class="n">رسوم التوصيل</th><th class="n">تم التحصيل</th><th class="n">لم يُحصَّل</th><th class="n">سُلِّم</th><th class="n">متوسط وقت التوصيل</th></tr></thead><tbody>
+{% for r in rows %}<tr><td><b>{{ r.rider }}</b></td><td class="n">{{ r.n }}</td><td class="n">{{ r.total|floatformat:2 }}</td><td class="n">{{ r.fees|floatformat:2 }}</td><td class="n">{{ r.got|floatformat:2 }}</td><td class="n">{% if r.out %}<b style="color:#C62828">{{ r.out|floatformat:2 }}</b>{% else %}0.00{% endif %}</td><td class="n">{{ r.done }}</td><td class="n">{% if r.avg is not None %}{{ r.avg }} دقيقة{% else %}—{% endif %}</td></tr>{% endfor %}
+<tr style="font-weight:800"><td>الإجمالي</td><td class="n">{{ tot.n }}</td><td class="n">{{ tot.total|floatformat:2 }}</td><td class="n">{{ tot.fees|floatformat:2 }}</td><td class="n">{{ tot.got|floatformat:2 }}</td><td class="n">{{ tot.out|floatformat:2 }}</td><td class="n">{{ tot.done }}</td><td></td></tr></tbody></table></div>
 {% else %}<p class="muted">لا توجد طلبات دليفري في هذه الفترة.</p>{% endif %}</div>
 
-{% if orders %}<div class="card"><h2 style="margin:0 0 10px">🧾 الطلبات</h2><div class="table-wrap"><table><thead><tr><th>الوقت</th><th>الفاتورة</th><th>العميل</th><th>العنوان</th><th>عامل التوصيل</th><th class="n">الإجمالي</th><th>الحالة</th></tr></thead><tbody>
-{% for d in orders %}<tr><td>{{ d.created_at|date:"d/m H:i" }}</td><td dir="ltr" style="text-align:right">{{ d.order.uid }}</td><td>{{ d.name|default:"—" }}{% if d.phone %}<br><small dir="ltr">{{ d.phone }}</small>{% endif %}</td><td>{{ d.address|default:"—" }}</td><td>{{ d.rider|default:"—" }}</td><td class="n">{{ d.order.total|floatformat:2 }}</td>
-<td>{% if d.state == "out" %}<span class="pill warn">مع عامل التوصيل</span>{% else %}<span class="pill">تم التحصيل{% if d.collected_at %} {{ d.collected_at|time:"H:i" }}{% endif %}</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+{% if orders %}<div class="card"><h2 style="margin:0 0 10px">🧾 سجل الطلبات</h2><div class="table-wrap"><table><thead><tr><th>الوقت</th><th>الفاتورة</th><th>العميل</th><th>العنوان</th><th>عامل التوصيل</th><th class="n">الإجمالي</th><th>الحالة</th></tr></thead><tbody>
+{% for d in orders %}<tr><td>{{ d.created_at|date:"d/m H:i" }}</td><td dir="ltr" style="text-align:right">{{ d.order.uid }}</td><td>{{ d.name|default:"—" }}{% if d.phone %}<br><small dir="ltr">{{ d.phone }}</small>{% endif %}</td><td>{{ d.address|default:"—" }}</td><td>{% if d.platform %}{{ plat_names|get:d.platform }}{% else %}{{ d.rider|default:"—" }}{% endif %}</td><td class="n">{{ d.order.total|floatformat:2 }}</td>
+<td><span class="pill{% if d.stage == 'void' %} warn{% endif %}">{{ stage_ar|get:d.stage }}</span> {% if d.stage == "void" %}{% elif d.state == "out" %}<span class="pill warn">لم يُحصَّل</span>{% elif d.platform %}{% else %}<span class="pill">تم التحصيل{% if d.collected_at %} {{ d.collected_at|time:"H:i" }}{% endif %}</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
 {% endblock %}

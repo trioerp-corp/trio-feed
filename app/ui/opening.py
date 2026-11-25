@@ -1,4 +1,5 @@
-"""/ui/start/stock/ — «رصيد البضاعة الموجودة عندك الآن» (1.25, inventory/opening.py). Owner only."""
+"""/ui/start/stock/ — «رصيد البضاعة الموجودة لديك الآن» (1.25, inventory/opening.py). Owner only."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import json
 import secrets
 
@@ -54,7 +55,7 @@ def page(request):
             s.onboarding = ob
             s.save(update_fields=["onboarding"])
         sm = OP.summary(mv)
-        messages.success(request, f"تم تسجيل رصيد {sm['n']} صنف بقيمة {sm['v']:,.2f} ج.م ✔ (قيد رقم {mv.number})")
+        messages.success(request, f"تم تسجيل رصيد {sm['n']} صنف بقيمة {_CUR.fmt(sm['v'])} ✔ (قيد رقم {mv.number})")
         return redirect("start_stock")
     return render(request, "ui/start_stock.html", _ctx(s, wh, whs))
 

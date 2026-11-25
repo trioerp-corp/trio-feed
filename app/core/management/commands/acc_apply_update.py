@@ -3,6 +3,10 @@
   acc_apply_update            backup the database, keep the current program files aside, put the new ones in place
   acc_apply_update --rollback put the old files and the database back (when migrate failed)
   acc_apply_update --done     the new version is running: remember it for the «تم التحديث» notice and clean up
+
+A light update (1.26, ready.json delta=true) holds only the changed / new files and «_delta.json» {from, to, deleted}: it is
+installed only over exactly the version «from»; each file it replaces or deletes is kept aside first, so --rollback puts them back.
+data/ (the shop's data and its custom pack data/custom) is never touched by either kind.
 """
 import hashlib
 import json
@@ -56,6 +60,12 @@ class Command(BaseCommand):
         if hashlib.sha256(data).hexdigest() != rd["sha"]:
             (f / "ready.json").unlink()
             raise CommandError("ملف التحديث متغيّر — تم حذفه")
+        if rd.get("delta"):
+            if str(rd.get("from")) != VERSION:  # made for another version: the next check downloads the full update
+                (f / "ready.json").unlink()
+                zp.unlink(missing_ok=True)
+                raise CommandError("التحديث الخفيف لا يناسب هذا الإصدار — سيُنزَّل التحديث الكامل")
+            return self.apply_delta(root, f, rd, zp)
         with zipfile.ZipFile(zp) as z:
             base = root.resolve()
             listing = set(z.namelist())
@@ -104,12 +114,88 @@ class Command(BaseCommand):
                 raise
         self.stdout.write(f"ملفات {rd['v']} في مكانها")
 
+    def apply_delta(self, root, f, rd, zp):
+        from core.version import VERSION
+
+        base = root.resolve()
+        with zipfile.ZipFile(zp) as z:
+            listing = set(z.namelist())
+            try:
+                meta = json.loads(z.read("_delta.json").decode("utf-8"))
+            except (KeyError, ValueError):
+                (f / "ready.json").unlink()
+                raise CommandError("التحديث الخفيف ناقص — سيُنزَّل التحديث الكامل")
+            if str(meta.get("from")) != VERSION or str(meta.get("to")) != str(rd["v"]):
+                (f / "ready.json").unlink()
+                raise CommandError("التحديث الخفيف لا يناسب هذا الإصدار — سيُنزَّل التحديث الكامل")
+
+            def safe(n):
+                p = Path(str(n).replace("\\", "/"))
+                parts = p.parts
+                if not parts or p.is_absolute() or p.drive or ".." in parts or any(":" in x for x in parts):
+                    return None
+                if parts[0] in KEEP or parts[0].startswith("_"):
+                    return None
+                if len(parts) == 1:  # a top file: only the program's own (manage.py, Trio.exe…), never the notes
+                    if parts[0] not in ALLOWED_TOP:
+                        return None
+                elif parts[0] not in ALLOWED_TOP and not (parts[0].isidentifier() and (f"{parts[0]}/apps.py" in listing or (root / parts[0] / "apps.py").exists())):
+                    return None
+                try:
+                    (base / p).resolve().relative_to(base)
+                except ValueError:
+                    return None
+                return "/".join(parts)
+
+            put = sorted({x for x in (safe(n) for n in listing if not n.endswith("/")) if x})
+            gone = sorted({x for x in (safe(n) for n in meta.get("deleted") or []) if x} - set(put))
+            from core.management.commands.backup_now import run_backup
+
+            bk, _ = run_backup(force=True)
+            rb = f / "rollback" / VERSION
+            if rb.exists():
+                shutil.rmtree(rb)
+            (rb / "files").mkdir(parents=True)
+            kept, new = [], []
+            for rel in put + gone:  # what is there now goes aside first (a running .exe can be moved, not overwritten)
+                cur = root.joinpath(*rel.split("/"))
+                if cur.is_file():
+                    dst = rb.joinpath("files", *rel.split("/"))
+                    dst.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(cur), str(dst))
+                    kept.append(rel)
+                elif rel in put:
+                    new.append(rel)
+            (f / "applying.json").write_text(json.dumps(dict(**{"from": VERSION}, to=rd["v"], rollback=str(rb), backup=str(bk) if bk else "",
+                                                             tops=[], delta=True, kept=kept, new=new), ensure_ascii=False), encoding="utf-8")
+            try:
+                for rel in put:
+                    out = root.joinpath(*rel.split("/"))
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    with z.open(rel) as src, open(out, "wb") as dst:
+                        shutil.copyfileobj(src, dst)
+            except Exception:
+                self.rollback(root, f)
+                raise
+        self.stdout.write(f"ملفات {rd['v']} في مكانها (تحديث خفيف: {len(put)} ملف، حُذف {len(gone)})")
+
     def rollback(self, root, f):
         info = json.loads((f / "applying.json").read_text(encoding="utf-8")) if (f / "applying.json").exists() else None
         if not info:
             self.stdout.write("لا يوجد ما يمكن التراجع عنه")
             return
         rb = Path(info["rollback"])
+        for rel in info.get("new", []) + info.get("kept", []) if info.get("delta") else []:  # a light update: file by file
+            cur = root.joinpath(*rel.split("/"))
+            if cur.is_file():
+                try:
+                    cur.unlink()
+                except OSError:
+                    cur.rename(cur.with_suffix(cur.suffix + ".failed"))
+            old = rb.joinpath("files", *rel.split("/"))
+            if old.is_file():
+                cur.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(old), str(cur))
         for t in info["tops"]:
             new = root / t
             if new.exists():

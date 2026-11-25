@@ -45,13 +45,13 @@ body{font-family:Cairo,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);c
 <section class="v c on" id="idle"><div class="logo" id="iLogo"></div><div class="co" id="iCo">أهلًا بكم</div><div class="k" id="iSub">مرحبًا بكم</div>
 <div class="offers" id="iOff"></div><div class="pay-in" id="iPay" style="display:none"><div class="code" id="iQr"></div><div><b>نقبل الدفع بـ InstaPay</b><div class="muted" id="iLbl" dir="ltr"></div></div></div></section>
 <section class="v" id="cart"><div class="top"><div class="logo" id="cLogo"></div><div><div class="co" id="cCo"></div><div class="muted" id="cSub" style="font-size:2.4vh">فاتورتك</div></div></div>
-<div class="body"><div class="lines" id="cLines"></div><div class="side"><div class="box"><div class="k" id="cTotK">الإجمالي</div><div class="big"><span id="cTot">0.00</span><small>ج.م</small></div></div>
+<div class="body"><div class="lines" id="cLines"></div><div class="side"><div class="box"><div class="k" id="cTotK">الإجمالي</div><div class="big"><span id="cTot">0.00</span><small>{{ CUR }}</small></div></div>
 <div class="box disc" id="cDisc" style="display:none"><div class="k">خصم على الفاتورة</div><div class="big" id="cDiscV"></div></div>
 <div class="qr" id="cQr" style="display:none"><b>ادفع بـ InstaPay</b><div class="code" id="cQrC"></div><span id="cQrL"></span></div></div></div></section>
-<section class="v c" id="insta"><div class="k">ادفع بـ InstaPay</div><div class="qr"><div class="code" id="qC"></div><span id="qL"></span></div><div class="k">المبلغ المطلوب</div><div class="big"><span id="qA"></span><small>ج.م</small></div>
+<section class="v c" id="insta"><div class="k">ادفع بـ InstaPay</div><div class="qr"><div class="code" id="qC"></div><span id="qL"></span></div><div class="k">المبلغ المطلوب</div><div class="big"><span id="qA"></span><small>{{ CUR }}</small></div>
 <div class="k" style="font-size:2.6vh">امسح الرمز من تطبيق InstaPay واكتب المبلغ ثم أكّد التحويل</div></section>
-<section class="v c" id="paid"><div class="thx" id="pT">شكرًا لكم</div><div class="k" id="pK">الإجمالي</div><div class="big"><span id="pTot"></span><small>ج.م</small></div>
-<div class="k" id="pPaid"></div><div class="chg" id="pChg" style="display:none"><div class="k">الباقي لك</div><div class="big"><span id="pChgV"></span><small>ج.م</small></div></div></section>
+<section class="v c" id="paid"><div class="thx" id="pT">شكرًا لكم</div><div class="k" id="pK">الإجمالي</div><div class="big"><span id="pTot"></span><small>{{ CUR }}</small></div>
+<div class="k" id="pPaid"></div><div class="chg" id="pChg" style="display:none"><div class="k">الباقي لك</div><div class="big"><span id="pChgV"></span><small>{{ CUR }}</small></div></div></section>
 <div class="foot">بواسطة تريو</div>
 <script>
 const $=id=>document.getElementById(id),fmt=n=>(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});

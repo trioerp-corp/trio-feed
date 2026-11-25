@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/catalog/", views.api_catalog),
     path("api/nos/", views.api_nos),
     path("api/link/", views.api_link),
+    path("api/ping/", views.api_ping),
     path("api/sync/", views.api_sync),
     path("api/kitchen/", views.api_kitchen),
     path("api/delivery/", views.api_delivery),

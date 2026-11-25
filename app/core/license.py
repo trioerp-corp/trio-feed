@@ -28,6 +28,7 @@ def _b64d(s):
 # certificate rides at the end of the code: TAG.payload.sig.cert-payload.cert-sig. Never updates (TRIOUP) or key
 # certificates / revocations (TRIOK) — those stay with Trio's own key on its computer.
 ADMIN_TAGS = {"TRIO1", "TRIOM", "TRIOC", "TRIOD", "TRIOP"}
+UPDATE_TAGS = {"TRIOUP", "TRIOCP"}  # releases and a client's custom pack (1.26): Trio's key, or its certified update key
 
 
 def _revoked_at(k):
@@ -53,18 +54,18 @@ def signed(code, tag):
         if len(parts) == 3:
             main.verify(_b64d(parts[2]), parts[1].encode())
             return json.loads(_b64d(parts[1]).decode())
-        assert len(parts) == 5 and (tag in ADMIN_TAGS or tag == "TRIOUP")
+        assert len(parts) == 5 and (tag in ADMIN_TAGS or tag in UPDATE_TAGS)
         _, payload, sig, kpayload, ksig = parts
         main.verify(_b64d(ksig), kpayload.encode())
         cert = json.loads(_b64d(kpayload).decode())
         # the phone's admin key signs licences / orders; a release (TRIOUP) needs a key certified for updates only
-        assert cert.get("use") == ("update" if tag == "TRIOUP" else "admin") and cert.get("k")
+        assert cert.get("use") == ("update" if tag in UPDATE_TAGS else "admin") and cert.get("k")
         Ed25519PublicKey.from_public_bytes(base64.b64decode(cert["k"])).verify(_b64d(sig), payload.encode())
         d = json.loads(_b64d(payload).decode())
         r = _revoked_at(cert["k"])
         # a stopped admin key keeps what it signed before; a stopped update key kills its releases too (they wait 2 hours for this)
         stamp = d.get("at") if tag == "TRIOD" else d.get("t")  # a developer code's «t» is its type («dev»)
-        assert not r or (tag != "TRIOUP" and stamp and str(stamp) < str(r))
+        assert not r or (tag not in UPDATE_TAGS and stamp and str(stamp) < str(r))
         d["_k"] = cert["k"]
         return d
     except (ValueError, AssertionError, InvalidSignature, KeyError, TypeError, IndexError):
@@ -117,6 +118,33 @@ def parse(code):
     except (ValueError, AssertionError, InvalidSignature, KeyError, TypeError):
         raise ValueError("كود التفعيل غير صحيح أو ناقص — انسخه كاملًا كما أُرسل إليك")
     return lic
+
+
+def market_flag(s=None, lic=None):
+    """«mk» in a licence bought online = the country whose prices were paid. When the shop itself is in another country
+    (its phone's +code, else its base currency) whose price is higher, returns "<paid>><shop>" (e.g. "EG>JO") for the
+    presence ping, so Trio License can show it to Trio — the program never blocks or tells the owner. Else ""."""
+    from . import modules as M
+
+    try:
+        from core.models import CompanySettings
+
+        s = s or CompanySettings.get()
+        lic = lic if lic is not None else parse(s.license_code) if s.license_code else {}
+        paid = str(lic.get("mk") or "").upper()
+        if not paid:
+            return ""
+        phone = str(s.phone or "").strip()
+        shop = M.country_of(phone) if (phone.startswith("+") or phone.startswith("00")) else ""
+        if not shop or shop == "ZZ":
+            cur = (s.base_currency or "EGP").upper()
+            shop = next((k for k, m in M.MARKETS.items() if m["cur"] == cur and k != "USD"), "") or (shop or "")
+        if not shop or shop == paid:
+            return ""
+        (_, pm), (_, sm) = M.market(paid), M.market(shop)
+        return f"{paid}>{shop}" if pm["egp"]["year"] < sm["egp"]["year"] else ""
+    except Exception:  # noqa: BLE001
+        return ""
 
 
 def revoked(lic):
@@ -226,10 +254,11 @@ def renew_notice(st):
     else:
         text = f"ينتهي اشتراك Trio السنوي بعد {left} يوم ({day}) — جدّد الاشتراك حتى لا يتوقف البرنامج"
     level = "info" if left > RENEW_NOTICE[1] else "warn" if left > RENEW_NOTICE[2] else "urgent"
-    from .modules import year_total
+    from .models import CompanySettings
+    from .modules import shop_prices
 
     br = int(st.get("branches") or 0)
-    price = f"{year_total(br):,} ج في السنة — كل البرنامج" + (f" (فرع رئيسي + {br} فرع إضافي)" if br else "")
+    price = f"{shop_prices(CompanySettings.get(), br)['year_price']} في السنة — كل البرنامج" + (f" (فرع رئيسي + {br} فرع إضافي)" if br else "")
     return dict(level=level, days=left, expires=day, text=text, price=price, branches=br,
                 note="التجديد يبدأ من تاريخ الانتهاء الحالي — لا تخسر أي يوم لو جددت مبكرًا")
 

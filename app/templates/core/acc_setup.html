@@ -58,6 +58,7 @@
   <label class="field">الاسم بالإنجليزي<input name="name_en" dir="ltr" value="{% if not first %}{{ s.name_en }}{% endif %}" maxlength="200"></label>
   <label class="field">التليفون<input name="phone" dir="ltr" value="{{ s.phone }}" maxlength="60"></label>
   <label class="field">العنوان<input name="address" value="{{ s.address }}" maxlength="200"></label>
+  {% include "core/_currency.html" %}
   <label class="field">واتساب صاحب المحل (لملخص اليوم)<input name="owner_whatsapp" dir="ltr" value="{{ s.owner_whatsapp }}" maxlength="20" placeholder="01xxxxxxxxx" inputmode="tel"></label>
   <label class="field">بريد صاحب المحل (لملخص اليوم)<input name="email_to" dir="ltr" value="{{ s.email_to }}" maxlength="300" placeholder="name@gmail.com" inputmode="email"></label>
 </div>
@@ -73,8 +74,8 @@
 </section>
 
 <section class="card sec" id="s2"><h2><i>2</i>نوع النشاط</h2>
-<div style="margin-bottom:12px">{% include "core/_activity.html" %}</div>
-{% if not first %}<input type="hidden" name="business" value="{{ s.business }}">
+{% if first %}<div style="margin-bottom:12px">{% include "core/_activity.html" %}</div>{% endif %}
+{% if not first %}<input type="hidden" name="business" value="{{ s.business }}">{% if s.activity.name %}<p style="margin:0 0 6px">النشاط: <b>{{ s.activity.name }}</b></p>{% endif %}
 <p style="margin:0">النوع الأساسي: <b>{% for k, b in business %}{% if k == s.business %}{{ b.0 }}{% endif %}{% endfor %}</b> — <span class="muted">ثابت ولا يتغير بعد تجهيز المحل.</span></p>
 {% else %}<p class="muted" style="margin:0 0 8px;font-size:13px">النوع الأساسي (يُحدَّد تلقائيًا من النشاط المكتوب):</p>
 <div class="choice">{% for k, b in business %}

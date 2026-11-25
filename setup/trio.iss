@@ -79,10 +79,13 @@ Name: "{group}\{cm:StopTrio}"; Filename: "{app}\Trio.exe"; Parameters: "-stop"; 
 [Run]
 Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "{cm:WebView}"; Flags: waituntilterminated; Check: NeedsWebView2
 Filename: "netsh"; Parameters: "advfirewall firewall add rule name=""Trio 8000"" dir=in action=allow protocol=TCP localport=8000"; Flags: runhidden waituntilterminated
+Filename: "netsh"; Parameters: "advfirewall firewall delete rule name=""Trio 8001 UDP"""; Flags: runhidden waituntilterminated
+Filename: "netsh"; Parameters: "advfirewall firewall add rule name=""Trio 8001 UDP"" dir=in action=allow protocol=UDP localport=8001"; Flags: runhidden waituntilterminated
 Filename: "{app}\Trio.exe"; Description: "{cm:Launch}"; WorkingDir: "{app}"; Flags: postinstall nowait skipifsilent
 
 [UninstallRun]
 Filename: "netsh"; Parameters: "advfirewall firewall delete rule name=""Trio 8000"""; Flags: runhidden; RunOnceId: "fw"
+Filename: "netsh"; Parameters: "advfirewall firewall delete rule name=""Trio 8001 UDP"""; Flags: runhidden; RunOnceId: "fwudp"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\staticfiles"

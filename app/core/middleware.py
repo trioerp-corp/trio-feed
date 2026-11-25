@@ -144,7 +144,15 @@ class ModuleGuard:
     def __call__(self, request):
         from . import modules as M
 
+        try:
+            fits = M.page_fits(request.path)
+        except Exception:  # noqa: BLE001 — before the first migrate
+            fits = True
         key = M.module_for_path(request.path)
+        if key and not fits_business(M, key):
+            fits = False
+        if not fits and not request.path.startswith("/pos/api/"):
+            return other_business(request)
         if key and not request.path.startswith("/pos/api/"):
             try:
                 from .models import CompanySettings
@@ -158,6 +166,31 @@ class ModuleGuard:
 
                 return render(request, "core/not_in_plan.html", {"module": M.MODULES[key]}, status=403)
         return self.get_response(request)
+
+
+def fits_business(M, key):
+    try:
+        from .models import CompanySettings
+
+        return M.fits(key, CompanySettings.get().business or "market")
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def other_business(request):
+    """1.26: a page of another business (old data of a copy that changed business): home, with a clear message."""
+    from django.contrib import messages
+    from django.shortcuts import redirect
+
+    from .modules import BUSINESS
+    from .models import CompanySettings
+
+    label = BUSINESS.get(CompanySettings.get().business or "market", ("",))[0]
+    try:
+        messages.warning(request, f"هذه الصفحة لا تخص نشاط محلك ({label}) — البرنامج يعرض أجزاء نشاطك فقط، وبياناتك القديمة محفوظة كما هي.")
+    except Exception:  # noqa: BLE001 — no session (API / test client without messages)
+        pass
+    return redirect("/")
 
 
 class SuspendGuard:

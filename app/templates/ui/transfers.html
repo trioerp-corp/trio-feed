@@ -16,7 +16,7 @@
 <datalist id="itemlist">{% for i, h in items %}<option value="{{ i.name }} | {{ i.code }}"></option>{% endfor %}</datalist>
 <form method="post" class="card trf" id="new" style="margin-bottom:16px" data-op="request">{% csrf_token %}<input type="hidden" name="op" value="request">
 <h2>طلب بضاعة من فرع آخر</h2><p class="muted" style="margin-top:0">يصل الطلب للفرع الآخر؛ يوافق ويرسل (أو يرفض بسبب)، ثم تستلم أنت وتؤكد الكميات.</p>
-<div class="form-grid"><label class="field">من فرع (عنده البضاعة)<select name="from" class="f-from">{% for b in branches %}{% if not mine or b.pk != mine.pk %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endif %}{% endfor %}</select></label>
+<div class="form-grid"><label class="field">من فرع (لديه البضاعة)<select name="from" class="f-from">{% for b in branches %}{% if not mine or b.pk != mine.pk %}<option value="{{ b.pk|unlocalize }}">{{ b.name }}</option>{% endif %}{% endfor %}</select></label>
 <label class="field">إلى فرع (يحتاجها)<select name="to" class="f-to">{% for b in branches %}{% if not mine or b.pk == mine.pk %}<option value="{{ b.pk|unlocalize }}" {% if not mine and forloop.counter == 2 %}selected{% endif %}>{{ b.name }}</option>{% endif %}{% endfor %}</select></label>
 <label class="field">ملاحظة<input name="note" placeholder="مثلًا: مطلوب قبل الخميس"></label></div>
 <div class="table-wrap" style="margin-top:12px;box-shadow:none"><table class="lines-table"><thead><tr><th style="min-width:220px">الصنف</th><th>عند المرسل</th><th>{% if mine %}عندك{% else %}عند الطالب{% endif %}</th><th style="width:130px">الكمية</th></tr></thead><tbody class="rows"></tbody></table></div>

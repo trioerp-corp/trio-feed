@@ -37,7 +37,7 @@
 function q(n){return f.querySelector('[name='+n+']')}
 function check(){var p=q('patient').value,d=q('doctor').value,s=q('service').value;if(!d&&!s){b.style.display=w.style.display='none';return}
 fetch('{% url "clinic_appointments" %}?check=1&d={{ today|date:"Y-m-d" }}&doctor='+d+'&service='+s+'&patient='+p,{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
-if(j.followup){t.textContent='⟲ '+j.followup.note+' — بسعر '+(+j.followup.price?j.followup.price+' ج':'مجانًا');b.style.display='block'}else b.style.display='none';
+if(j.followup){t.textContent='⟲ '+j.followup.note+' — بسعر '+(+j.followup.price?j.followup.price+' {{ CUR }}':'مجانًا');b.style.display='block'}else b.style.display='none';
 if(j.warn&&j.warn.length){w.textContent='⚠ '+j.warn.join(' · ');w.style.display='block'}else w.style.display='none'}).catch(function(){})}
 ['doctor','service'].forEach(function(n){q(n).addEventListener('change',check)});{% if walk %}var fp=f.querySelector('input:not([type=hidden])');if(fp)fp.focus();{% endif %}setInterval(function(){var k=q('patient').value;if(k!==last){last=k;check()}},700)})();</script>
 

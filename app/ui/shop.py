@@ -1,4 +1,5 @@
 """Lite edition for shops / supermarkets: home, sales list, items & prices, sales and profit reports."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 from collections import defaultdict
 from decimal import Decimal, InvalidOperation
@@ -888,7 +889,7 @@ def returns(request):
 
             src = SUP.source_line(pre["src"], it.pk)
             if src:  # the batch's own cost and supplier, shown before saving
-                pre.update(src_txt=f"من فاتورة {src.move.number} بسعر شراء {SUP.batch_cost(src):,.2f} ج للوحدة")
+                pre.update(src_txt=f"من فاتورة {src.move.number} بسعر شراء {_CUR.fmt(SUP.batch_cost(src))} للوحدة")
     return render(request, "ui/shop_returns.html", dict(
         rows=[(m, sum((l.value or Z for l in m.lines.all()), Z)) for m in qs], whs=Warehouse.objects.filter(active=True, **({"pk": rb.warehouse_id} if rb else {})),
         suppliers=Partner.objects.filter(kind="supplier", active=True).order_by("name"), item_units=_purchase_units(items),
@@ -953,15 +954,35 @@ def shop_settings(request):
     U = get_user_model()
     if request.method == "POST":
         a = request.POST.get("action")
-        if a == "device":  # 1.25: the owner picks the branch the new till belongs to
+        def new_device():
             br = (Branch.objects.filter(pk=request.POST.get("branch") or 0, active=True).first() if not _locked(request) else None) or _b(request) \
                 or Branch.objects.order_by("id").first()
             n = Device.objects.filter(branch=br).count() + 1
             while Device.objects.filter(branch=br, code=f"{n:02d}").exists():
                 n += 1
             code = f"{n:02d}"
-            Device.objects.create(branch=br, code=code, name=(request.POST.get("name") or "").strip()[:60] or f"كاشير {int(code)}")
+            return Device.objects.create(branch=br, code=code, name=(request.POST.get("name") or "").strip()[:60] or f"كاشير {int(code)}")
+
+        if a == "device":  # 1.25: the owner picks the branch the new till belongs to
+            br = new_device().branch
             messages.success(request, f"أُضيف جهاز في «{br.name}» — افتح لوحة البيع على الجهاز الجديد وأنت داخل بحسابك واختر «اربط هذا الجهاز»")
+        elif a in ("pair_code", "pair_file"):  # 1.26.1 a cashier PC from one file: over the shop network (code) or a USB flash
+            from pos import cashier_setup as CS
+
+            if not CS.ready():
+                messages.error(request, "ملف تجهيز جهاز الكاشير غير موجود في هذه النسخة — حدّث البرنامج.")
+                return redirect("shop_settings")
+            pick = request.POST.get("id") or ""
+            dev = new_device() if pick == "new" else Device.objects.filter(pk=pick if pick.isdigit() else 0, active=True, branch__active=True) \
+                .exclude(code__in=["CL", "GM"]).first()
+            if not dev:
+                messages.error(request, "اختر جهازًا نشطًا أو «جهاز جديد»")
+                return redirect("shop_settings")
+            if a == "pair_file":
+                return CS.response(dev)
+            until = timezone.now() + __import__("datetime").timedelta(seconds=CS.CODE_TTL)
+            request.session["cpair"] = {"code": CS.issue_code(dev), "device": dev.name, "until": until.isoformat(), "addrs": CS.addresses()}
+            return redirect("/ui/shop/settings/#pair")
         elif a == "toggle_device":
             d = Device.objects.get(pk=request.POST["id"])
             d.active = not d.active
@@ -1115,7 +1136,12 @@ def shop_settings(request):
         elif a == "receipt":
             s = CompanySettings.get()
             s.phone, s.address = request.POST.get("phone", ""), request.POST.get("address", "")
-            s.save(update_fields=["phone", "address"])
+            from core import currency as CUR
+            from pos import receipt as RC
+
+            s.base_currency = CUR.clean(request.POST.get("currency"), CUR.code(s))  # 1.26: display only, no conversion
+            s.menu_cfg = RC.with_width(s, request.POST.get("paper"))
+            s.save(update_fields=["phone", "address", "base_currency", "menu_cfg"])
             br = Branch.objects.first()
             if br:
                 br.receipt_footer = request.POST.get("footer", "")
@@ -1163,7 +1189,22 @@ def shop_settings(request):
 
     from core.activities import current
 
-    return render(request, "ui/shop_settings.html", dict(act=current(),devices=Device.objects.select_related("branch").order_by("branch__code", "code"),
+    from core import currency as CUR
+    from pos import receipt as RC
+
+    pairing = request.session.get("cpair")
+    if pairing:
+        from django.utils.dateparse import parse_datetime
+
+        until = parse_datetime(pairing.get("until") or "")
+        if not until or until <= timezone.now():
+            pairing = None
+            request.session.pop("cpair", None)
+        else:
+            pairing = dict(pairing, mins=max(1, int((until - timezone.now()).total_seconds() // 60)))
+    from pos import cashier_setup as CSET
+
+    return render(request, "ui/shop_settings.html", dict(pairing=pairing, pair_ready=CSET.ready(), cur_choices=CUR.choices(), cur_now=CUR.code(), cur_set=True, paper=RC.width(), act=current(),devices=Device.objects.select_related("branch").order_by("branch__code", "code"),
                                                           branches=Branch.objects.all(), drives=drive_candidates(),
                                                           users=U.objects.filter(is_superuser=False).order_by("username"),
                                                           s=CompanySettings.get(), br=Branch.objects.first(), bkey=_bkey(request),
@@ -1285,7 +1326,7 @@ def order_edit(request, pk):
                 from gaming.bookings import refund_package
 
                 ret = refund_package(order, reason, request.user)
-                messages.success(request, f"سُجّل الاسترداد {ret.total:,.2f} ج بالفاتورة {ret.uid} وخُصمت الدقائق من رصيد العميل")
+                messages.success(request, f"سُجّل الاسترداد {_CUR.fmt(ret.total)} بالفاتورة {ret.uid} وخُصمت الدقائق من رصيد العميل")
                 return redirect("order_edit", order.pk)
             lines = []
             for i in range(int(request.POST.get("rows") or 0)):
@@ -1474,7 +1515,7 @@ def whatsapp_text(day):
 
     drawer = CashBox.objects.filter(active=True, kind="cash").first()
     lines = [f"ملخص {CompanySettings.get().name} — {day:%d/%m/%Y}",
-             f"المبيعات: {t['net']:,.2f} ج ({t['n']} فاتورة)", f"نقدي {t['cash']:,.2f} — فيزا/محافظ {t['card']:,.2f}" + (f" — InstaPay {t['insta']:,.2f}" if t['insta'] else "") + f" — آجل {t['credit']:,.2f}",
+             f"المبيعات: {_CUR.fmt(t['net'])} ({t['n']} فاتورة)", f"نقدي {t['cash']:,.2f} — فيزا/محافظ {t['card']:,.2f}" + (f" — InstaPay {t['insta']:,.2f}" if t['insta'] else "") + f" — آجل {t['credit']:,.2f}",
              f"مجمل الربح التقريبي: {t['net_ex_vat'] - cogs:,.2f}", f"رصيد الدرج: {T.cashbox_balance(drawer, upto=day) if drawer else 0:,.2f}",
              f"رصيد صاحب المحل: {owner_balance():,.2f}", "بواسطة برنامج Trio"]
     return "\n".join(lines)
@@ -1538,7 +1579,7 @@ def recipes(request):
                         if not name:
                             raise ValidationError("اكتب اسم المشروب / الأكلة")
                         if Item.objects.filter(name=name, active=True).exists():
-                            raise ValidationError(f"فيه صنف اسمه «{name}» بالفعل — افتح وصفته وعدّلها")
+                            raise ValidationError(f"يوجد صنف اسمه «{name}» بالفعل — افتح وصفته وعدّلها")
                         last = Item.objects.filter(code__regex=r"^\d+$").order_by("-id").first()
                         code = str((int(last.code) + 1) if last else 1001)
                         while Item.objects.filter(code=code).exists():
@@ -1764,29 +1805,7 @@ def statement(request):
 
 @login_required
 def activity(request):
-    """The owner re-tells the program his activity: new categories, item fields and words (the plan does not change)."""
-    from core import activities as A
-    from core import modules as M
-    from pos.branches import is_owner_level
-
-    if not (request.user.is_superuser or is_owner_level(request.user)):
-        raise PermissionDenied
-    s = CompanySettings.get()
-    if request.method == "POST":
-        text = (request.POST.get("activity") or "").strip()
-        if len(text) < 2:
-            messages.error(request, "اكتب نشاطك")
-            return redirect("shop_activity")
-        p = A.lookup(request, text)
-        p["base"] = s.business  # the hall / recipes / warehouses stay what was bought
-        s.activity = p
-        s.save(update_fields=["activity"])
-        n = A.add_categories(p["categories"])
-        messages.success(request, f"ضُبط البرنامج على «{p['name']}» ✔" + (f" — تمت الإضافة {n} تصنيف" if n else ""))
-        if p["suggest"]:
-            missing = [M.MODULES[m][0] for m in p["suggest"] if m not in M.enabled(s)]
-            if missing:
-                messages.info(request, "مفيد لنشاطك وغير مفتوح لديك: " + "، ".join(missing) + " — تواصل مع Trio")
-        return redirect("shop_settings")
-    act = A.current(s)
-    return render(request, "ui/shop_activity.html", dict(act=A.view(act), act_value=act.get("text") or act.get("name"), act_library=[p["name"] for p in A.LIBRARY]))
+    """1.26: the business type and the activity are chosen once, in the first setup, and never change afterwards (a café
+    that became a clinic kept the café's parts on screen). The old page only says so and goes back to the settings."""
+    messages.info(request, "نوع النشاط يُحدَّد مرة واحدة عند تجهيز البرنامج لأول مرة ولا يتغير بعدها — كل البرنامج مضبوط على نشاطك الحالي.")
+    return redirect("shop_settings")

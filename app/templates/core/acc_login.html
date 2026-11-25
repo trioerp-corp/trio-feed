@@ -25,6 +25,7 @@
     <section class="wz" data-step="1"><h3>2 · بيانات محلك</h3>
       <label class="field">اسم المحل<input name="shop" maxlength="60" value="{{ demo.shop|default:'' }}" placeholder="مثلًا: الأمير لقطع الغيار"></label>
       <label class="field">هاتف المحل<input name="phone" dir="ltr" maxlength="40" value="{{ demo.phone|default:'' }}" placeholder="01xxxxxxxxx"></label>
+      {% include "core/_currency.html" %}
       <label class="field">العنوان (اختياري — يظهر على الإيصال)<input name="address" maxlength="200" value="{{ demo.address|default:'' }}"></label></section>
     <section class="wz" data-step="2"><h3>3 · بعض الأسئلة</h3>
       <label class="field"><span id="qDevL">كم جهاز كاشير لديك (تبيع منه)؟</span><select name="devices"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
@@ -60,7 +61,7 @@
     if((p.fields||[]).length)h+='<div>🏷 بيانات لكل '+esc(p.item||'صنف')+': '+p.fields.map(x=>esc(x.n)).join('، ')+'</div>';
     h+='<div>🖥 '+$('devices').value+(p.clinic?' مكتب استقبال':' جهاز كاشير')+'</div>';if(multi)h+='<div>🏬 أكثر من فرع: بعد الدخول افتح كل فرع من «الفروع» (مخزن وخزينة وأجهزة ومدير لكل فرع)</div>';
     if(p.tables)h+='<div>🪑 '+(Math.max(0,Math.min(100,parseInt($('tables').value)||0))||'بدون')+' ترابيزة'+(+$('tables').value>0?' مع بطاقات QR':' (تيك أواي)')+'</div>';
-    if(p.hall){const g=[];if(+$('ps_count').value>0)g.push((+$('ps_count').value)+' بلايستيشن 5 ('+esc($('ps_rate').value)+' فردي / '+esc($('ps_multi').value||'—')+' مالتي)');if(+$('ps4_count').value>0)g.push((+$('ps4_count').value)+' بلايستيشن 4 ('+esc($('ps4_rate').value)+' فردي / '+esc($('ps4_multi').value||'—')+' مالتي)');if(+$('bl_count').value>0)g.push((+$('bl_count').value)+' بلياردو ('+esc($('bl_rate').value)+' ج/ساعة)');h+='<div>🎮 '+(g.join('، ')||'بدون أجهزة')+'</div>'}
+    if(p.hall){const g=[];if(+$('ps_count').value>0)g.push((+$('ps_count').value)+' بلايستيشن 5 ('+esc($('ps_rate').value)+' فردي / '+esc($('ps_multi').value||'—')+' مالتي)');if(+$('ps4_count').value>0)g.push((+$('ps4_count').value)+' بلايستيشن 4 ('+esc($('ps4_rate').value)+' فردي / '+esc($('ps4_multi').value||'—')+' مالتي)');if(+$('bl_count').value>0)g.push((+$('bl_count').value)+' بلياردو ('+esc($('bl_rate').value)+' '+(($('curSel')||{}).value||'')+'/ساعة)');h+='<div>🎮 '+(g.join('، ')||'بدون أجهزة')+'</div>'}
     if(f.querySelector('[name=samples]:checked').value==='1'&&(p.samples||[]).length)h+='<div>🧪 '+p.samples.length+' أصناف أمثلة: '+p.samples.slice(0,3).map(x=>esc(x[0])).join('، ')+'…</div>';
     h+='<div>👤 دخولك: <b dir="ltr">'+esc($('username').value)+'</b></div>';
     h+='<div style="margin-top:6px">✔ التجربة 14 يومًا بكل إمكانيات البرنامج.</div>';

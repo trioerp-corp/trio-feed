@@ -1,5 +1,6 @@
 """1.25 owner pages: a credit customer's statement (bills, instalments, due dates, FIFO, WhatsApp), «الأقساط والمستحقات»
 (everything due this week / late, with WhatsApp reminders), and «منصات التوصيل» (Talabat / Elmenus: settings + report)."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 
 from django.contrib import messages
@@ -157,7 +158,7 @@ def dues(request):
 @login_required
 def platforms(request):
     s = CompanySettings.get()
-    if s.business not in PF.BIZ:
+    if not PF.available(s):
         raise Http404("منصات التوصيل غير متاحة لهذا النشاط")
     _need_cash(request)
     owner = _owner(request.user)
@@ -168,13 +169,13 @@ def platforms(request):
                 if not owner:
                     raise PermissionDenied
                 PF.set_cfg({k: dict(on=request.POST.get(f"{k}_on") == "1", link=request.POST.get(f"{k}_link", ""), pct=request.POST.get(f"{k}_pct", "0"))
-                            for k in PF.PLATFORMS})
+                            for k in PF.available(s)})
                 messages.success(request, "تم الحفظ ✔ — تظهر المنصات المفعّلة في شاشة الكاشير ضمن طرق الدفع بعد تحديث الصفحة")
             elif op == "payout":
                 box = get_object_or_404(CashBox, pk=request.POST.get("box") or 0, active=True)
                 pay = PF.settle(request.POST.get("platform", ""), request.POST.get("amount"), box, other=request.POST.get("other") or 0,
                                 date=_date(request.POST.get("date"), timezone.localdate()), note=request.POST.get("note", ""), user=request.user)
-                messages.success(request, f"سُجّل تحويل {PF.PLATFORMS[pay.platform]['name']} {pay.amount:,.2f} ج إلى {box.name} ✔")
+                messages.success(request, f"سُجّل تحويل {PF.PLATFORMS[pay.platform]['name']} {_CUR.fmt(pay.amount)} إلى {box.name} ✔")
             elif op == "cancel_payout":
                 if not owner:
                     raise PermissionDenied

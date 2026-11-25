@@ -43,7 +43,7 @@
 <script>document.getElementById('addP').onclick=()=>{const d=document.createElement('div');d.className='prow';d.innerHTML='<input name="name" placeholder="اسم الشريك"><input name="share" inputmode="decimal" placeholder="%"><span>%</span>';document.getElementById('prow').appendChild(d)}</script>
 {% else %}{% for sp in sps %}<div class="attn" style="margin-bottom:6px"><span>{{ sp.partner.name }}</span><b>{{ sp.share|floatformat:"-2" }}%</b></div>{% empty %}<p class="muted">لا يوجد شركاء — الربح لصاحب المحل.</p>{% endfor %}{% endif %}
 </div>
-<div class="card"><h2>كيف نحسبه؟</h2><p class="muted" style="font-size:13.5px;margin:0">الربح = الإيرادات − (تكلفة البضاعة المباعة + المصروفات والأجور). كل جنيه ربح لا بد أن يكون في مكان ما: سُحب، أو زاد النقدية، أو تحوّل إلى بضاعة، أو لدى العملاء، أو سدّد للموردين — والمجموع يطابق الربح تمامًا.</p></div>
+<div class="card"><h2>كيف نحسبه؟</h2><p class="muted" style="font-size:13.5px;margin:0">الربح = الإيرادات − (تكلفة البضاعة المباعة + المصروفات والأجور). كل {{ CUR }} ربح لا بد أن يكون في مكان ما: سُحب، أو زاد النقدية، أو تحوّل إلى بضاعة، أو لدى العملاء، أو سدّد للموردين — والمجموع يطابق الربح تمامًا.</p></div>
 </div>
 </div>
 {% endblock %}

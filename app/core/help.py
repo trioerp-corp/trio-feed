@@ -34,8 +34,8 @@ TOPICS = [
      "«العملاء والموردين» ← «عميل جديد» بحد المديونية. التحصيل من الكاشير أو «الأموال». «كشف حساب»: كل فاتورة ودفعة بالرصيد بعدها."),
     ("الأقساط ومواعيد السداد", "قسط اقساط تقسيط مستحق متأخر ميعاد السداد تذكير واتساب كشف حساب واتساب", "/ui/shop/dues/", "partners",
      "في الكاشير عند البيع الآجل اختر «طريقة السداد»: دفعة واحدة أو أقساط شهرية. «الأقساط والمستحقات»: المتأخر والمستحق اليوم وهذا الأسبوع مع زر «💬 تذكير». من كشف حساب العميل: «إرسال كشف الحساب واتساب»، «طباعة / حفظ PDF»، وتقسيط أي فاتورة أو الرصيد كله."),
-    ("طلبات وطلبات المنيوز (منصات التوصيل)", "طلبات talabat المنيوز elmenus منصة توصيل عمولة المنصة تحويل المنصة", "/ui/shop/platforms/", "pos",
-     "«منصات التوصيل»: رابط محلك وعمولة كل منصة. في الكاشير اختر «طلبات» أو «المنيوز» عند الدفع: لا يدخل الدرج، ويُسجَّل مستحقًا على المنصة بعد العمولة حتى «تسجيل تحويل من المنصة». الاستيراد التلقائي يحتاج واجهة الشركاء (API) من المنصة وغير متاح حاليًا."),
+    ("منصات التوصيل (طلبات، المنيوز، هنقرستيشن، جاهز…)", "طلبات talabat المنيوز elmenus هنقرستيشن hungerstation جاهز jahez كيتا keeta مرسول رابيت كريم ديليفرو منصة توصيل عمولة المنصة تحويل المنصة", "/ui/shop/platforms/", "pos",
+     "«منصات التوصيل»: تظهر المنصات العاملة في بلدك فقط؛ اكتب رابط محلك وعمولة كل منصة. في الكاشير اختر المنصة عند الدفع: لا يدخل الدرج، ويُسجَّل مستحقًا على المنصة بعد العمولة حتى «تسجيل تحويل من المنصة». الاستيراد التلقائي يحتاج واجهة الشركاء (API) من المنصة وغير متاح حاليًا."),
     ("الحجز أونلاين للعيادة", "حجز اونلاين رابط الحجز كيو ار حجز من الموبايل المريض يحجز لوحده", "/ui/clinic/setup/", "clinic",
      "«الخدمات والأسعار» ← «🌐 الحجز أونلاين»: شغّله وانسخ الرابط أو اطبع الـ QR. يختار المريض الطبيب والخدمة والموعد المتاح، فيظهر الطلب في «الاستقبال» لتأكيده أو الاعتذار، ويصله الرد على الصفحة، ومعه زر تأكيد على واتساب."),
     ("مصروف أو مرتب أو سلفة", "مصروف كهربا ايجار مرتب اجر سلفة موظف مسحوبات صاحب المحل", "/ui/shop/money/", "money",
@@ -97,8 +97,6 @@ TOPICS = [
      "يُنزَّل أي إصدار جديد ويُثبَّت تلقائيًا ليلًا. تريده الآن؟ «🔄 التحديثات» ← «حدّث الآن». وكل الإمكانيات مفتوحة لديك."),
     ("الرخصة والتفعيل", "رخصة تفعيل كود الجهاز اشتراك انتهى", "/license/", None,
      "صفحة «التفعيل»: حالة الرخصة وكود الجهاز وخانة لصق كود التفعيل، ورقم الطلب إن دفعت من صفحة البيع."),
-    ("نشاط المحل والبيانات الإضافية", "نشاط المحل رقم القطعة مقاس ماركة خانة زيادة تصنيفات", "/ui/shop/activity/", None,
-     "«الإعدادات» ← «نشاط المحل»: اكتب نشاطك ويُضبط البرنامج عليه — التصنيفات والبيانات الإضافية لكل صنف (رقم القطعة، المقاس…)، ويمكنك البحث بها في الكاشير."),
     ("ملخص اليوم على الهاتف", "ملخص واتساب تليجرام ايميل تقرير يوصلني", "/ui/shop/settings/", None,
      "«الإعدادات» ← ملخص اليوم: رقم واتساب / تليجرام / البريد."),
     # 1.21
@@ -129,7 +127,7 @@ PAGES = [("الرئيسية", "/", None), ("لوحة البيع", "/pos/", "pos"
          ("المبيعات", "/ui/shop/sales/", "pos"), ("العملاء والموردين", "/ui/shop/partners/", "partners"), ("الأقساط والمستحقات", "/ui/shop/dues/", "partners"), ("الأموال وصاحب المحل", "/ui/shop/money/", "money"),
          ("الخزينة", "/ui/vouchers/", "treasury"), ("تقفيل اليوم", "/ui/shop/close/", None), ("التقارير", "/ui/shop/reports/", None),
          ("الفروع", "/ui/shop/branches/", "branches"), ("الأرباح والشركاء", "/ui/shop/profit/", "profit_monthly"), ("الإعدادات", "/ui/shop/settings/", None), ("تجهيز المحل", "/ui/start/", None), ("البيانات الأساسية", "/ui/data/", None), ("الموظفين والمرتبات", "/ui/staff/", None), ("الإقرارات الضريبية", "/ui/tax/", None), ("دليل الاستخدام", "/ui/guide/", None),
-         ("نشاط المحل", "/ui/shop/activity/", None), ("الطلبات", "/ui/shop/requests/", None), ("🔄 التحديثات", "/ui/shop/upgrade/", None),
+         ("الطلبات", "/ui/shop/requests/", None), ("🔄 التحديثات", "/ui/shop/upgrade/", None),
          ("الرفع من إكسل", "/ui/import/", None), ("التفعيل", "/license/", None), ("الصالة", "/play/", "gaming"),
          ("العيادة — اليوم", "/ui/clinic/", "clinic"), ("الحجوزات", "/ui/clinic/appointments/", "clinic"), ("المرضى", "/ui/clinic/patients/", "clinic"),
          ("الأطباء ونسبهم", "/ui/clinic/doctors/", "clinic"), ("الخدمات والأسعار", "/ui/clinic/setup/", "clinic")]
@@ -150,14 +148,22 @@ def search(q, mods, n=5):
         hay = _norm(title + " " + kw)
         sc = sum(len(w) for w in words if w in hay) + sum(3 for w in _norm(title).split() if len(w) > 2 and w in nq)
         if sc:
-            scored.append((sc, dict(t=title, a=ans, url=url, ok=mod is None or mod in mods, mod=mod)))
+            scored.append((sc, dict(t=title, a=ans, url=url, ok=(mod is None or mod in mods) and _fits(url), mod=mod)))
     scored.sort(key=lambda x: -x[0])
     return [d for _, d in scored[:n]]
 
 
 def pages(mods, owner):
     owner_only = {"/ui/shop/money/", "/ui/shop/profit/", "/ui/shop/settings/", "/ui/shop/activity/", "/ui/shop/upgrade/", "/ui/shop/branches/", "/ui/vouchers/"}
-    return [dict(name=n, url=u) for n, u, m in PAGES if (m is None or m in mods) and (owner or u not in owner_only)]
+    return [dict(name=n, url=u) for n, u, m in PAGES if (m is None or m in mods) and (owner or u not in owner_only) and _fits(u)]
+
+
+def _fits(url):
+    """1.26: never offer a page of another business (a clinic that was a hall gets no hall answers)."""
+    try:
+        return M.page_fits(url or "")
+    except Exception:  # noqa: BLE001
+        return True
 
 
 def local_answer(q, mods):

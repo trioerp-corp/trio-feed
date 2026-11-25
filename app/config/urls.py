@@ -2,7 +2,7 @@ from django.contrib import admin
 from ui.restore import restore_page
 from django.urls import include, path
 
-from core import devaccess, license_views, password, twofa
+from core import devaccess, i18n_mw, license_views, password, twofa
 
 class _CompanyName:
     """Admin header follows the company name in settings (works for every client of the system)."""
@@ -42,8 +42,16 @@ def _cashier(request):
     return redirect("/ui/play/" if s.business == "gaming" and "gaming" in mods else "/pos/")
 
 
+def _cashier_get(request):
+    from pos.cashier_setup import code_view
+
+    return code_view(request)
+
+
 urlpatterns = [
     path("cashier/", _cashier),
+    path("c", _cashier_get),  # 1.26.1 a cashier PC on the shop network gets its setup file with the owner's one-time code
+    path("c/", _cashier_get),
     path("healthz/", _healthz),
     path("admin/", admin.site.urls),
     path("license/", license_views.page, name="license"),
@@ -64,6 +72,12 @@ urlpatterns = [
     path("2fa/new-codes/", twofa.regenerate, name="2fa_codes"),
     path("ui/accruals/", include("accruals.urls")),
     path("pos/", include("pos.urls")),
+    path("lang/", i18n_mw.set_lang, name="set_lang"),
     path("", include("ui.urls")),
     path("", include("reports.urls")),
 ]
+
+from core import custom as _custom  # noqa: E402
+
+urlpatterns += _custom.extra_urls()  # a client's custom pack (extra/urls.py → /custom/…); a broken one is logged and skipped
+

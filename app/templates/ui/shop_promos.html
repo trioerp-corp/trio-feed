@@ -5,7 +5,7 @@
 <label class="field">اسم العرض<input name="name" placeholder="مثلًا: اشترِ 2 والثالث هدية"></label>
 <label class="field">النوع<select name="kind" id="pk">{% for v, n in kinds %}<option value="{{ v }}">{{ n }}</option>{% endfor %}</select></label>
 <label class="field">الصنف<select name="item">{% for i in items %}<option value="{{ i.pk|unlocalize }}">{{ i.name }} — {{ i.sale_price|default_if_none:"" }}</option>{% endfor %}</select></label>
-<label class="field" id="vL">القيمة<input name="value" inputmode="decimal" placeholder="% أو جنيه أو سعر الجملة"></label>
+<label class="field" id="vL">القيمة<input name="value" inputmode="decimal" placeholder="% أو مبلغ أو سعر الجملة"></label>
 <label class="field">من كمية<input name="min_qty" inputmode="decimal" value="1"></label>
 <label class="field" id="fL">الهدية<input name="free_qty" inputmode="decimal" value="0"></label>
 <label class="field">من<input type="date" name="start" value="{{ today|date:'Y-m-d' }}"></label><label class="field">حتى<input type="date" name="end" value="{{ month|date:'Y-m-d' }}"></label>

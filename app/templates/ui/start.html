@@ -16,7 +16,7 @@
 <div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span>📘 <b>دليل الاستخدام لنشاطك</b> — خطوة بخطوة بالصور{% if auto_guide %} (يُنزَّل الآن على جهازك){% endif %}.</span><span class="actions"><a class="btn light" href="{% url 'guide' %}?pdf=download" id="guideDl">⬇ نزّل الدليل PDF</a><a class="btn light" href="{% url 'guide' %}">اقرأه هنا</a></span></div>
 {% if auto_guide %}<script>window.addEventListener('load',()=>setTimeout(()=>{const a=document.getElementById('guideDl');if(a)a.click()},600))</script>{% endif %}
 <nav class="st-prog" aria-label="الخطوات">{% for r in rows %}<a href="#{{ r.key }}" class="{% if r.done %}ok{% endif %}">{% if r.done %}✔{% else %}○{% endif %} {{ r.title }}</a>{% endfor %}</nav>
-{% if status.stock and not status.stock.done and items %}<div class="card" style="margin-bottom:16px;border:2px solid var(--brand);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><b style="font-size:17px">📦 أدخل رصيد البضاعة الموجودة عندك الآن</b><br><span class="muted">الكمية وسعر الشراء لكل صنف — ليعرف البرنامج مخزونك وقيمته وأرباحك من أول فاتورة.</span></div><a class="btn" href="{% url 'start_stock' %}">ابدأ الآن</a></div>{% endif %}
+{% if status.stock and not status.stock.done and items %}<div class="card" style="margin-bottom:16px;border:2px solid var(--brand);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><b style="font-size:17px">📦 أدخل رصيد البضاعة الموجودة لديك الآن</b><br><span class="muted">الكمية وسعر الشراء لكل صنف — ليعرف البرنامج مخزونك وقيمته وأرباحك من أول فاتورة.</span></div><a class="btn" href="{% url 'start_stock' %}">ابدأ الآن</a></div>{% endif %}
 
 {% with st=status.shop %}<section class="card st-sec {% if st.done %}ok{% endif %}" id="shop"><h2><span class="n">1</span> {% if s.business == 'clinic' %}بيانات العيادة{% else %}بيانات المحل{% endif %}</h2>
 <p class="muted why">تظهر على الإيصال وعلى الفاتورة.</p>
@@ -24,6 +24,7 @@
 <label class="field">{% if s.business == 'clinic' %}اسم العيادة{% else %}اسم المحل{% endif %}<input name="name" value="{{ s.name }}" required maxlength="60"><small class="muted">حتى 60 حرفًا — يظهر على الإيصال وفي أعلى الشاشة</small></label>
 <label class="field">التليفون<input name="phone" value="{{ s.phone }}" dir="ltr" maxlength="40"></label>
 <label class="field">العنوان<input name="address" value="{{ s.address }}" maxlength="250"></label>
+{% include "core/_currency.html" %}
 <label class="field">آخر سطر في الإيصال<input name="footer" value="{{ footer }}" maxlength="200" placeholder="شكرًا لزيارتكم"></label>
 <div class="field" id="logo" style="grid-column:1/-1">شعار المحل (اللوجو) — يظهر على الإيصال وفي أعلى الشاشة{% if s.business == 'cafe' %} وعلى بطاقات QR{% endif %}
 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">{% if s.logo_svg %}<span style="width:64px;height:64px;display:inline-flex;border:1px solid var(--line,#ddd);border-radius:8px;padding:4px;background:#fff">{{ s.logo_svg|safe }}</span>{% endif %}
@@ -63,7 +64,7 @@
 <label class="field">اسم الطبيب<input name="name" required maxlength="100"></label><label class="field">التخصص<input name="specialty" maxlength="100"></label>
 <label class="field" style="max-width:150px">نسبته من الكشف %<input name="share_pct" value="0" inputmode="decimal" dir="ltr"></label><button>إضافة</button></form></section>
 <section class="card st-sec {% if status.services.done %}ok{% endif %}" id="services"><h2><span class="n">5</span> الخدمات والأسعار</h2>
-<div class="st-chips">{% for v in services %}<span>{{ v.item.name }} — {{ v.item.sale_price|floatformat:-2 }} ج{% if v.doctor %} (د. {{ v.doctor.name }}){% endif %}</span>{% empty %}<span class="muted">لا يوجد بعد</span>{% endfor %}</div>
+<div class="st-chips">{% for v in services %}<span>{{ v.item.name }} — {{ v.item.sale_price|floatformat:-2 }} {{ CUR }}{% if v.doctor %} (د. {{ v.doctor.name }}){% endif %}</span>{% empty %}<span class="muted">لا يوجد بعد</span>{% endfor %}</div>
 <form method="post" class="st-row">{% csrf_token %}<input type="hidden" name="op" value="service">
 <label class="field">الخدمة<input name="name" required maxlength="150" placeholder="كشف / استشارة / جلسة"></label><label class="field" style="max-width:150px">السعر<input name="price" required inputmode="decimal" dir="ltr"></label>
 <label class="field">الطبيب<select name="doctor"><option value="">أي طبيب</option>{% for d in doctors %}<option value="{{ d.pk|unlocalize }}">د. {{ d.name }}</option>{% endfor %}</select></label>
@@ -73,7 +74,7 @@
 
 {% if 'gaming' in mods %}
 <section class="card st-sec {% if status.stations.done %}ok{% endif %}" id="stations"><h2><span class="n">4</span> أجهزة الصالة</h2>
-<div class="st-chips">{% for t in stations %}<span>{{ t.name }} — {{ t.rate|floatformat:-2 }} ج/ساعة{% if t.rate_multi %} · مالتي {{ t.rate_multi|floatformat:-2 }}{% endif %}</span>{% empty %}<span class="muted">لا يوجد بعد</span>{% endfor %}</div>
+<div class="st-chips">{% for t in stations %}<span>{{ t.name }} — {{ t.rate|floatformat:-2 }} {{ CUR }}/ساعة{% if t.rate_multi %} · مالتي {{ t.rate_multi|floatformat:-2 }}{% endif %}</span>{% empty %}<span class="muted">لا يوجد بعد</span>{% endfor %}</div>
 <form method="post" class="st-row">{% csrf_token %}<input type="hidden" name="op" value="station">
 <label class="field">اسم الجهاز<input name="name" required maxlength="40" placeholder="جهاز 4"></label>
 <label class="field" style="max-width:150px">النوع<select name="kind"><option value="ps5">PS5</option><option value="ps4">PS4</option><option value="billiard">بلياردو</option><option value="pingpong">بينج بونج</option><option value="vr">VR</option><option value="pc">كمبيوتر</option><option value="other">آخر</option></select></label>
@@ -107,10 +108,23 @@
 {% if is_pharmacy %}<a class="btn light" href="{% url 'pharmacy' %}">💊 من مكتبة الأدوية</a>{% endif %}</div></section>
 <span id="reorder"></span>{% endif %}
 
-{% if status.stock %}<section class="card st-sec {% if status.stock.done %}ok{% endif %}" id="stock"><h2><span class="n">✦</span> رصيد البضاعة الموجودة عندك الآن</h2>
-<p class="muted why">{% if opening %}✔ سُجّل يوم {{ opening.date|date:"d/m/Y" }}: {{ opening.n|count:"صنف" }} بقيمة {{ opening.v|money }} ج.م — يمكنك إضافة ما نسيته (يُضاف فوق الرصيد).{% elif items %}اكتب لكل صنف الكمية الموجودة على الرف الآن وسعر شرائه — بالبحث أو بمسح الباركود{% if is_pharmacy %} (بالعلبة والشريط){% endif %}، أو ارفع ملف إكسل. يُسجَّل مرة واحدة رصيدًا أول المدة.{% else %}أضف الأصناف أولًا، ثم اكتب رصيدها هنا.{% endif %}</p>
+{% if status.stock %}<section class="card st-sec {% if status.stock.done %}ok{% endif %}" id="stock"><h2><span class="n">✦</span> رصيد البضاعة الموجودة لديك الآن</h2>
+<p class="muted why">{% if opening %}✔ سُجّل يوم {{ opening.date|date:"d/m/Y" }}: {{ opening.n|count:"صنف" }} بقيمة {{ opening.v|money }} {{ CUR }} — يمكنك إضافة ما نسيته (يُضاف فوق الرصيد).{% elif items %}اكتب لكل صنف الكمية الموجودة على الرف الآن وسعر شرائه — بالبحث أو بمسح الباركود{% if is_pharmacy %} (بالعلبة والشريط){% endif %}، أو ارفع ملف إكسل. يُسجَّل مرة واحدة رصيدًا أول المدة.{% else %}أضف الأصناف أولًا، ثم اكتب رصيدها هنا.{% endif %}</p>
 <div class="actions" style="justify-content:flex-start">{% if items %}<a class="btn" href="{% url 'start_stock' %}">📦 {% if opening %}أضف رصيدًا{% else %}أدخل الرصيد{% endif %}</a>{% endif %}<a class="btn light" href="{% url 'import_upload' 'opening' %}">⬆ من ملف إكسل</a></div>
 {% if not status.stock.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="stock"><button class="skip">لا توجد بضاعة الآن (سأسجّلها مع فواتير الشراء) — تخطٍّ</button></form>{% endif %}</section>{% endif %}
+
+{% if status.delivery %}<section class="card st-sec {% if status.delivery.done %}ok{% endif %}" id="delivery"><h2><span class="n">✦</span> 🛵 الدليفري <small class="muted">(اختياري)</small></h2>
+<p class="muted why">يسجّل الكاشير طلب الدليفري بعنوان العميل وموبايله، ويتابع الطلب في تبويب «🛵 الدليفري»: جديد ← قيد التحضير ← خرج مع عامل التوصيل ← تم التسليم.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="delivery"><label class="field check"><input type="checkbox" name="on" value="1"{% if dl.on or not status.delivery.done %} checked{% endif %}> أقبل طلبات دليفري</label>
+<div class="st-row"><label class="field" style="max-width:200px">رسم التوصيل ({{ CUR }})<input name="fee" inputmode="decimal" dir="ltr" value="{{ dl.fee|default:'0' }}"></label>
+<label class="field">عمال التوصيل (اسم في كل سطر)<textarea name="riders" rows="2" placeholder="محمد&#10;كريم">{{ dl_riders }}</textarea></label><button>حفظ</button></div></form>
+{% if not status.delivery.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="delivery"><button class="skip">لا يوجد دليفري — تخطٍّ</button></form>{% endif %}</section>{% endif %}
+
+{% if status.platforms %}<section class="card st-sec {% if status.platforms.done %}ok{% endif %}" id="platforms"><h2><span class="n">✦</span> ربط منصات الطلبات <small class="muted">(اختياري)</small></h2>
+<p class="muted why">إن كان محلك على منصة طلبات: الصق رابط صفحة محلك عليها ونسبة عمولتها — تظهر المنصة في الكاشير كنوع طلب، وتُتابع طلباتها في تبويب الدليفري، ويُحسب ما تدين لك به بعد العمولة.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="op" value="platforms">{% for c in plats %}<div class="st-row"><label class="field">{{ c.icon }} رابط محلك على {{ c.name }}<input name="{{ c.key }}_link" dir="ltr" value="{{ c.link }}" placeholder="https://www.{{ c.ph }}"></label>
+<label class="field" style="max-width:160px">عمولة {{ c.name }} %<input name="{{ c.key }}_pct" inputmode="decimal" dir="ltr" value="{{ c.pct }}"></label></div>{% endfor %}<button>حفظ</button></form>
+{% if not status.platforms.done %}<form method="post">{% csrf_token %}<input type="hidden" name="op" value="skip"><input type="hidden" name="key" value="platforms"><button class="skip">لست على أي منصة — تخطٍّ</button></form>{% endif %}</section>{% endif %}
 
 {% if 'purchases' in mods %}<section class="card st-sec {% if status.suppliers.done %}ok{% endif %}" id="suppliers"><h2><span class="n">✦</span> الموردين</h2>
 {% if suppliers %}<div class="st-chips">{% for n in suppliers %}<span>{{ n }}</span>{% endfor %}</div>{% endif %}

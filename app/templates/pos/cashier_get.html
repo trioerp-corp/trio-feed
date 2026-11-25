@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}تجهيز جهاز كاشير{% endblock %}
+{% block content %}
+<style>.cg{max-width:460px;margin:24px auto;padding:0 4px}.cg input[name=code]{width:100%;box-sizing:border-box;font-size:30px;letter-spacing:8px;text-align:center;direction:ltr;padding:10px}
+.cg ol{padding-inline-start:20px;line-height:1.9;margin:8px 0}.cg .btn{width:100%;font-size:18px;padding:12px}</style>
+<div class="cg"><div class="card" style="display:flex;flex-direction:column;gap:10px">
+<h1 style="margin:0">💻 تجهيز جهاز كاشير</h1>
+<p class="muted" style="margin:0">اكتب الرمز المكوّن من 6 أرقام الذي يظهر لصاحب المحل في «الإعدادات ← أجهزة الكاشير».</p>
+{% if error %}<div class="attn" role="alert" style="color:var(--bad)">{{ error }}</div>{% endif %}
+{% if locked %}<div class="attn" role="alert" style="color:var(--bad)">محاولات خاطئة كثيرة — انتظر 15 دقيقة ثم حاول مرة أخرى.</div>
+{% else %}<form method="post" style="display:flex;flex-direction:column;gap:10px">{% csrf_token %}
+<label for="code"><b>الرمز</b></label>
+<input id="code" name="code" inputmode="numeric" pattern="[0-9 ]{6,7}" maxlength="7" autocomplete="one-time-code" required autofocus aria-label="الرمز">
+<button class="btn" type="submit">⬇️ تنزيل ملف التجهيز</button></form>{% endif %}
+<ol class="muted"><li>بعد التنزيل افتح الملف من «التنزيلات» (إذا ظهر تحذير Windows اختر «مزيد من المعلومات» ثم «التشغيل على أي حال»).</li>
+<li>يُثبَّت البرنامج على هذا الجهاز ويظهر اختصار «Trio – الكاشير» على سطح المكتب.</li>
+<li>الرمز يُستخدم مرة واحدة فقط وينتهي بعد 15 دقيقة.</li></ol>
+</div></div>
+{% endblock %}

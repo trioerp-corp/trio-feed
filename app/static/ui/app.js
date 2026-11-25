@@ -57,14 +57,18 @@
     const img = /^image|\.(png|jpe?g|svg|webp)/i.test(inp.accept || '');
     const w = document.createElement('span'); w.className = 'filepick';
     const b = document.createElement('button'); b.type = 'button'; b.className = 'light';
-    b.textContent = img ? '🖼 اختر صورة' : '📁 اختر ملفًا';
+    const lg = document.documentElement.lang;  // static file: the i18n middleware never sees it
+    const T = { en: ['🖼 Choose an image', '📁 Choose a file', 'No image chosen yet', 'No file chosen yet'],
+      fr: ['🖼 Choisir une image', '📁 Choisir un fichier', 'Aucune image choisie', 'Aucun fichier choisi'] }[lg]
+      || ['🖼 اختر صورة', '📁 اختر ملفًا', 'لم تُختر صورة بعد', 'لم يُختر ملف بعد'];
+    b.textContent = img ? T[0] : T[1];
     const n = document.createElement('span'); n.className = 'fp-name';
-    const none = img ? 'لم تُختر صورة بعد' : 'لم يُختر ملف بعد';
+    const none = img ? T[2] : T[3];
     n.textContent = none;
     inp.parentNode.insertBefore(w, inp); w.append(inp, b, n);
     inp.classList.add('fp-in');
     b.addEventListener('click', (e) => { e.preventDefault(); inp.click(); });
-    inp.addEventListener('change', () => { n.textContent = [...(inp.files || [])].map((f) => f.name).join('، ') || none; });
+    inp.addEventListener('change', () => { n.textContent = [...(inp.files || [])].map((f) => f.name).join(lg === 'ar' || !T ? '، ' : ', ') || none; });
   }
 
   function initAll(root) { root.querySelectorAll('[data-lookup]').forEach(initLookup); root.querySelectorAll('input[type=file]').forEach(initFile); }

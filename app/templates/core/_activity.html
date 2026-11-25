@@ -11,14 +11,14 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const chips=a=>'<div class="chips">'+a.map(x=>'<span>'+esc(x)+'</span>').join('')+'</div>';
 async function look(){const q=i.value.trim();if(q===last)return;last=q;if(q.length<2){box.hidden=true;return}
 box.hidden=false;box.innerHTML='<span class="src">⏳ جارٍ تجهيز البرنامج على مقاس نشاطك…</span>';
-try{const r=await fetch('/trio/activity/?q='+encodeURIComponent(q),{credentials:'same-origin'});const d=await r.json();const p=d.profile;if(!p||q!==i.value.trim())return;
+try{const r=await fetch('/trio/activity/?q='+encodeURIComponent(q),{credentials:'same-origin'});const d=await r.json();const P=d.profile;if(!P||q!==i.value.trim())return;const p=d.i18n_view||P;
 let h='<b class="t">✔ '+esc(p.name)+'</b> <span class="src">('+(p.src==='lib'?'من مكتبة الأنشطة':p.src==='ai'?'جُهّز بالذكاء الاصطناعي':'تجهيز عام — يمكنك تعديله لاحقًا')+')</span>';
 h+='<div>التصنيفات:</div>'+chips(p.categories);
 if(p.fields.length)h+='<div>بيانات إضافية لكل '+esc(p.item)+':</div>'+chips(p.fields.map(f=>f.n));
 h+='<div>الوحدات: '+p.units.map(esc).join('، ')+'</div>';
 if(p.hall)h+='<div>🎮 صالة الأجهزة بالساعة + المنيو</div>';else if(p.clinic)h+='<div>🩺 ملفات المرضى والحجوزات والأطباء بنسبة والروشتة</div>';else if(p.recipes)h+='<div>☕ المنيو ومكونات كل صنف</div>';
 if(p.suggest_names.length)h+='<div class="src">مفيد لنشاطك: '+p.suggest_names.map(esc).join('، ')+'</div>';
-box.innerHTML=h;window.ACC_ACT=p;document.dispatchEvent(new CustomEvent('act:profile',{detail:p}));
+box.innerHTML=h;window.ACC_ACT=P;document.dispatchEvent(new CustomEvent('act:profile',{detail:P}));
 const r2=document.querySelector('input[name=business][value="'+p.base+'"]');if(r2&&!r2.checked){r2.checked=true;r2.dispatchEvent(new Event('change',{bubbles:true}))}
 }catch(e){box.innerHTML='<span class="src">تعذّر تجهيز المعاينة الآن — ستُضبط عند الحفظ.</span>'}}
 i.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(look,700)});i.addEventListener('change',look);if(i.value)look();})();</script>

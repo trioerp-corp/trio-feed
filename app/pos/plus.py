@@ -7,6 +7,7 @@
   applies it (catalog promos) and _promo_max accepts it, so it never counts as a manual discount.
 - loy: loyalty points per X EGP for a customer known by his phone; points are redeemed as an invoice discount that the
   server checks against the balance (what the balance does not cover is a manual discount under the usual cap)."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 import datetime as dt
 from decimal import ROUND_FLOOR, Decimal, InvalidOperation
 
@@ -30,7 +31,10 @@ def _s(x):
 
 
 def is_pharmacy(s):
-    return isinstance(s.activity, dict) and s.activity.get("key") == "pharmacy"
+    from core.activities import same_family
+
+    a = s.activity if isinstance(s.activity, dict) else {}
+    return a.get("key") == "pharmacy" and same_family(a.get("base"), s.business)  # 1.26: never one left over from an older business
 
 
 def cfg(s=None):
@@ -427,7 +431,7 @@ def loy_check(data, is_return, device=None, pk=None):
                 data.pop("loy", None)
             return Z, why
         clean["ok"], clean["unc"], clean["amt"] = True, True, str(seen)
-        return seen, f"نقاط غير مغطاة: استبدال {use} نقطة ({seen} ج) — {why}"
+        return seen, f"نقاط غير مغطاة: استبدال {use} نقطة ({_CUR.fmt(seen)}) — {why}"
 
     if not c["on"]:
         return uncovered("نقاط الولاء أُوقفت")
@@ -440,7 +444,7 @@ def loy_check(data, is_return, device=None, pk=None):
     if abs(want - amt) > Decimal("0.01"):
         return uncovered(f"قيمة النقاط {amt} ≠ {want}")
     clean["ok"] = True
-    return amt, f"استبدال {use} نقطة ({amt} ج)"
+    return amt, f"استبدال {use} نقطة ({_CUR.fmt(amt)})"
 
 
 def loy_earn(order, data):

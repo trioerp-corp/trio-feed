@@ -2,7 +2,7 @@
 {% block content %}
 <div class="page-head"><div><h1>🔎 ابحث عن أي شيء</h1><p class="muted" style="margin:0">صنف، عميل، مورد، مريض، رقم فاتورة، أو اسم صفحة (مثلًا: مصروف، جرد، حد الطلب).</p></div></div>
 <form method="get" style="display:flex;gap:8px;margin-bottom:18px"><label class="sr" for="fq" style="position:absolute;width:1px;height:1px;overflow:hidden">بحث</label>
-<input id="fq" name="q" value="{{ q }}" type="search" autofocus style="flex:1;font-size:17px;padding:12px 14px" placeholder="اكتب أي حاجة…"><button>بحث</button></form>
+<input id="fq" name="q" value="{{ q }}" type="search" autofocus style="flex:1;font-size:17px;padding:12px 14px" placeholder="اكتب أي شيء…"><button>بحث</button></form>
 {% if q and not groups %}<div class="card"><p style="margin:0">لا توجد نتائج لـ «{{ q }}». جرّب كلمات أقل، أو اسأل من زر «؟ اسأل».</p></div>{% endif %}
 {% for title, rows in groups %}<section style="margin-bottom:18px"><h2>{{ title }}</h2><div class="card" style="padding:4px 0">
 {% for r in rows %}<a href="{{ r.url }}" style="display:flex;gap:12px;align-items:center;padding:10px 16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line-2)"><span style="font-size:20px" aria-hidden="true">{{ r.icon }}</span><span><b>{{ r.title }}</b><br><small class="muted">{{ r.sub }}</small></span></a>{% endfor %}

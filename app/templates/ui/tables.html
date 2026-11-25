@@ -25,16 +25,16 @@
 
 <div class="card" style="margin-bottom:16px"><h2 style="margin:0 0 10px">🍽 الترابيزات ({{ tables|length }})</h2>
 {% if tables %}<div class="table-wrap"><table><thead><tr><th>الترابيزة</th><th>المكان</th><th>الكراسي</th><th>الحالة</th><th>QR</th></tr></thead><tbody>
-{% for t in tables %}<tr><td><b>{{ t.name }}</b></td><td>{{ t.area|default:"—" }}</td><td>{{ t.seats|default:"—" }}</td><td>{% if not t.active %}<span class="pill">متوقفة</span>{% else %}{% for tb in tabs %}{% if tb.table_id == t.pk %}<span class="pill warn">مشغولة — {{ tb.total }} ج</span>{% endif %}{% empty %}متاحة{% endfor %}{% endif %}</td>
+{% for t in tables %}<tr><td><b>{{ t.name }}</b></td><td>{{ t.area|default:"—" }}</td><td>{{ t.seats|default:"—" }}</td><td>{% if not t.active %}<span class="pill">متوقفة</span>{% else %}{% for tb in tabs %}{% if tb.table_id == t.pk %}<span class="pill warn">مشغولة — {{ tb.total }} {{ CUR }}</span>{% endif %}{% empty %}متاحة{% endfor %}{% endif %}</td>
 <td>{% if t.active %}<a href="{% url 'shop_tables_qr' %}?t={{ t.pk|unlocalize }}" target="_blank">🖨 اطبع</a>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
 {% else %}<p class="muted">لا توجد ترابيزات بعد — أضفها من الأعلى.</p>{% endif %}</div>
 
 {% if missing %}<div class="card" style="margin-bottom:16px;border-color:var(--bad,#c0392b)"><h2 style="margin:0 0 6px">⚠️ حسابات حوسبت ولم تصل فاتورتها ({{ missing|length }})</h2>
 <p class="muted" style="margin:0 0 8px">قُفلت هذه الترابيزات من الكاشير ومضى عليها أكثر من يوم دون أن تصل فاتورة البيع إلى البرنامج. شغّل جهاز الكاشير المذكور ليُزامن، أو راجع الكاشير.</p>
 <div class="table-wrap"><table><thead><tr><th>الترابيزة</th><th>رقم الفاتورة</th><th>المبلغ</th><th>الوقت</th><th>الكاشير</th></tr></thead><tbody>
-{% for m in missing %}<tr><td><b>{{ m.table }}</b></td><td dir="ltr">{{ m.uid }}</td><td>{% if m.amt %}{{ m.amt }} ج{% else %}—{% endif %}</td><td>{{ m.at|date:"d/m H:i" }}</td><td>{{ m.by|default:"—" }}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
+{% for m in missing %}<tr><td><b>{{ m.table }}</b></td><td dir="ltr">{{ m.uid }}</td><td>{% if m.amt %}{{ m.amt }} {{ CUR }}{% else %}—{% endif %}</td><td>{{ m.at|date:"d/m H:i" }}</td><td>{{ m.by|default:"—" }}</td></tr>{% endfor %}</tbody></table></div></div>{% endif %}
 <div class="card"><h2 style="margin:0 0 10px">🧾 الحسابات المفتوحة الآن</h2>
-{% for tb in tabs %}<details style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px"><summary><b>{{ tb.table.name }}</b> — {{ tb.total }} ج · فُتحت {{ tb.opened_at|time:"H:i" }}{% if tb.opened_by %} · {{ tb.opened_by }}{% endif %}</summary>
+{% for tb in tabs %}<details style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px"><summary><b>{{ tb.table.name }}</b> — {{ tb.total }} {{ CUR }} · فُتحت {{ tb.opened_at|time:"H:i" }}{% if tb.opened_by %} · {{ tb.opened_by }}{% endif %}</summary>
 <table style="margin-top:8px"><tbody>{% for l in tb.lines %}<tr><td>{{ l.qty }} × {{ l.name }}{% for a in l.adds %}<br><small>+ {{ a.name }}</small>{% endfor %}{% if l.note %}<br><small>📝 {{ l.note }}</small>{% endif %}{% if l.src == "qr" %} <span class="pill">📱 الزبون</span>{% endif %}</td><td>{{ l.price }}</td>
 <td><form method="post" onsubmit="return confirm('إلغاء هذا الصنف من الحساب؟')">{% csrf_token %}<input type="hidden" name="op" value="rm"><input type="hidden" name="tab" value="{{ tb.pk|unlocalize }}"><input type="hidden" name="line" value="{{ l.id|unlocalize }}"><button class="light" style="padding:4px 10px">✕ إلغاء</button></form></td></tr>{% endfor %}</tbody></table>
 {% if tb.log %}<p class="muted" style="font-size:13px">{% for g in tb.log %}{{ g.by }}: {{ g.what }}<br>{% endfor %}</p>{% endif %}

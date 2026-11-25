@@ -401,7 +401,21 @@ def current(s=None):
     from .models import CompanySettings
 
     s = s or CompanySettings.get()
-    return s.activity if isinstance(s.activity, dict) and s.activity.get("categories") else for_base(s.business)
+    act = s.activity if isinstance(s.activity, dict) and s.activity.get("categories") else None
+    if act and not same_family(act.get("base"), s.business):  # 1.26: an activity left over from an older business is ignored
+        act = None
+    return act or for_base(s.business)
+
+
+FAMILIES = (("market", "retail"), ("cafe", "gaming"), ("clinic",))
+
+
+def same_family(base, business):
+    """True when an activity made for `base` fits a shop whose business is `business` (no base = an old profile: fits)."""
+    if not base:
+        return True
+    business = business or "market"
+    return any(base in f and business in f for f in FAMILIES)
 
 
 APPAREL = ("clothes", "shoes")  # sizes and colours: no expiry dates, no cartons, no scale

@@ -190,6 +190,9 @@ def snapshot(now=None):
             pass
     if s.owner_whatsapp:
         data["wa"] = "".join(ch for ch in s.owner_whatsapp if ch.isdigit())
+    from . import currency as CUR
+
+    data["cur"] = CUR.sym(CUR.code(s), "ar")  # 1.26: the phone page shows the shop's currency (Arabic page)
     return data
 
 

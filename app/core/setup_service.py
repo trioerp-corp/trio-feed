@@ -77,6 +77,7 @@ def clean(data):
     business = data.get("business") if data.get("business") in M.BUSINESS else (act["base"] if act else "market")
     if CompanySettings.get().setup_done:  # 1.23: the business type is fixed once the shop is set up — it never changes
         business = CompanySettings.get().business
+        act = A.current(CompanySettings.get())  # 1.26: and so is the activity (chosen in the first setup only)
     act = act or (CompanySettings.get().activity if CompanySettings.get().business == business and CompanySettings.get().activity else A.for_base(business))
     plan = data.get("plan") if data.get("plan") in M.PLANS else "pro"
     mods = [m for m in data.get("modules", []) if m in M.MODULES]
@@ -145,7 +146,13 @@ def clean(data):
                 raise ValidationError("اكتب سعر الساعة لكل نوع أجهزة")
             stations.append(dict(kind=g.get("kind") or "ps5", prefix=(g.get("prefix") or "جهاز").strip()[:30], count=n, rate=rate,
                                  rate_multi=dec(g.get("rate_multi"), "0") or None))
-    return dict(name=name[:200], name_en=(data.get("name_en") or name).strip()[:200], phone=(data.get("phone") or "").strip()[:60],
+    from . import currency as CUR
+
+    if CompanySettings.get().setup_done and not data.get("currency"):
+        currency = CUR.code()  # a re-run of the developer setup keeps the shop's currency unless it names one
+    else:
+        currency = CUR.clean(data.get("currency"), CUR.default_code(data.get("phone") or ""))
+    return dict(currency=currency, name=name[:200], name_en=(data.get("name_en") or name).strip()[:200], phone=(data.get("phone") or "").strip()[:60],
                 address=(data.get("address") or "").strip()[:200], business=business, plan=plan, modules=mods, activity=act,
                 devices=min(max(int(data.get("devices") or 1), 1), 10),
                 vat=bool(data.get("vat")), vat_rate=dec(data.get("vat_rate") or "14"), users=users, stations=stations, branches=branches,
@@ -216,6 +223,7 @@ def apply(data, logo=None, logo_name=""):
         call_command("seed_shop", config=str(f), allow_existing=True, stdout=io.StringIO())
         s = CompanySettings.get()
     s.name, s.name_en, s.phone, s.address = cfg["name"], cfg["name_en"], cfg["phone"], cfg["address"]
+    s.base_currency = cfg.get("currency") or s.base_currency  # 1.26: the shop's currency (display only, core/currency.py)
     s.business, s.plan, s.modules, s.activity = cfg["business"], cfg["plan"], cfg["modules"], cfg["activity"]
     if not first:
         from .activities import add_categories

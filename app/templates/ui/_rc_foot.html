@@ -1,0 +1,4 @@
+{# 1.26 receipt footer: policy, InstaPay QR (when set), thanks line, «بواسطة تريو». #}
+{% if rc_policy %}<hr><div class="pol">{{ rc_policy }}</div>{% endif %}
+{% if rc_qr and rc_due %}<hr><div class="iq"><b>ادفع بـ InstaPay</b><div class="iqr">{{ rc_qr|safe }}</div>{% if rc_qr_label %}<div class="sub" dir="ltr">{{ rc_qr_label }}</div>{% endif %}</div>{% endif %}
+<hr><div class="thx">{{ rc_foot_line|default:rc_footer }}</div><div class="pw">بواسطة تريو · 01228827915</div>

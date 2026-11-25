@@ -1,5 +1,6 @@
 """One search box for everything (1.21): an item, a customer / supplier, a patient, an invoice number, or a page of the
 program («مصروف», «جرد», «حد الطلب») — for people who do not know where things live. Only what the user may open."""
+from core import currency as _CUR  # 1.26: the shop's currency (display only)
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
@@ -59,7 +60,7 @@ def find(request):
                 words &= Q(name__icontains=w) | Q(extra__icontains=w) | Q(aliases__icontains=w)
             items = Item.objects.filter(Q(name__icontains=q) | Q(code=q) | Q(barcode=q) | Q(aliases__icontains=q) | words, active=True).exclude(code="0")[:12]
             groups.append(("الأصناف", [dict(title=i.name, sub=f"كود {i.code} · الرصيد {i.qty_on_hand.normalize():f} {i.unit}"
-                                          + (f" · {i.sale_price} ج" if i.sale_price is not None else ""),
+                                          + (f" · {_CUR.fmt(i.sale_price)}" if i.sale_price is not None else ""),
                                           url=f"/ui/shop/items/?q={i.code}", icon="📦") for i in items]))
         if u.has_perm("treasury.view_voucher") or u.is_superuser:
             from ledger.models import Partner
@@ -72,7 +73,7 @@ def find(request):
                                                                url=f"/ui/shop/statement/?partner={p.pk}&account={acc[p.kind]}", icon="👤") for p in ps]))
             if q.replace("-", "").isalnum() and any(ch.isdigit() for ch in q):
                 os_ = Order.objects.filter(Q(uid=q) | Q(uid__endswith="-" + q.zfill(7)) | Q(uid__endswith=q)).order_by("-id")[:8]
-                groups.append(("الفواتير", [dict(title=f"فاتورة {o.uid}", sub=f"{o.created_at_device:%d/%m/%Y %H:%M} · {o.total} ج"
+                groups.append(("الفواتير", [dict(title=f"فاتورة {o.uid}", sub=f"{o.created_at_device:%d/%m/%Y %H:%M} · {_CUR.fmt(o.total)}"
                                                  + (" · ملغية" if o.cancelled else ""), url=f"/ui/shop/sales/{o.pk}/", icon="🧾") for o in os_]))
         if "clinic" in mods:
             from django.apps import apps

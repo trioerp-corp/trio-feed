@@ -114,7 +114,7 @@ def _cash_guard(request):
     if not can_see_cash(request.user):
         from django.core.exceptions import PermissionDenied
 
-        raise PermissionDenied("الخزينة للمدير بس")
+        raise PermissionDenied("الخزينة للمدير فقط")
 
 
 def _my_branch(request):

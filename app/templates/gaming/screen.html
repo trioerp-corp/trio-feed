@@ -64,7 +64,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
 <header class="top">
   <div class="brand">{% if s.logo_svg %}<span class="lg">{{ s.logo_svg|safe }}</span>{% endif %}<span>{{ s.name }}</span></div>
   <span class="pill" id="shiftPill">الوردية: …</span>
-  <span class="pill">اليوم: <b id="todayTotal">0</b> ج · <span id="todayCount">0</span> فاتورة</span>
+  <span class="pill">اليوم: <b id="todayTotal">0</b> {{ CUR }} · <span id="todayCount">0</span> فاتورة</span>
   <span class="sp"></span>
   <span id="clock">--:--</span>
   <button class="ghost" id="takeBtn" title="طلب بوفيه بدون جهاز">🥤 تيك أواي</button>
@@ -107,7 +107,7 @@ label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu
   <div class="lines" id="mpLines"></div>
   <div id="mpPre" style="border:1px dashed #3B4F86;border-radius:12px;padding:10px"><label class="f">🎟 رصيد باقة — موبايل العميل<input id="mpPhone" inputmode="tel" dir="ltr" maxlength="40" placeholder="اختياري"></label>
   <label style="display:none;gap:8px;align-items:center;margin-top:6px" id="mpUseL"><input type="checkbox" id="mpUse" style="width:auto;min-height:0"> <span id="mpPreInfo"></span></label><div class="muted" id="mpPreMsg" style="font-size:13px"></div></div>
-  <label class="f">خصم (جنيه)<input id="mpDisc" inputmode="decimal" value="0" dir="ltr"></label>
+  <label class="f">خصم ({{ CUR }})<input id="mpDisc" inputmode="decimal" value="0" dir="ltr"></label>
   <div class="tot"><span>المطلوب</span><span id="mpTotal">0</span></div>
   <label class="f">مدفوع ببطاقة / محفظة<input id="mpCard" inputmode="decimal" value="0" dir="ltr"></label>
   <label class="f">آجل على عميل<select id="mpCust"><option value="">— لا يوجد —</option></select></label>
@@ -190,7 +190,7 @@ function render(){
     b.className='st '+(s?(late?'busy late':'busy'):'free')+(soon?' soon':'')+(sel&&s&&sel===s.id?' sel':'');
     const mode=s&&st.rate_multi?(s.mode==='multi'?'مالتي':'فردي'):'';
     b.innerHTML=`<div class="nm"><span>${escapeHtml(st.name)}</span><span class="ic">${ICON[st.kind]||'⭐'}</span></div>
-      <div class="k">${escapeHtml(st.kind_name)} · ${fmt(st.rate)} ج/س${st.rate_multi?` · مالتي ${fmt(st.rate_multi)}`:''}</div>
+      <div class="k">${escapeHtml(st.kind_name)} · ${fmt(st.rate)} {{ CUR }}/س${st.rate_multi?` · مالتي ${fmt(st.rate_multi)}`:''}</div>
       ${s?(s.planned?`<div class="timer down" data-t="${s.opened_at}" data-p="${s.planned}">${tleft(s)}</div>`:`<div class="timer" data-t="${s.opened_at}">${hms(elapsed(s.opened_at))}</div>`)+`
         <div class="stt">${[mode,s.customer?escapeHtml(s.customer):'',s.planned?`محجوز ${s.planned} د`:'',late?'انتهى الوقت!':''].filter(Boolean).join(' · ')}</div>
         <div class="amt">الحساب <b>${fmt(s.total)}</b>${Number(s.items_amount)?` <span class="k">(طلبات ${fmt(s.items_amount)})</span>`:''}</div>
@@ -223,8 +223,8 @@ function openStart(st){
   if(!S.shift){afterShift=()=>openStart(st);$('shiftBtn').click();return}  // no «open the shift first»: open it, then go on
   starting=st;$('moTitle').textContent=`تشغيل ${st.name}`;
   // one price (billiard, ping-pong…): no lone «فردي» choice — just the hour price
-  $('moMode').innerHTML=st.rate_multi?`<label><input type="radio" name="mode" value="single" checked><b>فردي</b><br>${fmt(st.rate)} ج/س</label><label><input type="radio" name="mode" value="multi"><b>مالتي</b><br>${fmt(st.rate_multi)} ج/س</label>`
-    :`<p style="margin:0;grid-column:1/-1">سعر الساعة <b>${fmt(st.rate)} ج</b></p>`;
+  $('moMode').innerHTML=st.rate_multi?`<label><input type="radio" name="mode" value="single" checked><b>فردي</b><br>${fmt(st.rate)} {{ CUR }}/س</label><label><input type="radio" name="mode" value="multi"><b>مالتي</b><br>${fmt(st.rate_multi)} {{ CUR }}/س</label>`
+    :`<p style="margin:0;grid-column:1/-1">سعر الساعة <b>${fmt(st.rate)} {{ CUR }}</b></p>`;
   $('moCust').value='';$('moPlan').value='';show('mOpen');
 }
 $('moGo').onclick=async()=>{const mode=(document.querySelector('#moMode input:checked')||{}).value||'single';
@@ -244,7 +244,7 @@ async function bookState(st){try{await api('book_state',{booking:booking.id,stat
 $('mbNo').onclick=()=>bookState('noshow');$('mbCancel').onclick=()=>{if(confirmBox('إلغاء الحجز؟'))bookState('cancelled')};
 // packages: sold at the hall, the balance goes on the customer's mobile number
 $('pkgBtn').onclick=()=>{if(S&&!S.shift){afterShift=()=>$('pkgBtn').click();$('shiftBtn').click();return}
-  $('pkSel').innerHTML=S.packages.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} — ${fmt(p.price)} ج (${escapeHtml(p.kind)})</option>`).join('');
+  $('pkSel').innerHTML=S.packages.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} — ${fmt(p.price)} {{ CUR }} (${escapeHtml(p.kind)})</option>`).join('');
   $('pkPhone').value='';$('pkName').value='';$('pkInfo').textContent='';show('mPkg')};
 $('pkPhone').addEventListener('change',async()=>{const v=$('pkPhone').value.trim();if(v.length<8)return;
   try{const r=await fetch('/ui/play/api/balance/?phone='+encodeURIComponent(v),{credentials:'same-origin'});const j=await r.json();
@@ -257,7 +257,7 @@ function closeSide(){sel=null;$('side').classList.remove('on');render()}
 $('sdClose').onclick=closeSide;
 function fillSide(s){
   const st=s._st;$('sdName').textContent=st?st.name:'تيك أواي #'+(s.no||s.id)+(s.customer?' '+s.customer:'');
-  $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} ج`:'طلب بدون جهاز';
+  $('sdInfo').textContent=st?`من ${new Date(new Date(s.opened_at).getTime()).toLocaleTimeString('ar-EG-u-nu-latn',{hour:'2-digit',minute:'2-digit'})} · ${s.billed} دقيقة محسوبة · وقت ${fmt(s.time_amount)} {{ CUR }}`:'طلب بدون جهاز';
   const m=$('sdModes');m.innerHTML='';
   if(st&&st.rate_multi){['single','multi'].forEach(md=>{const b=document.createElement('button');b.className=s.mode===md?'':'ghost';b.textContent=md==='multi'?`مالتي ${fmt(st.rate_multi)}`:`فردي ${fmt(st.rate)}`;
     b.onclick=async()=>{if(s.mode===md)return;try{await api('switch',{session:s.id,mode:md});await load();toast('تغيّر السعر بدءًا من الآن')}catch(e){}};m.appendChild(b)})}
@@ -269,7 +269,7 @@ function fillSide(s){
     d.innerHTML=`<div class="t">${escapeHtml(i.name)}<small>${fmt(i.qty)} × ${fmt(i.price)} = ${fmt(i.total)}</small></div><button class="ghost" data-q="-1" aria-label="ناقص">−</button><button class="ghost" data-q="1" aria-label="زيادة">+</button>`;
     d.querySelectorAll('button').forEach(b=>b.onclick=async()=>{try{await api('add',{session:s.id,code:i.code,qty:b.dataset.q});await load()}catch(e){}});L.appendChild(d)});
   if(!s.items.length) L.innerHTML+='<div class="muted" style="font-size:13px">لا توجد طلبات — اختر من المنيو في الأسفل</div>';
-  $('sdTotal').textContent=fmt(s.total)+' ج';
+  $('sdTotal').textContent=fmt(s.total)+' {{ CUR }}';
   $('moveBtn').style.display=st?'':'none';
 }
 function renderCats(){const c=$('cats');c.innerHTML='';const cats=[...new Set(catalog.map(i=>i.cat))];
@@ -292,7 +292,7 @@ $('mcGo').onclick=()=>{const o=$('mcOwnerU').value.trim();if(!o||!$('mcOwnerP').
 function confirmBox(m){return window.confirm(m)}
 // move
 $('moveBtn').onclick=()=>{const free=S.stations.filter(x=>!x.session);if(!free.length){toast('لا يوجد جهاز متاح',true);return}
-  $('mvTo').innerHTML=free.map(x=>`<option value="${x.id}">${escapeHtml(x.name)} — ${fmt(x.rate)} ج/س</option>`).join('');show('mMove')};
+  $('mvTo').innerHTML=free.map(x=>`<option value="${x.id}">${escapeHtml(x.name)} — ${fmt(x.rate)} {{ CUR }}/س</option>`).join('');show('mMove')};
 $('mvGo').onclick=async()=>{try{await api('switch',{session:sel,station:+$('mvTo').value});hide('mMove');await load();toast('نُقل ✔')}catch(e){}};
 // pay
 let paying=null;
@@ -311,13 +311,13 @@ async function preRun(v){pre=null;$('mpUseL').style.display='none';$('mpPreMsg')
   try{const r=await fetch(`/ui/play/api/balance/?phone=${encodeURIComponent(v)}&session=${paying.id}`,{credentials:'same-origin'});const j=await r.json();
     if(!j.found){$('mpPreMsg').textContent='لا يوجد عميل باقة بهذا الرقم';payCalc();return}
     if(!j.use){$('mpPreMsg').textContent=`${j.name}: لا يوجد رصيد لهذا الجهاز`;payCalc();return}
-    pre=j;$('mpPreInfo').textContent=`خصم ${j.use} دقيقة من رصيد ${j.name} (${j.balance} دقيقة) = ${fmt(j.value)} ج`;$('mpUseL').style.display='flex';$('mpUse').checked=true}catch(e){}payCalc()}
+    pre=j;$('mpPreInfo').textContent=`خصم ${j.use} دقيقة من رصيد ${j.name} (${j.balance} دقيقة) = ${fmt(j.value)} {{ CUR }}`;$('mpUseL').style.display='flex';$('mpUse').checked=true}catch(e){}payCalc()}
 $('mpPhone').addEventListener('change',preCheck);$('mpUse').addEventListener('change',()=>payCalc());
 function preVal(){return pre&&$('mpUse').checked?Number(pre.value):0}
 function gross(){return paying?Number(paying.total)+Number(paying.discount||0)-preVal():0}
 function needOwner(){return !S.owner&&Number($('mpDisc').value||0)>Math.round(gross()*Number(S.max_disc||0))/100+0.001}
 function due(){return Math.max(0,gross()-Number($('mpDisc').value||0))}
-function payCalc(){const o=needOwner();$('mpOwner').style.display=o?'':'none';if(o)$('mpOwnerMsg').textContent=`الخصم أكبر من ${fmt(S.max_disc)}% من الحساب — يكتب صاحب المحل اسمه وكلمة سره للموافقة`;const d=due();$('mpTotal').textContent=fmt(d)+' ج';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
+function payCalc(){const o=needOwner();$('mpOwner').style.display=o?'':'none';if(o)$('mpOwnerMsg').textContent=`الخصم أكبر من ${fmt(S.max_disc)}% من الحساب — يكتب صاحب المحل اسمه وكلمة سره للموافقة`;const d=due();$('mpTotal').textContent=fmt(d)+' {{ CUR }}';const cash=d-Number($('mpCard').value||0)-Number($('mpCredit').value||0);
   const g=Number($('mpGiven').value||0);$('mpChange').textContent=`نقدًا مطلوب ${fmt(cash)}`+(g?` · الباقي للعميل ${fmt(g-cash)}`:'');}
 ['mpDisc','mpCard','mpGiven','mpCredit'].forEach(id=>$(id).addEventListener('input',payCalc));
 $('mpCust').onchange=()=>{const v=$('mpCust').value;$('mpCreditL').style.display=v?'':'none';$('mpNew').style.display=v==='new'?'flex':'none';if(v)$('mpCredit').value=fmt(due()).replace(/,/g,'');if(v==='new')setTimeout(()=>$('mpNewName').focus(),30);payCalc()};
@@ -326,7 +326,7 @@ $('mpGo').onclick=async()=>{const btn=$('mpGo');btn.disabled=true;if($('mpPhone'
   if(cv==='new'){if(!$('mpNewName').value.trim()){toast('اكتب اسم العميل الجديد',true);btn.disabled=false;$('mpNewName').focus();return}body.customer_new={name:$('mpNewName').value.trim(),phone:$('mpNewPhone').value.trim()}}
   if(needOwner()){body.owner=$('mpOwnerU').value.trim();body.password=$('mpOwnerP').value}
   try{const j=await api('close',body);if(cv==='new')load(true);
-    hide('mPay');sel=null;$('side').classList.remove('on');window.open(j.receipt,'_blank','width=420,height=640');await load();toast(`أُغلق — ${fmt(j.total)} ج ✔`);lowShow(j.low)}catch(e){}finally{btn.disabled=false}};
+    hide('mPay');sel=null;$('side').classList.remove('on');window.open(j.receipt,'_blank','width=420,height=640');await load();toast(`أُغلق — ${fmt(j.total)} {{ CUR }} ✔`);lowShow(j.low)}catch(e){}finally{btn.disabled=false}};
 // shift
 $('shiftBtn').onclick=()=>{const open=!!S.shift;$('msTitle').textContent=open?'قفل الوردية':'فتح وردية';
   $('msL').firstChild.textContent=open?'النقدية الموجودة في الدرج الآن (عُدّها)':'رصيد الدرج في البداية';$('msVal').value='0';

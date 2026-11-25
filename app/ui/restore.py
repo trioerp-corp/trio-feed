@@ -41,7 +41,7 @@ def restore_page(request):
                 f = request.FILES.get("file")
                 if f:
                     if f.size > MAX_UPLOAD:
-                        raise ValidationError("الملف كبير أوي")
+                        raise ValidationError("الملف كبير جدًا")
                     blob = f.read()
                     ctx["src"] = f.name
                 elif request.POST.get("path") and who == "owner":

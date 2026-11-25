@@ -1,13 +1,17 @@
 {% load gg %}<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>إيصال باقة</title>
-<style>body{font-family:Tahoma,Arial,sans-serif;margin:0;background:#fff;color:#000}.r{width:72mm;margin:0 auto;padding:4mm 0;font-size:12px}
-.c{text-align:center}.logo{width:22mm;height:22mm;margin:0 auto}table{width:100%;border-collapse:collapse}td{padding:2px 0}td.n{text-align:left;direction:ltr;white-space:nowrap}
-hr{border:0;border-top:1px dashed #000;margin:6px 0}.big{font-size:16px;font-weight:700}.no{text-align:center;margin-top:10px}@media print{.no{display:none}}</style></head>
-<body onload="setTimeout(()=>window.print(),200)"><div class="r">
-<div class="c">{% if s.logo_svg %}<div class="logo">{{ s.logo_svg|safe }}</div>{% endif %}<b style="font-size:15px">{{ s.name }}</b>{% if s.phone %}<br><span dir="ltr">{{ s.phone }}</span>{% endif %}</div><hr>
-<div class="c big">إيصال باقة ساعات</div>
-<table>{% if mv.order.shift_seq %}<tr><td>فاتورة رقم</td><td class="n">{{ mv.order.shift_seq }}</td></tr>{% endif %}<tr><td>التاريخ</td><td class="n">{{ mv.at|date:"d/m/Y H:i" }}</td></tr><tr><td>العميل</td><td>{{ mv.customer.name }}</td></tr><tr><td>الموبايل</td><td class="n">{{ mv.customer.phone }}</td></tr></table><hr>
-<table><tr><td>{{ mv.package.name }}<br><small>{{ mv.minutes|hm }} — {{ mv.package.kind_name }}</small></td><td class="n">{{ mv.amount|floatformat:2 }}</td></tr>
-<tr class="big"><td>المدفوع</td><td class="n">{{ mv.amount|floatformat:2 }}</td></tr>{% if mv.order.paid_card %}<tr><td>بطاقة / محفظة</td><td class="n">{{ mv.order.paid_card|floatformat:2 }}</td></tr>{% endif %}</table><hr>
-<div class="c">رصيدك الآن: <b>{{ left|hm }}</b><br><small>يُخصم من الرصيد عند قفل حساب اللعب بذكر رقم الموبايل</small></div><hr>
-<div class="c">شكرًا لزيارتكم<br><small>Trio · 01228827915</small></div>
-<div class="no"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div></div></body></html>
+<style>body{margin:0;background:#fff;color:#000}.page{width:{% if rc_w == "58" %}48mm{% else %}72mm{% endif %};margin:0 auto;padding:3mm 0}
+{% include "ui/_rc_css.html" %}
+.noprint{text-align:center;margin-top:10px}@media print{.noprint{display:none}}@page{margin:2mm}</style></head>
+<body onload="setTimeout(()=>window.print(),200)"><div class="page"><div class="rc{% if rc_w == '58' %} w58{% endif %}">
+{% include "ui/_rc_head.html" %}
+<div class="meta">{% if mv.order.shift_seq %}<div><b>رقم الفاتورة</b><span><b>{{ mv.order.shift_seq }}</b></span></div>{% endif %}
+<div><b>التاريخ</b><span>{{ mv.at|date:"d/m/Y" }}</span></div><div><b>الوقت</b><span>{{ mv.at|date:"H:i" }}</span></div>
+<div class="w"><b>العميل</b><span>{{ mv.customer.name }}</span></div><div class="w"><b>الموبايل</b><span><bdi dir="ltr">{{ mv.customer.phone }}</bdi></span></div></div><hr>
+<table class="it"><thead><tr><th>البيان</th><th class="n">القيمة</th></tr></thead><tbody>
+<tr><td><span class="nmx">{{ mv.package.name }}</span><span class="qp">{{ mv.minutes|hm }} — {{ mv.package.kind_name }}</span></td><td class="n">{{ mv.amount|money }}</td></tr></tbody></table>
+<div class="tot"><span>المدفوع</span><span>{{ mv.amount|cur }}</span></div>
+{% if mv.order.paid_card %}<div class="row2"><span>بالبطاقة / المحفظة</span><span>{{ mv.order.paid_card|money }}</span></div>{% endif %}
+{% if mv.order.paid_insta %}<div class="row2"><span>بـ InstaPay</span><span>{{ mv.order.paid_insta|money }}</span></div>{% endif %}
+<hr><div class="c">رصيدك الآن: <b>{{ left|hm }}</b><div class="sub">يُخصم من الرصيد عند قفل حساب اللعب بذكر رقم الموبايل</div></div>
+{% include "ui/_rc_foot.html" %}
+</div><div class="noprint"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div></div></body></html>

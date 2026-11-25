@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.custom.Middleware",  # the custom pack's static files come before the program's (1.26)
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -63,6 +64,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "core.i18n_mw.I18nMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.middleware.CurrentUserMiddleware",
     "core.middleware.SetupGuard",
@@ -81,8 +83,10 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
         "OPTIONS": {
+            # a client's custom pack (data/custom/templates, core/custom.py) is searched first, then the program's templates
+            "loaders": [("django.template.loaders.cached.Loader", ["core.custom.TemplateLoader", "django.template.loaders.filesystem.Loader",
+                                                                   "django.template.loaders.app_directories.Loader"])],
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -125,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "ar"
-LANGUAGES = [("ar", "العربية"), ("en", "English")]
+LANGUAGES = [("ar", "العربية"), ("en", "English"), ("fr", "Français")]
 TIME_ZONE = "Africa/Cairo"
 USE_I18N = True
 USE_TZ = True

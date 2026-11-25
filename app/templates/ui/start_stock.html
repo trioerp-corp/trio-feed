@@ -10,11 +10,11 @@
 .os-g small{display:block;color:var(--muted);font-size:11px}
 @media (max-width:700px){.os-t tr{grid-template-columns:1fr 1fr!important}.os-t td.nm,.os-t td.gr,.os-t td.gq{grid-column:1/-1}.os-t td.gq button{width:100%;white-space:normal}.os-t .qx input{width:100%}.os-t .c,.os-t .x{width:auto}.os-g input{width:52px}.os-gw{overflow-x:auto;max-width:calc(100vw - 48px)}}
 </style>
-<div class="page-head"><div><h1>📦 رصيد البضاعة الموجودة عندك الآن</h1>
+<div class="page-head"><div><h1>📦 رصيد البضاعة الموجودة لديك الآن</h1>
 <p class="muted" style="margin:0">اكتب لكل صنف الكمية الموجودة على الرف الآن وسعر شرائه — ويُسجَّل كله مرة واحدة رصيدًا أول المدة بقيمته في الحسابات. الأصناف التي لا تكتب لها كمية تبقى كما هي.</p></div>
 <div class="actions"><a class="btn light" href="{% url 'import_upload' 'opening' %}">⬆ من ملف إكسل</a><a class="btn light" href="{% url 'start' %}#stock">⬅ تجهيز المحل</a></div></div>
 
-{% if first %}<div class="msg" style="margin-bottom:12px">✔ سُجّل رصيد أول المدة يوم {{ first.date|date:"d/m/Y" }} ({{ first.n|count:"صنف" }} بقيمة {{ first.v|money }} ج.م). <b>ما تكتبه الآن يُضاف فوق الرصيد الحالي</b> رصيدًا افتتاحيًا إضافيًا (لبضاعة نسيتها أو وصلت قبل أول فاتورة شراء). لتصحيح رصيد خاطئ استخدم <a href="{% url 'shop_count' %}">الجرد</a>.</div>{% endif %}
+{% if first %}<div class="msg" style="margin-bottom:12px">✔ سُجّل رصيد أول المدة يوم {{ first.date|date:"d/m/Y" }} ({{ first.n|count:"صنف" }} بقيمة {{ first.v|money }} {{ CUR }}). <b>ما تكتبه الآن يُضاف فوق الرصيد الحالي</b> رصيدًا افتتاحيًا إضافيًا (لبضاعة نسيتها أو وصلت قبل أول فاتورة شراء). لتصحيح رصيد خاطئ استخدم <a href="{% url 'shop_count' %}">الجرد</a>.</div>{% endif %}
 
 {% if not data %}<div class="card"><h2>لا توجد أصناف بعد</h2><p class="muted">أضف أصنافك أولًا (أو ارفعها من إكسل مع كمياتها مرة واحدة)، ثم ارجع إلى هنا.</p>
 <div class="actions" style="justify-content:flex-start"><a class="btn" href="{% url 'import_upload' 'items' %}">⬆ ارفع الأصناف من إكسل</a><a class="btn light" href="{% url 'shop_items' %}">أضف صنفًا يدويًا</a></div></div>
@@ -28,7 +28,7 @@
 <p class="muted" style="margin:0;font-size:13px" id="osHint">{% if pharmacy %}الأدوية التي تُباع بالشريط: اكتب عدد العلب، والشرائط الفكة إن وُجدت، وسعر شراء العلبة.{% elif apparel %}الأصناف بمقاسات وألوان: اضغط «المقاسات والألوان» واكتب كمية كل مقاس ولون، وسعر شراء القطعة مرة واحدة.{% else %}سعر الشراء مكتوب مسبقًا إن كان معروفًا — عدّله إن لزم.{% endif %}</p></div>
 <div class="table-wrap"><table class="stack os-t"><thead><tr><th>الصنف</th><th class="n">الرصيد الحالي</th><th>الكمية الموجودة الآن</th><th>سعر الشراء</th>{% if expiry %}<th>الصلاحية (اختياري)</th>{% endif %}<th class="n">القيمة</th></tr></thead><tbody id="osB"></tbody></table></div>
 <p class="muted" id="osMore" style="display:none"></p>
-<div class="os-sum"><span><span id="osN">لم تكتب أي كمية بعد</span> — القيمة <b id="osV">0.00</b> ج.م</span><button type="submit" id="osGo">✔ تسجيل الرصيد</button></div></form>
+<div class="os-sum"><span><span id="osN">لم تكتب أي كمية بعد</span> — القيمة <b id="osV">0.00</b> {{ CUR }}</span><button type="submit" id="osGo">✔ تسجيل الرصيد</button></div></form>
 {{ data|json_script:"os-data" }}{{ typed|json_script:"os-typed" }}
 <script>
 (function(){const D=JSON.parse(document.getElementById('os-data').textContent),X={{ expiry|yesno:"true,false" }},$=id=>document.getElementById(id);
@@ -74,7 +74,7 @@ const v=V[r.id];if(!v)continue;const q=num(v.q),l=num(v.l);if(isNaN(q)||isNaN(l)
 if(bad.length){e.preventDefault();alert('اكتب الأرقام فقط في: '+bad.slice(0,5).join('، '));return}
 if(noc.length){e.preventDefault();alert('اكتب سعر الشراء لـ: '+noc.slice(0,5).join('، ')+(noc.length>5?' و'+(noc.length-5)+' غيرها':''));return}
 if(!out.length){e.preventDefault();alert('لم تكتب أي كمية — اكتب كمية صنف واحد على الأقل');return}
-if(!confirm('تسجيل رصيد '+out.length+' سطر بقيمة '+$('osV').textContent+' ج.م؟'{% if first %}+'\nيُضاف فوق الرصيد الحالي.'{% endif %})){e.preventDefault();return}
+if(!confirm('تسجيل رصيد '+out.length+' سطر بقيمة '+$('osV').textContent+' {{ CUR }}؟'{% if first %}+'\nيُضاف فوق الرصيد الحالي.'{% endif %})){e.preventDefault();return}
 $('osRows').value=JSON.stringify(out);$('osGo').disabled=true;$('osGo').textContent='جارٍ التسجيل…'};
 draw();if(window.matchMedia&&matchMedia('(pointer:fine)').matches)$('osScan').focus()})();
 </script>

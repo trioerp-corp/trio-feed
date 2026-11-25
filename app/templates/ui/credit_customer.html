@@ -17,7 +17,7 @@ tr.late td{background:rgba(198,40,40,.06)}.cc-grid{display:grid;gap:14px;grid-te
 {% if not has_phone %}<p class="muted noprint" style="margin:-6px 0 10px">لا يوجد رقم موبايل مصري صحيح للعميل — أضفه من «✏ تعديل» في قائمة العملاء ليفتح واتساب على محادثته مباشرة.</p>{% endif %}
 
 <section class="grid" style="margin-bottom:16px">
-<div class="card kpi hero"><span class="k">إجمالي المستحق عليه</span><span class="v">{% if d.owed < 0 %}{{ d.owed|neg|money }}{% else %}{{ d.owed|money }}{% endif %}</span><span class="k">{% if d.owed < 0 %}رصيد له لدينا{% elif not d.owed %}مسدَّد بالكامل ✔{% else %}جنيه{% endif %}</span></div>
+<div class="card kpi hero"><span class="k">إجمالي المستحق عليه</span><span class="v">{% if d.owed < 0 %}{{ d.owed|neg|money }}{% else %}{{ d.owed|money }}{% endif %}</span><span class="k">{% if d.owed < 0 %}رصيد له لدينا{% elif not d.owed %}مسدَّد بالكامل ✔{% else %}{{ CUR }}{% endif %}</span></div>
 <div class="card kpi{% if d.late %} red{% endif %}"><span class="k">متأخر السداد</span><span class="v"{% if d.late %} style="color:var(--bad,#C62828)"{% endif %}>{{ d.late|money }}</span><span class="k">{% if d.late %}أقدمه منذ {{ d.late_days }} يوم{% else %}لا توجد متأخرات{% endif %}</span></div>
 <div class="card kpi"><span class="k">المستحق القادم</span><span class="v">{% if d.next %}{{ d.next.remaining|money }}{% else %}—{% endif %}</span><span class="k">{% if d.next %}يوم {{ d.next.due|date:"d/m/Y" }}{% else %}لا يوجد{% endif %}</span></div>
 </section>

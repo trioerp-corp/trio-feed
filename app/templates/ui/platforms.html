@@ -1,16 +1,16 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}منصات التوصيل{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>🛵 منصات التوصيل (طلبات · المنيوز)</h1><p class="muted" style="margin:0">اختياري: سجّل طلبات المنصات من شاشة الكاشير بطريقة دفع «طلبات» أو «المنيوز» — لا تدخل الدرج، بل تُسجَّل مستحقة على المنصة بعد خصم عمولتها، حتى تحوّل لك المبلغ.</p></div>
+<div class="page-head"><div><h1>🛵 منصات التوصيل</h1><p class="muted" style="margin:0">اختياري: سجّل طلبات المنصات من شاشة الكاشير باختيار المنصة عند الدفع — لا تدخل الدرج، بل تُسجَّل مستحقة على المنصة بعد خصم عمولتها، حتى تحوّل لك المبلغ.</p></div>
 <div class="actions"><a class="btn light" href="/pos/" target="_blank">🧾 شاشة الكاشير</a></div></div>
 
 <div class="card" style="margin-bottom:16px;border-inline-start:5px solid #C9A227"><b>ℹ️ لماذا تُسجَّل الطلبات يدويًا؟</b>
-<p style="margin:6px 0 0">استيراد طلبات «طلبات» و«المنيوز» تلقائيًا إلى البرنامج يحتاج إلى واجهة الشركاء البرمجية (Partner API) الخاصة بكل منصة، وهي تُمنح بعقد تكامل مع المنصة نفسها وغير متاحة للمحلات حاليًا. لذلك يسجّل الكاشير طلب المنصة عند وصوله (نفس الأصناف والأسعار) ويختار المنصة عند الدفع — ويظهر كل شيء في هذا التقرير. عند إتاحة الربط من المنصات سيُضاف تلقائيًا.</p></div>
+<p style="margin:6px 0 0">استيراد طلبات المنصات تلقائيًا إلى البرنامج يحتاج إلى واجهة الشركاء البرمجية (Partner API) الخاصة بكل منصة، وهي تُمنح بعقد تكامل مع المنصة نفسها وغير متاحة للمحلات حاليًا. لذلك يسجّل الكاشير طلب المنصة عند وصوله (نفس الأصناف والأسعار) ويختار المنصة عند الدفع — ويظهر كل شيء في هذا التقرير. عند إتاحة الربط من المنصات سيُضاف تلقائيًا.</p></div>
 
 <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));align-items:start;margin-bottom:16px">
 {% if owner %}<form method="post" class="card">{% csrf_token %}<input type="hidden" name="op" value="cfg"><h2 style="margin:0 0 10px">⚙️ الإعدادات</h2>
 {% for c in cfg %}<fieldset style="border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 10px"><legend><b>{{ c.icon }} {{ c.name }}</b></legend>
 <label class="field check"><input type="checkbox" name="{{ c.key }}_on" value="1"{% if c.on %} checked{% endif %}> أستقبل طلبات من {{ c.name }}</label>
-<label class="field">رابط محلك على {{ c.name }}<input name="{{ c.key }}_link" dir="ltr" value="{{ c.link }}" placeholder="https://www.{% if c.key == 'talabat' %}talabat.com/egypt/...{% else %}elmenus.com/cairo/...{% endif %}"></label>
+<label class="field">رابط محلك على {{ c.name }}<input name="{{ c.key }}_link" dir="ltr" value="{{ c.link }}" placeholder="https://www.{{ c.ph }}"></label>
 <label class="field">عمولة المنصة %<input name="{{ c.key }}_pct" inputmode="decimal" dir="ltr" value="{{ c.pct|unlocalize }}"></label></fieldset>{% endfor %}
 <p class="muted" style="font-size:12.5px;margin:0 0 8px">العمولة تُحسب من إجمالي الطلب وتُسجَّل مصروفًا «عمولات منصات التوصيل» لحظة البيع.</p><button>حفظ</button></form>{% endif %}
 

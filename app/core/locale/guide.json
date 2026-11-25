@@ -1,0 +1,1606 @@
+{
+"سوبر ماركت / بقالة": {
+"en": "Supermarket / grocery",
+"fr": "Supermarché / épicerie"
+},
+"صيدلية": {
+"en": "Pharmacy",
+"fr": "Pharmacie"
+},
+"محل ملابس وأحذية": {
+"en": "Clothing and shoe shop",
+"fr": "Boutique de vêtements et chaussures"
+},
+"محلات التجزئة": {
+"en": "Retail shops",
+"fr": "Commerces de détail"
+},
+"كافيه / مطعم": {
+"en": "Café / restaurant",
+"fr": "Café / restaurant"
+},
+"صالة بلايستيشن / بلياردو": {
+"en": "PlayStation / billiards hall",
+"fr": "Salle PlayStation / billard"
+},
+"عيادة / مركز طبي": {
+"en": "Clinic / medical centre",
+"fr": "Cabinet / centre médical"
+},
+"أولًا: التجهيز لأول مرة": {
+"en": "Part one: first-time setup",
+"fr": "Partie 1 : la première installation"
+},
+"معالج التثبيت": {
+"en": "The setup wizard",
+"fr": "L’assistant d’installation"
+},
+"عند تشغيل البرنامج أول مرة على جهاز جديد يفتح المعالج من تلقاء نفسه.": {
+"en": "When the program runs for the first time on a new computer, the wizard opens by itself.",
+"fr": "Au premier lancement du logiciel sur un nouvel ordinateur, l’assistant s’ouvre de lui-même."
+},
+"اكتب نشاطك بكلماتك (مثل: «سوبر ماركت» أو «صيدلية» أو «كافيه») فيختار البرنامج المقاس المناسب لك: التصنيفات والوحدات والصفحات.": {
+"en": "Type your business in your own words (for example “supermarket”, “pharmacy” or “café”) and the program picks the right fit for you: categories, units and pages.",
+"fr": "Décrivez votre activité avec vos propres mots (par exemple « supermarché », « pharmacie » ou « café ») et le logiciel choisit la configuration adaptée : catégories, unités et pages."
+},
+"اكتب اسم المحل وهاتفه وعنوانه، ثم أجب عن الأسئلة القصيرة: عدد أجهزة الكاشير، وهل لديك أكثر من فرع، وهل نضيف أصنافًا نموذجية.": {
+"en": "Enter the shop’s name, phone and address, then answer the short questions: the number of cashier devices, whether you have more than one branch, and whether to add sample items.",
+"fr": "Saisissez le nom, le téléphone et l’adresse du commerce, puis répondez aux courtes questions : le nombre de caisses, si vous avez plusieurs succursales et s’il faut ajouter des articles d’exemple."
+},
+"أنشئ حسابك: اسمك، واسم الدخول بالإنجليزية، وكلمة سر لا تقل عن 8 أحرف. هذا هو حساب صاحب المحل وله كل الصلاحيات.": {
+"en": "Create your account: your name, a login name in English and a password of at least 8 characters. This is the shop owner’s account and it has every permission.",
+"fr": "Créez votre compte : votre nom, un identifiant en lettres latines et un mot de passe d’au moins 8 caractères. C’est le compte du propriétaire du commerce, il a toutes les autorisations."
+},
+"راجع ملخص ما سيُجهَّز ثم اضغط «🚀 ابدأ». يدخل البرنامج مباشرة على صفحة «تجهيز المحل».": {
+"en": "Review the summary of what will be set up, then press “🚀 Start”. The program opens directly on the “Shop setup” page.",
+"fr": "Vérifiez le récapitulatif de ce qui sera préparé, puis appuyez sur « 🚀 Démarrer ». Le logiciel s’ouvre directement sur la page « Préparation du commerce »."
+},
+"نوع النشاط يُثبَّت بعد التجهيز، فاكتبه بدقة. أما التصنيفات والأسماء فتعدّلها في أي وقت.": {
+"en": "The type of business is fixed after setup, so enter it carefully. Categories and names can be changed at any time.",
+"fr": "Le type d’activité est fixé après l’installation : saisissez-le avec soin. Les catégories et les noms se modifient à tout moment."
+},
+"«تجهيز المحل» — صفحة واحدة لكل شيء": {
+"en": "“Shop setup” — one page for everything",
+"fr": "« Préparation du commerce » — une seule page pour tout"
+},
+"تعرض الصفحة في أعلاها كل ما يحتاجه البرنامج: ما اكتمل عليه ✔، وما بقي عليه ○.": {
+"en": "The top of the page shows everything the program needs: what is complete ✔ and what is still missing ○.",
+"fr": "Le haut de la page affiche tout ce dont le logiciel a besoin : ce qui est terminé ✔ et ce qui reste à faire ○."
+},
+"بيانات المحل: الاسم والهاتف والعنوان وآخر سطر في الإيصال، و«شعار المحل» (صورة PNG أو JPG أو SVG حتى 2 ميجابايت) يظهر على الإيصال وفي أعلى الشاشة.": {
+"en": "Shop details: name, phone, address and the last line of the receipt, plus the “Shop logo” (a PNG, JPG or SVG image up to 2 MB) shown on the receipt and at the top of the screen.",
+"fr": "Informations du commerce : nom, téléphone, adresse et dernière ligne du ticket, ainsi que le « Logo du commerce » (image PNG, JPG ou SVG jusqu’à 2 Mo) affiché sur le ticket et en haut de l’écran."
+},
+"الملف الضريبي: النظام الضريبي، والتسجيل في القيمة المضافة ونسبتها، وهل أسعار البيع شاملة الضريبة. إن لم تكن متأكدًا فاسأل محاسبك.": {
+"en": "Tax profile: the tax system, VAT registration and its rate, and whether sale prices include tax. If you are not sure, ask your accountant.",
+"fr": "Profil fiscal : le régime fiscal, l’immatriculation à la TVA et son taux, et si les prix de vente sont TTC. En cas de doute, demandez à votre comptable."
+},
+"طرق الدفع والدرج: علّم على ما تقبله فقط (المحافظ أو الحساب البنكي)، واكتب النقدية الموجودة في الدرج اليوم.": {
+"en": "Payment methods and drawer: tick only what you accept (wallets or bank account), and enter the cash in the drawer today.",
+"fr": "Moyens de paiement et tiroir : cochez uniquement ce que vous acceptez (portefeuilles ou compte bancaire) et saisissez l’espèce présente dans le tiroir aujourd’hui."
+},
+"InstaPay: الصق رابط الدفع من تطبيق InstaPay (يبدأ بـ https://ipn.eg) أو عنوانك مثل name@instapay — فيظهر رمز QR للدفع على الإيصال وشاشة العميل.": {
+"en": "InstaPay: paste the payment link from the InstaPay app (it starts with https://ipn.eg) or your address such as name@instapay — a QR code for payment then appears on the receipt and the customer screen.",
+"fr": "InstaPay : collez le lien de paiement de l’application InstaPay (il commence par https://ipn.eg) ou votre adresse comme name@instapay — un code QR de paiement apparaît alors sur le ticket et l’écran client."
+},
+"الأصناف وأسعارها، و«حد الطلب» لكل صنف، والموردون، وعملاء الآجل.": {
+"en": "Items and their prices, the “Reorder level” of each item, suppliers and credit customers.",
+"fr": "Les articles et leurs prix, le « Seuil de réapprovisionnement » de chaque article, les fournisseurs et les clients à crédit."
+},
+"أي جزء غير جاهز الآن اضغط عليه «تخطٍّ»؛ ويبقى ظاهرًا في الرئيسية حتى تكمله.": {
+"en": "Press “Skip” on any part that is not ready yet; it stays visible on the home page until you complete it.",
+"fr": "Appuyez sur « Passer » pour toute partie qui n’est pas prête ; elle reste visible sur l’accueil jusqu’à ce que vous la terminiez."
+},
+"هذا الدليل يُنزَّل تلقائيًا أول مرة تفتح فيها «تجهيز المحل»، وتجده دائمًا في القائمة: «📘 دليل الاستخدام».": {
+"en": "This guide downloads automatically the first time you open “Shop setup”, and it is always in the menu: “📘 User guide”.",
+"fr": "Ce guide se télécharge automatiquement la première fois que vous ouvrez « Préparation du commerce », et il est toujours dans le menu : « 📘 Guide d’utilisation »."
+},
+"رصيد البضاعة الموجودة لديك (أول مرة)": {
+"en": "Opening stock (the first time)",
+"fr": "Stock d’ouverture (la première fois)"
+},
+"من «تجهيز المحل»: «📦 أدخل رصيد البضاعة الموجودة لديك الآن» — مرة واحدة عند بدء العمل بالبرنامج.": {
+"en": "From “Shop setup”: “📦 Enter the stock you have now” — once, when you start working with the program.",
+"fr": "Depuis « Préparation du commerce » : « 📦 Saisir le stock dont vous disposez » — une seule fois, au démarrage avec le logiciel."
+},
+"ابحث عن الصنف بالاسم أو امسح الباركود، واكتب الكمية الموجودة وتكلفتها.": {
+"en": "Search for the item by name or scan its barcode, then enter the quantity on hand and its cost.",
+"fr": "Cherchez l’article par son nom ou scannez son code-barres, puis saisissez la quantité présente et son coût."
+},
+"«حفظ الرصيد»: يُسجَّل كله في قيد واحد كبضاعة أول المدة. وإن رجعت للصفحة لاحقًا تُضاف الكميات الجديدة ولا يتكرر ما سُجّل.": {
+"en": "“Save stock”: everything is recorded in a single entry as opening stock. If you come back to the page later, the new quantities are added and nothing already recorded is repeated.",
+"fr": "« Enregistrer le stock » : tout est enregistré en une seule écriture de stock initial. Si vous revenez plus tard, les nouvelles quantités s’ajoutent et rien n’est enregistré deux fois."
+},
+"البضاعة التي تشتريها بعد ذلك تُدخلها بفاتورة مشتريات، لا من هذه الصفحة.": {
+"en": "Goods you buy after that are entered with a purchase invoice, not from this page.",
+"fr": "Les marchandises achetées ensuite se saisissent par une facture d’achat, pas depuis cette page."
+},
+"الشاشة الرئيسية والقائمة والبحث": {
+"en": "Home screen, menu and search",
+"fr": "Écran d’accueil, menu et recherche"
+},
+"القائمة على اليمين ثابتة ومقسّمة إلى مجموعات، ولا تعرض إلا ما يخص نشاطك وصلاحيات المستخدم.": {
+"en": "The menu on the side is fixed and grouped, and it shows only what concerns your business and the user’s permissions.",
+"fr": "Le menu latéral est fixe et organisé en groupes ; il n’affiche que ce qui concerne votre activité et les autorisations de l’utilisateur."
+},
+"خانة البحث في الأعلى تجد أي شيء: صنفًا، أو عميلًا، أو رقم فاتورة، أو اسم صفحة مثل «مصروف» أو «جرد».": {
+"en": "The search box at the top finds anything: an item, a customer, an invoice number or a page name such as “Expense” or “Stock count”.",
+"fr": "La zone de recherche en haut trouve tout : un article, un client, un numéro de facture ou le nom d’une page comme « Dépense » ou « Inventaire »."
+},
+"زر «؟ اسأل» في أسفل الشاشة: اكتب سؤالك فيوصلك البرنامج إلى الصفحة المناسبة.": {
+"en": "The “? Ask” button at the bottom of the screen: type your question and the program takes you to the right page.",
+"fr": "Le bouton « ? Demander » en bas de l’écran : posez votre question et le logiciel vous mène à la bonne page."
+},
+"على الهاتف أو الشاشة الصغيرة: اضغط ☰ لفتح القائمة.": {
+"en": "On a phone or a small screen: press ☰ to open the menu.",
+"fr": "Sur un téléphone ou un petit écran : appuyez sur ☰ pour ouvrir le menu."
+},
+"المستخدمون والصلاحيات": {
+"en": "Users and permissions",
+"fr": "Utilisateurs et autorisations"
+},
+"من «الإعدادات ← المستخدمين» اضغط «+ مستخدم»، واكتب الاسم واسم الدخول واختر الدور؛ فيعطيك البرنامج كلمة سر مؤقتة.": {
+"en": "From “Settings → Users” press “+ User”, enter the name and login name and choose the role; the program gives you a temporary password.",
+"fr": "Dans « Paramètres → Utilisateurs », appuyez sur « + Utilisateur », saisissez le nom et l’identifiant et choisissez le rôle ; le logiciel vous donne un mot de passe temporaire."
+},
+"الأدوار الجاهزة: صاحب النشاط / المدير العام، ومدير فرع، وكاشير، وأمين مخزن، ومحاسب. أو «مسمى خاص» تختار صلاحياته بنفسك.": {
+"en": "Ready-made roles: business owner / general manager, branch manager, cashier, storekeeper and accountant — or a “Custom title” whose permissions you choose yourself.",
+"fr": "Rôles prêts à l’emploi : propriétaire / directeur général, responsable de succursale, caissier, magasinier et comptable — ou un « Intitulé personnalisé » dont vous choisissez vous-même les autorisations."
+},
+"يغيّر المستخدم كلمة السر المؤقتة عند أول دخول. نسيها؟ «كلمة سر مؤقتة» بجوار اسمه. ولإيقاف مستخدم اضغط «إيقاف»؛ فلا يُحذف سجلّه.": {
+"en": "The user changes the temporary password at the first login. Forgot it? “Temporary password” next to their name. To suspend a user press “Suspend”; their record is not deleted.",
+"fr": "L’utilisateur change le mot de passe temporaire à la première connexion. Oublié ? « Mot de passe temporaire » à côté de son nom. Pour suspendre un utilisateur, appuyez sur « Suspendre » ; son historique n’est pas supprimé."
+},
+"الكاشير لا يلغي ولا يعدّل فاتورة بنفسه — إلا إن سمحت بذلك من «الإعدادات ← الإلغاء والتعديل».": {
+"en": "A cashier cannot cancel or edit an invoice on their own — unless you allow it in “Settings → Cancelling and editing”.",
+"fr": "Un caissier ne peut ni annuler ni modifier une facture de lui-même — sauf si vous l’autorisez dans « Paramètres → Annulation et modification »."
+},
+"أجهزة الكاشير وربطها": {
+"en": "Cashier devices and linking them",
+"fr": "Les caisses et leur association"
+},
+"كل جهاز كاشير له اسم ومفتاح في «الإعدادات ← أجهزة الكاشير». جهاز جديد: «+ جهاز».": {
+"en": "Every cashier device has a name and a key in “Settings → Cashier devices”. A new device: “+ Device”.",
+"fr": "Chaque caisse a un nom et une clé dans « Paramètres → Caisses ». Nouvelle caisse : « + Caisse »."
+},
+"على جهاز الكاشير افتح «لوحة البيع (الكاشير)». إن كنت داخلًا بحساب صاحب المحل فاختر الجهاز واضغط «🔗 اربط هذا الجهاز» — دون نسخ أي مفتاح.": {
+"en": "On the cashier computer open “Sales screen (cashier)”. If you are signed in as the shop owner, choose the device and press “🔗 Link this device” — no key to copy.",
+"fr": "Sur l’ordinateur de caisse, ouvrez « Écran de vente (caisse) ». Si vous êtes connecté en tant que propriétaire, choisissez la caisse et appuyez sur « 🔗 Associer cet appareil » — sans copier de clé."
+},
+"أو الصق مفتاح الجهاز يدويًا في «لصق مفتاح الجهاز يدويًا» ثم «حفظ». يُربط كل جهاز مرة واحدة فقط.": {
+"en": "Or paste the device key by hand in “Paste the device key manually”, then “Save”. Each device is linked only once.",
+"fr": "Ou collez la clé de la caisse dans « Coller la clé de l’appareil manuellement », puis « Enregistrer ». Chaque caisse n’est associée qu’une seule fois."
+},
+"تعمل لوحة البيع حتى إن انقطع الاتصال: تُحفظ الفواتير على الجهاز وتُرسل تلقائيًا فور عودته («0 في الانتظار» أعلى الشاشة).": {
+"en": "The sales screen keeps working even when the connection drops: invoices are saved on the device and sent automatically as soon as it returns (“0 waiting” at the top of the screen).",
+"fr": "L’écran de vente fonctionne même sans connexion : les factures sont gardées sur l’appareil et envoyées automatiquement dès son retour (« 0 en attente » en haut de l’écran)."
+},
+"إن غيّرت الجهاز أو أردت ربطه بمفتاح آخر فاضغط «🔑 مفتاح الجهاز» أعلى لوحة البيع.": {
+"en": "If you change the device or want to link it with another key, press “🔑 Device key” at the top of the sales screen.",
+"fr": "Si vous changez d’appareil ou voulez l’associer à une autre clé, appuyez sur « 🔑 Clé de l’appareil » en haut de l’écran de vente."
+},
+"ثانيًا: الأصناف والمشتريات": {
+"en": "Part two: items and purchases",
+"fr": "Partie 2 : articles et achats"
+},
+"الأصناف والأسعار": {
+"en": "Items and prices",
+"fr": "Articles et prix"
+},
+"«+ صنف جديد»: الاسم والباركود والتصنيف والوحدة وسعر البيع. إن تركت الكود فارغًا أنشأه البرنامج.": {
+"en": "“+ New item”: name, barcode, category, unit and sale price. If you leave the code empty, the program creates one.",
+"fr": "« + Nouvel article » : nom, code-barres, catégorie, unité et prix de vente. Si vous laissez le code vide, le logiciel en crée un."
+},
+"الباركود: ضع المؤشر في خانته وامسح العلبة بالقارئ. صنف بلا باركود؟ يطبع له البرنامج ملصقًا بكود خاص.": {
+"en": "Barcode: put the cursor in its box and scan the pack with the reader. An item without a barcode? The program prints a label with its own code.",
+"fr": "Code-barres : placez le curseur dans sa case et scannez l’emballage avec le lecteur. Un article sans code-barres ? Le logiciel imprime une étiquette avec un code propre."
+},
+"«حد الطلب» إجباري: أقل كمية تريد إعادة الشراء عندها (اكتب 0 إن لم ترد تنبيهًا). عند الوصول إليه يظهر تنبيه على شاشة البيع.": {
+"en": "The “Reorder level” is required: the lowest quantity at which you want to buy again (enter 0 if you want no alert). When it is reached, an alert appears on the sales screen.",
+"fr": "Le « Seuil de réapprovisionnement » est obligatoire : la quantité minimale à laquelle vous voulez racheter (saisissez 0 pour ne pas être alerté). Une fois atteint, une alerte apparaît sur l’écran de vente."
+},
+"عدّل الأسعار مباشرة في الجدول ثم «💾 حفظ الكل». الصنف الذي بيع من قبل يُوقف بدلًا من حذفه حفاظًا على الحسابات.": {
+"en": "Edit prices directly in the table, then “💾 Save all”. An item that has already been sold is deactivated instead of deleted, to keep the accounts right.",
+"fr": "Modifiez les prix directement dans le tableau, puis « 💾 Tout enregistrer ». Un article déjà vendu est désactivé au lieu d’être supprimé, pour préserver les comptes."
+},
+"الرفع من إكسل": {
+"en": "Uploading from Excel",
+"fr": "Import depuis Excel"
+},
+"«⬆ رفع / تعديل الأصناف من إكسل»: نزّل الملف المنسّق (فيه شرح ومثال وبياناتك الحالية)، واملأه، ثم ارفعه.": {
+"en": "“⬆ Upload / edit items from Excel”: download the formatted file (with explanations, an example and your current data), fill it in, then upload it.",
+"fr": "« ⬆ Importer / modifier les articles depuis Excel » : téléchargez le fichier formaté (avec explications, exemple et vos données actuelles), remplissez-le, puis importez-le."
+},
+"يعرض البرنامج مراجعة قبل الحفظ وأي خطأ برقم السطر، ثم يحفظ الكل مرة واحدة. إن رفعت الملف مرة أخرى يُحدَّث ولا يتكرر.": {
+"en": "The program shows a review before saving, with any error and its line number, then saves everything at once. Uploading the file again updates it without duplicates.",
+"fr": "Le logiciel affiche une vérification avant l’enregistrement, avec chaque erreur et son numéro de ligne, puis enregistre tout en une fois. Réimporter le fichier le met à jour sans doublons."
+},
+"الترتيب المقترح لمحل جديد: الأصناف بكمياتها ← العملاء والموردون بأرصدتهم ← الموظفون.": {
+"en": "Suggested order for a new shop: items with their quantities → customers and suppliers with their balances → employees.",
+"fr": "Ordre conseillé pour un nouveau commerce : les articles avec leurs quantités → les clients et fournisseurs avec leurs soldes → les employés."
+},
+"الوحدات: كرتونة وعلبة": {
+"en": "Units: carton and pack",
+"fr": "Unités : carton et boîte"
+},
+"«الوحدات (كرتونة / علبة)»: اختر الصنف واكتب اسم الوحدة ومعاملها (كرتونة = 12 علبة مثلًا) وباركودها وسعر بيعها.": {
+"en": "“Units (carton / pack)”: choose the item and enter the unit name, its factor (carton = 12 packs, for example), its barcode and its sale price.",
+"fr": "« Unités (carton / boîte) » : choisissez l’article et saisissez le nom de l’unité, son coefficient (carton = 12 boîtes, par exemple), son code-barres et son prix de vente."
+},
+"يُحسب المخزن دائمًا بالوحدة الأساسية، ويبيع الكاشير بالوحدة الكبيرة إذا مسح باركودها.": {
+"en": "Stock is always counted in the base unit, and the cashier sells the large unit when scanning its barcode.",
+"fr": "Le stock est toujours compté dans l’unité de base, et la caisse vend la grande unité en scannant son code-barres."
+},
+"ملصقات الباركود والأسعار": {
+"en": "Barcode and price labels",
+"fr": "Étiquettes code-barres et prix"
+},
+"«🏷 ملصقات الباركود»: اختر الأصناف وعدد الملصقات من كل صنف، ثم «تجهيز الملصقات» و«🖨 طباعة».": {
+"en": "“🏷 Barcode labels”: choose the items and the number of labels for each, then “Prepare labels” and “🖨 Print”.",
+"fr": "« 🏷 Étiquettes code-barres » : choisissez les articles et le nombre d’étiquettes pour chacun, puis « Préparer les étiquettes » et « 🖨 Imprimer »."
+},
+"الملصق 50×30 مم على طابعة ملصقات، أو على ورق A4 عادي.": {
+"en": "The label is 50×30 mm on a label printer, or on plain A4 paper.",
+"fr": "L’étiquette mesure 50×30 mm sur une imprimante d’étiquettes, ou sur du papier A4 ordinaire."
+},
+"بعد فاتورة مشتريات: «ملصقات فاتورة المشتريات» تجهّز عدد كل صنف بالكمية المستلمة.": {
+"en": "After a purchase invoice: “Purchase invoice labels” prepares the count of each item from the received quantity.",
+"fr": "Après une facture d’achat : « Étiquettes de la facture d’achat » prépare le nombre de chaque article selon la quantité reçue."
+},
+"العروض والتخفيض الموسمي": {
+"en": "Offers and seasonal discounts",
+"fr": "Offres et soldes de saison"
+},
+"«🎁 العروض والخصومات»: خصم على صنف، أو «اشترِ كذا وخذ كذا هدية»، بين تاريخين. يطبّقه الكاشير تلقائيًا ويظهر على الإيصال.": {
+"en": "“🎁 Offers and discounts”: a discount on an item, or “buy this and get that free”, between two dates. The cashier applies it automatically and it appears on the receipt.",
+"fr": "« 🎁 Offres et remises » : une remise sur un article, ou « achetez ceci, recevez cela gratuitement », entre deux dates. La caisse l’applique automatiquement et elle figure sur le ticket."
+},
+"«🏷 التخفيض الموسمي والراكد»: نسبة خصم على تصنيفات أو أصناف مختارة لمدة محددة — ولا يُحسب خصمًا يدويًا على الكاشير.": {
+"en": "“🏷 Seasonal and slow-moving discount”: a discount rate on chosen categories or items for a set period — and it is not counted as a manual discount at the till.",
+"fr": "« 🏷 Soldes de saison et articles dormants » : un taux de remise sur des catégories ou articles choisis pour une durée définie — non compté comme remise manuelle en caisse."
+},
+"أسفل الصفحة نفسها: «الأصناف الراكدة» التي لها رصيد ولم تُبع منذ مدة تختارها، لتعمل عليها عرضًا.": {
+"en": "At the bottom of the same page: the “Slow-moving items” that have stock but have not sold for a period you choose, so you can put them on offer.",
+"fr": "En bas de la même page : les « Articles dormants », en stock mais non vendus depuis la durée choisie, pour leur faire une offre."
+},
+"فاتورة المشتريات": {
+"en": "The purchase invoice",
+"fr": "La facture d’achat"
+},
+"«المشتريات» ← «فاتورة مشتريات»: اختر المورد (أو اكتب اسم مورد جديد) ورقم فاتورته وتاريخها.": {
+"en": "“Purchases” → “Purchase invoice”: choose the supplier (or type a new supplier’s name), their invoice number and its date.",
+"fr": "« Achats » → « Facture d’achat » : choisissez le fournisseur (ou saisissez le nom d’un nouveau fournisseur), le numéro de sa facture et sa date."
+},
+"لكل سطر: الصنف و«الوحدة» كما في فاتورة المورد (علبة، كرتونة…) — يحوّلها البرنامج إلى وحدة البيع ويحسب تكلفة الوحدة الصغيرة.": {
+"en": "For each line: the item and the “Unit” as on the supplier’s invoice (pack, carton…) — the program converts it to the sales unit and works out the cost of the small unit.",
+"fr": "Pour chaque ligne : l’article et l’« Unité » comme sur la facture du fournisseur (boîte, carton…) — le logiciel la convertit en unité de vente et calcule le coût de la petite unité."
+},
+"«سعر الجمهور والخصم والبونص»: اكتب سعر الجمهور ونسبة الخصم فيُحسب سعر الشراء؛ والبونص كمية مجانية تدخل المخزن وتوزَّع عليها التكلفة.": {
+"en": "“Retail price, discount and bonus”: enter the retail price and the discount rate and the purchase price is calculated; the bonus is a free quantity that enters stock and shares the cost.",
+"fr": "« Prix public, remise et bonus » : saisissez le prix public et le taux de remise, le prix d’achat est calculé ; le bonus est une quantité gratuite qui entre en stock et partage le coût."
+},
+"صنف تشتريه لأول مرة؟ اكتب اسمه في السطر ويُضاف عند الحفظ. «تاريخ الانتهاء» اختياري — وإن كُتب نبّهك البرنامج قبله.": {
+"en": "An item you are buying for the first time? Type its name on the line and it is added on saving. The “Expiry date” is optional — if entered, the program alerts you before it.",
+"fr": "Un article acheté pour la première fois ? Saisissez son nom sur la ligne, il est ajouté à l’enregistrement. La « Date de péremption » est facultative — si elle est saisie, le logiciel vous prévient avant."
+},
+"أسفل الفاتورة: «خصم على الفاتورة» و«ضريبة القيمة المضافة %» — تُسجَّل ضريبة مدخلات إن كنت مسجّلًا، أو تُضاف إلى التكلفة إن لم تكن.": {
+"en": "At the bottom of the invoice: “Invoice discount” and “VAT %” — recorded as input tax if you are registered, or added to the cost if you are not.",
+"fr": "En bas de la facture : « Remise sur facture » et « TVA % » — enregistrée en TVA déductible si vous êtes assujetti, sinon ajoutée au coût."
+},
+"الدفع: آجل على المورد، أو نقدًا بالكامل، أو جزء نقدًا والباقي آجل، أو «من صاحب المحل (من جيبه)» فلا يُخصم شيء من الدرج ويُسجَّل المبلغ لك.": {
+"en": "Payment: on credit with the supplier, fully in cash, part in cash and the rest on credit, or “From the owner (own pocket)” so nothing is taken from the drawer and the amount is recorded in your favour.",
+"fr": "Paiement : à crédit chez le fournisseur, entièrement en espèces, une partie en espèces et le reste à crédit, ou « Par le propriétaire (de sa poche) » : rien ne sort du tiroir et le montant est porté à votre compte."
+},
+"البرنامج يراجع الفاتورة قبل الحفظ وينبّهك إن بدا سعر أو كمية غير منطقي.": {
+"en": "The program reviews the invoice before saving and warns you if a price or quantity looks unreasonable.",
+"fr": "Le logiciel vérifie la facture avant l’enregistrement et vous prévient si un prix ou une quantité semble anormal."
+},
+"مرتجع للمورد والهالك": {
+"en": "Returns to the supplier and write-offs",
+"fr": "Retours fournisseur et pertes"
+},
+"«مرتجع للمورد»: اختر «مرتجع لمورد» والمورد والأصناف والكميات — فتقلّ مستحقاته.": {
+"en": "“Return to supplier”: choose “Return to a supplier”, the supplier, the items and the quantities — their balance goes down.",
+"fr": "« Retour fournisseur » : choisissez « Retour à un fournisseur », le fournisseur, les articles et les quantités — sa créance diminue."
+},
+"أو «هالك / منتهي الصلاحية» فيخرج من المخزن على «بضاعة هالكة»، ليظهر الربح صحيحًا.": {
+"en": "Or “Damaged / expired”: it leaves stock as “Damaged goods”, so the profit shows correctly.",
+"fr": "Ou « Avarié / périmé » : il sort du stock en « Marchandises avariées », pour que le bénéfice soit juste."
+},
+"الصلاحية ومرتجعات الشركات": {
+"en": "Expiry and company returns",
+"fr": "Péremption et retours aux laboratoires"
+},
+"«⏳ الصلاحية»: الأصناف التي تقترب صلاحيتها من الانتهاء (خلال أسبوع… 6 أشهر) من التواريخ المكتوبة في فواتير المشتريات — بِعها أولًا.": {
+"en": "“⏳ Expiry”: items close to their expiry date (within a week … 6 months), from the dates entered on purchase invoices — sell them first.",
+"fr": "« ⏳ Péremption » : les articles proches de leur date de péremption (d’une semaine à 6 mois), d’après les dates des factures d’achat — vendez-les en priorité."
+},
+"«📦 مرتجعات الشركات»: نفس الأصناف مجمّعة حسب المورد الذي وردت منه، بسعر شراء كل دفعة من فاتورتها.": {
+"en": "“📦 Company returns”: the same items grouped by the supplier they came from, at the purchase price of each batch from its invoice.",
+"fr": "« 📦 Retours fournisseurs » : les mêmes articles regroupés par fournisseur d’origine, au prix d’achat de chaque lot selon sa facture."
+},
+"اطبع قائمة كل مورد (فيها توقيع المستلم)، ثم «↩ سجّل المرتجع لهذا المورد» بضغطة واحدة.": {
+"en": "Print each supplier’s list (with a space for the receiver’s signature), then “↩ Record the return for this supplier” in one click.",
+"fr": "Imprimez la liste de chaque fournisseur (avec la signature du destinataire), puis « ↩ Enregistrer le retour pour ce fournisseur » en un clic."
+},
+"طلبات الشراء من الموردين": {
+"en": "Purchase orders to suppliers",
+"fr": "Bons de commande fournisseurs"
+},
+"«📝 طلبات الشراء من الموردين»: الأصناف التي وصلت إلى حد الطلب أو أقل، مجمّعة حسب آخر مورد اشتريت منه.": {
+"en": "“📝 Purchase orders to suppliers”: items at or below their reorder level, grouped by the last supplier you bought from.",
+"fr": "« 📝 Bons de commande fournisseurs » : les articles au seuil de réapprovisionnement ou en dessous, regroupés par dernier fournisseur."
+},
+"الكمية المقترحة تعيد الرصيد إلى ضعف حد الطلب.": {
+"en": "The suggested quantity brings the stock back to twice the reorder level.",
+"fr": "La quantité proposée ramène le stock au double du seuil de réapprovisionnement."
+},
+"عدّل الكميات، ثم «🖨 طباعة الطلب» أو «واتساب للمورد»، وعند الاستلام «فاتورة الاستلام».": {
+"en": "Adjust the quantities, then “🖨 Print the order” or “WhatsApp to supplier”, and on delivery “Receiving invoice”.",
+"fr": "Ajustez les quantités, puis « 🖨 Imprimer la commande » ou « WhatsApp au fournisseur », et à la livraison « Facture de réception »."
+},
+"الجرد": {
+"en": "Stock count",
+"fr": "Inventaire"
+},
+"«الجرد والتالف»: رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا.": {
+"en": "“Stock count and damage”: the balance of every item is in front of you — enter the quantity actually counted.",
+"fr": "« Inventaire et pertes » : le solde de chaque article est sous vos yeux — saisissez la quantité réellement comptée."
+},
+"يُظهر البرنامج العجز والزيادة وقيمتهما بمتوسط التكلفة، ثم «✔ تسوية الفرق» بضغطة.": {
+"en": "The program shows the shortages and surpluses and their value at average cost, then “✔ Settle the difference” in one click.",
+"fr": "Le logiciel affiche les manquants et les excédents et leur valeur au coût moyen, puis « ✔ Régulariser l’écart » en un clic."
+},
+"جرد كبير؟ «رفع ملف جرد (إكسل)». و«تسجيل تالف / هالك» من الصفحة نفسها.": {
+"en": "A large count? “Upload a count file (Excel)”. And “Record damage / loss” from the same page.",
+"fr": "Un gros inventaire ? « Importer un fichier d’inventaire (Excel) ». Et « Enregistrer une perte / casse » depuis la même page."
+},
+"ثالثًا: البيع من الكاشير": {
+"en": "Part three: selling at the till",
+"fr": "Partie 3 : la vente en caisse"
+},
+"فتح الوردية": {
+"en": "Opening the shift",
+"fr": "Ouverture de la session"
+},
+"كل بيع يتم داخل وردية باسم الكاشير. اضغط «فتح وردية»، واختر الكاشير، واكتب كلمة سره، والنقدية الموجودة في الدرج الآن، ثم «فتح».": {
+"en": "Every sale takes place within a shift in the cashier’s name. Press “Open shift”, choose the cashier, enter their password and the cash in the drawer now, then “Open”.",
+"fr": "Chaque vente a lieu dans une session au nom du caissier. Appuyez sur « Ouvrir la session », choisissez le caissier, saisissez son mot de passe et l’espèce présente dans le tiroir, puis « Ouvrir »."
+},
+"إن اختلفت نقدية الدرج عن المسجّل في الدفاتر يسألك البرنامج: هل يُسجَّل الفرق إيداعًا من صاحب المحل؟": {
+"en": "If the drawer cash differs from what the books show, the program asks you: should the difference be recorded as a deposit from the owner?",
+"fr": "Si l’espèce du tiroir diffère des livres, le logiciel vous demande : faut-il enregistrer l’écart comme un apport du propriétaire ?"
+},
+"إن بدأ الكاشير البيع ولا وردية مفتوحة، يفتحها البرنامج ثم يكمل البيع.": {
+"en": "If the cashier starts selling with no open shift, the program opens one and completes the sale.",
+"fr": "Si le caissier commence à vendre sans session ouverte, le logiciel en ouvre une et termine la vente."
+},
+"فاتورة البيع": {
+"en": "The sales invoice",
+"fr": "La facture de vente"
+},
+"امسح الباركود أو اكتب جزءًا من اسم الصنف ثم Enter، أو اضغط على الصنف من الشبكة (والتصنيفات فوقها).": {
+"en": "Scan the barcode or type part of the item name then Enter, or press the item in the grid (the categories are above it).",
+"fr": "Scannez le code-barres ou tapez une partie du nom de l’article puis Entrée, ou appuyez sur l’article dans la grille (les catégories sont au-dessus)."
+},
+"غيّر الكمية بـ «+» و«−» أو اضغط على الرقم لكتابتها أو الوزن (ويقرأ البرنامج ملصق الميزان إن ضبطته من الإعدادات).": {
+"en": "Change the quantity with “+” and “−” or press the number to type it or the weight (the program reads the scale label if you set it up in the settings).",
+"fr": "Modifiez la quantité avec « + » et « − » ou appuyez sur le chiffre pour la saisir, ou le poids (le logiciel lit l’étiquette de la balance si vous l’avez réglée dans les paramètres)."
+},
+"«+ صنف بدون كود»: بيع صنف ليس في القائمة بسعر تكتبه.": {
+"en": "“+ Item without a code”: sell an item that is not in the list at a price you type.",
+"fr": "« + Article sans code » : vendre un article absent de la liste au prix que vous saisissez."
+},
+"اختر طريقة الدفع: «نقدي» واكتب المبلغ الذي دفعه العميل فيظهر الباقي، أو «بطاقة / محفظة»، ثم «تحصيل وطباعة».": {
+"en": "Choose the payment method: “Cash” and enter the amount the customer paid to see the change, or “Card / wallet”, then “Collect and print”.",
+"fr": "Choisissez le mode de paiement : « Espèces » et saisissez le montant versé pour voir la monnaie, ou « Carte / portefeuille », puis « Encaisser et imprimer »."
+},
+"بعد الحفظ يظهر «✔ فاتورة رقم … — الباقي للعميل» ومعه «📲 إرسال واتساب» و«🖨 طباعة مرة أخرى».": {
+"en": "After saving, “✔ Invoice no. … — change for the customer” appears, with “📲 Send via WhatsApp” and “🖨 Print again”.",
+"fr": "Après l’enregistrement s’affiche « ✔ Facture n° … — monnaie à rendre », avec « 📲 Envoyer par WhatsApp » et « 🖨 Réimprimer »."
+},
+"عند وصول صنف إلى حد الطلب تظهر نافذة «⚠ أصناف وصلت لحد الطلب» — أبلغ المسؤول عن الشراء.": {
+"en": "When an item reaches its reorder level, the window “⚠ Items at their reorder level” appears — tell the person in charge of purchasing.",
+"fr": "Quand un article atteint son seuil, la fenêtre « ⚠ Articles au seuil de réapprovisionnement » s’affiche — prévenez le responsable des achats."
+},
+"الانتقال إلى خانة «المبلغ المدفوع» ثم Enter للتحصيل": {
+"en": "Go to the “Amount paid” box, then Enter to collect",
+"fr": "Aller à la case « Montant versé », puis Entrée pour encaisser"
+},
+"تحصيل وطباعة مباشرة": {
+"en": "Collect and print directly",
+"fr": "Encaisser et imprimer directement"
+},
+"تعليق الفاتورة": {
+"en": "Hold the invoice",
+"fr": "Mettre la facture en attente"
+},
+"خصم": {
+"en": "Discount",
+"fr": "Remise"
+},
+"الفواتير المعلّقة": {
+"en": "Held invoices",
+"fr": "Factures en attente"
+},
+"إغلاق النافذة المفتوحة أو مسح خانة البحث": {
+"en": "Close the open window or clear the search box",
+"fr": "Fermer la fenêtre ouverte ou vider la recherche"
+},
+"5*الباركود": {
+"en": "5*barcode",
+"fr": "5*code-barres"
+},
+"اكتب الكمية ثم * ثم امسح الباركود: يُضاف الصنف بالكمية 5 مرة واحدة": {
+"en": "Type the quantity, then *, then scan the barcode: the item is added with quantity 5 in one go",
+"fr": "Tapez la quantité, puis *, puis scannez le code-barres : l’article est ajouté en quantité 5 d’un coup"
+},
+"الخصم وموافقة صاحب المحل": {
+"en": "Discounts and the owner’s approval",
+"fr": "Remises et accord du propriétaire"
+},
+"«٪ خصم» (أو F8): خصم على الفاتورة بمبلغ أو بنسبة %.": {
+"en": "“% Discount” (or F8): a discount on the invoice as an amount or a percentage.",
+"fr": "« % Remise » (ou F8) : une remise sur la facture en montant ou en pourcentage."
+},
+"حدّد «أقصى خصم يدوي يمنحه الكاشير دون موافقتك (%)» من «الإعدادات ← الكاشير: الخصم». صفر = لا خصم إلا بموافقتك.": {
+"en": "Set the “Maximum manual discount the cashier may give without your approval (%)” in “Settings → Cashier: discount”. Zero = no discount without your approval.",
+"fr": "Fixez la « Remise manuelle maximale que le caissier accorde sans votre accord (%) » dans « Paramètres → Caisse : remise ». Zéro = aucune remise sans votre accord."
+},
+"إن زاد الخصم على الحد يكتب صاحب المحل أو المدير اسم المستخدم وكلمة السر على الشاشة نفسها.": {
+"en": "If the discount exceeds the limit, the owner or manager enters their user name and password on the same screen.",
+"fr": "Si la remise dépasse la limite, le propriétaire ou le responsable saisit son identifiant et son mot de passe sur le même écran."
+},
+"كل خصم يظهر على الفاتورة وفي تقرير الوردية وصفحة المبيعات باسم من منحه.": {
+"en": "Every discount appears on the invoice, in the shift report and on the sales page, under the name of whoever granted it.",
+"fr": "Chaque remise figure sur la facture, dans le rapport de session et sur la page des ventes, au nom de qui l’a accordée."
+},
+"البيع الآجل والدفع الجزئي والأقساط": {
+"en": "Credit sales, partial payment and instalments",
+"fr": "Vente à crédit, paiement partiel et échéances"
+},
+"اختر «آجل» ثم العميل. عميل جديد؟ «+ جديد» بجوار اسم العميل ويُسجَّل مع أول فاتورة.": {
+"en": "Choose “Credit”, then the customer. A new customer? “+ New” next to the customer’s name; they are saved with the first invoice.",
+"fr": "Choisissez « Crédit », puis le client. Nouveau client ? « + Nouveau » à côté du nom du client ; il est enregistré avec la première facture."
+},
+"«المدفوع الآن (والباقي آجل على العميل)»: اكتب ما دفعه الآن نقدًا أو ببطاقة، ويُسجَّل الباقي على حسابه.": {
+"en": "“Paid now (the rest on the customer’s credit)”: enter what they paid now in cash or by card; the rest is recorded on their account.",
+"fr": "« Payé maintenant (le reste à crédit) » : saisissez ce qu’il a payé en espèces ou par carte ; le reste est porté à son compte."
+},
+"تحصيل قسط لاحقًا: «💰 تحصيل من عميل» أعلى لوحة البيع (أو «💸 صرف / إيداع» ← «تحصيل من عميل آجل (قسط)»)، ويُطبع إيصال.": {
+"en": "Collecting an instalment later: “💰 Collect from a customer” at the top of the sales screen (or “💸 Pay out / deposit” → “Collect from a credit customer (instalment)”), and a receipt is printed.",
+"fr": "Encaisser une échéance plus tard : « 💰 Encaisser d’un client » en haut de l’écran de vente (ou « 💸 Décaissement / dépôt » → « Encaisser d’un client à crédit (échéance) »), et un reçu s’imprime."
+},
+"كشف حساب كل عميل من «العملاء والموردين».": {
+"en": "Each customer’s statement is in “Customers and suppliers”.",
+"fr": "Le relevé de chaque client se trouve dans « Clients et fournisseurs »."
+},
+"عميل نسي شيئًا؟ «⏸️ تعليق الفاتورة» (F4) فتُحفظ ويبدأ الكاشير فاتورة جديدة.": {
+"en": "A customer forgot something? “⏸️ Hold the invoice” (F4): it is saved and the cashier starts a new invoice.",
+"fr": "Un client a oublié quelque chose ? « ⏸️ Mettre en attente » (F4) : elle est gardée et le caissier commence une nouvelle facture."
+},
+"«⏸️ المعلّقة» (F9) تعرض الفواتير المعلّقة لاسترجاعها — محفوظة على الجهاز حتى بعد إغلاق الصفحة.": {
+"en": "“⏸️ Held” (F9) lists the held invoices so you can bring them back — they stay saved on the device even after the page is closed.",
+"fr": "« ⏸️ En attente » (F9) liste les factures en attente pour les reprendre — elles restent gardées sur l’appareil même après la fermeture de la page."
+},
+"المرتجع": {
+"en": "Returns",
+"fr": "Retours"
+},
+"علّم «مرتجع» أعلى الفاتورة، وأضف الأصناف المرتجعة، ثم «تحصيل وطباعة».": {
+"en": "Tick “Return” at the top of the invoice, add the returned items, then “Collect and print”.",
+"fr": "Cochez « Retour » en haut de la facture, ajoutez les articles retournés, puis « Encaisser et imprimer »."
+},
+"اكتب «سبب المرتجع». إن لم يكن للكاشير حق الإلغاء يكتب صاحب المحل أو المدير اسم المستخدم وكلمة السر، ثم «اعتماد المرتجع».": {
+"en": "Enter the “Reason for the return”. If the cashier has no right to cancel, the owner or manager enters their user name and password, then “Approve the return”.",
+"fr": "Saisissez le « Motif du retour ». Si le caissier n’a pas le droit d’annuler, le propriétaire ou le responsable saisit son identifiant et son mot de passe, puis « Approuver le retour »."
+},
+"يرجع الصنف إلى المخزن ويخرج المبلغ من الدرج، ويظهر في تقرير الوردية.": {
+"en": "The item goes back to stock, the amount leaves the drawer, and it appears in the shift report.",
+"fr": "L’article revient en stock, le montant sort du tiroir et il figure dans le rapport de session."
+},
+"الاستبدال والمرتجع بالفاتورة": {
+"en": "Exchanges and returns with the invoice",
+"fr": "Échanges et retours sur facture"
+},
+"«🔁 استبدال / مرتجع بفاتورة»: اكتب رقم الفاتورة (الرقم الكبير على الإيصال) ثم «بحث».": {
+"en": "“🔁 Exchange / return by invoice”: enter the invoice number (the large number on the receipt), then “Search”.",
+"fr": "« 🔁 Échange / retour sur facture » : saisissez le numéro de facture (le grand numéro sur le ticket), puis « Rechercher »."
+},
+"اختر الأصناف المرتجعة وكمياتها، ثم «متابعة: أضف الأصناف الجديدة».": {
+"en": "Choose the returned items and their quantities, then “Continue: add the new items”.",
+"fr": "Choisissez les articles retournés et leurs quantités, puis « Continuer : ajouter les nouveaux articles »."
+},
+"يحسب البرنامج «الفرق المطلوب من العميل» أو «يُرد للعميل»، ويطبع إيصال الاستبدال. لا يُرد أكثر مما دُفع في الفاتورة الأصلية.": {
+"en": "The program works out the “Difference due from the customer” or “Refund to the customer” and prints the exchange receipt. It never refunds more than was paid on the original invoice.",
+"fr": "Le logiciel calcule la « Différence due par le client » ou le « Remboursement au client » et imprime le ticket d’échange. Il ne rembourse jamais plus que le montant payé sur la facture d’origine."
+},
+"إيصال واتساب وإعادة الطباعة": {
+"en": "WhatsApp receipt and reprinting",
+"fr": "Ticket WhatsApp et réimpression"
+},
+"بعد أي فاتورة: «📲 إرسال واتساب» يفتح رسالة الإيصال جاهزة على رقم العميل (أو يسألك عن الرقم).": {
+"en": "After any invoice: “📲 Send via WhatsApp” opens the receipt message ready on the customer’s number (or asks you for the number).",
+"fr": "Après chaque facture : « 📲 Envoyer par WhatsApp » ouvre le message du ticket prêt sur le numéro du client (ou vous demande le numéro)."
+},
+"«🖨 إعادة طباعة» أعلى الشاشة: اختر أي فاتورة حديثة لطباعتها أو إرسالها على واتساب.": {
+"en": "“🖨 Reprint” at the top of the screen: choose any recent invoice to print it or send it via WhatsApp.",
+"fr": "« 🖨 Réimprimer » en haut de l’écran : choisissez une facture récente pour l’imprimer ou l’envoyer par WhatsApp."
+},
+"«↩ طلب إلغاء/تعديل»: يرسل الكاشير طلبًا بالسبب فيعتمده صاحب المحل أو يرفضه من «الطلبات» أو من هاتفه.": {
+"en": "“↩ Cancel/edit request”: the cashier sends a request with the reason, and the owner approves or rejects it from “Requests” or from their phone.",
+"fr": "« ↩ Demande d’annulation/modification » : le caissier envoie une demande motivée que le propriétaire approuve ou refuse depuis « Demandes » ou son téléphone."
+},
+"صرف وإيداع من الدرج": {
+"en": "Paying out and depositing from the drawer",
+"fr": "Décaissements et dépôts du tiroir"
+},
+"«💸 صرف / إيداع»: مصروف تشغيل، أو مسحوبات صاحب المحل، أو أجر موظف أو سلفة، أو سداد مورد، أو تحصيل قسط، أو إيداع من صاحب المحل.": {
+"en": "“💸 Pay out / deposit”: an operating expense, owner’s drawings, an employee’s wage or advance, a supplier payment, an instalment collection, or a deposit from the owner.",
+"fr": "« 💸 Décaissement / dépôt » : une dépense d’exploitation, un prélèvement du propriétaire, un salaire ou une avance d’employé, un règlement fournisseur, l’encaissement d’une échéance ou un apport du propriétaire."
+},
+"اختر النوع والطرف والمبلغ ثم «تسجيل وطباعة إيصال». تظهر الحركة في تقرير الوردية.": {
+"en": "Choose the type, the party and the amount, then “Record and print receipt”. The movement appears in the shift report.",
+"fr": "Choisissez le type, le tiers et le montant, puis « Enregistrer et imprimer le reçu ». Le mouvement figure dans le rapport de session."
+},
+"الدفع بـ InstaPay": {
+"en": "Paying with InstaPay",
+"fr": "Paiement par InstaPay"
+},
+"بعد حفظ رابط InstaPay في «تجهيز المحل» يظهر زر «📲 InstaPay» بين طرق الدفع.": {
+"en": "Once the InstaPay link is saved in “Shop setup”, an “📲 InstaPay” button appears among the payment methods.",
+"fr": "Une fois le lien InstaPay enregistré dans « Préparation du commerce », un bouton « 📲 InstaPay » apparaît parmi les moyens de paiement."
+},
+"اضغطه ثم «تحصيل»: يظهر رمز QR والمبلغ — يمسحه العميل ويحوّل، وعند وصول التحويل على هاتف المحل «✔ وصل التحويل — تحصيل وطباعة».": {
+"en": "Press it, then “Collect”: a QR code and the amount appear — the customer scans it and transfers, and when the transfer reaches the shop’s phone, “✔ Transfer received — collect and print”.",
+"fr": "Appuyez dessus, puis « Encaisser » : un code QR et le montant s’affichent — le client le scanne et vire, et quand le virement arrive sur le téléphone du commerce, « ✔ Virement reçu — encaisser et imprimer »."
+},
+"مبلغ InstaPay لا يدخل الدرج: يُسجَّل في حساب «إنستاباي»، وله عمود مستقل في تقرير الوردية والتقفيل. ويُطبع رمز QR على الإيصال إن اخترت ذلك.": {
+"en": "The InstaPay amount does not go into the drawer: it is recorded in the “InstaPay” account and has its own column in the shift and day-close reports. The QR code is printed on the receipt if you choose so.",
+"fr": "Le montant InstaPay n’entre pas dans le tiroir : il est enregistré sur le compte « InstaPay » et a sa propre colonne dans les rapports de session et de clôture. Le code QR s’imprime sur le ticket si vous le souhaitez."
+},
+"شاشة العميل": {
+"en": "Customer display",
+"fr": "Écran client"
+},
+"«🖥 شاشة العميل» في لوحة البيع تفتح نافذة ثانية — اسحبها إلى الشاشة التي يراها العميل.": {
+"en": "“🖥 Customer display” on the sales screen opens a second window — drag it to the screen the customer sees.",
+"fr": "« 🖥 Écran client » sur l’écran de vente ouvre une seconde fenêtre — faites-la glisser vers l’écran que voit le client."
+},
+"يرى العميل الأصناف والأسعار والإجمالي أولًا بأول، ثم المدفوع والباقي له، ورمز InstaPay للدفع إن كان مفعّلًا.": {
+"en": "The customer sees the items, prices and total as they are added, then the amount paid and their change, and the InstaPay code for payment if it is enabled.",
+"fr": "Le client voit les articles, les prix et le total au fur et à mesure, puis le montant payé et sa monnaie, et le code InstaPay s’il est activé."
+},
+"كشف حساب عملاء الآجل والمستحقات": {
+"en": "Credit customers’ statements and dues",
+"fr": "Relevés des clients à crédit et échéances"
+},
+"«📒 المستحقات»: كل عميل آجل برصيده وما تأخر عن موعده وما يستحق قريبًا — والأقدم يُسدَّد أولًا.": {
+"en": "“📒 Dues”: every credit customer with their balance, what is overdue and what falls due soon — the oldest is paid first.",
+"fr": "« 📒 Échéances » : chaque client à crédit avec son solde, ce qui est en retard et ce qui arrive à échéance — le plus ancien est réglé en premier."
+},
+"مدة السداد العامة (30 يومًا مثلًا) أو مدة خاصة لكل عميل، و«منع البيع الآجل للمتأخر» اختياري.": {
+"en": "A general payment term (30 days, for example) or a specific term for each customer, and “Block credit sales for late payers” is optional.",
+"fr": "Un délai de paiement général (30 jours, par exemple) ou propre à chaque client, et « Bloquer le crédit aux retardataires » est facultatif."
+},
+"«كشف الحساب»: فواتير العميل بمواعيد استحقاقها ومدفوعاته، للطباعة أو الإرسال على واتساب. والأقساط تُقسَّم من الكاشير عند البيع الآجل.": {
+"en": "“Statement”: the customer’s invoices with their due dates and payments, to print or send via WhatsApp. Instalments are split at the till during a credit sale.",
+"fr": "« Relevé » : les factures du client avec leurs échéances et ses paiements, à imprimer ou envoyer par WhatsApp. Les échéances se répartissent en caisse lors d’une vente à crédit."
+},
+"منصات التوصيل (طلبات والمنيوز)": {
+"en": "Delivery platforms (Talabat and Elmenus)",
+"fr": "Plateformes de livraison (Talabat et Elmenus)"
+},
+"«🛵 منصات التوصيل»: فعّل المنصة واكتب رابط محلك عليها ونسبة عمولتها.": {
+"en": "“🛵 Delivery platforms”: enable the platform and enter your shop’s link on it and its commission rate.",
+"fr": "« 🛵 Plateformes de livraison » : activez la plateforme et saisissez le lien de votre commerce et son taux de commission."
+},
+"في لوحة البيع تظهر المنصة كطريقة دفع: الفاتورة لا تدخل الدرج، وتُسجَّل مستحقة على المنصة بعد خصم عمولتها.": {
+"en": "On the sales screen the platform appears as a payment method: the invoice does not go into the drawer and is recorded as owed by the platform after its commission.",
+"fr": "Sur l’écran de vente, la plateforme apparaît comme moyen de paiement : la facture n’entre pas dans le tiroir et est due par la plateforme, commission déduite."
+},
+"الصفحة تعرض ما تدين به كل منصة؛ وعند التحويل «تسجيل التحصيل» في الخزينة أو البنك.": {
+"en": "The page shows what each platform owes; when it transfers, “Record the collection” into the cash box or the bank.",
+"fr": "La page affiche ce que doit chaque plateforme ; au virement, « Enregistrer l’encaissement » en caisse ou en banque."
+},
+"الدليفري": {
+"en": "Delivery",
+"fr": "Livraison"
+},
+"شغّل الدليفري من «🛵 الدليفري»: رسم التوصيل الافتراضي، وأسماء عمال التوصيل (أو تظهر أسماء الموظفين).": {
+"en": "Turn on delivery from “🛵 Delivery”: the default delivery fee and the drivers’ names (or the employees’ names appear).",
+"fr": "Activez la livraison dans « 🛵 Livraison » : les frais de livraison par défaut et les noms des livreurs (sinon ceux des employés s’affichent)."
+},
+"في لوحة البيع: «🛵 دليفري» على الفاتورة (أو «🛵 طلب دليفري»): موبايل العميل — فيظهر اسمه وعنوانه إن طلب من قبل — والعنوان ورسم التوصيل وعامل التوصيل.": {
+"en": "On the sales screen: “🛵 Delivery” on the invoice (or “🛵 Delivery order”): the customer’s mobile — their name and address appear if they ordered before — the address, the delivery fee and the driver.",
+"fr": "Sur l’écran de vente : « 🛵 Livraison » sur la facture (ou « 🛵 Commande à livrer ») : le mobile du client — son nom et son adresse s’affichent s’il a déjà commandé — l’adresse, les frais et le livreur."
+},
+"ادفع بـ «🛵 مع عامل التوصيل»: يبقى المبلغ معه حتى يعود.": {
+"en": "Pay with “🛵 With the driver”: the amount stays with them until they return.",
+"fr": "Payez par « 🛵 Avec le livreur » : le montant reste chez lui jusqu’à son retour."
+},
+"عند عودته: «🛵 طلبات الدليفري» ← «✔ تم التحصيل» فيدخل المبلغ في نقدية هذه الوردية.": {
+"en": "When they return: “🛵 Delivery orders” → “✔ Collected”, and the amount goes into this shift’s cash.",
+"fr": "À son retour : « 🛵 Commandes livrées » → « ✔ Encaissé », et le montant entre dans l’espèce de cette session."
+},
+"صفحة الدليفري تعرض ما مع كل عامل توصيل وما لم يُحصَّل بعد.": {
+"en": "The delivery page shows what each driver holds and what has not been collected yet.",
+"fr": "La page livraison affiche ce que détient chaque livreur et ce qui n’est pas encore encaissé."
+},
+"مزايا إضافية للكاشير": {
+"en": "Extra features for the till",
+"fr": "Fonctions supplémentaires de la caisse"
+},
+"كلها اختيارية من «الإعدادات ← مزايا إضافية للكاشير» — فعّل ما يناسبك فقط.": {
+"en": "All optional, from “Settings → Extra till features” — turn on only what suits you.",
+"fr": "Toutes facultatives, dans « Paramètres → Fonctions supplémentaires de la caisse » — activez seulement ce qui vous convient."
+},
+"🧑‍💼 «البائع» على كل فاتورة وعمولته: يختار الكاشير البائع، وتحسب صفحة «عمولات البائعين» عمولة كل واحد.": {
+"en": "🧑‍💼 The “Salesperson” on each invoice and their commission: the cashier chooses the salesperson, and the “Salespeople’s commissions” page works out each one’s commission.",
+"fr": "🧑‍💼 Le « Vendeur » sur chaque facture et sa commission : le caissier choisit le vendeur, et la page « Commissions des vendeurs » calcule la commission de chacun."
+},
+"⭐ نقاط الولاء: «⭐ نقاط العميل» على الفاتورة — اكتب موبايل العميل فتُحسب نقاطه، ويستبدلها خصمًا من فاتورة لاحقة.": {
+"en": "⭐ Loyalty points: “⭐ Customer points” on the invoice — enter the customer’s mobile and their points are counted; they redeem them as a discount on a later invoice.",
+"fr": "⭐ Points de fidélité : « ⭐ Points du client » sur la facture — saisissez le mobile du client et ses points sont comptés ; il les échange contre une remise sur une facture suivante."
+},
+"نسب النقاط وقيمتها وأقل عدد للاستبدال من صفحة «⭐ نقاط الولاء»، والاستبدال يُراجع على رصيد العميل في البرنامج.": {
+"en": "Point rates, their value and the minimum to redeem are set on the “⭐ Loyalty points” page, and redemption is checked against the customer’s balance in the program.",
+"fr": "Le barème, la valeur des points et le minimum d’échange se règlent sur la page « ⭐ Points de fidélité », et l’échange est vérifié sur le solde du client dans le logiciel."
+},
+"قفل الوردية وتقريرها": {
+"en": "Closing the shift and its report",
+"fr": "Clôture de la session et son rapport"
+},
+"في نهاية الوردية: «قفل الوردية». عُدّ النقدية الموجودة في الدرج كلها واكتب المبلغ — دون أن يرى الكاشير المتوقع (عدّ أعمى).": {
+"en": "At the end of the shift: “Close shift”. Count all the cash in the drawer and enter the amount — without the cashier seeing the expected figure (blind count).",
+"fr": "En fin de session : « Clôturer la session ». Comptez toute l’espèce du tiroir et saisissez le montant — sans que le caissier voie le montant attendu (comptage à l’aveugle)."
+},
+"«قفل الوردية وطباعة التقرير»: المبيعات نقدًا وبطاقة وآجل، والمرتجعات والخصومات، والمصروفات، والمتوقع في الدرج والفعلي والعجز أو الزيادة.": {
+"en": "“Close the shift and print the report”: sales in cash, by card and on credit, returns and discounts, expenses, the expected and actual drawer, and the shortage or surplus.",
+"fr": "« Clôturer la session et imprimer le rapport » : ventes en espèces, par carte et à crédit, retours et remises, dépenses, tiroir attendu et réel, et le manque ou l’excédent."
+},
+"يُسجَّل العجز أو الزيادة على حسابهما باسم الكاشير، ويراه صاحب المحل في «تقفيل اليوم».": {
+"en": "The shortage or surplus is recorded on its account in the cashier’s name, and the owner sees it in “Day close”.",
+"fr": "Le manque ou l’excédent est enregistré sur son compte au nom du caissier, et le propriétaire le voit dans « Clôture de la journée »."
+},
+"رابعًا: نهاية اليوم والأموال والتقارير": {
+"en": "Part four: end of day, money and reports",
+"fr": "Partie 4 : fin de journée, argent et rapports"
+},
+"تقفيل اليوم": {
+"en": "Day close",
+"fr": "Clôture de la journée"
+},
+"بعد قفل كل الورديات: «🔒 تقفيل اليوم» يعرض صافي مبيعات اليوم نقدًا وبطاقات وآجلًا ودليفري، والورديات بالمتوقع والفعلي والفرق.": {
+"en": "After all shifts are closed: “🔒 Day close” shows the day’s net sales in cash, cards, credit and delivery, and the shifts with expected, actual and difference.",
+"fr": "Une fois toutes les sessions clôturées : « 🔒 Clôture de la journée » affiche les ventes nettes du jour en espèces, cartes, crédit et livraison, et les sessions avec attendu, réel et écart."
+},
+"عُدّ النقدية الموجودة فعلًا في الخزينة واكتبها، ثم «تقفيل نهائي». بعدها لا يمكن لأحد تسجيل حركات في هذا اليوم.": {
+"en": "Count the cash actually in the cash box and enter it, then “Final close”. After that no one can record movements on that day.",
+"fr": "Comptez l’espèce réellement présente en caisse et saisissez-la, puis « Clôture définitive ». Ensuite, personne ne peut enregistrer de mouvement sur cette journée."
+},
+"«📲 الملخص على واتساب» يرسل ملخص اليوم إلى رقمك.": {
+"en": "“📲 Summary on WhatsApp” sends the day’s summary to your number.",
+"fr": "« 📲 Résumé sur WhatsApp » envoie le résumé du jour à votre numéro."
+},
+"المصروفات وصاحب المحل": {
+"en": "Expenses and the owner",
+"fr": "Dépenses et propriétaire"
+},
+"«المصروفات وصاحب المحل»: مصروف (إيجار، كهرباء…)، أو أجر أو سلفة موظف، أو سداد مورد، أو مسحوبات صاحب المحل.": {
+"en": "“Expenses and the owner”: an expense (rent, electricity…), an employee’s wage or advance, a supplier payment, or the owner’s drawings.",
+"fr": "« Dépenses et propriétaire » : une dépense (loyer, électricité…), le salaire ou l’avance d’un employé, un règlement fournisseur ou un prélèvement du propriétaire."
+},
+"من الخزينة، أو «من مال صاحب المحل الخاص» فيُسجَّل له. وكشف حساب صاحب المحل في أعلى الصفحة.": {
+"en": "From the cash box, or “From the owner’s own money”, which is recorded in their favour. The owner’s statement is at the top of the page.",
+"fr": "Depuis la caisse, ou « Avec l’argent personnel du propriétaire », porté à son compte. Le relevé du propriétaire est en haut de la page."
+},
+"أنواع المصروفات والخزائن والمحافظ من «📚 البيانات الأساسية».": {
+"en": "Expense types, cash boxes and wallets are in “📚 Master data”.",
+"fr": "Les types de dépenses, les caisses et les portefeuilles sont dans « 📚 Données de base »."
+},
+"المبيعات وتعديل الفواتير": {
+"en": "Sales and editing invoices",
+"fr": "Ventes et modification des factures"
+},
+"«المبيعات»: كل فاتورة بوقتها وجهازها وكاشيرها وطريقة دفعها، و«ما يحتاج إلى مراجعة».": {
+"en": "“Sales”: every invoice with its time, device, cashier and payment method, and “What needs review”.",
+"fr": "« Ventes » : chaque facture avec son heure, sa caisse, son caissier et son mode de paiement, et « Ce qui doit être vérifié »."
+},
+"«فتح / تعديل»: يلغي صاحب المحل الفاتورة أو يعدّلها بقيد عكسي مسجّل باسمه مع السبب.": {
+"en": "“Open / edit”: the owner cancels or edits the invoice with a reversing entry recorded in their name with the reason.",
+"fr": "« Ouvrir / modifier » : le propriétaire annule ou modifie la facture par une écriture d’extourne à son nom, avec le motif."
+},
+"«📨 الطلبات»: طلبات الإلغاء والتعديل من الكاشير — «اعتماد» أو «رفض».": {
+"en": "“📨 Requests”: cancel and edit requests from the cashier — “Approve” or “Reject”.",
+"fr": "« 📨 Demandes » : les demandes d’annulation et de modification du caissier — « Approuver » ou « Refuser »."
+},
+"التقارير": {
+"en": "Reports",
+"fr": "Rapports"
+},
+"«📈 التقارير» لأي فترة: صافي المبيعات، وتكلفة البضاعة المباعة، ومجمل الربح وهامشه، والمصروفات، وصافي الربح.": {
+"en": "“📈 Reports” for any period: net sales, cost of goods sold, gross profit and margin, expenses and net profit.",
+"fr": "« 📈 Rapports » sur toute période : ventes nettes, coût des marchandises vendues, marge brute et taux, dépenses et bénéfice net."
+},
+"المبيعات يومًا بيوم، وأكثر الأصناف مبيعًا، والورديات وفروقها، والأصناف التي وصلت حد الطلب، وقيمة المخزون.": {
+"en": "Sales day by day, best-selling items, shifts and their differences, items at their reorder level, and stock value.",
+"fr": "Les ventes jour par jour, les articles les plus vendus, les sessions et leurs écarts, les articles au seuil et la valeur du stock."
+},
+"«💰 الأرباح والشركاء»: ربح كل شهر وتوزيعه على الشركاء.": {
+"en": "“💰 Profits and partners”: each month’s profit and its distribution among the partners.",
+"fr": "« 💰 Bénéfices et associés » : le bénéfice de chaque mois et sa répartition entre les associés."
+},
+"«عمولات البائعين»: مبيعات كل بائع ومرتجعاته وعمولته لأي فترة.": {
+"en": "“Salespeople’s commissions”: each salesperson’s sales, returns and commission for any period.",
+"fr": "« Commissions des vendeurs » : les ventes, retours et commission de chaque vendeur sur toute période."
+},
+"«الأصناف الراكدة» (في صفحة التخفيض الموسمي): ما له رصيد ولم يُبع منذ مدة.": {
+"en": "“Slow-moving items” (on the seasonal discount page): items with stock that have not sold for a while.",
+"fr": "« Articles dormants » (sur la page des soldes de saison) : ce qui a du stock et ne s’est pas vendu depuis un moment."
+},
+"الفروع": {
+"en": "Branches",
+"fr": "Succursales"
+},
+"لديك أكثر من فرع؟ «🏬 الفروع» ← «فتح فرع جديد» بمخزنه ودرجه وأجهزته، ثم «مدير الفرع» وموظفوه.": {
+"en": "More than one branch? “🏬 Branches” → “Open a new branch” with its store, drawer and devices, then the “Branch manager” and staff.",
+"fr": "Plusieurs succursales ? « 🏬 Succursales » → « Ouvrir une nouvelle succursale » avec son magasin, son tiroir et ses caisses, puis le « Responsable de succursale » et son personnel."
+},
+"الصفحة تعرض مبيعات كل فرع اليوم ودرجه ومخزونه، و«تعديل» أو «إغلاق» الفرع. ولكل جهاز كاشير فرعه: أصنافه ورصيده وكاشيروه وعنوانه على الإيصال.": {
+"en": "The page shows each branch’s sales today, its drawer and stock, and “Edit” or “Close” the branch. Each cashier device has its branch: its items, stock, cashiers and address on the receipt.",
+"fr": "La page affiche les ventes du jour, le tiroir et le stock de chaque succursale, et « Modifier » ou « Fermer » la succursale. Chaque caisse a sa succursale : ses articles, son stock, ses caissiers et son adresse sur le ticket."
+},
+"مدير الفرع يرى فرعه فقط، وصاحب المحل يتنقل بين الفروع من الشريط العلوي ويرى تقرير كل فرع ومقارنتها.": {
+"en": "A branch manager sees only their branch; the owner switches between branches from the top bar and sees each branch’s report and the comparison.",
+"fr": "Le responsable ne voit que sa succursale ; le propriétaire passe d’une succursale à l’autre depuis la barre du haut et voit le rapport de chacune et leur comparaison."
+},
+"تحويل البضاعة بين الفروع": {
+"en": "Transferring goods between branches",
+"fr": "Transferts de marchandises entre succursales"
+},
+"«🔁 التحويلات»: مدير الفرع يطلب أصنافًا من المخزن الرئيسي أو من فرع آخر، أو يرسل صاحب المحل بضاعة مباشرة «إرسال دون طلب».": {
+"en": "“🔁 Transfers”: the branch manager requests items from the main store or another branch, or the owner sends goods directly with “Send without a request”.",
+"fr": "« 🔁 Transferts » : le responsable demande des articles au magasin principal ou à une autre succursale, ou le propriétaire envoie directement avec « Envoyer sans demande »."
+},
+"المرسِل «إرسال» باسم السائق فتصبح البضاعة «في الطريق»، وتُطبع ورقة التحويل للتوقيع.": {
+"en": "The sender presses “Send” with the driver’s name and the goods become “In transit”; the transfer sheet is printed for signature.",
+"fr": "L’expéditeur appuie sur « Envoyer » avec le nom du chauffeur et la marchandise passe « En route » ; le bon de transfert s’imprime pour signature."
+},
+"المستلم «استلام» بالكميات التي وصلت فعلًا؛ والعجز يُحمَّل على المرسِل أو يرجع لمخزنه — وكل خطوة باسم من قام بها.": {
+"en": "The receiver presses “Receive” with the quantities that actually arrived; any shortage is charged to the sender or returned to its store — and every step is recorded in the name of whoever did it.",
+"fr": "Le destinataire appuie sur « Recevoir » avec les quantités réellement arrivées ; le manque est imputé à l’expéditeur ou revient à son magasin — et chaque étape est enregistrée au nom de son auteur."
+},
+"الموظفون والمرتبات والإقرارات الضريبية": {
+"en": "Employees, payroll and tax returns",
+"fr": "Employés, paie et déclarations fiscales"
+},
+"«الموظفين والمرتبات»: أضف كل موظف بمرتبه وبدلاته، وهل هو مؤمَّن عليه.": {
+"en": "“Employees and payroll”: add each employee with their salary and allowances, and whether they are insured.",
+"fr": "« Employés et paie » : ajoutez chaque employé avec son salaire et ses indemnités, et s’il est assuré."
+},
+"كل شهر: «مسير مرتبات الشهر» — تُحسب التأمينات وضريبة كسب العمل وتُخصم السلف تلقائيًا، ثم «اعتمد» و«صرف المرتبات».": {
+"en": "Every month: “This month’s payroll” — social insurance and payroll tax are calculated and advances deducted automatically, then “Approve” and “Pay salaries”.",
+"fr": "Chaque mois : « Paie du mois » — les cotisations sociales et l’impôt sur les salaires sont calculés et les avances déduites automatiquement, puis « Approuver » et « Verser les salaires »."
+},
+"«الإقرارات الضريبية»: مسودة القيمة المضافة وضريبة الدخل وكسب العمل والتأمينات من حساباتك — يراجعها المحاسب قبل تقديمها.": {
+"en": "“Tax returns”: a draft of VAT, income tax, payroll tax and social insurance from your accounts — your accountant reviews it before filing.",
+"fr": "« Déclarations fiscales » : un brouillon de la TVA, de l’impôt sur le revenu, de l’impôt sur les salaires et des cotisations à partir de vos comptes — votre comptable le vérifie avant le dépôt."
+},
+"خامسًا: هاتفك والنسخ الاحتياطي والتحديثات": {
+"en": "Part five: your phone, backups and updates",
+"fr": "Partie 5 : votre téléphone, les sauvegardes et les mises à jour"
+},
+"هاتف صاحب المحل": {
+"en": "The owner’s phone",
+"fr": "Le téléphone du propriétaire"
+},
+"«📱 الموبايل والتقارير»: امسح الكود بكاميرا هاتفك أو أرسل الرابط لنفسك على واتساب، ثم «إضافة إلى الشاشة الرئيسية» فتظهر أيقونة Trio.": {
+"en": "“📱 Mobile and reports”: scan the code with your phone camera or send yourself the link on WhatsApp, then “Add to Home screen” and the Trio icon appears.",
+"fr": "« 📱 Mobile et rapports » : scannez le code avec l’appareil photo de votre téléphone ou envoyez-vous le lien par WhatsApp, puis « Ajouter à l’écran d’accueil » : l’icône Trio apparaît."
+},
+"تتابع من الأيقونة مبيعات اليوم والخزينة والنواقص وآخر الفواتير، وتتحدث كل 10 دقائق طالما البرنامج يعمل.": {
+"en": "From the icon you follow today’s sales, the cash box, shortages and the latest invoices; it refreshes every 10 minutes while the program is running.",
+"fr": "Depuis l’icône, vous suivez les ventes du jour, la caisse, les ruptures et les dernières factures ; tout se met à jour toutes les 10 minutes tant que le logiciel tourne."
+},
+"«🔗 اربط موبايلي» (مرة واحدة، والكود صالح 15 دقيقة): بعدها تسحب مبالغ على حسابك، وتوافق على طلبات الإلغاء والتعديل أو ترفضها، وتضيف فاتورة مشتريات دفعتها أثناء الشراء. يطلب الهاتف رقمك السري (PIN) قبل أي سحب أو فاتورة.": {
+"en": "“🔗 Link my phone” (once; the code is valid for 15 minutes): then you can withdraw amounts to your account, approve or reject cancel and edit requests, and add a purchase invoice you paid while buying. The phone asks for your PIN before any withdrawal or invoice.",
+"fr": "« 🔗 Associer mon téléphone » (une fois ; le code est valable 15 minutes) : vous pouvez ensuite retirer des montants à votre compte, approuver ou refuser les demandes d’annulation et de modification, et ajouter une facture d’achat payée sur place. Le téléphone demande votre code PIN avant tout retrait ou toute facture."
+},
+"«📨 ملخص اليوم»: رقم واتساب صاحب المحل والبريد — يصلك الملخص بعد التقفيل النهائي، أو في الساعة التي تحددها.": {
+"en": "“📨 Daily summary”: the owner’s WhatsApp number and email — the summary reaches you after the final close, or at the hour you choose.",
+"fr": "« 📨 Résumé du jour » : le numéro WhatsApp et l’e-mail du propriétaire — le résumé vous parvient après la clôture définitive, ou à l’heure choisie."
+},
+"«📊 المقارنات» على الهاتف: هذا الأسبوع بالسابق وهذا الشهر بالسابق، وأكثر الأصناف مبيعًا، والنواقص، ومقارنة الفروع.": {
+"en": "“📊 Comparisons” on the phone: this week against the last, this month against the last, best-selling items, shortages and a branch comparison.",
+"fr": "« 📊 Comparaisons » sur le téléphone : cette semaine face à la précédente, ce mois face au précédent, les meilleures ventes, les ruptures et la comparaison des succursales."
+},
+"وصل الرابط إلى شخص آخر؟ «أنشئ رابطًا جديدًا» فيتوقف القديم فورًا.": {
+"en": "Did the link reach someone else? “Create a new link” and the old one stops at once.",
+"fr": "Le lien est parvenu à quelqu’un d’autre ? « Créer un nouveau lien » et l’ancien cesse aussitôt de fonctionner."
+},
+"كل أمر من الهاتف يُوقَّع بمفتاح هاتفك فقط، ويُنفَّذ على البرنامج خلال دقيقة إن كان الجهاز يعمل.": {
+"en": "Every command from the phone is signed with your phone’s key only, and it runs on the program within a minute if the computer is on.",
+"fr": "Chaque commande du téléphone est signée par la seule clé de votre téléphone et s’exécute sur le logiciel en moins d’une minute si l’ordinateur est allumé."
+},
+"النسخ الاحتياطي والاسترجاع": {
+"en": "Backup and restore",
+"fr": "Sauvegarde et restauration"
+},
+"تُنشأ نسخة تلقائيًا كل 12 ساعة طالما البرنامج يعمل، وتُحفظ 30 يومًا في مجلد backups على الجهاز. و«حفظ نسخة احتياطية الآن» في أي وقت.": {
+"en": "A backup is made automatically every 12 hours while the program is running and kept for 30 days in the backups folder on the computer. And “Back up now” at any time.",
+"fr": "Une sauvegarde est créée automatiquement toutes les 12 heures tant que le logiciel tourne, et conservée 30 jours dans le dossier backups de l’ordinateur. Et « Sauvegarder maintenant » à tout moment."
+},
+"إن وُجد Google Drive على الجهاز تُحفظ نسخة مشفّرة 🔒 على الإنترنت أيضًا، لا تُفتح إلا بـ «مفتاح الاسترجاع».": {
+"en": "If Google Drive is on the computer, an encrypted 🔒 copy is also kept online; it opens only with the “Recovery key”.",
+"fr": "Si Google Drive est installé sur l’ordinateur, une copie chiffrée 🔒 est aussi gardée en ligne ; elle ne s’ouvre qu’avec la « Clé de restauration »."
+},
+"«🖨 اطبع بطاقة الاسترجاع» واحفظها بعيدًا عن الجهاز. ولدى Trio نسخة من المفتاح.": {
+"en": "“🖨 Print the recovery card” and keep it away from the computer. Trio also holds a copy of the key.",
+"fr": "« 🖨 Imprimer la carte de restauration » et gardez-la loin de l’ordinateur. Trio conserve aussi une copie de la clé."
+},
+"تعطّل الجهاز؟ ثبّت Trio على جهاز جديد ← «♻️ لديك نسخة احتياطية؟» ← ارفع آخر ملف واكتب المفتاح. وللرجوع إلى نسخة سابقة على الجهاز نفسه: «♻️ استرجاع نسخة احتياطية».": {
+"en": "The computer broke down? Install Trio on a new computer → “♻️ Do you have a backup?” → upload the latest file and enter the key. To go back to an earlier backup on the same computer: “♻️ Restore a backup”.",
+"fr": "L’ordinateur est en panne ? Installez Trio sur un nouvel ordinateur → « ♻️ Vous avez une sauvegarde ? » → importez le dernier fichier et saisissez la clé. Pour revenir à une sauvegarde antérieure sur le même ordinateur : « ♻️ Restaurer une sauvegarde »."
+},
+"قبل أي استرجاع يأخذ البرنامج نسخة أمان من بيانات اليوم.": {
+"en": "Before any restore, the program takes a safety copy of today’s data.",
+"fr": "Avant toute restauration, le logiciel fait une copie de sécurité des données du jour."
+},
+"التحديثات": {
+"en": "Updates",
+"fr": "Mises à jour"
+},
+"يصل أي إصدار جديد تلقائيًا ويُثبَّت ليلًا. ويظهر أعلى الشاشة «🆕 متاح إصدار أحدث».": {
+"en": "Every new version arrives automatically and installs at night. “🆕 A newer version is available” appears at the top of the screen.",
+"fr": "Chaque nouvelle version arrive automatiquement et s’installe la nuit. « 🆕 Une version plus récente est disponible » s’affiche en haut de l’écran."
+},
+"من «🔄 التحديثات» اضغط «حدّث الآن» فيُنزَّل ويُثبَّت فورًا. بياناتك لا تتأثر.": {
+"en": "From “🔄 Updates” press “Update now” to download and install it at once. Your data is not affected.",
+"fr": "Dans « 🔄 Mises à jour », appuyez sur « Mettre à jour maintenant » pour la télécharger et l’installer aussitôt. Vos données ne sont pas touchées."
+},
+"الدعم الفني": {
+"en": "Technical support",
+"fr": "Assistance technique"
+},
+"Trio · 01228827915 · 01121460640 (اتصال أو واتساب).": {
+"en": "Trio · 01228827915 · 01121460640 (call or WhatsApp).",
+"fr": "Trio · 01228827915 · 01121460640 (appel ou WhatsApp)."
+},
+"قبل الاتصال: اكتب سؤالك في «؟ اسأل» — كثير من الأسئلة يجيب عنها البرنامج مباشرة.": {
+"en": "Before calling: type your question in “? Ask” — the program answers many questions directly.",
+"fr": "Avant d’appeler : posez votre question dans « ? Demander » — le logiciel répond directement à beaucoup de questions."
+},
+"ابحث عن الصنف بالاسم أو امسح الباركود، واكتب الكمية الموجودة وتكلفتها (بالعلبة أو بالشريط).": {
+"en": "Search for the item by name or scan its barcode, then enter the quantity on hand and its cost (per pack or per strip).",
+"fr": "Cherchez l’article par son nom ou scannez son code-barres, puis saisissez la quantité présente et son coût (par boîte ou par plaquette)."
+},
+"الأدوية والأصناف": {
+"en": "Medicines and items",
+"fr": "Médicaments et articles"
+},
+"مكتبة الأدوية والبيع بالعلبة والشريط": {
+"en": "The medicine library and selling by pack and strip",
+"fr": "La bibliothèque des médicaments et la vente par boîte et par plaquette"
+},
+"«💊 مكتبة الأدوية والشريط» فيها الأدوية المسجّلة في مصر: ابحث بالاسم التجاري (عربي أو إنجليزي) أو المادة الفعالة.": {
+"en": "“💊 Medicine library and strips” holds the medicines registered in Egypt: search by brand name (Arabic or English) or by active ingredient.",
+"fr": "« 💊 Bibliothèque des médicaments et plaquettes » contient les médicaments enregistrés en Égypte : cherchez par nom commercial (arabe ou anglais) ou par principe actif."
+},
+"علّم على الأدوية الموجودة لديك، واكتب «حد الطلب» بالعلبة، ثم «أضف المختار إلى الأصناف».": {
+"en": "Tick the medicines you stock, enter the “Reorder level” per pack, then “Add the selection to items”.",
+"fr": "Cochez les médicaments que vous avez, saisissez le « Seuil de réapprovisionnement » par boîte, puis « Ajouter la sélection aux articles »."
+},
+"«شرائط في العلبة»: إن كانت العلبة فيها أكثر من شريط يُعدّ الرصيد بالشرائط، والعلبة وحدة أكبر بسعرها وباركودها. يمسح الكاشير العلبة فتُباع علبة، أو يختار «شريط».": {
+"en": "“Strips per pack”: if a pack holds more than one strip, stock is counted in strips and the pack is a larger unit with its own price and barcode. The cashier scans the pack to sell a pack, or chooses “Strip”.",
+"fr": "« Plaquettes par boîte » : si une boîte contient plusieurs plaquettes, le stock se compte en plaquettes et la boîte est une unité plus grande avec son prix et son code-barres. Le caissier scanne la boîte pour vendre une boîte, ou choisit « Plaquette »."
+},
+"اكتب 1 في «شرائط في العلبة» ليعود البيع بالعلبة فقط. تُسجَّل الأدوية بدون ضريبة قيمة مضافة.": {
+"en": "Enter 1 in “Strips per pack” to go back to selling by the pack only. Medicines are recorded without VAT.",
+"fr": "Saisissez 1 dans « Plaquettes par boîte » pour revenir à la vente à la boîte uniquement. Les médicaments sont enregistrés sans TVA."
+},
+"السعر في المكتبة مرجعي من قاعدة البيانات العامة — راجعه قبل البيع.": {
+"en": "The price in the library is a reference from the public database — check it before selling.",
+"fr": "Le prix de la bibliothèque est indicatif, issu de la base publique — vérifiez-le avant de vendre."
+},
+"«شراء أدوية» ← «فاتورة مشتريات»: اختر المورد (أو اكتب اسم مورد جديد) ورقم فاتورته وتاريخها.": {
+"en": "“Buy medicines” → “Purchase invoice”: choose the supplier (or type a new supplier’s name), their invoice number and its date.",
+"fr": "« Achat de médicaments » → « Facture d’achat » : choisissez le fournisseur (ou saisissez le nom d’un nouveau fournisseur), le numéro de sa facture et sa date."
+},
+"«جرد الصيدلية»: رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا.": {
+"en": "“Pharmacy stock count”: the balance of every item is in front of you — enter the quantity actually counted.",
+"fr": "« Inventaire de la pharmacie » : le solde de chaque article est sous vos yeux — saisissez la quantité réellement comptée."
+},
+"غيّر الكمية بـ «+» و«−» أو اضغط على الرقم لكتابتها.": {
+"en": "Change the quantity with “+” and “−” or press the number to type it.",
+"fr": "Modifiez la quantité avec « + » et « − » ou appuyez sur le chiffre pour la saisir."
+},
+"💊 «رصيد الصنف على كارت الكاشير وبدائله بالمادة الفعالة»: يرى الصيدلي الرصيد على كل صنف، وإن نفد دواء يعرض البرنامج «البدائل» المتوفرة بنفس المادة الفعالة.": {
+"en": "💊 “Item stock on the till card and alternatives by active ingredient”: the pharmacist sees the stock on every item, and when a medicine runs out the program shows the available “Alternatives” with the same active ingredient.",
+"fr": "💊 « Stock de l’article sur la carte de caisse et équivalents par principe actif » : le pharmacien voit le stock de chaque article, et quand un médicament est épuisé, le logiciel propose les « Équivalents » disponibles au même principe actif."
+},
+"ابحث عن الصنف بالاسم أو امسح الباركود، واكتب الكمية الموجودة وتكلفتها (ولكل مقاس ولون كميته).": {
+"en": "Search for the item by name or scan its barcode, then enter the quantity on hand and its cost (each size and colour has its own quantity).",
+"fr": "Cherchez l’article par son nom ou scannez son code-barres, puis saisissez la quantité présente et son coût (chaque taille et couleur a sa quantité)."
+},
+"الأصناف بالمقاسات والألوان": {
+"en": "Items in sizes and colours",
+"fr": "Articles en tailles et couleurs"
+},
+"«👕 المقاسات والألوان» ← «+ صنف بمقاسات وألوان»: اسم الموديل والتصنيف وسعر البيع، ثم المقاسات (S M L… أو أرقام) والألوان.": {
+"en": "“👕 Sizes and colours” → “+ Item with sizes and colours”: the model name, category and sale price, then the sizes (S M L… or numbers) and the colours.",
+"fr": "« 👕 Tailles et couleurs » → « + Article en tailles et couleurs » : le nom du modèle, la catégorie et le prix de vente, puis les tailles (S M L… ou des pointures) et les couleurs."
+},
+"يُنشئ البرنامج صنفًا لكل مقاس ولون بباركود خاص به؛ واكتب في الجدول سعرًا مختلفًا لمقاس إن أردت، والكمية الموجودة لديك الآن.": {
+"en": "The program creates an item for every size and colour with its own barcode; enter a different price for a size in the table if you wish, and the quantity you have now.",
+"fr": "Le logiciel crée un article pour chaque taille et couleur avec son propre code-barres ; saisissez dans le tableau un prix différent pour une taille si vous le souhaitez, et la quantité dont vous disposez."
+},
+"عند البيع يختار الكاشير المقاس واللون من شبكة تعرض المتاح في الفرع.": {
+"en": "When selling, the cashier picks the size and colour from a grid showing what is available in the branch.",
+"fr": "À la vente, le caissier choisit la taille et la couleur dans une grille qui montre le disponible dans la succursale."
+},
+"«📊 الرصيد حسب المقاس» يبيّن ما بقي من كل مقاس ولون، و«🏷 ملصقات» تطبع ملصق كل قطعة.": {
+"en": "“📊 Stock by size” shows what is left of each size and colour, and “🏷 Labels” prints a label for every piece.",
+"fr": "« 📊 Stock par taille » montre ce qui reste de chaque taille et couleur, et « 🏷 Étiquettes » imprime une étiquette par pièce."
+},
+"بعد فاتورة مشتريات: «ملصقات فاتورة المشتريات» تجهّز عدد كل صنف بالكمية المستلمة. وللموديلات: عدد كل مقاس ولون = رصيده.": {
+"en": "After a purchase invoice: “Purchase invoice labels” prepares the count of each item from the received quantity. For models: the count of each size and colour = its stock.",
+"fr": "Après une facture d’achat : « Étiquettes de la facture d’achat » prépare le nombre de chaque article selon la quantité reçue. Pour les modèles : le nombre de chaque taille et couleur = son stock."
+},
+"التخفيض الموسمي والأصناف الراكدة": {
+"en": "Seasonal discount and slow-moving items",
+"fr": "Soldes de saison et articles dormants"
+},
+"«🏷 التخفيض الموسمي والراكد» ← «تخفيض جديد»: الاسم والنسبة والتاريخين، والتصنيفات أو الموديلات.": {
+"en": "“🏷 Seasonal and slow-moving discount” → “New discount”: the name, the rate, the two dates, and the categories or models.",
+"fr": "« 🏷 Soldes de saison et articles dormants » → « Nouvelle remise » : le nom, le taux, les deux dates, et les catégories ou modèles."
+},
+"يطبّقه الكاشير تلقائيًا ويظهر على الإيصال، ولا يُحسب خصمًا يدويًا.": {
+"en": "The cashier applies it automatically and it appears on the receipt; it is not counted as a manual discount.",
+"fr": "La caisse l’applique automatiquement et elle figure sur le ticket ; elle n’est pas comptée comme remise manuelle."
+},
+"«الأصناف الراكدة»: ما له رصيد ولم يُبع منذ مدة — ابدأ بها في التخفيض.": {
+"en": "“Slow-moving items”: items with stock that have not sold for a while — start the discount with them.",
+"fr": "« Articles dormants » : ce qui a du stock et ne s’est pas vendu depuis un moment — commencez les soldes par eux."
+},
+"صنف تشتريه لأول مرة؟ اكتب اسمه في السطر ويُضاف عند الحفظ.": {
+"en": "An item you are buying for the first time? Type its name on the line and it is added on saving.",
+"fr": "Un article acheté pour la première fois ? Saisissez son nom sur la ligne, il est ajouté à l’enregistrement."
+},
+"للملابس: «👕 شراء بالمقاسات» — اختر الموديل واكتب عدد القطع من كل مقاس ولون، ثم «أضف للفاتورة».": {
+"en": "For clothes: “👕 Buy by size” — choose the model and enter the number of pieces of each size and colour, then “Add to invoice”.",
+"fr": "Pour les vêtements : « 👕 Achat par tailles » — choisissez le modèle et saisissez le nombre de pièces de chaque taille et couleur, puis « Ajouter à la facture »."
+},
+"الكمية المقترحة تعيد الرصيد إلى ضعف حد الطلب؛ وللموديلات: المقاسات والألوان التي نفدت مما يُباع.": {
+"en": "The suggested quantity brings the stock back to twice the reorder level; for models: the sizes and colours that sold out.",
+"fr": "La quantité proposée ramène le stock au double du seuil ; pour les modèles : les tailles et couleurs épuisées parmi celles qui se vendent."
+},
+"البيع بالمقاس واللون": {
+"en": "Selling by size and colour",
+"fr": "Vente par taille et couleur"
+},
+"عند اختيار موديل له مقاسات وألوان تظهر شبكة «اختر المقاس واللون»: المقاسات أعمدة والألوان صفوف، والرقم هو المتاح في الفرع.": {
+"en": "When you pick a model with sizes and colours, the “Choose size and colour” grid appears: sizes are columns, colours are rows, and the number is what is available in the branch.",
+"fr": "Quand vous choisissez un modèle en tailles et couleurs, la grille « Choisir la taille et la couleur » s’affiche : les tailles en colonnes, les couleurs en lignes, et le chiffre est le disponible dans la succursale."
+},
+"اضغط الخانة المطلوبة فيُضاف المقاس واللون إلى الفاتورة. ومسح باركود القطعة يضيفها مباشرة دون الشبكة.": {
+"en": "Press the box you need and that size and colour is added to the invoice. Scanning the piece’s barcode adds it directly without the grid.",
+"fr": "Appuyez sur la case voulue : la taille et la couleur sont ajoutées à la facture. Scanner le code-barres de la pièce l’ajoute directement, sans la grille."
+},
+"يظهر تحت كل خانة المتاح منها، أو «نفد» إن انتهى رصيدها، وسعرها إن اختلف عن سعر الموديل.": {
+"en": "Under each box you see what is available, or “Sold out” if its stock is gone, and its price if it differs from the model’s.",
+"fr": "Sous chaque case s’affiche le disponible, ou « Épuisé » si son stock est fini, et son prix s’il diffère de celui du modèle."
+},
+"سياسة الاستبدال (مثلًا: خلال 14 يومًا بالفاتورة) تُطبع أسفل الإيصال — تكتبها في «الإعدادات ← الكاشير».": {
+"en": "The exchange policy (for example: within 14 days with the invoice) is printed at the bottom of the receipt — you write it in “Settings → Cashier”.",
+"fr": "La politique d’échange (par exemple : sous 14 jours avec la facture) s’imprime en bas du ticket — vous la rédigez dans « Paramètres → Caisse »."
+},
+"«📊 الرصيد حسب المقاس»: المتاح والمبيع من كل مقاس ولون.": {
+"en": "“📊 Stock by size”: what is available and sold of each size and colour.",
+"fr": "« 📊 Stock par taille » : le disponible et le vendu de chaque taille et couleur."
+},
+"إن كنت تبيع موديلًا واحدًا بمقاسات أو ألوان مختلفة: «👕 المقاسات والألوان» ← «+ صنف بمقاسات وألوان».": {
+"en": "If you sell one model in different sizes or colours: “👕 Sizes and colours” → “+ Item with sizes and colours”.",
+"fr": "Si vous vendez un même modèle en plusieurs tailles ou couleurs : « 👕 Tailles et couleurs » → « + Article en tailles et couleurs »."
+},
+"يُنشئ البرنامج صنفًا لكل مقاس ولون بباركود خاص، ويختار الكاشير المقاس واللون عند البيع.": {
+"en": "The program creates an item for every size and colour with its own barcode, and the cashier picks the size and colour when selling.",
+"fr": "Le logiciel crée un article pour chaque taille et couleur avec son propre code-barres, et le caissier choisit la taille et la couleur à la vente."
+},
+"«📊 الرصيد حسب المقاس» يبيّن المتاح من كل مقاس ولون.": {
+"en": "“📊 Stock by size” shows what is available of each size and colour.",
+"fr": "« 📊 Stock par taille » montre le disponible de chaque taille et couleur."
+},
+"اكتب اسم المحل وهاتفه وعنوانه، ثم أجب عن الأسئلة القصيرة: عدد أجهزة الكاشير، وعدد الترابيزات.": {
+"en": "Enter the shop’s name, phone and address, then answer the short questions: the number of cashier devices and the number of tables.",
+"fr": "Saisissez le nom, le téléphone et l’adresse du commerce, puis répondez aux courtes questions : le nombre de caisses et le nombre de tables."
+},
+"بيانات المحل: الاسم والهاتف والعنوان وآخر سطر في الإيصال، و«شعار المحل» (صورة PNG أو JPG أو SVG حتى 2 ميجابايت) يظهر على الإيصال وفي أعلى الشاشة وعلى بطاقات QR.": {
+"en": "Shop details: name, phone, address and the last line of the receipt, plus the “Shop logo” (a PNG, JPG or SVG image up to 2 MB) shown on the receipt, at the top of the screen and on the QR cards.",
+"fr": "Informations du commerce : nom, téléphone, adresse et dernière ligne du ticket, ainsi que le « Logo du commerce » (image PNG, JPG ou SVG jusqu’à 2 Mo) affiché sur le ticket, en haut de l’écran et sur les cartes QR."
+},
+"المنيو، والترابيزات وبطاقات QR، وشكل الإيصال، وورقة المطبخ.": {
+"en": "The menu, the tables and QR cards, the receipt layout and the kitchen ticket.",
+"fr": "Le menu, les tables et les cartes QR, la mise en page du ticket et le bon de cuisine."
+},
+"الأدوار الجاهزة: صاحب النشاط / المدير العام، ومدير فرع، وكاشير، وويتر / كابتن (يفتح الترابيزات ويرسل للمطبخ ولا يستلم مالًا)، ومحاسب، وأمين مخزن. أو «مسمى خاص» تختار صلاحياته بنفسك.": {
+"en": "Ready-made roles: business owner / general manager, branch manager, cashier, waiter / captain (opens tables and sends to the kitchen, never takes money), accountant and storekeeper — or a “Custom title” whose permissions you choose yourself.",
+"fr": "Rôles prêts à l’emploi : propriétaire / directeur général, responsable de succursale, caissier, serveur / chef de rang (ouvre les tables et envoie en cuisine, sans encaisser), comptable et magasinier — ou un « Intitulé personnalisé » dont vous choisissez les autorisations."
+},
+"ثانيًا: المنيو والمخزن والمشتريات": {
+"en": "Part two: the menu, the store and purchases",
+"fr": "Partie 2 : le menu, le stock et les achats"
+},
+"المنيو: المنتجات والأحجام والإضافات": {
+"en": "The menu: products, sizes and add-ons",
+"fr": "Le menu : produits, tailles et suppléments"
+},
+"من «المنيو» اضغط «+ منتج جديد»: الاسم والتصنيف والسعر فقط — لا يلزم مخزون ولا مكونات.": {
+"en": "From “Menu” press “+ New product”: just the name, category and price — no stock or ingredients needed.",
+"fr": "Dans « Menu », appuyez sur « + Nouveau produit » : seulement le nom, la catégorie et le prix — ni stock ni ingrédients nécessaires."
+},
+"للمنتج أحجام؟ علّم «للمنتج أحجام مختلفة» واكتب سعر كل حجم تبيعه (صغير / وسط / كبير) واترك ما لا تبيعه فارغًا. يسأل الكاشير عن الحجم عند البيع.": {
+"en": "Does the product come in sizes? Tick “The product has different sizes” and enter the price of each size you sell (small / medium / large), leaving the others empty. The cashier asks for the size when selling.",
+"fr": "Le produit existe en plusieurs tailles ? Cochez « Le produit a plusieurs tailles » et saisissez le prix de chaque taille vendue (petit / moyen / grand), en laissant les autres vides. La caisse demande la taille à la vente."
+},
+"«+ إضافة على الطلب» (جبنة زيادة، صوص…) بسعرها، ومع أي تصنيفات تظهر. يختارها الكاشير من «＋ إضافات / ملاحظة» على سطر المنتج.": {
+"en": "“+ Order add-on” (extra cheese, sauce…) with its price and the categories it appears with. The cashier picks it from “＋ Add-ons / note” on the product line.",
+"fr": "« + Supplément » (fromage en plus, sauce…) avec son prix et les catégories où il apparaît. Le caissier le choisit via « ＋ Suppléments / note » sur la ligne du produit."
+},
+"«المكونات / الوصف» يظهر للعميل في منيو QR. ولديك منيو كبير؟ «📊 رفع المنيو من إكسل».": {
+"en": "The “Ingredients / description” appears to the customer on the QR menu. A large menu? “📊 Upload the menu from Excel”.",
+"fr": "Les « Ingrédients / description » s’affichent au client sur le menu QR. Un grand menu ? « 📊 Importer le menu depuis Excel »."
+},
+"المكونات والتكلفة (اختياري)": {
+"en": "Ingredients and cost (optional)",
+"fr": "Ingrédients et coût (facultatif)"
+},
+"لكل منتج مكوناته بكمياتها (بن، لبن، سكر…)، ومع كل طلب تُخصم الخامات من المخزن.": {
+"en": "Each product has its ingredients and quantities (coffee, milk, sugar…), and with every order the raw materials are taken out of stock.",
+"fr": "Chaque produit a ses ingrédients et leurs quantités (café, lait, sucre…), et à chaque commande les matières premières sortent du stock."
+},
+"تُحسب التكلفة بسعر آخر فاتورة شراء، ويقترح البرنامج سعر البيع بهامش الربح الذي تحدده.": {
+"en": "The cost is calculated at the last purchase price, and the program suggests a sale price with the profit margin you set.",
+"fr": "Le coût est calculé au dernier prix d’achat, et le logiciel propose un prix de vente selon la marge que vous fixez."
+},
+"اكتب «حد الطلب» لكل خامة ليظهر التنبيه قبل أن تنفد.": {
+"en": "Enter the “Reorder level” for each raw material so the alert appears before it runs out.",
+"fr": "Saisissez le « Seuil de réapprovisionnement » de chaque matière première pour être alerté avant la rupture."
+},
+"«شراء الخامات» ← «فاتورة مشتريات»: اختر المورد (أو اكتب اسم مورد جديد) ورقم فاتورته وتاريخها.": {
+"en": "“Buy raw materials” → “Purchase invoice”: choose the supplier (or type a new supplier’s name), their invoice number and its date.",
+"fr": "« Achat de matières premières » → « Facture d’achat » : choisissez le fournisseur (ou saisissez le nom d’un nouveau fournisseur), le numéro de sa facture et sa date."
+},
+"«جرد الخامات والهالك»: رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا.": {
+"en": "“Raw materials count and waste”: the balance of every item is in front of you — enter the quantity actually counted.",
+"fr": "« Inventaire des matières et pertes » : le solde de chaque article est sous vos yeux — saisissez la quantité réellement comptée."
+},
+"«+ صنف بسعر حر»: بيع صنف ليس في القائمة بسعر تكتبه.": {
+"en": "“+ Open-price item”: sell an item that is not in the list at a price you type.",
+"fr": "« + Article à prix libre » : vendre un article absent de la liste au prix que vous saisissez."
+},
+"الأحجام والإضافات والملاحظات": {
+"en": "Sizes, add-ons and notes",
+"fr": "Tailles, suppléments et notes"
+},
+"عند اختيار منتج له أحجام تظهر نافذة «اختر الحجم» بسعر كل حجم.": {
+"en": "When you pick a product with sizes, the “Choose the size” window appears with each size’s price.",
+"fr": "Quand vous choisissez un produit en plusieurs tailles, la fenêtre « Choisir la taille » s’affiche avec le prix de chaque taille."
+},
+"على سطر المنتج: «＋ إضافات / ملاحظة» لاختيار الإضافات بسعرها وكتابة ملاحظة (مثل: بدون بصل).": {
+"en": "On the product line: “＋ Add-ons / note” to pick add-ons with their prices and type a note (for example: no onions).",
+"fr": "Sur la ligne du produit : « ＋ Suppléments / note » pour choisir des suppléments avec leur prix et écrire une note (par exemple : sans oignons)."
+},
+"«📝 ملاحظة على الطلب» لملاحظة على الطلب كله — تظهر في المطبخ وعلى الفاتورة.": {
+"en": "“📝 Order note” for a note on the whole order — it appears in the kitchen and on the invoice.",
+"fr": "« 📝 Note de commande » pour une note sur toute la commande — elle s’affiche en cuisine et sur la facture."
+},
+"الترابيزات والويتر والمطبخ": {
+"en": "Tables, waiters and the kitchen",
+"fr": "Tables, serveurs et cuisine"
+},
+"عند تشغيل الترابيزات تفتح لوحة البيع على «🍽 الترابيزات»: المتاحة بيضاء، والمشغولة ملوّنة وعليها حسابها حتى الآن.": {
+"en": "When tables are on, the sales screen opens on “🍽 Tables”: free ones are white, occupied ones are coloured and show their bill so far.",
+"fr": "Quand les tables sont activées, l’écran de vente s’ouvre sur « 🍽 Tables » : les libres sont blanches, les occupées sont colorées et affichent leur addition en cours."
+},
+"اضغط الترابيزة، وأضف الأصناف، ثم «🍳 إرسال للمطبخ». كل إضافة لاحقة تُرسل وحدها للمطبخ.": {
+"en": "Press the table, add the items, then “🍳 Send to kitchen”. Every later addition is sent to the kitchen on its own.",
+"fr": "Appuyez sur la table, ajoutez les articles, puis « 🍳 Envoyer en cuisine ». Chaque ajout ultérieur part seul en cuisine."
+},
+"«🖨 طباعة الحساب» قبل الدفع، و«↔ نقل / دمج» لنقل الحساب إلى ترابيزة أخرى (وإن كانت مشغولة يُدمج الحسابان).": {
+"en": "“🖨 Print the bill” before payment, and “↔ Move / merge” to move the bill to another table (if it is occupied, the two bills are merged).",
+"fr": "« 🖨 Imprimer l’addition » avant le paiement, et « ↔ Déplacer / fusionner » pour transférer l’addition à une autre table (si elle est occupée, les deux additions sont fusionnées)."
+},
+"«🧾 الحساب والتحصيل»: فاتورة واحدة كاملة، وتصبح الترابيزة متاحة. والويتر لا يستلم مالًا؛ يحاسب الكاشير.": {
+"en": "“🧾 Bill and payment”: one complete invoice, and the table becomes free. The waiter never takes money; the cashier settles the bill.",
+"fr": "« 🧾 Addition et encaissement » : une facture complète, et la table redevient libre. Le serveur n’encaisse jamais ; c’est le caissier qui encaisse."
+},
+"«🛍 طلب تيك أواي / بدون ترابيزة» للبيع السريع.": {
+"en": "“🛍 Takeaway / no table” for quick sales.",
+"fr": "« 🛍 À emporter / sans table » pour la vente rapide."
+},
+"تقسيم الحساب والخدمة": {
+"en": "Splitting the bill and the service charge",
+"fr": "Partage de l’addition et service"
+},
+"«✂ تقسيم الحساب»: «بالتساوي» على عدد أجزاء، أو «باختيار الأصناف» لكل جزء؛ ويبقى الباقي على الترابيزة حتى يُدفع.": {
+"en": "“✂ Split the bill”: “Equally” into a number of parts, or “By choosing items” for each part; the rest stays on the table until it is paid.",
+"fr": "« ✂ Partager l’addition » : « À parts égales » en un nombre de parts, ou « Par choix des articles » pour chaque part ; le reste demeure sur la table jusqu’au paiement."
+},
+"نسبة الخدمة (مثل 12%) تُضاف سطرًا مستقلًا على حساب الترابيزة — تضبطها من «الخدمة ومحطات المطبخ»، ولا تُضاف على التيك أواي ولا الدليفري.": {
+"en": "The service charge (for example 12%) is added as a separate line on the table’s bill — set it in “Service and kitchen stations”; it is not added to takeaway or delivery.",
+"fr": "Le service (par exemple 12 %) s’ajoute en ligne séparée sur l’addition de la table — réglez-le dans « Service et postes de cuisine » ; il ne s’applique ni à l’emporter ni à la livraison."
+},
+"حدّد «أقصى خصم يدوي يمنحه الكاشير دون موافقتك (%)» من «الإعدادات ← الكاشير: الخصم» أو «الخدمة ومحطات المطبخ». صفر = لا خصم إلا بموافقتك.": {
+"en": "Set the “Maximum manual discount the cashier may give without your approval (%)” in “Settings → Cashier: discount” or “Service and kitchen stations”. Zero = no discount without your approval.",
+"fr": "Fixez la « Remise manuelle maximale que le caissier accorde sans votre accord (%) » dans « Paramètres → Caisse : remise » ou « Service et postes de cuisine ». Zéro = aucune remise sans votre accord."
+},
+"محطات المطبخ وطلبات QR": {
+"en": "Kitchen stations and QR orders",
+"fr": "Postes de cuisine et commandes QR"
+},
+"«🪑 الترابيزات وطلبات QR»: أضف ترابيزاتك (تُرقَّم تلقائيًا) وعدّلها في أي وقت، و«🖨 اطبع أكواد QR للترابيزات».": {
+"en": "“🪑 Tables and QR orders”: add your tables (numbered automatically) and edit them at any time, and “🖨 Print the tables’ QR codes”.",
+"fr": "« 🪑 Tables et commandes QR » : ajoutez vos tables (numérotées automatiquement) et modifiez-les à tout moment, et « 🖨 Imprimer les codes QR des tables »."
+},
+"بكود QR يرى العميل المنيو، وإن سمحت له يطلب بنفسه فيُسجَّل الطلب على ترابيزته ويصل للمطبخ — أو بعد موافقة الويتر.": {
+"en": "With the QR code the customer sees the menu, and if you allow it they order themselves: the order is recorded on their table and reaches the kitchen — or after the waiter approves it.",
+"fr": "Avec le code QR, le client voit le menu et, si vous l’autorisez, commande lui-même : la commande est enregistrée sur sa table et arrive en cuisine — ou après l’accord du serveur."
+},
+"«🧑‍🍳 الخدمة ومحطات المطبخ»: «المطبخ» و«البار»… لكل محطة طابعتها وأقسامها، فتطبع كل محطة أصنافها فقط.": {
+"en": "“🧑‍🍳 Service and kitchen stations”: “Kitchen”, “Bar”… each station has its printer and sections, so each station prints only its own items.",
+"fr": "« 🧑‍🍳 Service et postes de cuisine » : « Cuisine », « Bar »… chaque poste a son imprimante et ses rubriques, et n’imprime que ses articles."
+},
+"ورقة المطبخ (بلا أسعار) تُطبع مع الإيصال على الطابعة نفسها أو على طابعة المطبخ — من «الإعدادات ← 🍳 ورقة المطبخ».": {
+"en": "The kitchen ticket (without prices) prints with the receipt on the same printer or on the kitchen printer — from “Settings → 🍳 Kitchen ticket”.",
+"fr": "Le bon de cuisine (sans prix) s’imprime avec le ticket sur la même imprimante ou sur celle de la cuisine — via « Paramètres → 🍳 Bon de cuisine »."
+},
+"«الطلبات والمبيعات»: كل فاتورة بوقتها وجهازها وكاشيرها وطريقة دفعها، و«ما يحتاج إلى مراجعة».": {
+"en": "“Orders and sales”: every invoice with its time, device, cashier and payment method, and “What needs review”.",
+"fr": "« Commandes et ventes » : chaque facture avec son heure, sa caisse, son caissier et son mode de paiement, et « Ce qui doit être vérifié »."
+},
+"اكتب اسم الصالة وهاتفه وعنوانه، ثم أجب عن الأسئلة القصيرة: عدد الأجهزة وسعر الساعة وطريقة حساب الوقت.": {
+"en": "Enter the hall’s name, phone and address, then answer the short questions: the number of consoles, the hourly rate and how time is charged.",
+"fr": "Saisissez le nom, le téléphone et l’adresse de la salle, puis répondez aux courtes questions : le nombre de postes, le tarif horaire et le mode de calcul du temps."
+},
+"أنشئ حسابك: اسمك، واسم الدخول بالإنجليزية، وكلمة سر لا تقل عن 8 أحرف. هذا هو حساب صاحب الصالة وله كل الصلاحيات.": {
+"en": "Create your account: your name, a login name in English and a password of at least 8 characters. This is the hall owner’s account and it has every permission.",
+"fr": "Créez votre compte : votre nom, un identifiant en lettres latines et un mot de passe d’au moins 8 caractères. C’est le compte du propriétaire de la salle, il a toutes les autorisations."
+},
+"بيانات الصالة: الاسم والهاتف والعنوان وآخر سطر في الإيصال، و«شعار المحل» (صورة PNG أو JPG أو SVG حتى 2 ميجابايت) يظهر على الإيصال وفي أعلى الشاشة.": {
+"en": "Hall details: name, phone, address and the last line of the receipt, plus the “Shop logo” (a PNG, JPG or SVG image up to 2 MB) shown on the receipt and at the top of the screen.",
+"fr": "Informations de la salle : nom, téléphone, adresse et dernière ligne du ticket, ainsi que le « Logo du commerce » (image PNG, JPG ou SVG jusqu’à 2 Mo) affiché sur le ticket et en haut de l’écran."
+},
+"أجهزة الصالة وسعر الساعة، وطريقة حساب الوقت.": {
+"en": "The hall’s consoles and hourly rate, and how time is charged.",
+"fr": "Les postes de la salle et le tarif horaire, et le mode de calcul du temps."
+},
+"الأدوار الجاهزة: صاحب النشاط / المدير العام، ومدير فرع، وعامل الصالة (يشغّل الأجهزة والبوفيه والدرج)، ومحاسب، وأمين مخزن. أو «مسمى خاص» تختار صلاحياته بنفسك.": {
+"en": "Ready-made roles: business owner / general manager, branch manager, hall worker (runs the consoles, the snack bar and the drawer), accountant and storekeeper — or a “Custom title” whose permissions you choose yourself.",
+"fr": "Rôles prêts à l’emploi : propriétaire / directeur général, responsable de succursale, employé de salle (gère les postes, le buffet et le tiroir), comptable et magasinier — ou un « Intitulé personnalisé » dont vous choisissez les autorisations."
+},
+"ثانيًا: البوفيه والمشتريات": {
+"en": "Part two: the snack bar and purchases",
+"fr": "Partie 2 : le buffet et les achats"
+},
+"البوفيه والخامات": {
+"en": "Snack bar and raw materials",
+"fr": "Buffet et matières premières"
+},
+"أصناف البوفيه (مشروبات، سناكس…) من «البوفيه والخامات»: الاسم والتصنيف والوحدة وسعر البيع و«حد الطلب».": {
+"en": "Snack bar items (drinks, snacks…) from “Snack bar and raw materials”: name, category, unit, sale price and “Reorder level”.",
+"fr": "Les articles du buffet (boissons, snacks…) dans « Buffet et matières premières » : nom, catégorie, unité, prix de vente et « Seuil de réapprovisionnement »."
+},
+"يظهر الصنف على لوحة الجهاز في الصالة وعلى «🥤 تيك أواي» بمجرد أن يكون له سعر بيع.": {
+"en": "The item appears on the console panel in the hall and on “🥤 Takeaway” as soon as it has a sale price.",
+"fr": "L’article apparaît sur le panneau du poste dans la salle et sur « 🥤 À emporter » dès qu’il a un prix de vente."
+},
+"منتجات تُحضَّر (شاي، قهوة) لها «المكونات والتكلفة» إن أردت خصم الخامات من المخزن.": {
+"en": "Prepared products (tea, coffee) have “Ingredients and cost” if you want the raw materials taken out of stock.",
+"fr": "Les produits préparés (thé, café) ont des « Ingrédients et coût » si vous voulez déduire les matières premières du stock."
+},
+"لديك أصناف كثيرة؟ «⬆ رفع / تعديل الأصناف من إكسل».": {
+"en": "Many items? “⬆ Upload / edit items from Excel”.",
+"fr": "Beaucoup d’articles ? « ⬆ Importer / modifier les articles depuis Excel »."
+},
+"«شراء البوفيه» ← «فاتورة مشتريات»: اختر المورد (أو اكتب اسم مورد جديد) ورقم فاتورته وتاريخها.": {
+"en": "“Buy for the snack bar” → “Purchase invoice”: choose the supplier (or type a new supplier’s name), their invoice number and its date.",
+"fr": "« Achats du buffet » → « Facture d’achat » : choisissez le fournisseur (ou saisissez le nom d’un nouveau fournisseur), le numéro de sa facture et sa date."
+},
+"«جرد البوفيه»: رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا.": {
+"en": "“Snack bar stock count”: the balance of every item is in front of you — enter the quantity actually counted.",
+"fr": "« Inventaire du buffet » : le solde de chaque article est sous vos yeux — saisissez la quantité réellement comptée."
+},
+"ثالثًا: الصالة": {
+"en": "Part three: the hall",
+"fr": "Partie 3 : la salle"
+},
+"شاشة الصالة": {
+"en": "The hall screen",
+"fr": "L’écran de la salle"
+},
+"كل جهاز أمامك: متاح أم مشغول، ووقته وحسابه حتى الآن. افتح الوردية من أعلى الشاشة برصيد الدرج في البداية.": {
+"en": "Every console is in front of you: free or busy, with its time and bill so far. Open the shift from the top of the screen with the starting drawer balance.",
+"fr": "Chaque poste est sous vos yeux : libre ou occupé, avec son temps et son montant en cours. Ouvrez la session en haut de l’écran avec le fond de tiroir initial."
+},
+"اضغط على جهاز متاح: اسم العميل (اختياري)، والوقت المحجوز (مفتوح، نصف ساعة، ساعة…)، وفردي أو مالتي، ثم «▶ ابدأ».": {
+"en": "Press a free console: the customer’s name (optional), the booked time (open, half an hour, an hour…), and single or multi, then “▶ Start”.",
+"fr": "Appuyez sur un poste libre : le nom du client (facultatif), la durée réservée (libre, une demi-heure, une heure…), et solo ou multi, puis « ▶ Démarrer »."
+},
+"طلبات البوفيه: اضغط الجهاز المشغول واختر الأصناف فتُضاف على حسابه. وللبيع بدون جهاز: «🥤 تيك أواي».": {
+"en": "Snack bar orders: press the busy console and choose the items; they are added to its bill. To sell without a console: “🥤 Takeaway”.",
+"fr": "Commandes du buffet : appuyez sur le poste occupé et choisissez les articles ; ils s’ajoutent à son montant. Pour vendre sans poste : « 🥤 À emporter »."
+},
+"«نقل إلى جهاز آخر»: يُحسب الوقت المنقضي بسعر الجهاز القديم، والقادم بسعر الجديد.": {
+"en": "“Move to another console”: the time so far is charged at the old console’s rate, and what follows at the new one’s.",
+"fr": "« Transférer vers un autre poste » : le temps écoulé est facturé au tarif de l’ancien poste, la suite à celui du nouveau."
+},
+"إلغاء جلسة مرّ عليها أكثر من 5 دقائق أو عليها طلبات يحتاج اسم صاحب المحل وكلمة سره.": {
+"en": "Cancelling a session older than 5 minutes or one with orders needs the owner’s name and password.",
+"fr": "Annuler une séance de plus de 5 minutes ou avec des commandes exige l’identifiant et le mot de passe du propriétaire."
+},
+"الحساب": {
+"en": "The bill",
+"fr": "Le paiement"
+},
+"«💵 قفل وحساب»: يظهر وقت اللعب والبوفيه والمطلوب.": {
+"en": "“💵 Stop and bill”: the play time, the snack bar and the amount due are shown.",
+"fr": "« 💵 Arrêter et facturer » : le temps de jeu, le buffet et le montant dû s’affichent."
+},
+"«خصم (جنيه)» في حدود ما سمحت به للعامل؛ والأكبر يحتاج اسم صاحب المحل وكلمة سره.": {
+"en": "“Discount (EGP)” within what you allowed the worker; a larger one needs the owner’s name and password.",
+"fr": "« Remise (EGP) » dans la limite accordée à l’employé ; au-delà, il faut l’identifiant et le mot de passe du propriétaire."
+},
+"الدفع نقدًا، أو ببطاقة / محفظة، أو آجل على عميل، أو من «🎟 رصيد باقة» بموبايل العميل — ثم «✔ تم الدفع واطبع».": {
+"en": "Pay in cash, by card / wallet, on credit to a customer, or from a “🎟 Package balance” with the customer’s mobile — then “✔ Paid, print”.",
+"fr": "Paiement en espèces, par carte / portefeuille, à crédit sur un client, ou depuis un « 🎟 Solde de forfait » avec le mobile du client — puis « ✔ Payé, imprimer »."
+},
+"الأجهزة والأسعار وحساب الوقت": {
+"en": "Consoles, prices and time charging",
+"fr": "Postes, tarifs et calcul du temps"
+},
+"«⚙ الأجهزة والأسعار»: سعر الساعة فردي ومالتي لكل جهاز، أو «سعر واحد لكل الأجهزة من نوع واحد» ثم «طبّق على الكل».": {
+"en": "“⚙ Consoles and prices”: the single and multi hourly rate for each console, or “One price for all consoles of one type”, then “Apply to all”.",
+"fr": "« ⚙ Postes et tarifs » : le tarif horaire solo et multi de chaque poste, ou « Un tarif unique pour tous les postes d’un même type », puis « Appliquer à tous »."
+},
+"اترك «مالتي» فارغًا إن كان للجهاز سعر واحد (مثل البلياردو). «+ إضافة أجهزة»: النوع والعدد والسعر، وتُسمّى تلقائيًا.": {
+"en": "Leave “Multi” empty if the console has a single price (like billiards). “+ Add consoles”: the type, the number and the price; they are named automatically.",
+"fr": "Laissez « Multi » vide si le poste a un tarif unique (comme le billard). « + Ajouter des postes » : le type, le nombre et le tarif ; ils sont nommés automatiquement."
+},
+"«طريقة حساب الوقت والخصم»: التقريب لأقرب ربع ساعة أو نصف ساعة أو ساعة، وأقل وقت يُحاسب عليه، ودقائق السماح قبل التقريب، و«أقصى خصم يعطيه العامل وحده».": {
+"en": "“Time charging and discount”: rounding to the nearest quarter hour, half hour or hour, the minimum time charged, grace minutes before rounding, and the “Maximum discount the worker may give alone”.",
+"fr": "« Calcul du temps et remise » : arrondi au quart d’heure, à la demi-heure ou à l’heure, durée minimale facturée, minutes de tolérance avant l’arrondi, et la « Remise maximale que l’employé accorde seul »."
+},
+"السعر الجديد يسري على الجلسات التي تبدأ بعد الحفظ.": {
+"en": "A new price applies to sessions that start after saving.",
+"fr": "Un nouveau tarif s’applique aux séances qui commencent après l’enregistrement."
+},
+"الحجوزات": {
+"en": "Bookings",
+"fr": "Réservations"
+},
+"«📅 حجوزات الأجهزة» ← «+ حجز جديد»: اسم العميل وموبايله، وجهاز محدد أو «أي PS5»، واليوم والساعة والمدة.": {
+"en": "“📅 Console bookings” → “+ New booking”: the customer’s name and mobile, a specific console or “Any PS5”, the day, the hour and the duration.",
+"fr": "« 📅 Réservations des postes » → « + Nouvelle réservation » : le nom et le mobile du client, un poste précis ou « N’importe quelle PS5 », le jour, l’heure et la durée."
+},
+"يظهر الحجز أعلى شاشة الصالة؛ وعند وصول العميل اضغطه ← «▶ وصل — ابدأ». أو «لم يحضر» / «إلغاء الحجز».": {
+"en": "The booking appears at the top of the hall screen; when the customer arrives, press it → “▶ Arrived — start”. Or “No-show” / “Cancel booking”.",
+"fr": "La réservation s’affiche en haut de l’écran de la salle ; à l’arrivée du client, appuyez dessus → « ▶ Arrivé — démarrer ». Ou « Absent » / « Annuler la réservation »."
+},
+"ينبّهك البرنامج إن شغّلت جهازًا محجوزًا قريبًا.": {
+"en": "The program warns you if you start a console that is booked soon.",
+"fr": "Le logiciel vous prévient si vous lancez un poste réservé sous peu."
+},
+"باقات الساعات المدفوعة مقدمًا": {
+"en": "Prepaid hour packages",
+"fr": "Forfaits d’heures prépayés"
+},
+"عرّف الباقات من «الأجهزة والأسعار ← 🎟 باقات الساعات»: الاسم وعدد الساعات والسعر.": {
+"en": "Define the packages in “Consoles and prices → 🎟 Hour packages”: the name, the number of hours and the price.",
+"fr": "Définissez les forfaits dans « Postes et tarifs → 🎟 Forfaits d’heures » : le nom, le nombre d’heures et le prix."
+},
+"على شاشة الصالة: «🎟 باقة» ← اختر الباقة وموبايل العميل واسمه وطريقة الدفع. يُضاف رصيدها إلى رقم موبايله.": {
+"en": "On the hall screen: “🎟 Package” → choose the package, the customer’s mobile and name, and the payment method. Its balance is added to their mobile number.",
+"fr": "Sur l’écran de la salle : « 🎟 Forfait » → choisissez le forfait, le mobile et le nom du client, et le mode de paiement. Son solde est ajouté à son numéro de mobile."
+},
+"عند الحساب تُخصم دقائق اللعب من رصيده ويدفع الباقي فقط. «🎟 أرصدة الباقات» تعرض رصيد كل عميل وحركته.": {
+"en": "At billing, the play minutes are taken from their balance and they pay only the rest. “🎟 Package balances” shows each customer’s balance and movements.",
+"fr": "À la facturation, les minutes de jeu sont déduites de son solde et il ne paie que le reste. « 🎟 Soldes des forfaits » affiche le solde et les mouvements de chaque client."
+},
+"تقرير الصالة": {
+"en": "The hall report",
+"fr": "Le rapport de la salle"
+},
+"«📊 تقرير الصالة» لليوم أو آخر 7 أيام أو الشهر: إيراد الوقت والبوفيه والتيك أواي والباقات والخصومات.": {
+"en": "“📊 Hall report” for today, the last 7 days or the month: revenue from time, the snack bar, takeaway, packages and discounts.",
+"fr": "« 📊 Rapport de la salle » pour aujourd’hui, les 7 derniers jours ou le mois : recettes du temps, du buffet, de l’emporter, des forfaits, et les remises."
+},
+"كل جهاز: جلساته وساعات اللعب وإيراده ونسبة إشغاله؛ وكل عامل: فواتيره وخصوماته والجلسات التي ألغاها.": {
+"en": "Each console: its sessions, play hours, revenue and occupancy rate; each worker: their invoices, discounts and the sessions they cancelled.",
+"fr": "Chaque poste : ses séances, ses heures de jeu, ses recettes et son taux d’occupation ; chaque employé : ses factures, ses remises et les séances qu’il a annulées."
+},
+"قفل الوردية من شاشة الصالة نفسها: عُدّ الدرج واكتبه، ويُطبع تقرير الوردية.": {
+"en": "Close the shift from the hall screen itself: count the drawer and enter it, and the shift report is printed.",
+"fr": "Clôturez la session depuis l’écran de la salle : comptez le tiroir et saisissez le montant, le rapport de session s’imprime."
+},
+"بعد قفل كل الورديات: «🔒 تقفيل اليوم» يعرض صافي مبيعات اليوم نقدًا وبطاقات وآجلًا، والورديات بالمتوقع والفعلي والفرق.": {
+"en": "After all shifts are closed: “🔒 Day close” shows the day’s net sales in cash, cards and credit, and the shifts with expected, actual and difference.",
+"fr": "Une fois toutes les sessions clôturées : « 🔒 Clôture de la journée » affiche les ventes nettes du jour en espèces, cartes et crédit, et les sessions avec attendu, réel et écart."
+},
+"«الفواتير والمبيعات»: كل فاتورة بوقتها وجهازها وكاشيرها وطريقة دفعها، و«ما يحتاج إلى مراجعة».": {
+"en": "“Invoices and sales”: every invoice with its time, device, cashier and payment method, and “What needs review”.",
+"fr": "« Factures et ventes » : chaque facture avec son heure, sa caisse, son caissier et son mode de paiement, et « Ce qui doit être vérifié »."
+},
+"هاتف صاحب الصالة": {
+"en": "The hall owner’s phone",
+"fr": "Le téléphone du propriétaire de la salle"
+},
+"اكتب اسم العيادة وهاتفه وعنوانه، ثم أجب عن الأسئلة القصيرة.": {
+"en": "Enter the clinic’s name, phone and address, then answer the short questions.",
+"fr": "Saisissez le nom, le téléphone et l’adresse du cabinet, puis répondez aux courtes questions."
+},
+"أنشئ حسابك: اسمك، واسم الدخول بالإنجليزية، وكلمة سر لا تقل عن 8 أحرف. هذا هو حساب صاحب العيادة وله كل الصلاحيات.": {
+"en": "Create your account: your name, a login name in English and a password of at least 8 characters. This is the clinic owner’s account and it has every permission.",
+"fr": "Créez votre compte : votre nom, un identifiant en lettres latines et un mot de passe d’au moins 8 caractères. C’est le compte du propriétaire du cabinet, il a toutes les autorisations."
+},
+"بيانات العيادة: الاسم والهاتف والعنوان وآخر سطر في الإيصال، و«شعار المحل» (صورة PNG أو JPG أو SVG حتى 2 ميجابايت) يظهر على الإيصال وفي أعلى الشاشة.": {
+"en": "Clinic details: name, phone, address and the last line of the receipt, plus the “Shop logo” (a PNG, JPG or SVG image up to 2 MB) shown on the receipt and at the top of the screen.",
+"fr": "Informations du cabinet : nom, téléphone, adresse et dernière ligne du reçu, ainsi que le « Logo » (image PNG, JPG ou SVG jusqu’à 2 Mo) affiché sur le reçu et en haut de l’écran."
+},
+"الأطباء ونسبهم، ثم الخدمات وأسعارها (كشف، استشارة، جلسة…).": {
+"en": "The doctors and their shares, then the services and their prices (consultation, follow-up advice, session…).",
+"fr": "Les médecins et leurs parts, puis les prestations et leurs prix (consultation, avis, séance…)."
+},
+"الأدوار الجاهزة: صاحب النشاط / المدير العام، ومدير فرع، واستقبال (العيادة)، ودكتور (العيادة) — ويُربط حساب الدكتور باسمه في «إن كان طبيبًا: من؟»، ومحاسب، وأمين مخزن. أو «مسمى خاص» تختار صلاحياته بنفسك.": {
+"en": "Ready-made roles: business owner / general manager, branch manager, reception (clinic) and doctor (clinic) — the doctor’s account is linked to their name in “If a doctor: who?” — accountant and storekeeper. Or a “Custom title” whose permissions you choose yourself.",
+"fr": "Rôles prêts à l’emploi : propriétaire / directeur général, responsable de succursale, accueil (cabinet) et médecin (cabinet) — le compte du médecin est lié à son nom dans « S’il s’agit d’un médecin : lequel ? » —, comptable et magasinier. Ou un « Intitulé personnalisé » dont vous choisissez les autorisations."
+},
+"ثانيًا: العيادة": {
+"en": "Part two: the clinic",
+"fr": "Partie 2 : le cabinet"
+},
+"الأطباء والخدمات والأسعار": {
+"en": "Doctors, services and prices",
+"fr": "Médecins, prestations et tarifs"
+},
+"«🧾 الخدمات والأسعار» ← «+ طبيب»: الاسم والتخصص ونسبته من الكشف والخدمات (0 = صاحب العيادة أو براتب).": {
+"en": "“🧾 Services and prices” → “+ Doctor”: the name, the specialty and their share of consultations and services (0 = the clinic owner or salaried).",
+"fr": "« 🧾 Prestations et tarifs » → « + Médecin » : le nom, la spécialité et sa part des consultations et prestations (0 = le propriétaire du cabinet ou salarié)."
+},
+"مواعيد كل طبيب: أيام العمل وساعاته، وأقصى عدد كشوفات في اليوم — يُنبَّه الاستقبال عند الحجز خارجها. وتُطبع على الروشتة.": {
+"en": "Each doctor’s schedule: working days and hours, and the maximum number of consultations per day — reception is warned when booking outside it. It is printed on the prescription.",
+"fr": "L’agenda de chaque médecin : jours et heures de travail, et nombre maximal de consultations par jour — l’accueil est averti en cas de réservation hors de ces plages. Il s’imprime sur l’ordonnance."
+},
+"«+ خدمة جديدة»: كشف، استشارة، جلسة… بسعرها ومدتها وطبيبها، والمستهلكات التي تُصرف في كل مرة. أو «＋ أضف الخدمات الجاهزة».": {
+"en": "“+ New service”: consultation, follow-up advice, session… with its price, duration and doctor, and the consumables used each time. Or “＋ Add the ready-made services”.",
+"fr": "« + Nouvelle prestation » : consultation, avis, séance… avec son prix, sa durée et son médecin, et les consommables utilisés à chaque fois. Ou « ＋ Ajouter les prestations prêtes »."
+},
+"«الإعادة»: إن حُجز للمريض نفس الكشف مع نفس الطبيب خلال المدة يُحسب «إعادة» بسعرها تلقائيًا (سعر 0 = مجانية).": {
+"en": "“Follow-up visit”: if the patient is booked for the same consultation with the same doctor within the period, it is charged automatically as a “Follow-up” at its price (price 0 = free).",
+"fr": "« Visite de contrôle » : si le patient est réservé pour la même consultation avec le même médecin dans le délai, elle est facturée automatiquement en « Contrôle » à son prix (prix 0 = gratuite)."
+},
+"«خصم الاستقبال»: أقصى خصم يمنحه الاستقبال دون موافقتك.": {
+"en": "“Reception discount”: the maximum discount reception may give without your approval.",
+"fr": "« Remise de l’accueil » : la remise maximale que l’accueil accorde sans votre accord."
+},
+"الاستقبال": {
+"en": "Reception",
+"fr": "Accueil"
+},
+"ابحث عن المريض بالاسم أو الهاتف أو رقم الملف، أو سجّل مريضًا جديدًا (السن أو سنة الميلاد والنوع).": {
+"en": "Search for the patient by name, phone or file number, or register a new patient (age or year of birth, and sex).",
+"fr": "Cherchez le patient par nom, téléphone ou numéro de dossier, ou enregistrez un nouveau patient (âge ou année de naissance, et sexe)."
+},
+"«+ حجز» لموعد قادم، أو «+ مريض وصل بدون حجز» فيدخل الدور مباشرة — ويمكنه الدفع وطباعة إيصال.": {
+"en": "“+ Booking” for a later appointment, or “+ Walk-in patient” who joins the queue directly — and can pay and get a printed receipt.",
+"fr": "« + Réservation » pour un rendez-vous à venir, ou « + Patient sans rendez-vous » qui entre directement dans la file — et peut payer et recevoir un reçu imprimé."
+},
+"الدور أمامك: محجوز ولم يصل ← «وصل ✔» ← ينتظر ← «أدخِله إلى الطبيب» ← عند الطبيب ← انتهى.": {
+"en": "The queue in front of you: booked and not arrived → “Arrived ✔” → waiting → “Send in to the doctor” → with the doctor → done.",
+"fr": "La file sous vos yeux : réservé non arrivé → « Arrivé ✔ » → en attente → « Faire entrer chez le médecin » → chez le médecin → terminé."
+},
+"«💵 حسابات في انتظار الدفع» في الأعلى: اضغط «حاسب».": {
+"en": "“💵 Bills awaiting payment” at the top: press “Bill”.",
+"fr": "« 💵 Comptes en attente de paiement » en haut : appuyez sur « Encaisser »."
+},
+"درج الاستقبال": {
+"en": "The reception drawer",
+"fr": "Le tiroir de l’accueil"
+},
+"يُفتح الدرج تلقائيًا باسم موظف الاستقبال مع أول مبلغ يستلمه، أو «افتح الدرج» بفكة أول اليوم.": {
+"en": "The drawer opens automatically in the receptionist’s name with the first amount received, or “Open the drawer” with the morning float.",
+"fr": "Le tiroir s’ouvre automatiquement au nom de la personne à l’accueil avec le premier montant reçu, ou « Ouvrir le tiroir » avec le fond de caisse du matin."
+},
+"في نهاية الوردية: «🔒 قفّل درجي» — عُدّ النقدية واكتبها، ويظهر العجز أو الزيادة لصاحب العيادة.": {
+"en": "At the end of the shift: “🔒 Close my drawer” — count the cash and enter it, and any shortage or surplus is shown to the clinic owner.",
+"fr": "En fin de session : « 🔒 Clôturer mon tiroir » — comptez l’espèce et saisissez-la ; le manque ou l’excédent est signalé au propriétaire du cabinet."
+},
+"الحجز أونلاين": {
+"en": "Online booking",
+"fr": "Réservation en ligne"
+},
+"من «إعداد العيادة» ← «🌐 الحجز أونلاين»: «الحجز أونلاين يعمل»، وعدد الأيام المسموح بالحجز فيها، وملاحظة للمريض.": {
+"en": "From “Clinic setup” → “🌐 Online booking”: “Online booking is on”, the number of days open for booking, and a note for the patient.",
+"fr": "Dans « Configuration du cabinet » → « 🌐 Réservation en ligne » : « La réservation en ligne est active », le nombre de jours ouverts à la réservation, et une note pour le patient."
+},
+"انسخ رابط صفحة الحجز أو اطبع رمز QR وعلّقه في العيادة أو ضعه على صفحتك: يختار المريض الطبيب والخدمة وموعدًا متاحًا من مواعيد الطبيب.": {
+"en": "Copy the booking page link or print the QR code and hang it in the clinic or put it on your page: the patient picks the doctor, the service and a free slot from the doctor’s schedule.",
+"fr": "Copiez le lien de la page de réservation ou imprimez le code QR et affichez-le au cabinet ou sur votre page : le patient choisit le médecin, la prestation et un créneau libre de son agenda."
+},
+"«تأكيد تلقائي» اختياري؛ وإلا يقرّر الاستقبال كل طلب.": {
+"en": "“Automatic confirmation” is optional; otherwise reception decides on each request.",
+"fr": "La « Confirmation automatique » est facultative ; sinon, l’accueil décide pour chaque demande."
+},
+"طلبات الحجز أونلاين في الاستقبال": {
+"en": "Online booking requests at reception",
+"fr": "Les demandes de réservation en ligne à l’accueil"
+},
+"تظهر الطلبات أعلى الاستقبال «🌐 طلبات حجز أونلاين تنتظر التأكيد» بالاسم والموبايل والطبيب والموعد.": {
+"en": "Requests appear at the top of reception — “🌐 Online booking requests awaiting confirmation” — with the name, mobile, doctor and time.",
+"fr": "Les demandes s’affichent en haut de l’accueil — « 🌐 Demandes de réservation en ligne en attente de confirmation » — avec le nom, le mobile, le médecin et l’heure."
+},
+"«✔ تأكيد الحجز» فيصبح حجزًا عاديًا في الدور، أو «✖ اعتذار» بسبب يظهر للمريض — ويرى المريض الرد على صفحة الحجز نفسها.": {
+"en": "“✔ Confirm booking” turns it into a normal booking in the queue, or “✖ Decline” with a reason shown to the patient — the patient sees the reply on the booking page itself.",
+"fr": "« ✔ Confirmer la réservation » la transforme en réservation ordinaire dans la file, ou « ✖ Décliner » avec un motif affiché au patient — qui voit la réponse sur la page de réservation elle-même."
+},
+"شاشة الطبيب": {
+"en": "The doctor’s screen",
+"fr": "L’écran du médecin"
+},
+"لكل طبيب حساب دخول يفتح على شاشته: من بالداخل، ومن ينتظر، ومن حُجز ولم يصل.": {
+"en": "Each doctor has a login that opens on their screen: who is inside, who is waiting, and who is booked but has not arrived.",
+"fr": "Chaque médecin a un identifiant qui ouvre son écran : qui est en consultation, qui attend, et qui est réservé mais pas encore arrivé."
+},
+"«أدخِل المريض التالي ←» ثم «افتح الكشف ←»: ملف المريض أمامه — آخر الزيارات، والروشتات، والتحاليل والأشعة.": {
+"en": "“Send in the next patient →” then “Open the consultation →”: the patient’s file is in front of them — recent visits, prescriptions, lab tests and imaging.",
+"fr": "« Faire entrer le patient suivant → » puis « Ouvrir la consultation → » : le dossier du patient est sous ses yeux — dernières visites, ordonnances, analyses et imagerie."
+},
+"«انتهى — التالي ←» يُدخل المريض التالي مباشرة.": {
+"en": "“Done — next →” sends in the next patient directly.",
+"fr": "« Terminé — suivant → » fait entrer directement le patient suivant."
+},
+"الكشف والحساب": {
+"en": "The consultation and the bill",
+"fr": "La consultation et le paiement"
+},
+"في الكشف: الشكوى والتشخيص والروشتة (سطر لكل دواء) والوزن وميعاد المتابعة، ثم «حفظ الكشف». ملاحظات الطبيب لا تُطبع.": {
+"en": "During the consultation: the complaint, the diagnosis, the prescription (one line per medicine), the weight and the follow-up date, then “Save the consultation”. The doctor’s notes are not printed.",
+"fr": "Pendant la consultation : le motif, le diagnostic, l’ordonnance (une ligne par médicament), le poids et la date de contrôle, puis « Enregistrer la consultation ». Les notes du médecin ne s’impriment pas."
+},
+"أضف أي خدمة إضافية في «الحساب»، وحسابها يذهب للاستقبال.": {
+"en": "Add any extra service in “Bill”; its charge goes to reception.",
+"fr": "Ajoutez toute prestation supplémentaire dans « Paiement » ; son montant va à l’accueil."
+},
+"الدفع: نقدي، أو بطاقة / محفظة، أو آجل على المريض، أو جزء وجزء، أو تأمين. الخصم فوق الحد يحتاج موافقة صاحب العيادة.": {
+"en": "Payment: cash, card / wallet, on the patient’s credit, part and part, or insurance. A discount above the limit needs the clinic owner’s approval.",
+"fr": "Paiement : espèces, carte / portefeuille, à crédit sur le patient, en partie l’un en partie l’autre, ou assurance. Une remise au-delà de la limite exige l’accord du propriétaire du cabinet."
+},
+"«🖨 الروشتة» و«🧾 الإيصال». تُخصم المستهلكات من المخزن وتُسجَّل نسبة الطبيب تلقائيًا.": {
+"en": "“🖨 Prescription” and “🧾 Receipt”. The consumables are taken out of stock and the doctor’s share is recorded automatically.",
+"fr": "« 🖨 Ordonnance » et « 🧾 Reçu ». Les consommables sortent du stock et la part du médecin est enregistrée automatiquement."
+},
+"الخطأ يُصحَّح من «إلغاء / تعديل» بالسبب — بقيد عكسي مسجّل باسمك.": {
+"en": "A mistake is corrected from “Cancel / edit” with the reason — by a reversing entry recorded in your name.",
+"fr": "Une erreur se corrige depuis « Annuler / modifier » avec le motif — par une écriture d’extourne à votre nom."
+},
+"ملف المريض والتحاليل والأشعة": {
+"en": "The patient file, lab tests and imaging",
+"fr": "Le dossier patient, les analyses et l’imagerie"
+},
+"ملف المريض: بياناته، والأمراض المزمنة، وكل زياراته وروشتاته.": {
+"en": "The patient file: their details, chronic conditions, and all their visits and prescriptions.",
+"fr": "Le dossier patient : ses informations, ses maladies chroniques, et toutes ses visites et ordonnances."
+},
+"ارفع صورة التحليل أو الأشعة أو ملف PDF على ملفه (من الكمبيوتر أو صورة بالهاتف).": {
+"en": "Upload a picture of the lab test or scan, or a PDF file, to their file (from the computer or a photo taken with the phone).",
+"fr": "Importez la photo de l’analyse ou de l’imagerie, ou un fichier PDF, dans son dossier (depuis l’ordinateur ou une photo prise au téléphone)."
+},
+"كشف حساب المريض: كل فاتورة مدفوعة أو جزئية أو آجلة، والمتبقي عليه — وتحصّل منه من الصفحة نفسها.": {
+"en": "The patient’s statement: every paid, partial or credit invoice, and what they still owe — collect from them on the same page.",
+"fr": "Le relevé du patient : chaque facture payée, partielle ou à crédit, et ce qu’il doit encore — encaissez-le sur la même page."
+},
+"التأمين الطبي": {
+"en": "Medical insurance",
+"fr": "Assurance maladie"
+},
+"«🛡 التأمين الطبي»: أضف الشركات ونسبة تحمّل كل شركة وأقصى مبلغ للزيارة إن وُجد.": {
+"en": "“🛡 Medical insurance”: add the companies, each company’s coverage rate and the maximum amount per visit, if any.",
+"fr": "« 🛡 Assurance maladie » : ajoutez les compagnies, le taux de prise en charge de chacune et le plafond par visite, le cas échéant."
+},
+"في ملف المريض: الشركة والرقم التأميني وصلاحية البطاقة.": {
+"en": "In the patient file: the company, the insurance number and the card’s validity.",
+"fr": "Dans le dossier patient : la compagnie, le numéro d’assuré et la validité de la carte."
+},
+"عند الحساب اختر «تأمين»: تُسجَّل حصة الشركة عليها، ويدفع المريض حصته.": {
+"en": "At billing choose “Insurance”: the company’s share is recorded against it, and the patient pays their share.",
+"fr": "Au paiement, choisissez « Assurance » : la part de la compagnie lui est imputée, et le patient paie sa part."
+},
+"كشف حساب كل شركة ومطالبة الشهر للطباعة، وعند الدفع سجّل التحصيل.": {
+"en": "Each company’s statement and the monthly claim for printing; when they pay, record the collection.",
+"fr": "Le relevé de chaque compagnie et la réclamation du mois à imprimer ; au paiement, enregistrez l’encaissement."
+},
+"المتابعات والتذكيرات": {
+"en": "Follow-ups and reminders",
+"fr": "Contrôles et rappels"
+},
+"«📨 التذكيرات»: حجوزات الغد والمتابعات المستحقة، ولكل مريض رسالة جاهزة على واتساب.": {
+"en": "“📨 Reminders”: tomorrow’s bookings and the follow-ups due, with a ready WhatsApp message for each patient.",
+"fr": "« 📨 Rappels » : les réservations du lendemain et les contrôles à prévoir, avec un message WhatsApp prêt pour chaque patient."
+},
+"اضغط «واتساب» ثم علّم «تم الإرسال ✔». متابعة مستحقة؟ «احجز له».": {
+"en": "Press “WhatsApp”, then tick “Sent ✔”. A follow-up is due? “Book them”.",
+"fr": "Appuyez sur « WhatsApp », puis cochez « Envoyé ✔ ». Un contrôle est à prévoir ? « Lui réserver »."
+},
+"شاشة الانتظار (التلفزيون)": {
+"en": "The waiting-room screen (TV)",
+"fr": "L’écran de la salle d’attente (TV)"
+},
+"«📺 شاشة الانتظار» من الاستقبال: افتحها على شاشة في صالة الانتظار — تعرض الدور الحالي ومن عليه الدور، وتتحدّث تلقائيًا.": {
+"en": "“📺 Waiting screen” from reception: open it on a screen in the waiting room — it shows the current turn and who is next, and refreshes by itself.",
+"fr": "« 📺 Écran d’attente » depuis l’accueil : ouvrez-le sur un écran de la salle d’attente — il affiche le tour en cours et le suivant, et se met à jour tout seul."
+},
+"لوحة صاحب العيادة ونسب الأطباء": {
+"en": "The clinic owner’s dashboard and doctors’ shares",
+"fr": "Le tableau de bord du propriétaire et les parts des médecins"
+},
+"«📊 لوحة صاحب العيادة»: إيراد اليوم والفترة، وطرق التحصيل، والخصومات باسم من منحها، والمتبقي على المرضى وشركات التأمين.": {
+"en": "“📊 Clinic owner’s dashboard”: revenue for the day and the period, collection methods, discounts by who gave them, and what patients and insurance companies still owe.",
+"fr": "« 📊 Tableau de bord du propriétaire » : recettes du jour et de la période, modes d’encaissement, remises par auteur, et ce que doivent encore les patients et les assurances."
+},
+"«👨‍⚕️ الأطباء ونسبهم»: زيارات كل طبيب وإيرادها ونسبته والمستحق له، ثم «اصرف» لصرف مستحقاته.": {
+"en": "“👨‍⚕️ Doctors and their shares”: each doctor’s visits, their revenue, share and what is due to them, then “Pay” to pay their dues.",
+"fr": "« 👨‍⚕️ Médecins et leurs parts » : les visites de chaque médecin, leurs recettes, sa part et ce qui lui est dû, puis « Payer » pour régler son dû."
+},
+"ثالثًا: المستلزمات والمشتريات": {
+"en": "Part three: supplies and purchases",
+"fr": "Partie 3 : fournitures et achats"
+},
+"المستلزمات والأدوية": {
+"en": "Supplies and medicines",
+"fr": "Fournitures et médicaments"
+},
+"سجّل المستلزمات (قفاز، سرنجة، قطن، بنج…) أصنافًا بوحدتها و«حد الطلب».": {
+"en": "Record the supplies (gloves, syringes, cotton, anaesthetic…) as items with their unit and “Reorder level”.",
+"fr": "Enregistrez les fournitures (gants, seringues, coton, anesthésique…) comme articles avec leur unité et leur « Seuil de réapprovisionnement »."
+},
+"اربط كل خدمة بالمستهلكات التي تصرفها من «الخدمات والأسعار»؛ فتُخصم من المخزن تلقائيًا مع كل زيارة محاسَبة.": {
+"en": "Link each service to the consumables it uses in “Services and prices”; they are taken out of stock automatically with every billed visit.",
+"fr": "Liez chaque prestation aux consommables qu’elle utilise dans « Prestations et tarifs » ; ils sortent du stock automatiquement à chaque visite facturée."
+},
+"يظهر لك تنبيه عند وصول أي مستلزم إلى حد الطلب، فتشتريه قبل أن ينفد.": {
+"en": "You get an alert when any supply reaches its reorder level, so you buy it before it runs out.",
+"fr": "Vous êtes alerté quand une fourniture atteint son seuil, pour l’acheter avant la rupture."
+},
+"«شراء مستلزمات» ← «فاتورة مشتريات»: اختر المورد (أو اكتب اسم مورد جديد) ورقم فاتورته وتاريخها.": {
+"en": "“Buy supplies” → “Purchase invoice”: choose the supplier (or type a new supplier’s name), their invoice number and its date.",
+"fr": "« Achat de fournitures » → « Facture d’achat » : choisissez le fournisseur (ou saisissez le nom d’un nouveau fournisseur), le numéro de sa facture et sa date."
+},
+"«مرتجع مستلزمات»: اختر «مرتجع لمورد» والمورد والأصناف والكميات — فتقلّ مستحقاته.": {
+"en": "“Supplies return”: choose “Return to a supplier”, the supplier, the items and the quantities — their balance goes down.",
+"fr": "« Retour de fournitures » : choisissez « Retour à un fournisseur », le fournisseur, les articles et les quantités — sa créance diminue."
+},
+"«جرد المستلزمات»: رصيد كل صنف أمامك — اكتب الكمية المعدودة فعليًا.": {
+"en": "“Supplies count”: the balance of every item is in front of you — enter the quantity actually counted.",
+"fr": "« Inventaire des fournitures » : le solde de chaque article est sous vos yeux — saisissez la quantité réellement comptée."
+},
+"تقفيل اليوم والدرج": {
+"en": "Day and drawer close",
+"fr": "Clôture de la journée et du tiroir"
+},
+"بعد قفل كل الورديات: «🔒 تقفيل اليوم والدرج» يعرض صافي مبيعات اليوم نقدًا وبطاقات وآجلًا، والورديات بالمتوقع والفعلي والفرق.": {
+"en": "After all shifts are closed: “🔒 Day and drawer close” shows the day’s net sales in cash, cards and credit, and the shifts with expected, actual and difference.",
+"fr": "Une fois toutes les sessions clôturées : « 🔒 Clôture de la journée et du tiroir » affiche les ventes nettes du jour en espèces, cartes et crédit, et les sessions avec attendu, réel et écart."
+},
+"«الإيرادات والفواتير»: كل فاتورة بوقتها وجهازها وكاشيرها وطريقة دفعها، و«ما يحتاج إلى مراجعة».": {
+"en": "“Revenue and invoices”: every invoice with its time, device, cashier and payment method, and “What needs review”.",
+"fr": "« Recettes et factures » : chaque facture avec son heure, sa caisse, son caissier et son mode de paiement, et « Ce qui doit être vérifié »."
+},
+"مدير الفرع يرى فرعه فقط، وصاحب العيادة يتنقل بين الفروع من الشريط العلوي ويرى تقرير كل فرع ومقارنتها.": {
+"en": "A branch manager sees only their branch; the clinic owner switches between branches from the top bar and sees each branch’s report and the comparison.",
+"fr": "Le responsable ne voit que sa succursale ; le propriétaire du cabinet passe d’une succursale à l’autre depuis la barre du haut et voit le rapport de chacune et leur comparaison."
+},
+"هاتف صاحب العيادة": {
+"en": "The clinic owner’s phone",
+"fr": "Le téléphone du propriétaire du cabinet"
+}
+}

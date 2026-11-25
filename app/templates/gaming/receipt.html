@@ -1,29 +1,28 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>فاتورة {{ ses.order.shift_seq|default:ses.pk }}</title>
-<style>
-body{font-family:Tahoma,Arial,sans-serif;margin:0;background:#fff;color:#000}
-.r{width:72mm;margin:0 auto;padding:4mm 0;font-size:12px}
-.c{text-align:center}.logo{width:22mm;height:22mm;margin:0 auto}
-table{width:100%;border-collapse:collapse}td{padding:2px 0;vertical-align:top}td.n{text-align:left;direction:ltr;white-space:nowrap}
-hr{border:0;border-top:1px dashed #000;margin:6px 0}.big{font-size:16px;font-weight:700}
-.no{text-align:center;margin-top:10px}@media print{.no{display:none}}
-</style></head><body onload="setTimeout(()=>window.print(),200)">
-<div class="r">
-<div class="c">{% if s.logo_svg %}<div class="logo">{{ s.logo_svg|safe }}</div>{% endif %}<b style="font-size:15px">{{ s.name }}</b>
-{% if s.phone %}<br><span dir="ltr">{{ s.phone }}</span>{% endif %}{% if s.address %}<br>{{ s.address }}{% endif %}</div><hr>
-<table>{% if ses.order %}<tr><td>فاتورة رقم</td><td class="n">{{ ses.order.shift_seq|default:ses.pk }}</td></tr>{% else %}<tr><td colspan="2" style="text-align:center;font-weight:700">إيصال لعب من رصيد الباقة</td></tr>{% endif %}
-<tr><td>{% if ses.station %}{{ ses.station }}{% else %}تيك أواي{% if ses.daily_no %} #{{ ses.daily_no }}{% endif %}{% endif %}</td><td class="n">{{ ses.closed_at|date:"d/m/Y H:i" }}</td></tr>
-{% if ses.customer %}<tr><td>العميل</td><td>{{ ses.customer }}</td></tr>{% endif %}</table><hr>
-{% if b.segments %}<table>{% for g in b.segments %}<tr><td>{{ g.station }}{% if g.multi %} — {% if g.mode == 'multi' %}مالتي{% else %}فردي{% endif %}{% endif %}<br><small>{{ g.start|date:"H:i" }} ← {{ g.end|date:"H:i" }} ({{ g.minutes }} د) × {{ g.rate|floatformat:"-2" }}/س</small></td><td></td></tr>{% endfor %}
-<tr><td>وقت اللعب المحسوب {{ b.billed }} دقيقة{% if rule %}<br><small>{{ rule }}</small>{% endif %}</td><td class="n">{{ b.time_amount|floatformat:2 }}</td></tr></table><hr>{% endif %}
-{% if b.items %}<table>{% for i in b.items %}<tr><td>{{ i.name }}<br><small>{{ i.qty|floatformat:"-3" }} × {{ i.price|floatformat:"-2" }}</small></td><td class="n">{{ i.total|floatformat:2 }}</td></tr>{% endfor %}</table><hr>{% endif %}
-<table>{% if ses.prepaid_minutes %}<tr><td>من رصيد الباقة {{ ses.prepaid_minutes }} دقيقة{% if ses.hall_customer %}<br><small>{{ ses.hall_customer.name }} — الباقي {{ left }} دقيقة</small>{% endif %}</td><td class="n">-{{ ses.prepaid_value|floatformat:2 }}</td></tr>{% endif %}
-{% if ses.discount %}<tr><td>خصم</td><td class="n">-{{ ses.discount|floatformat:2 }}</td></tr>{% endif %}
-<tr class="big"><td>الإجمالي</td><td class="n">{{ ses.total|floatformat:2 }}</td></tr>
-{% if ses.order.paid_credit or ses.order.paid_card %}{% if ses.order.paid_cash %}<tr><td>نقدي</td><td class="n">{{ ses.order.paid_cash|floatformat:2 }}</td></tr>{% endif %}{% endif %}
-{% if ses.order.paid_card %}<tr><td>بطاقة / محفظة</td><td class="n">{{ ses.order.paid_card|floatformat:2 }}</td></tr>{% endif %}
-{% if ses.order.paid_credit %}<tr><td>آجل على الحساب</td><td class="n">{{ ses.order.paid_credit|floatformat:2 }}</td></tr>{% endif %}</table>
-{% if ses.order.paid_credit and ses.order.customer %}<hr><table><tr><td>عميل الآجل</td><td>{{ ses.order.customer.name }}</td></tr>{% if ses.order.customer.phone %}<tr><td>الموبايل</td><td class="n">{{ ses.order.customer.phone }}</td></tr>{% endif %}</table>
-<div style="margin-top:14px">توقيع العميل: ____________________</div>{% endif %}<hr>
-<div class="c">شكرًا لزيارتكم<br><small>Trio · 01228827915</small></div>
-<div class="no"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div>
-</div></body></html>
+{% load gg %}<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>فاتورة {{ ses.order.shift_seq|default:ses.pk }}</title>
+<style>body{margin:0;background:#fff;color:#000}.page{width:{% if rc_w == "58" %}48mm{% else %}72mm{% endif %};margin:0 auto;padding:3mm 0}
+{% include "ui/_rc_css.html" %}
+.noprint{text-align:center;margin-top:10px}@media print{.noprint{display:none}}@page{margin:2mm}</style></head>
+<body onload="setTimeout(()=>window.print(),200)"><div class="page"><div class="rc{% if rc_w == '58' %} w58{% endif %}">
+{% include "ui/_rc_head.html" %}
+<div class="meta">{% if ses.order %}<div><b>رقم الفاتورة</b><span><b>{{ ses.order.shift_seq|default:ses.pk }}</b></span></div>{% endif %}
+<div><b>التاريخ</b><span>{{ ses.closed_at|date:"d/m/Y" }}</span></div><div><b>الوقت</b><span>{{ ses.closed_at|date:"H:i" }}</span></div>
+<div><b>{% if ses.station %}الجهاز{% else %}الطلب{% endif %}</b><span>{% if ses.station %}{{ ses.station }}{% else %}تيك أواي{% if ses.daily_no %} #{{ ses.daily_no }}{% endif %}{% endif %}</span></div>
+{% if ses.closed_by %}<div class="w"><b>الكاشير</b><span>{{ ses.closed_by }}</span></div>{% endif %}
+{% if ses.customer %}<div class="w"><b>العميل</b><span>{{ ses.customer }}</span></div>{% endif %}</div><hr>
+<table class="it"><thead><tr><th>البيان</th><th class="n">القيمة</th></tr></thead><tbody>
+{% if b.segments %}{% for g in b.segments %}<tr class="ad"><td colspan="2">{{ g.station }}{% if g.multi %} — {% if g.mode == 'multi' %}مالتي{% else %}فردي{% endif %}{% endif %}
+<span class="qp"><bdi>{{ g.start|date:"H:i" }} ← {{ g.end|date:"H:i" }} ({{ g.minutes }} د) × {{ g.rate|money }}/س</bdi></span></td></tr>{% endfor %}
+<tr><td><span class="nmx">وقت اللعب — {{ b.billed }} دقيقة</span>{% if rule %}<span class="qp">{{ rule }}</span>{% endif %}</td><td class="n">{{ b.time_amount|money }}</td></tr>{% endif %}
+{% for i in b.items %}<tr><td><span class="nmx">{{ i.name }}</span><span class="qp"><bdi>{{ i.qty|floatformat:"-3" }} × {{ i.price|money }}</bdi></span></td><td class="n">{{ i.total|money }}</td></tr>{% endfor %}
+</tbody></table><hr>
+{% if ses.prepaid_minutes %}<div class="row2"><span>من رصيد الباقة {{ ses.prepaid_minutes }} دقيقة{% if ses.hall_customer %} — الباقي {{ left }} دقيقة{% endif %}</span><span>−{{ ses.prepaid_value|money }}</span></div>{% endif %}
+{% if ses.discount %}<div class="row2"><span>الخصم</span><span>−{{ ses.discount|money }}</span></div>{% endif %}
+<div class="tot"><span>الإجمالي</span><span>{{ ses.total|cur }}</span></div>
+{% if ses.order.paid_cash %}<div class="row2"><span>نقدًا</span><span>{{ ses.order.paid_cash|money }}</span></div>{% endif %}
+{% if ses.order.paid_card %}<div class="row2"><span>بالبطاقة / المحفظة</span><span>{{ ses.order.paid_card|money }}</span></div>{% endif %}
+{% if ses.order.paid_insta %}<div class="row2"><span>بـ InstaPay</span><span>{{ ses.order.paid_insta|money }}</span></div>{% endif %}
+{% if ses.order.paid_credit %}<div class="row2"><span>آجل على الحساب</span><span>{{ ses.order.paid_credit|money }}</span></div>{% endif %}
+{% if ses.order.paid_credit and ses.order.customer %}<hr><div class="meta cu"><div class="w"><b>عميل الآجل</b><span>{{ ses.order.customer.name }}</span></div>{% if ses.order.customer.phone %}<div class="w"><b>الموبايل</b><span><bdi dir="ltr">{{ ses.order.customer.phone }}</bdi></span></div>{% endif %}</div>
+<div class="row2" style="margin-top:10px"><span>توقيع العميل بالاستلام</span><span>............</span></div>{% endif %}
+{% include "ui/_rc_foot.html" %}
+</div><div class="noprint"><button onclick="window.print()">طباعة مرة أخرى</button> <button onclick="window.close()">قفل</button></div></div></body></html>

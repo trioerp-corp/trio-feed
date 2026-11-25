@@ -1,4 +1,4 @@
-"""Delivery platforms (1.25, optional): Talabat / Elmenus.
+"""Delivery platforms (1.25, optional; 1.26: per country — Talabat / Elmenus in Egypt, HungerStation / Jahez / Keeta … in Saudi Arabia).
 
 The owner writes his store links and each platform's commission %; the till then shows «طلبات» / «المنيوز» as a way to pay.
 Such a sale is not cash: the platform owes it. It posts Dr «مستحقات منصات التوصيل» (the platform's partner) instead of the
@@ -23,8 +23,69 @@ from ledger.models import Account, JournalLine, Partner
 
 from .models import PlatformPayout
 
-PLATFORMS = {"talabat": dict(name="طلبات", icon="🟠", hosts=("talabat.com",)), "elmenus": dict(name="المنيوز", icon="🔴", hosts=("elmenus.com",))}
-BIZ = ("market", "retail", "cafe")
+# 1.26: each platform with the countries it works in (ISO codes) and the shops it serves — food: restaurants / cafés,
+# mart: supermarkets, pharmacy: pharmacies. The keys are stored on orders (max 12 letters) — never rename one.
+_P = [
+    ("talabat", "طلبات", "🟠", ("talabat.com",), "EG KW AE QA BH OM JO IQ", "food mart pharmacy", "talabat.com/egypt/…"),
+    ("elmenus", "المنيوز", "🔴", ("elmenus.com",), "EG", "food", "elmenus.com/cairo/…"),
+    ("rabbit", "رابيت", "🐰", ("rabbitmart.com",), "EG SA", "mart", "rabbitmart.com/…"),
+    ("mrsool", "مرسول", "🟢", ("mrsool.co",), "SA EG", "food mart pharmacy", "mrsool.co/…"),
+    ("hunger", "هنقرستيشن", "🟡", ("hungerstation.com",), "SA", "food mart pharmacy", "hungerstation.com/sa-ar/…"),
+    ("jahez", "جاهز", "🟤", ("jahez.net",), "SA KW BH", "food mart", "jahez.net/…"),
+    ("keeta", "كيتا", "🟨", ("keeta.com",), "SA QA KW AE", "food", "keeta.com/…"),
+    ("chefz", "ذا شفز", "🍽", ("thechefz.co",), "SA", "food", "thechefz.co/…"),
+    ("careem", "كريم", "🟩", ("careem.com",), "AE JO", "food mart", "careem.com/…"),
+    ("deliveroo", "ديليفرو", "🔷", ("deliveroo.ae", "deliveroo.com.kw", "deliveroo.qa", "deliveroo.com"), "AE KW QA", "food mart",
+     "deliveroo.ae/menu/…"),
+    ("snoonu", "سنونو", "🔺", ("snoonu.com",), "QA", "food mart pharmacy", "snoonu.com/…"),
+    ("toters", "توترز", "🟦", ("totersapp.com",), "LB IQ", "food mart", "totersapp.com/…"),
+    ("lezzoo", "ليزو", "🟥", ("lezzoo.com",), "IQ", "food mart", "lezzoo.com/…"),
+    ("glovo", "جلوفو", "🟡", ("glovoapp.com",), "MA TN", "food mart pharmacy", "glovoapp.com/ma/…"),
+    ("yassir", "ياسر", "🟣", ("yassir.com",), "DZ MA TN", "food mart", "yassir.com/…"),
+]
+EN = {'talabat': 'Talabat', 'elmenus': 'Elmenus', 'rabbit': 'Rabbit', 'mrsool': 'Mrsool', 'hunger': 'HungerStation', 'jahez': 'Jahez', 'keeta': 'Keeta', 'chefz': 'The Chefz', 'careem': 'Careem', 'deliveroo': 'Deliveroo', 'snoonu': 'Snoonu', 'toters': 'Toters', 'lezzoo': 'Lezzoo', 'glovo': 'Glovo', 'yassir': 'Yassir'}
+PLATFORMS = {k: dict(name=n, en=EN[k], icon=i, hosts=h, cc=set(cc.split()), kinds=set(kd.split()), ph=ph) for k, n, i, h, cc, kd, ph in _P}
+
+
+def label(key):
+    """The platform's name in the viewer's language (its own Latin brand name in English / French: «طلبات» is also a plain word)."""
+    from core.currency import lang
+
+    meta = PLATFORMS[key]
+    return meta["name"] if lang() == "ar" else meta["en"]
+BIZ = ("market", "retail", "cafe")  # the page / menu gate is serves() below: which platform works with which shop
+
+
+def country(s=None):
+    """The shop's country, from the currency it chose in the first setup (EGP → EG, SAR → SA …); "" when it is not one we list."""
+    from core.currency import BY_COUNTRY
+
+    s = s or CompanySettings.get()
+    return {v: k for k, v in BY_COUNTRY.items()}.get((s.base_currency or "").upper(), "")
+
+
+def _kind(s):
+    if s.business == "cafe":
+        return "food"
+    if s.business == "market":
+        return "mart"
+    if s.business == "retail" and (s.activity or {}).get("key") == "pharmacy":
+        return "pharmacy"
+    return ""
+
+
+def serves(key, s=None):
+    """1.26: a platform shows only in the countries it works in, and only for the shops it serves (a clothes shop, the clinic
+    and the gaming hall get none). A country we do not list sees every platform that fits the shop."""
+    s = s or CompanySettings.get()
+    meta, kind, cc = PLATFORMS.get(key), _kind(s), country(s)
+    return bool(meta and kind and kind in meta["kinds"] and (not cc or cc in meta["cc"]))
+
+
+def available(s=None):
+    """The platforms this shop may link (an empty list hides the page, the menu link and the setup step)."""
+    s = s or CompanySettings.get()
+    return [k for k in PLATFORMS if serves(k, s)]
 RECEIVABLE, COMMISSION = "1203010102", "3202010131"
 MAX_PCT = Decimal("50")
 Z = Decimal(0)
@@ -47,7 +108,7 @@ def receivable():
     acc = Account.objects.filter(code=RECEIVABLE).first()
     if acc:
         return acc
-    return Account.objects.create(code=RECEIVABLE, name="مستحقات منصات التوصيل (طلبات / المنيوز)", parent=Account.objects.get(code="12030101"),
+    return Account.objects.create(code=RECEIVABLE, name="مستحقات منصات التوصيل", parent=Account.objects.get(code="12030101"),
                                   level=6, is_postable=True, account_type="asset", normal_balance="debit", report="balance_sheet",
                                   cash_flow_category="operating", is_partner_control=True)
 
@@ -90,9 +151,11 @@ def cfg(s=None):
     r = raw(s)
     out = []
     for k, meta in PLATFORMS.items():
+        if not serves(k, s) and not (r.get(k) or {}).get("pid"):  # a platform that does not serve this shop (kept if it was used)
+            continue
         c = r.get(k) or {}
-        out.append(dict(key=k, name=meta["name"], icon=meta["icon"], on=bool(c.get("on")) and s.business in BIZ, link=c.get("link", ""),
-                        pct=str(_dec(c.get("pct"), Z)), pid=c.get("pid")))
+        out.append(dict(key=k, name=label(k), icon=meta["icon"], on=bool(c.get("on")) and serves(k, s), link=c.get("link", ""),
+                        pct=str(_dec(c.get("pct"), Z)), pid=c.get("pid"), ph=meta["ph"]))
     return out
 
 
@@ -112,7 +175,7 @@ def set_cfg(rows):
     m = dict(s.menu_cfg or {})
     cur = dict(m.get("platforms") or {})
     for k, v in rows.items():
-        if k not in PLATFORMS:
+        if k not in PLATFORMS or not serves(k, s):
             continue
         c = dict(cur.get(k) or {})
         pct = _dec(v.get("pct") or "0")

@@ -1,34 +1,29 @@
 {% extends "base.html" %}{% load gg l10n %}{% block title %}إيصال — {{ v.patient.name }}{% endblock %}
 {% block messages %}{% for m in messages %}{% endfor %}{% endblock %}{% block content %}
-<style>@page{size:80mm auto;margin:3mm}
-@media print{.noprint,body>*:not(main),.ask-fab{display:none!important}body{background:#fff}main.page{padding:0;margin:0}.rc{border:0!important;box-shadow:none!important;margin:0!important;width:auto!important}}
-.rc{width:76mm;margin:0 auto;background:#fff;color:#000;padding:10px 12px;border:1px dashed #bbb;font-size:13px;line-height:1.6}
-.rc h1{font-size:16px;margin:0;text-align:center}.rc .c{text-align:center}.rc hr{border:0;border-top:1px dashed #000;margin:6px 0}
-.rc table{width:100%;border-collapse:collapse}.rc td{padding:2px 0;vertical-align:top}.rc td.n{text-align:end;white-space:nowrap}
-.rc .logo{margin:0 auto 4px;width:24mm;height:24mm}.rc .logo svg,.rc .logo img{width:100%;height:100%;object-fit:contain}.rc .no{font-size:15px;font-weight:700}
-.rc .q{font-size:30px;font-weight:800;text-align:center;line-height:1.2}.rc .kv{display:flex;justify-content:space-between;gap:8px}</style>
+<style>@page{size:{% if rc_w == "58" %}58mm{% else %}80mm{% endif %} auto;margin:2mm}
+@media print{.noprint,body>*:not(main),.ask-fab{display:none!important}body{background:#fff}main.page{padding:0;margin:0}.rcw{border:0!important;box-shadow:none!important;margin:0!important;padding:0!important}}
+.rcw{width:{% if rc_w == "58" %}48mm{% else %}72mm{% endif %};margin:0 auto;background:#fff;padding:10px 12px;border:1px dashed #bbb}
+{% include "ui/_rc_css.html" %}</style>
 <p class="noprint actions" style="justify-content:center;margin-bottom:12px"><button onclick="print()">🖨 اطبع</button><a class="btn light" href="{% url 'clinic_visit' v.pk %}">الزيارة</a><a class="btn light" href="{% url 'clinic_home' %}">الدور</a></p>
 {% if not pay %}<p class="card noprint">لا يوجد حساب مدفوع لهذه الزيارة.</p>{% else %}
-<div class="rc">
-{% if s.logo_svg %}<div class="logo">{{ s.logo_svg|safe }}</div>{% endif %}
-<h1>{{ s.name }}</h1>{% if s.address or s.phone %}<div class="c">{{ s.address }}{% if s.phone %} · <span dir="ltr">{{ s.phone }}</span>{% endif %}</div>{% endif %}
-{% with booked=appt.state %}<hr><div class="c"><b>{% if pay.kind == 'booking' and booked == 'booked' %}إيصال حجز{% elif pay.kind == 'extra' %}إيصال حساب إضافي{% else %}إيصال كشف{% endif %}</b></div>
-<div class="c no">إيصال رقم {{ pay.pk|unlocalize }}</div>
-{% if appt and pay.kind == 'booking' and booked == 'booked' %}<div class="q">دور {{ appt.queue_no }}</div><div class="c">يوم {{ appt.date|date:"l d/m/Y" }}{% if appt.time %} — الساعة {{ appt.time|time:"g:i A" }}{% endif %}</div>
-{% elif appt and pay.kind != 'extra' and booked != 'cancelled' %}<div class="c">دورك رقم</div><div class="q">{{ appt.queue_no }}</div>{% endif %}{% endwith %}
-<hr>
-<div class="kv"><span>المريض</span><b>{{ v.patient.name }}</b></div>
-<div class="kv"><span>رقم الملف</span><span>{{ v.patient.number|unlocalize }}</span></div>
-{% if v.doctor %}<div class="kv"><span>الطبيب</span><span>{{ v.doctor }}</span></div>{% endif %}
-<hr><table>{% for ln in lines %}<tr><td>{{ ln.item.name }}{% if ln.qty != 1 %} × {{ ln.qty|floatformat:-3 }}{% endif %}</td><td class="n">{{ ln.amount|money }}</td></tr>{% endfor %}{% if v.followup_note %}<tr><td colspan="2" style="font-weight:700">⟲ {{ v.followup_note }}</td></tr>{% endif %}
-{% if pay.discount %}<tr><td>خصم</td><td class="n">-{{ pay.discount|money }}</td></tr>{% endif %}</table>
-<hr><div class="kv" style="font-size:16px"><b>الإجمالي</b><b>{{ pay.total|money }}</b></div>
-{% if pay.order.paid_cash %}<div class="kv"><span>نقدي</span><span>{{ pay.order.paid_cash|money }}</span></div>{% endif %}
-{% if pay.order.paid_card %}<div class="kv"><span>بطاقة / محفظة</span><span>{{ pay.order.paid_card|money }}</span></div>{% endif %}
-{% if pay.insurance_id %}<div class="kv"><span>على {{ pay.insurance.name }}{% if v.patient.insurance_no %} ({{ v.patient.insurance_no }}){% endif %}</span><span>{{ pay.insurance_amount|money }}</span></div>{% elif pay.order.paid_credit %}<div class="kv"><span>آجل</span><span>{{ pay.order.paid_credit|money }}</span></div>{% endif %}
-<hr><div class="kv" style="font-size:11px"><span>إيصال رقم {{ pay.pk|unlocalize }}</span><span>{{ pay.created_at|date:"d/m/Y H:i" }}</span></div>
-{% if pay.by %}<div style="font-size:11px">الاستقبال: {{ pay.by }}</div>{% endif %}
-<div class="c" style="margin-top:6px;font-size:12px">{% if pay.kind == 'booking' and appt.state == 'booked' %}من فضلك احضر قبل موعدك بـ 10 دقائق — ومعك هذا الإيصال{% else %}شفاء عاجل إن شاء الله{% endif %}</div>
-</div>{% endif %}
+<div class="rcw"><div class="rc{% if rc_w == '58' %} w58{% endif %}">
+{% include "ui/_rc_head.html" %}
+{% with booked=appt.state %}{% if appt and pay.kind == 'booking' and booked == 'booked' %}<div class="q">دور {{ appt.queue_no }}</div><div class="c sub">يوم {{ appt.date|date:"l d/m/Y" }}{% if appt.time %} — الساعة {{ appt.time|time:"g:i A" }}{% endif %}</div>
+{% elif appt and pay.kind != 'extra' and booked != 'cancelled' %}<div class="c sub">دورك رقم</div><div class="q">{{ appt.queue_no }}</div>{% endif %}{% endwith %}
+<div class="meta"><div><b>إيصال رقم {{ pay.pk|unlocalize }}</b></div>{% if pay.created_at %}<div><b>التاريخ</b><span>{{ pay.created_at|date:"d/m/Y" }}</span></div><div><b>الوقت</b><span>{{ pay.created_at|date:"H:i" }}</span></div>{% endif %}
+{% if pay.by %}<div><b>الاستقبال</b><span>{{ pay.by }}</span></div>{% endif %}</div><hr>
+<div class="meta cu"><div class="w"><b>المريض</b><span><b>{{ v.patient.name }}</b></span></div><div><b>رقم الملف</b><span>{{ v.patient.number|unlocalize }}</span></div>
+{% if v.doctor %}<div><b>الطبيب</b><span>{{ v.doctor }}</span></div>{% endif %}</div><hr>
+<table class="it"><thead><tr><th>الخدمة</th><th class="n">القيمة</th></tr></thead><tbody>
+{% for ln in lines %}<tr><td><span class="nmx">{{ ln.item.name }}</span>{% if ln.qty != 1 %}<span class="qp"><bdi>{{ ln.qty|floatformat:-3 }} ×</bdi></span>{% endif %}</td><td class="n">{{ ln.amount|money }}</td></tr>{% endfor %}
+{% if v.followup_note %}<tr><td colspan="2"><div class="nt">⟲ {{ v.followup_note }}</div></td></tr>{% endif %}</tbody></table>
+{% if pay.discount %}<div class="row2"><span>الخصم</span><span>−{{ pay.discount|money }}</span></div>{% endif %}
+<div class="tot"><span>الإجمالي</span><span>{{ pay.total|cur }}</span></div>
+{% if pay.order.paid_cash %}<div class="row2"><span>نقدًا</span><span>{{ pay.order.paid_cash|money }}</span></div>{% endif %}
+{% if pay.order.paid_card %}<div class="row2"><span>بالبطاقة / المحفظة</span><span>{{ pay.order.paid_card|money }}</span></div>{% endif %}
+{% if pay.order.paid_insta %}<div class="row2"><span>بـ InstaPay</span><span>{{ pay.order.paid_insta|money }}</span></div>{% endif %}
+{% if pay.insurance_id %}<div class="row2"><span>على {{ pay.insurance.name }}{% if v.patient.insurance_no %} ({{ v.patient.insurance_no }}){% endif %}</span><span>{{ pay.insurance_amount|money }}</span></div>{% elif pay.order.paid_credit %}<div class="row2"><span>آجل</span><span>{{ pay.order.paid_credit|money }}</span></div>{% endif %}
+{% include "ui/_rc_foot.html" %}
+</div></div>{% endif %}
 {% if auto and pay %}<script>addEventListener('load',function(){setTimeout(function(){print()},300)})</script>{% endif %}
 {% endblock %}

@@ -5,7 +5,13 @@ Its money is «مع الطيار»: the sale posts Dr «دليفري تحت ال
 with the money, «تم التحصيل» at a till is a cash paper (CashMove kind «delivery»): Dr the drawer / Cr the same account, so the
 cash enters the shift that received it. The fee is a line of the service item «خدمة توصيل» (service revenue, like play time).
 
-Settings live in CompanySettings.menu_cfg["delivery"] = {on, fee, riders: [names]}; no riders listed → the employees.
+Settings live in CompanySettings.menu_cfg["delivery"] = {on, fee, riders: [names], late: {new, prep, out}}; no riders listed →
+the employees.
+
+1.26 tracking: every delivery (and every Talabat / Elmenus) order walks «جديد → قيد التحضير → خرج مع عامل التوصيل → تم التسليم»
+(DeliveryOrder.stage + steps: when and who). The kitchen ticket printed with the sale is «قيد التحضير»; the rider is given at «خرج».
+A till sends each step in its sync (dsteps); the program only moves forward (advance) — a step back is refused; «ملغي» is the
+owner's cancel of the bill (voids.void_order, or his approval of the cashier's request). «تم التحصيل» (the money) stays apart.
 """
 from decimal import Decimal, InvalidOperation
 
@@ -22,6 +28,9 @@ from .models import CashMove, DeliveryCustomer, DeliveryOrder
 
 BIZ = ("market", "retail", "cafe")  # every business except the clinic and the gaming hall
 FEE_CODE = "TRIO-DLV"
+FLOW = ("new", "prep", "out", "done")
+STAGE_AR = dict(new="جديد", prep="قيد التحضير", out="خرج مع عامل التوصيل", done="تم التسليم", void="ملغي")
+LATE = dict(new=10, prep=20, out=45)  # minutes in a step before the order is flagged late (the owner changes them)
 MAX_FEE = Decimal("5000")
 Z = Decimal(0)
 
@@ -53,10 +62,21 @@ def cfg(s=None):
     s = s or CompanySettings.get()
     c = raw_cfg(s)
     on = s.business in BIZ and bool(c.get("on"))
-    return dict(on=on, fee=str(L.q2(_dec(c.get("fee")))), riders=riders(s) if on else [], code=FEE_CODE if on else "")
+    return dict(on=on, fee=str(L.q2(_dec(c.get("fee")))), riders=riders(s) if on else [], code=FEE_CODE if on else "", late=late_cfg(s))
 
 
-def set_cfg(on=None, fee=None, riders_text=None):
+def late_cfg(s=None):
+    got = raw_cfg(s).get("late") or {}
+    out = {}
+    for k, v in LATE.items():
+        try:
+            out[k] = max(1, min(600, int(got.get(k, v))))
+        except (TypeError, ValueError):
+            out[k] = v
+    return out
+
+
+def set_cfg(on=None, fee=None, riders_text=None, late=None):
     s = CompanySettings.get()
     m = dict(s.menu_cfg or {})
     c = dict(m.get("delivery") or {})
@@ -74,6 +94,17 @@ def set_cfg(on=None, fee=None, riders_text=None):
             if x and x not in names:
                 names.append(x)
         c["riders"] = names[:50]
+    if late is not None:
+        new = {}
+        for k in LATE:
+            try:
+                v = int(str(late.get(k) or "").strip() or LATE[k])
+            except ValueError:
+                raise ValidationError("مدة التأخير بالدقائق (رقم صحيح)")
+            if not 1 <= v <= 600:
+                raise ValidationError("مدة التأخير من 1 إلى 600 دقيقة")
+            new[k] = v
+        c["late"] = new
     m["delivery"] = c
     s.menu_cfg = m
     s.save(update_fields=["menu_cfg"])
@@ -132,13 +163,25 @@ def clean_info(d):
                 rider=str(d.get("rider") or "").strip()[:80])
 
 
+def _step(stage, at, by="", dev="", u=""):
+    return {k: v for k, v in dict(s=stage, at=at.isoformat(timespec="seconds"), by=str(by or "")[:100], dev=dev, u=u).items() if v or k in ("s", "at")}
+
+
 def record(order, data):
-    """Called by ingest_order for a sale with «delivery»: the delivery paper + the address book."""
+    """Called by ingest_order for a sale with «delivery» or a platform order: the delivery paper + the address book."""
     info = clean_info(data.get("delivery"))
+    plat = str(data.get("platform") or "")[:12] if order.paid_credit > 0 else ""
     fee = sum((_dec(ln.get("qty"), Z) * _dec(ln.get("price"), Z) for ln in data.get("lines") or [] if str(ln.get("item_code")) == FEE_CODE), Z)
     state = "out" if order.paid_rider > 0 else "paid"
+    by = order.shift.cashier if order.shift_id else ""
+    dev = order.device.code if order.device_id else ""
+    steps = [_step("new", order.created_at_device, by, dev)]
+    s = CompanySettings.get()
+    if s.kitchen_ticket != "off" and s.business in ("cafe", "gaming"):  # the kitchen ticket printed with the sale = «قيد التحضير»
+        steps.append(_step("prep", order.created_at_device, "ورقة المطبخ", dev))
     d = DeliveryOrder.objects.create(order=order, fee=L.q2(fee), due=order.paid_rider, state=state, created_at=order.created_at_device,
-                                     collected_at=order.created_at_device if state == "paid" else None, **info)
+                                     collected_at=order.created_at_device if state == "paid" else None, stage=steps[-1]["s"], steps=steps,
+                                     platform=plat, **info)
     if info["phone"]:
         c, _ = DeliveryCustomer.objects.get_or_create(phone=info["phone"])
         c.name = info["name"] or c.name
@@ -150,15 +193,97 @@ def record(order, data):
 
 
 def open_orders(branch=None):
+    """Still with a rider (money not handed in yet)."""
     qs = DeliveryOrder.objects.filter(state="out", order__cancelled=False).select_related("order", "order__device")
     if branch is not None:
         qs = qs.filter(order__device__branch=branch)
     return qs.order_by("created_at")
 
 
+def active(branch=None):
+    """The board: every order not delivered yet, and delivered ones whose money is still with the rider."""
+    qs = DeliveryOrder.objects.filter(order__cancelled=False).exclude(stage="void").filter(Q(stage__in=FLOW[:3]) | Q(state="out"))
+    if branch is not None:
+        qs = qs.filter(order__device__branch=branch)
+    return qs.select_related("order", "order__device").order_by("created_at")
+
+
+def since(d):
+    """When the order entered its current step."""
+    for st in reversed(d.steps or []):
+        if st.get("s") == d.stage:
+            return st.get("at") or d.created_at.isoformat()
+    return d.created_at.isoformat()
+
+
+def late_by(d, now=None, lim=None):
+    """Minutes over the owner's limit for the current step (0 = on time)."""
+    lim = lim or late_cfg()
+    if d.stage not in lim:
+        return 0
+    from .services import _dt
+
+    m = int(((now or timezone.now()) - _dt(since(d))).total_seconds() // 60)
+    return max(0, m - lim[d.stage])
+
+
+def as_json(d):
+    return dict(uid=d.order.uid, seq=d.order.shift_seq, name=d.name, phone=d.phone, address=d.address, rider=d.rider, due=str(d.due),
+                total=str(d.order.total), at=d.created_at.isoformat(), stage=d.stage, since=since(d), plat=d.platform, paid=d.state == "paid",
+                steps=[dict(s=x.get("s"), at=x.get("at"), by=x.get("by", "")) for x in d.steps or []])
+
+
 def open_json(branch=None):
-    return [dict(uid=d.order.uid, seq=d.order.shift_seq, name=d.name, phone=d.phone, address=d.address, rider=d.rider, due=str(d.due),
-                 at=d.created_at.isoformat()) for d in open_orders(branch)[:200]]
+    return [as_json(d) for d in active(branch)[:300]]
+
+
+@transaction.atomic
+def advance(d, to, *, by="", at=None, rider=None, device=None, uid=""):
+    """One step forward on the way to the customer. A step already made is a no-op (a till sends again); backwards is refused."""
+    d = DeliveryOrder.objects.select_for_update().select_related("order", "order__device").get(pk=d.pk)
+    if uid and any(x.get("u") == uid for x in d.steps or []):
+        return d
+    if d.stage == "void" or d.order.cancelled:
+        raise ValidationError("الطلب ملغي")
+    if to not in FLOW:
+        raise ValidationError("مرحلة غير معروفة" if to != "void" else "الإلغاء من صاحب المحل فقط (طلب إلغاء الفاتورة)")
+    if device is not None and d.order.device_id and d.order.device.branch_id != device.branch_id:
+        raise ValidationError("طلب الدليفري من فرع آخر")
+    if FLOW.index(to) <= FLOW.index(d.stage):
+        if to == d.stage:
+            return d
+        raise ValidationError(f"الطلب «{STAGE_AR[d.stage]}» — لا يرجع إلى «{STAGE_AR[to]}»")
+    fields = ["stage", "steps"]
+    rider = str(rider or "").strip()[:80]
+    if rider and to == "out":
+        d.rider = rider
+        fields.append("rider")
+    if to == "out" and not d.rider and not d.platform and raw_cfg().get("riders"):
+        raise ValidationError("اختر عامل التوصيل")
+    d.stage = to
+    d.steps = [*(d.steps or []), _step(to, at or timezone.now(), by, device.code if device is not None else "", uid)]
+    d.save(update_fields=fields)
+    return d
+
+
+def ingest_step(device, data):
+    """A step sent by a till (offline-safe). Only «not arrived yet» is retried; a refused step is answered, never retried."""
+    uid = str(data.get("uid") or "")[:60]
+    if not uid.startswith(f"{device.branch.code}-{device.code}-"):
+        raise ValidationError("المعرف لا يخص هذا الجهاز")
+    d = DeliveryOrder.objects.filter(order__uid=str(data.get("order_uid") or "")).first()
+    if not d:
+        raise ValidationError("طلب الدليفري لم يصل إلى البرنامج بعد — يُعاد تلقائيًا")
+    from .models import Shift
+    from .services import _dt
+
+    sh = Shift.objects.filter(uid=str(data.get("shift_uid") or ""), device=device).first()
+    try:
+        advance(d, str(data.get("to") or ""), by=sh.cashier if sh else str(data.get("by") or "")[:100],
+                at=_dt(data["at"]) if data.get("at") else None, rider=data.get("rider"), device=device, uid=uid)
+    except ValidationError as e:
+        return "؛ ".join(e.messages)
+    return ""
 
 
 @transaction.atomic
@@ -194,12 +319,20 @@ def collect(device, data, shift=None):
     mv = CashMove.objects.create(uid=uid, kind="delivery", date=when.date(), shift=shift, cash_effect=amount, amount=amount,
                                  note=f"{d.rider} — {d.order.uid}"[:200], entry=entry, by=(shift.cashier if shift else "")[:100])
     d.state, d.collected_at, d.collect_move = "paid", when, mv
-    d.save(update_fields=["state", "collected_at", "collect_move"])
+    fields = ["state", "collected_at", "collect_move"]
+    if d.stage in FLOW[:3]:  # the money is back: the order was delivered
+        d.stage, d.steps = "done", [*(d.steps or []), _step("done", when, mv.by, device.code, uid)]
+        fields += ["stage", "steps"]
+    d.save(update_fields=fields)
     return mv
 
 
-def on_order_void(order):
-    DeliveryOrder.objects.filter(order=order, state="out").update(state="void")
+def on_order_void(order, reason=""):
+    for d in DeliveryOrder.objects.filter(order=order).exclude(stage="void"):
+        d.stage, d.steps = "void", [*(d.steps or []), _step("void", timezone.now(), str(reason)[:100])]
+        if d.state == "out":
+            d.state = "void"
+        d.save(update_fields=["stage", "steps", "state"])
 
 
 def on_move_void(mv):
@@ -207,15 +340,33 @@ def on_move_void(mv):
         DeliveryOrder.objects.filter(collect_move=mv).update(state="out", collected_at=None, collect_move=None)
 
 
+def _minutes(d, a, b):
+    """Minutes between two steps of an order (None when one is missing)."""
+    from .services import _dt
+
+    at = {x.get("s"): x.get("at") for x in d.steps or []}
+    if not at.get(a) or not at.get(b):
+        return None
+    return max(0, int((_dt(at[b]) - _dt(at[a])).total_seconds() // 60))
+
+
 def report(start, end, branch=None):
-    """Per rider: orders, total, collected, outstanding (the owner's page)."""
-    qs = DeliveryOrder.objects.filter(created_at__date__gte=start, created_at__date__lte=end).exclude(state="void").exclude(order__cancelled=True)
+    """Per rider: orders, total, collected, outstanding, delivered, average minutes order → customer (the owner's page);
+    the history lists platform orders too."""
+    qs = DeliveryOrder.objects.filter(created_at__date__gte=start, created_at__date__lte=end).exclude(stage="void").exclude(
+        order__cancelled=True)
     if branch is not None:
         qs = qs.filter(order__device__branch=branch)
+    own = qs.filter(platform="")
     rows = []
-    for r in qs.values("rider").annotate(n=Count("id"), total=Sum("order__total"), fees=Sum("fee"),
-                                         out=Sum("due", filter=Q(state="out")), got=Sum("order__total", filter=Q(state="paid"))).order_by("rider"):
-        rows.append(dict(rider=r["rider"] or "بدون طيار", n=r["n"], total=r["total"] or Z, fees=r["fees"] or Z, got=r["got"] or Z, out=r["out"] or Z))
+    for r in own.values("rider").annotate(n=Count("id"), total=Sum("order__total"), fees=Sum("fee"), done=Count("id", filter=Q(stage="done")),
+                                          out=Sum("due", filter=Q(state="out")), got=Sum("order__total", filter=Q(state="paid"))).order_by("rider"):
+        mins = [m for m in (_minutes(d, "new", "done") for d in own.filter(rider=r["rider"], stage="done").only("steps")[:2000]) if m is not None]
+        rows.append(dict(rider=r["rider"] or "بدون طيار", n=r["n"], total=r["total"] or Z, fees=r["fees"] or Z, got=r["got"] or Z, out=r["out"] or Z,
+                         done=r["done"], avg=round(sum(mins) / len(mins)) if mins else None))
     tot = dict(n=sum(r["n"] for r in rows), total=sum((r["total"] for r in rows), Z), fees=sum((r["fees"] for r in rows), Z),
-               got=sum((r["got"] for r in rows), Z), out=sum((r["out"] for r in rows), Z))
-    return rows, tot, qs.select_related("order").order_by("-created_at")[:300]
+               got=sum((r["got"] for r in rows), Z), out=sum((r["out"] for r in rows), Z), done=sum(r["done"] for r in rows))
+    hist = DeliveryOrder.objects.filter(created_at__date__gte=start, created_at__date__lte=end)
+    if branch is not None:
+        hist = hist.filter(order__device__branch=branch)
+    return rows, tot, hist.select_related("order").order_by("-created_at")[:300]

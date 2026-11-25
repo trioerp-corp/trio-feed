@@ -1,0 +1,7 @@
+{# 1.26 the shop's currency (core/currency.py): every price, receipt and report shows it. Default from the country (phone prefix). #}
+<label class="field">عملة المحل<select name="currency" id="curSel" data-touched="{% if cur_set %}1{% endif %}">{% for k, label in cur_choices %}<option value="{{ k }}"{% if k == cur_now %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+<small class="muted">تظهر بها الأسعار والإيصالات والتقارير — بدون تحويل في الحسابات.</small></label>
+<script>(function(){const s=document.getElementById('curSel');if(!s)return;s.addEventListener('change',()=>s.dataset.touched='1');
+const D={'20':'EGP','966':'SAR','971':'AED','974':'QAR','965':'KWD','973':'BHD','968':'OMR','962':'JOD','964':'IQD','212':'MAD','213':'DZD','216':'TND','218':'LYD'};
+const ph=s.form&&s.form.querySelector('[name=phone]');if(!ph)return;ph.addEventListener('input',()=>{if(s.dataset.touched)return;const v=ph.value.trim();let d=v.replace(/\D/g,'');
+if(!(v.startsWith('+')||d.startsWith('00'))){if(d)s.value='EGP';return}if(d.startsWith('00'))d=d.slice(2);const c=D[d.slice(0,3)]||D[d.slice(0,2)];s.value=c||'USD'})})();</script>
