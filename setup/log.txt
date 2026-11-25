@@ -1,115 +1,115 @@
-10:28:21 == printer: «TrioPDF» (Microsoft Print to PDF on a file port = no Save dialog), default
-10:28:23 default printer: TrioPDF
-10:28:23 == 1. install: Trio-Setup.exe /VERYSILENT
-10:28:23 WebView2 runtime before setup: 157.0.4341.46
-10:28:43 setup took 19 s
-10:28:43 PASS C:\Trio\Trio.exe
-10:28:43 PASS C:\Trio\Trio Cashier.exe
-10:28:43 PASS C:\Trio\window\TrioWindow.exe
-10:28:43 PASS C:\Trio\python\python.exe
-10:28:43 PASS no .acc-flash mark in C:\Trio
-10:28:43 PASS shortcut C:\Users\Public\Desktop\Trio.lnk
-10:28:43 PASS shortcut C:\Users\Public\Desktop\Trio Cashier.lnk
-10:28:43 PASS shortcut C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Trio\Trio.lnk
-10:28:43 PASS shortcut C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Trio\Trio Cashier.lnk
-10:28:43 desktop Trio.lnk → C:\Trio\Trio.exe icon C:\Trio\trio.ico,0
-10:28:43 PASS Apps entry: Trio 1.26.0 icon C:\Trio\trio.ico
-10:28:43 PASS WebView2 runtime after setup: 157.0.4341.46
-10:28:43 == 2. open from the desktop shortcut «Trio»
-10:28:45 PASS a Trio window appears (loading page)
-10:28:50 screenshot 01-loading.png (1024x768)
-10:29:01 PASS server answers on :8000
-10:29:13 window: «واجهة المطور — Trio» -8,-8,1040x736 maximized=True
-10:29:13 PASS window title has Trio
-10:29:13 PASS first open = maximized
-10:29:13 screenshot 02-window.png (1024x768)
-10:29:13 visible top-level windows:
-10:29:13    explorer | Shell_TrayWnd |  | 0,720,1024x48
-10:29:13    TrioWindow | WindowsForms10.Window.8.app.0.34f5582_r6_ad1 | واجهة المطور — Trio | -8,-8,1040x736
-10:29:13    WindowsTerminal | CASCADIA_HOSTING_WINDOW_CLASS | C:\ProgramData\GitHub\HostedComputeAgent\hosted-compute-agent | 44,52,1044x635
-10:29:13    hosted-compute-agent | PseudoConsoleWindow |  | 0,0,0x0
-10:29:13    SystemPropertiesPerformance | #32770 | System Properties | 311,319,420x192
-10:29:13    explorer | DummyDWMListenerWindow |  | 0,0,0x0
-10:29:13    explorer | EdgeUiInputTopWndClass |  | 15,0,1009x4
-10:29:13    explorer | DummyDWMListenerWindow |  | 0,0,0x0
-10:29:13    explorer | DummyDWMListenerWindow |  | 0,0,0x0
-10:29:13    explorer | DummyDWMListenerWindow |  | 0,0,0x0
-10:29:13    explorer | DummyDWMListenerWindow |  | 0,0,0x0
-10:29:13    explorer | Progman | Program Manager | 0,0,1024x768
-10:29:13 PASS no console / browser window ()
-10:29:13 PASS python (the server) runs in the background
-10:29:13 == 3. printing: silent on the till (/pos/), a printer dialog elsewhere (test pages on :8123)
-10:29:23 PASS till page: window.print() printed to the default printer (10899 bytes)
-10:29:23 PASS till page: no print dialog
-10:29:23 screenshot 03-till-print.png (1024x768)
-10:29:40 printed: 1 page(s): 
-10:29:40 INFO Microsoft Print to PDF keeps no text layer — the printed page is 03-till-printed-page.png (must show RECEIPT-ONE-123, not CHANGED-AFTER-PRINT)
-10:29:43 PASS report page: window.print() shows a printer dialog
-10:29:44 screenshot 04-report-print-dialog.png (1024x768)
-10:29:44 == 4. size the window (900x650 at 100,100), open Trio Cashier too
-10:29:47 after move: 100,100,900x650
-10:29:48 PASS Trio Cashier opens a second window (through the running copy)
-10:29:56 screenshot 05-two-windows.png (1024x768)
-10:29:56 cashier window command line: C:\Trio\window\TrioWindow.exe http://localhost:8000/cashier/ --title Trio --key till --till
-10:29:56 cashier window: «واجهة المطور — Trio»
-10:30:04 PASS closing ONE window keeps the server (the other window is open)
-10:30:04 == 5. close the last window → the server stops
-10:30:08 PASS port 8000 free after the last window closed
-10:30:11 PASS no Trio python left
-10:30:11 PASS no Trio.exe left
-10:30:11 window.json: {"till":{"x":-1,"y":-1,"w":1280,"h":800,"max":true},"main":{"x":100,"y":100,"w":900,"h":650,"max":false}}
-10:30:11 == 6. reopen → the same size and place
-10:30:12 PASS window again
-10:30:17 PASS server again
-10:30:27 window: «واجهة المطور — Trio» 100,100,900x650 maximized=False
-10:30:27 PASS size/place remembered (100,100,900x650)
-10:30:27 screenshot 06-reopened.png (1024x768)
-10:30:31 PASS stopped again
-10:30:31 == 7. uninstall (silent) — data kept
-10:30:47 PASS program files removed
-10:30:47 PASS data kept: .fw-udp8001, .installed, .last_check, .last_vacuum, acc-erp.sqlite3, feed.json, mobile.json, secret.txt, trio.log
-10:30:47 PASS desktop shortcut removed
-10:30:47 PASS Apps entry removed
-10:30:47 screenshot 07-after-uninstall.png (1024x768)
-10:30:47 trio.log:
-10:30:47      Applying pos.0010_device_next_no... OK
-10:30:47      Applying credit.0001_initial... OK
-10:30:47      Applying inventory.0005_menu_sizes_addons... OK
-10:30:47      Applying inventory.0006_msa_labels... OK
-10:30:47      Applying gaming.0001_initial... OK
-10:30:47      Applying gaming.0002_msa_labels... OK
-10:30:47      Applying gaming.0003_stop_stations_outside_gaming... OK
-10:30:47      Applying gaming.0004_hall_settings_daily_no... OK
-10:30:47      Applying gaming.0005_bookings_packages... OK
-10:30:47      Applying inventory.0007_transfer_transferline... OK
-10:30:47      Applying pos.0011_order_paid_insta... OK
-10:30:47      Applying pos.0012_delivery_stages... OK
-10:30:47      Applying sessions.0001_initial... OK
-10:30:47      Applying staff.0001_initial... OK
-10:30:47      Applying staff.0002_msa_labels... OK
-10:30:47    جاهز — افتح البرنامج وادخل واجهة المطور باسم ACC
-10:30:47    2026-11-25 10:28:57 === الجهاز جاهز ✔ ===
-10:30:47    Operations to perform:
-10:30:47      Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
-10:30:47    Running migrations:
-10:30:47      No migrations to apply.
-10:30:47    2026-11-25 10:29:01 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
-10:30:47    قناة الأوامر ✔ الإيقاف: شغال — الحضور ✔ — التجربة ✔
-10:30:47    لا يوجد بريد إرسال ولا رابط تحكم
-10:30:47    لا يوجد بريد البرنامج
-10:30:47    نسخة على الجهاز: C:\Trio\backups\shop_2026-11-25_122903.zip
-10:30:47    صيانة قاعدة البيانات: الفحص سليم — ضُغطت ونُظّفت
-10:30:47    2026-11-25 10:30:06 آخر شباك اتقفل — بقفل البرنامج
-10:30:47    2026-11-25 10:30:11 Trio · 01228827915 · 01121460640
-10:30:47    Operations to perform:
-10:30:47      Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
-10:30:47    Running migrations:
-10:30:47      No migrations to apply.
-10:30:47    2026-11-25 10:30:17 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
-10:30:47    قناة الأوامر ✔ الإيقاف: قديم —  — التجربة ✔
-10:30:47    لا يوجد بريد إرسال ولا رابط تحكم
-10:30:47    لا يوجد بريد البرنامج
-10:30:47    آخر نسخة ما زالت حديثة
-10:30:47    صيانة قاعدة البيانات: لم يحن وقتها بعد
-10:30:47    2026-11-25 10:30:29 آخر شباك اتقفل — بقفل البرنامج
-10:30:47 == 0 failure(s)
+10:41:21 == printer: «TrioPDF» (Microsoft Print to PDF on a file port = no Save dialog), default
+10:41:23 default printer: TrioPDF
+10:41:23 == 1. install: Trio-Setup.exe /VERYSILENT
+10:41:23 WebView2 runtime before setup: 157.0.4341.46
+10:41:39 setup took 16 s
+10:41:39 PASS C:\Trio\Trio.exe
+10:41:39 PASS C:\Trio\Trio Cashier.exe
+10:41:39 PASS C:\Trio\window\TrioWindow.exe
+10:41:39 PASS C:\Trio\python\python.exe
+10:41:39 PASS no .acc-flash mark in C:\Trio
+10:41:39 PASS shortcut C:\Users\Public\Desktop\Trio.lnk
+10:41:39 PASS shortcut C:\Users\Public\Desktop\Trio Cashier.lnk
+10:41:39 PASS shortcut C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Trio\Trio.lnk
+10:41:39 PASS shortcut C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Trio\Trio Cashier.lnk
+10:41:39 desktop Trio.lnk → C:\Trio\Trio.exe icon C:\Trio\trio.ico,0
+10:41:39 PASS Apps entry: Trio 1.26.0 icon C:\Trio\trio.ico
+10:41:39 PASS WebView2 runtime after setup: 157.0.4341.46
+10:41:39 == 2. open from the desktop shortcut «Trio»
+10:41:41 PASS a Trio window appears (loading page)
+10:41:47 screenshot 01-loading.png (1024x768)
+10:41:56 PASS server answers on :8000
+10:42:08 window: «واجهة المطور — Trio» -8,-8,1040x736 maximized=True
+10:42:08 PASS window title has Trio
+10:42:08 PASS first open = maximized
+10:42:08 screenshot 02-window.png (1024x768)
+10:42:08 visible top-level windows:
+10:42:08    explorer | Shell_TrayWnd |  | 0,720,1024x48
+10:42:08    TrioWindow | WindowsForms10.Window.8.app.0.34f5582_r6_ad1 | واجهة المطور — Trio | -8,-8,1040x736
+10:42:08    WindowsTerminal | CASCADIA_HOSTING_WINDOW_CLASS | C:\ProgramData\GitHub\HostedComputeAgent\hosted-compute-agent | 44,52,1044x635
+10:42:08    hosted-compute-agent | PseudoConsoleWindow |  | 0,0,0x0
+10:42:08    SystemPropertiesPerformance | #32770 | System Properties | 311,319,420x192
+10:42:08    explorer | DummyDWMListenerWindow |  | 0,0,0x0
+10:42:08    explorer | EdgeUiInputTopWndClass |  | 15,0,1009x4
+10:42:08    explorer | DummyDWMListenerWindow |  | 0,0,0x0
+10:42:08    explorer | DummyDWMListenerWindow |  | 0,0,0x0
+10:42:08    explorer | DummyDWMListenerWindow |  | 0,0,0x0
+10:42:08    explorer | DummyDWMListenerWindow |  | 0,0,0x0
+10:42:08    explorer | Progman | Program Manager | 0,0,1024x768
+10:42:08 PASS no console / browser window ()
+10:42:08 PASS python (the server) runs in the background
+10:42:08 == 3. printing: silent on the till (/pos/), a printer dialog elsewhere (test pages on :8123)
+10:42:18 PASS till page: window.print() printed to the default printer (10602 bytes)
+10:42:18 PASS till page: no print dialog
+10:42:18 screenshot 03-till-print.png (1024x768)
+10:42:33 printed: 1 page(s): 
+10:42:33 INFO Microsoft Print to PDF keeps no text layer — the printed page is 03-till-printed-page.png (must show RECEIPT-ONE-123, not CHANGED-AFTER-PRINT)
+10:42:36 PASS report page: window.print() shows a printer dialog
+10:42:36 screenshot 04-report-print-dialog.png (1024x768)
+10:42:36 == 4. size the window (900x650 at 100,100), open Trio Cashier too
+10:42:39 after move: 100,100,900x650
+10:42:40 PASS Trio Cashier opens a second window (through the running copy)
+10:42:48 screenshot 05-two-windows.png (1024x768)
+10:42:48 cashier window command line: C:\Trio\window\TrioWindow.exe http://localhost:8000/cashier/ --title Trio --key till --till
+10:42:48 cashier window: «واجهة المطور — Trio»
+10:42:56 PASS closing ONE window keeps the server (the other window is open)
+10:42:56 == 5. close the last window → the server stops
+10:43:00 PASS port 8000 free after the last window closed
+10:43:03 PASS no Trio python left
+10:43:03 PASS no Trio.exe left
+10:43:03 window.json: {"till":{"x":-1,"y":-1,"w":1280,"h":800,"max":true},"main":{"x":100,"y":100,"w":900,"h":650,"max":false}}
+10:43:03 == 6. reopen → the same size and place
+10:43:04 PASS window again
+10:43:09 PASS server again
+10:43:19 window: «واجهة المطور — Trio» 100,100,900x650 maximized=False
+10:43:19 PASS size/place remembered (100,100,900x650)
+10:43:19 screenshot 06-reopened.png (1024x768)
+10:43:23 PASS stopped again
+10:43:23 == 7. uninstall (silent) — data kept
+10:43:34 PASS program files removed
+10:43:34 PASS data kept: .fw-udp8001, .installed, .last_check, .last_vacuum, acc-erp.sqlite3, feed.json, mobile.json, secret.txt, trio.log
+10:43:34 PASS desktop shortcut removed
+10:43:34 PASS Apps entry removed
+10:43:34 screenshot 07-after-uninstall.png (1024x768)
+10:43:34 trio.log:
+10:43:34      Applying pos.0010_device_next_no... OK
+10:43:34      Applying credit.0001_initial... OK
+10:43:34      Applying inventory.0005_menu_sizes_addons... OK
+10:43:34      Applying inventory.0006_msa_labels... OK
+10:43:34      Applying gaming.0001_initial... OK
+10:43:34      Applying gaming.0002_msa_labels... OK
+10:43:34      Applying gaming.0003_stop_stations_outside_gaming... OK
+10:43:34      Applying gaming.0004_hall_settings_daily_no... OK
+10:43:34      Applying gaming.0005_bookings_packages... OK
+10:43:34      Applying inventory.0007_transfer_transferline... OK
+10:43:34      Applying pos.0011_order_paid_insta... OK
+10:43:34      Applying pos.0012_delivery_stages... OK
+10:43:34      Applying sessions.0001_initial... OK
+10:43:34      Applying staff.0001_initial... OK
+10:43:34      Applying staff.0002_msa_labels... OK
+10:43:34    جاهز — افتح البرنامج وادخل واجهة المطور باسم ACC
+10:43:34    2026-11-25 10:41:53 === الجهاز جاهز ✔ ===
+10:43:34    Operations to perform:
+10:43:34      Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
+10:43:34    Running migrations:
+10:43:34      No migrations to apply.
+10:43:34    2026-11-25 10:41:55 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
+10:43:34    قناة الأوامر ✔ الإيقاف: شغال — الحضور ✔ — التجربة ✔
+10:43:34    لا يوجد بريد إرسال ولا رابط تحكم
+10:43:34    لا يوجد بريد البرنامج
+10:43:34    نسخة على الجهاز: C:\Trio\backups\shop_2026-11-25_124158.zip
+10:43:34    صيانة قاعدة البيانات: الفحص سليم — ضُغطت ونُظّفت
+10:43:34    2026-11-25 10:42:58 آخر شباك اتقفل — بقفل البرنامج
+10:43:34    2026-11-25 10:43:03 Trio · 01228827915 · 01121460640
+10:43:34    Operations to perform:
+10:43:34      Apply all migrations: accruals, admin, auth, clinic, contenttypes, core, credit, gaming, inventory, ledger, pos, sessions, staff, treasury
+10:43:34    Running migrations:
+10:43:34      No migrations to apply.
+10:43:34    2026-11-25 10:43:09 البرنامج شغال — http://localhost:8000 (ومن موبايل على نفس الواي فاي: http://اسم-الجهاز:8000)
+10:43:34    قناة الأوامر ✔ الإيقاف: قديم —  — التجربة ✔
+10:43:34    لا يوجد بريد إرسال ولا رابط تحكم
+10:43:34    لا يوجد بريد البرنامج
+10:43:34    آخر نسخة ما زالت حديثة
+10:43:34    صيانة قاعدة البيانات: لم يحن وقتها بعد
+10:43:34    2026-11-25 10:43:21 آخر شباك اتقفل — بقفل البرنامج
+10:43:34 == 0 failure(s)
