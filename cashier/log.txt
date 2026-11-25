@@ -1,0 +1,55 @@
+10:27:56 == 1. owner PC: database, shop, owner user
+10:28:10 PASS owner server up on :8000
+10:28:10 == 2. owner: «رمز للتنزيل عبر شبكة المحل» → the cashier PC opens /c and types the code
+code 401125 addresses ['http://runnervmbpeip:8000/c', 'http://10.1.0.10:8000/c', 'http://172.30.192.1:8000/c']
+download 200 attachment; filename="Trio-Cashier-Setup.exe"; filename*=UTF-8''Trio%20Cashier%20Setup%20-%20CI%20%D9%83%D8%A7%D8%B4%D9%8A%D8%B1.exe 6381548
+second use refused: ok
+10:28:12 PASS setup file downloaded with the one-time code (second use refused)
+10:28:12 setup file size: 6381548
+10:28:12 PASS owner has data\shop_id.txt
+10:28:12 == 3. install on the «cashier PC» (per user, no admin)
+10:28:15 setup exit 0
+10:28:15 PASS installed TrioCashier.exe
+10:28:15 PASS installed window\TrioWindow.exe
+10:28:15 PASS installed pair.json
+10:28:15 PASS no Python on the cashier PC
+10:28:15 new desktop shortcuts: 
+10:28:15 FAIL exactly one new desktop shortcut «Trio – الكاشير»
+10:28:15 FAIL Start-menu entry
+10:28:15 FAIL Apps entry (HKCU):  | 
+10:28:15 FAIL shortcut → 
+10:28:15 == 4. discovery: UDP 8001 on loopback with this shop's id
+10:28:18 discovery found: 10.1.0.10:8000, 172.30.192.1:8000, 127.0.0.1:8000
+10:28:19 PASS owner launcher answered the discovery
+10:28:19 == 5. the cashier app (proxy) → owner
+10:28:19 PASS cashier app connected to the owner PC
+10:28:19 PASS /cashier/ → till page through the proxy (boot.js injected)
+10:28:19 PASS catalog through the proxy with the paired device key
+10:28:19 PASS sync POST through the proxy
+10:28:35 FAIL -nowindow app quit on request
+10:28:35 == 6. from the desktop shortcut: the till window
+10:30:36 FAIL shortcut started the cashier app
+10:31:16 FAIL till window open: 
+10:31:28 screenshot 1-till-online.png
+10:31:28 == 7. owner PC off → the till still opens (cache), API answers offline
+10:31:28 stop: no
+
+10:32:29 FAIL owner server stopped
+10:34:29 FAIL cashier app shows offline
+10:34:31 FAIL till page served from the cache with the owner PC off
+10:34:33 FAIL API offline answer: 0
+10:34:40 screenshot 2-till-offline.png
+10:34:40 == 8. owner PC back → reconnects
+10:34:40 PASS owner server up again
+10:37:41 FAIL cashier app reconnected
+10:37:46 screenshot 3-till-back.png
+10:37:46 == 9. re-run the setup file (update / re-pair) then uninstall
+10:37:46 PASS re-run keeps the install
+10:37:46 FAIL still one shortcut after re-run
+10:37:46 cashier.log: 2026-11-25 10:28:19 متصل بجهاز المحل: runnervmbpeip:8000
+10:37:46 cashier.log: 2026-11-25 10:28:19 شاشة الكاشير على http://127.0.0.1:8010/ — الجهاز: CI كاشير
+10:37:54 PASS uninstall removed the desktop shortcut
+10:37:54 PASS uninstall removed the Start-menu entry
+10:37:54 PASS uninstall removed the Apps entry
+10:38:10 FAIL uninstall removed the folder
+10:38:10 == result: 14 failed
