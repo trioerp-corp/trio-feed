@@ -17,3 +17,5 @@ func msgYesNo(title, text string) bool {
 }
 
 func hasWebView2() bool { return true }
+
+func shellLater(line string) *exec.Cmd { return exec.Command("sh", "-c", "true") }

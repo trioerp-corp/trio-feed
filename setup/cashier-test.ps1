@@ -58,7 +58,8 @@ Check ($new.Count -eq 1 -and $new[0] -eq "$title.lnk") "exactly one new desktop 
 Check (Test-Path (Join-Path $progs "$title.lnk")) "Start-menu entry"
 $un = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\TrioCashier" -ErrorAction SilentlyContinue
 Check ($un -and $un.DisplayName -eq $title -and $un.UninstallString -like "*-uninstall*") ("Apps entry (HKCU): " + $un.DisplayName + " | " + $un.UninstallString)
-$lnk = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $desk "$title.lnk"))
+$tmpl = Join-Path $env:TEMP "check-cashier.lnk"; Copy-Item -LiteralPath (Join-Path $desk "$title.lnk") $tmpl -Force  # WScript.Shell reads ANSI names only
+$lnk = (New-Object -ComObject WScript.Shell).CreateShortcut($tmpl)
 Check ($lnk.TargetPath -eq "$inst\TrioCashier.exe") ("shortcut → " + $lnk.TargetPath)
 
 L "== 4. discovery: UDP 8001 on loopback with this shop's id"

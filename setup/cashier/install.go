@@ -158,8 +158,6 @@ func uninstall(dir string) {
 		"Remove-Item -Recurse -Force -ErrorAction SilentlyContinue " + psQuote(uninstallKey)
 	powershell(script)
 	// the folder holds this running exe: a hidden cmd removes it a moment after this program ends
-	c := exec.Command("cmd", "/c", "ping -n 3 127.0.0.1 >nul & rmdir /s /q \""+dir+"\"")
-	hide(c)
-	c.Start()
+	shellLater(`ping -n 4 127.0.0.1 >nul & rmdir /s /q "` + dir + `"`).Start()
 	tell("تمت إزالة «"+title+"» ✔", false)
 }

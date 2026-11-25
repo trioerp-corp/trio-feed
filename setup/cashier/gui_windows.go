@@ -68,3 +68,10 @@ func hasWebView2() bool {
 	}
 	return false
 }
+
+// shellLater: a hidden «cmd /c <line>» with the line passed as is (Go would escape its quotes the C way, which cmd does not read)
+func shellLater(line string) *exec.Cmd {
+	c := exec.Command("cmd")
+	c.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000, CmdLine: `cmd /c ` + line}
+	return c
+}
